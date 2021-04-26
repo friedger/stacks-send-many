@@ -41,7 +41,7 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
         : 1
     );
   const showMemo =
-    tx && tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
+    tx && tx.apiData && tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
   const memos = showMemo
     ? new Array(
         ...new Set(
