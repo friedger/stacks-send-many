@@ -21,10 +21,6 @@ import { c32addressDecode } from 'c32check';
 import BigNum from 'bn.js';
 import { SendManyInput } from './SendManyInput';
 
-const addRows = (index, onKeyUp) => {
-  return <SendManyInput key={index} onKeyUp={onKeyUp} />;
-};
-
 export function SendManyButton() {
   const userSession = useAtomValue(userSessionState);
   const textfield = useRef();
@@ -34,12 +30,29 @@ export function SendManyButton() {
   const [txId, setTxId] = useState();
   const [preview, setPreview] = useState();
   const [loading, setLoading] = useState(false);
-  const [rows, setRows] = useState();
+  const [rows, setRows] = useState([
+    { to: '', stx: '0', memo: '' },
+    { to: '', stx: '0', memo: '' },
+  ]);
   const { ownerStxAddress } = useStxAddresses(userSession);
   const { doContractCall } = useConnect();
 
-  const updatePreview = async () => {
-    const { parts, total } = getParts();
+  useEffect(() => {
+    if (userSession?.isUserSignedIn() && ownerStxAddress) {
+      fetchAccount(ownerStxAddress)
+        .catch(e => {
+          setStatus('Failed to access your account', e);
+          console.log(e);
+        })
+        .then(async acc => {
+          setAccount(acc);
+          console.log({ acc });
+        });
+    }
+  }, [userSession, ownerStxAddress]);
+
+
+  const updatePreview = async ({ parts, total }) => {
     setPreview(
       <>
         {parts.map(p => {
@@ -68,39 +81,17 @@ export function SendManyButton() {
     );
   };
 
-  useEffect(() => {
-    if (userSession?.isUserSignedIn() && ownerStxAddress) {
-      fetchAccount(ownerStxAddress)
-        .catch(e => {
-          setStatus('Failed to access your account', e);
-          console.log(e);
-        })
-        .then(async acc => {
-          setAccount(acc);
-          console.log({ acc });
-        });
-      // FIXME: dynamically add SendManyInput with model
-      //setRows([addRows(0, updatePreview), addRows(1, updatePreview)]);
-    }
-  }, [userSession, ownerStxAddress]);
-
-  const getParts = () => {
-    let parts = textfield.current.value.split('\n');
-    parts = parts.map(s => {
-      const lineParts = s.split(';').map(lp => lp.trim());
-      return { to: lineParts[0], ustx: Math.floor(parseFloat(lineParts[1]) * 1000000) };
+  const getPartsFromRows = currentRows => {
+    const parts = currentRows.map(r => {
+      return { ...r, ustx: Math.floor(parseFloat(r.stx) * 1000000) };
     });
-    console.log({ parts });
-    parts = parts.filter(p => p.to && p.ustx > 0);
-    console.log({ parts });
-    const total = parts.reduce((sum, p) => (sum += p.ustx), 0);
-    console.log({ parts, total });
+    const total = parts.reduce((sum, r) => (sum += r.ustx), 0);
     return { parts, total };
   };
 
   const sendAction = async () => {
     setLoading(true);
-    const { parts, total } = getParts();
+    const { parts, total } = getPartsFromRows(rows);
     const contractAddress = CONTRACT_ADDRESS;
     const contractName = 'send-many';
     const functionName = 'send-many';
@@ -154,22 +145,39 @@ export function SendManyButton() {
     }
   };
 
+  const addNewRow = () => {
+    const newRows = [...rows];
+    newRows.push({ to: '', stx: '0', memo: '' });
+    console.log(newRows);
+    setRows(newRows);
+  };
+
+  const updateRow = (row, index) => {
+    console.log({ row });
+    const newRows = [...rows];
+    newRows[index] = row;
+    console.log(newRows);
+    setRows(newRows);
+    return newRows;
+  };
+
+  const updateModel = index => {
+    return row => {
+      const rows = updateRow(row, index);
+      updatePreview(getPartsFromRows(rows));
+    };
+  };
+
   return (
     <div>
       Send Test STXs
       <div className="NoteField">
-        {addRows(0, updatePreview)}
-        <textarea
-          type="text"
-          ref={textfield}
-          className="form-control"
-          defaultValue={''}
-          disabled={!account}
-          onKeyUp={updatePreview}
-          onBlur={e => {
-            setStatus(undefined);
-          }}
-        />
+        {rows.map((row, index) => {
+          return (
+            <SendManyInput key={index} row={row} index={index} updateModel={updateModel(index)} />
+          );
+        })}
+        <button onClick={e => addNewRow()}>Add row</button>
         <br />
         <div>{preview}</div>
         <br />
