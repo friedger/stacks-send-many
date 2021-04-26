@@ -20,7 +20,7 @@ import { saveTxData, TxStatus } from '../lib/transactions';
 import { c32addressDecode } from 'c32check';
 import BigNum from 'bn.js';
 
-export function SendManyButton({ parts }) {
+export function SendManyButton() {
   const userSession = useAtomValue(userSessionState);
   const textfield = useRef();
   const spinner = useRef();
