@@ -19,6 +19,7 @@ import { useConnect } from '@stacks/connect-react';
 import { saveTxData, TxStatus } from '../lib/transactions';
 import { c32addressDecode } from 'c32check';
 import BigNum from 'bn.js';
+import { SendManyInput } from './SendManyInput';
 
 export function SendManyButton() {
   const userSession = useAtomValue(userSessionState);
@@ -28,6 +29,7 @@ export function SendManyButton() {
   const [account, setAccount] = useState();
   const [txId, setTxId] = useState();
   const [preview, setPreview] = useState();
+  const [loading, setLoading] = useState(false);
 
   const { ownerStxAddress } = useStxAddresses(userSession);
   const { doContractCall } = useConnect();
@@ -91,9 +93,9 @@ export function SendManyButton() {
   };
 
   const sendAction = async () => {
-    spinner.current.classList.remove('d-none');
+    setLoading(true);
     const { parts, total } = getParts();
-    const contractAddress = CONTRACT_ADDRESS
+    const contractAddress = CONTRACT_ADDRESS;
     const contractName = 'send-many';
     const functionName = 'send-many';
     const functionArgs = [
@@ -131,7 +133,7 @@ export function SendManyButton() {
           setTxId(data.txId);
           saveTxData(data, userSession)
             .then(r => {
-              spinner.current.classList.add('d-none');
+              setLoading(false);
             })
             .catch(e => {
               console.log(e);
@@ -142,7 +144,7 @@ export function SendManyButton() {
     } catch (e) {
       console.log(e);
       setStatus(e.toString());
-      spinner.current.classList.add('d-none');
+      setLoading(true);
     }
   };
 
@@ -150,6 +152,8 @@ export function SendManyButton() {
     <div>
       Send Test STXs
       <div className="NoteField">
+        <SendManyInput onKeyUp={e => updatePreview()} />
+
         <textarea
           type="text"
           ref={textfield}
@@ -171,7 +175,9 @@ export function SendManyButton() {
             <div
               ref={spinner}
               role="status"
-              className="d-none spinner-border spinner-border-sm text-info align-text-top mr-2"
+              className={`${
+                loading ? '' : 'd-none'
+              } spinner-border spinner-border-sm text-info align-text-top mr-2`}
             />
             Send
           </button>
