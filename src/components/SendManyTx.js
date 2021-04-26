@@ -88,8 +88,8 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
             </div>
           );
         })}
-      {tx && !tx.apiData && tx.data && <>Transaction not found on server.</>}
-      {!loading && !tx && <>No transaction found with id {txId}.</>}
+      {tx && !tx.apiData && tx.data && <>Transaction not found on network.</>}
+      {!loading && (!tx || !tx.apiData) && <>No transaction found with id {txId}.</>}
       {status && (
         <>
           <div>{status}</div>
