@@ -41,7 +41,7 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
         : 1
     );
   const showMemo =
-    tx && tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
+    tx && tx.apiData && tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
   const memos = showMemo
     ? new Array(
         ...new Set(
@@ -88,8 +88,8 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
             </div>
           );
         })}
-      {tx && !tx.apiData && tx.data && <>Transaction not found on server.</>}
-      {!loading && !tx && <>No transaction found with id {txId}.</>}
+      {tx && !tx.apiData && tx.data && <>Transaction not found on network.</>}
+      {!loading && (!tx || !tx.apiData) && <>No transaction found with id {txId}.</>}
       {status && (
         <>
           <div>{status}</div>
