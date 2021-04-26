@@ -3,6 +3,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import { CONTRACT_ADDRESS } from '../lib/constants';
 
 import { getTx } from '../lib/transactions';
+import { Address } from './Address';
+import { Amount } from './Amount';
 
 export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
   const spinner = useRef();
@@ -126,12 +128,7 @@ function StxTransfer({ asset, ownerStxAddress, memo }) {
           asset.recipient === ownerStxAddress ? 'font-weight-bold' : ''
         }`}
       >
-        {(asset.amount / 1000000).toLocaleString(undefined, {
-          style: 'decimal',
-          minimumFractionDigits: 6,
-          maximumFractionDigits: 6,
-        })}
-        Ӿ
+        <Amount ustx={asset.amount} />
       </div>
       {memo && (
         <div className="col-xs-12 col-md-12">
@@ -141,10 +138,4 @@ function StxTransfer({ asset, ownerStxAddress, memo }) {
     </div>
   );
 }
-function Address({ addr }) {
-  return (
-    <>
-      {addr.substr(0, 5)}...{addr.substr(addr.length - 5)}
-    </>
-  );
-}
+

@@ -10,7 +10,7 @@ import {
   FungibleConditionCode,
 } from '@stacks/transactions';
 
-import { CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
+import { CONTRACT_ADDRESS, NETWORK, testnet } from '../lib/constants';
 import { fetchAccount } from '../lib/account';
 import { userSessionState } from '../lib/auth';
 import { useStxAddresses } from '../lib/hooks';
@@ -20,20 +20,18 @@ import { saveTxData, TxStatus } from '../lib/transactions';
 import { c32addressDecode } from 'c32check';
 import BigNum from 'bn.js';
 import { SendManyInput } from './SendManyInput';
+import { Address } from './Address';
+import { Amount } from './Amount';
 
 export function SendManyButton() {
   const userSession = useAtomValue(userSessionState);
-  const textfield = useRef();
   const spinner = useRef();
   const [status, setStatus] = useState();
   const [account, setAccount] = useState();
   const [txId, setTxId] = useState();
   const [preview, setPreview] = useState();
   const [loading, setLoading] = useState(false);
-  const [rows, setRows] = useState([
-    { to: '', stx: '0', memo: '' },
-    { to: '', stx: '0', memo: '' },
-  ]);
+  const [rows, setRows] = useState([{ to: '', stx: '0', memo: '' }]);
   const { ownerStxAddress } = useStxAddresses(userSession);
   const { doContractCall } = useConnect();
 
@@ -51,7 +49,6 @@ export function SendManyButton() {
     }
   }, [userSession, ownerStxAddress]);
 
-
   const updatePreview = async ({ parts, total }) => {
     setPreview(
       <>
@@ -60,19 +57,19 @@ export function SendManyButton() {
             c32addressDecode(p.to);
             return (
               <>
-                {p.to}: {p.ustx / 1000000}STX <br />
+                <Address addr={p.to} />: <Amount ustx={p.ustx} /> <br />
               </>
             );
           } catch (e) {
             return (
               <>
-                ...: {p.ustx / 1000000}STX
+                ...: <Amount ustx={p.ustx} />
                 <br />
               </>
             );
           }
         })}{' '}
-        Total: {total / 1000000}
+        Total: <Amount ustx={total} />
         <br />
         {total + 1000 > account.balance && (
           <>That is more than you have ({account.balance / 1000000})</>
@@ -85,7 +82,7 @@ export function SendManyButton() {
     const parts = currentRows.map(r => {
       return { ...r, ustx: Math.floor(parseFloat(r.stx) * 1000000) };
     });
-    const total = parts.reduce((sum, r) => (sum += r.ustx), 0);
+    const total = parts.reduce((sum, r) => (isNaN(r.ustx) ? sum : (sum += r.ustx)), 0);
     return { parts, total };
   };
 
@@ -170,7 +167,7 @@ export function SendManyButton() {
 
   return (
     <div>
-      Send Test STXs
+      Send {testnet ? 'Test' : ''} STXs
       <div className="NoteField">
         {rows.map((row, index) => {
           return (
