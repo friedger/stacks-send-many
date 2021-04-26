@@ -21,6 +21,10 @@ import { c32addressDecode } from 'c32check';
 import BigNum from 'bn.js';
 import { SendManyInput } from './SendManyInput';
 
+const addRows = (index, onKeyUp) => {
+  return <SendManyInput key={index} onKeyUp={onKeyUp} />;
+};
+
 export function SendManyButton() {
   const userSession = useAtomValue(userSessionState);
   const textfield = useRef();
@@ -30,38 +34,10 @@ export function SendManyButton() {
   const [txId, setTxId] = useState();
   const [preview, setPreview] = useState();
   const [loading, setLoading] = useState(false);
-
+  const [rows, setRows] = useState();
   const { ownerStxAddress } = useStxAddresses(userSession);
   const { doContractCall } = useConnect();
 
-  console.log({ ownerStxAddress, userSession });
-  useEffect(() => {
-    if (userSession?.isUserSignedIn() && ownerStxAddress) {
-      fetchAccount(ownerStxAddress)
-        .catch(e => {
-          setStatus('Failed to access your account', e);
-          console.log(e);
-        })
-        .then(async acc => {
-          setAccount(acc);
-          console.log({ acc });
-        });
-    }
-  }, [userSession, ownerStxAddress]);
-
-  const getParts = () => {
-    let parts = textfield.current.value.split('\n');
-    parts = parts.map(s => {
-      const lineParts = s.split(';').map(lp => lp.trim());
-      return { to: lineParts[0], ustx: Math.floor(parseFloat(lineParts[1]) * 1000000) };
-    });
-    console.log({ parts });
-    parts = parts.filter(p => p.to && p.ustx > 0);
-    console.log({ parts });
-    const total = parts.reduce((sum, p) => (sum += p.ustx), 0);
-    console.log({ parts, total });
-    return { parts, total };
-  };
   const updatePreview = async () => {
     const { parts, total } = getParts();
     setPreview(
@@ -90,6 +66,36 @@ export function SendManyButton() {
         )}
       </>
     );
+  };
+
+  useEffect(() => {
+    if (userSession?.isUserSignedIn() && ownerStxAddress) {
+      fetchAccount(ownerStxAddress)
+        .catch(e => {
+          setStatus('Failed to access your account', e);
+          console.log(e);
+        })
+        .then(async acc => {
+          setAccount(acc);
+          console.log({ acc });
+        });
+      // FIXME: dynamically add SendManyInput with model
+      //setRows([addRows(0, updatePreview), addRows(1, updatePreview)]);
+    }
+  }, [userSession, ownerStxAddress]);
+
+  const getParts = () => {
+    let parts = textfield.current.value.split('\n');
+    parts = parts.map(s => {
+      const lineParts = s.split(';').map(lp => lp.trim());
+      return { to: lineParts[0], ustx: Math.floor(parseFloat(lineParts[1]) * 1000000) };
+    });
+    console.log({ parts });
+    parts = parts.filter(p => p.to && p.ustx > 0);
+    console.log({ parts });
+    const total = parts.reduce((sum, p) => (sum += p.ustx), 0);
+    console.log({ parts, total });
+    return { parts, total };
   };
 
   const sendAction = async () => {
@@ -152,17 +158,14 @@ export function SendManyButton() {
     <div>
       Send Test STXs
       <div className="NoteField">
-        <SendManyInput onKeyUp={e => updatePreview()} />
-
+        {addRows(0, updatePreview)}
         <textarea
           type="text"
           ref={textfield}
           className="form-control"
           defaultValue={''}
           disabled={!account}
-          onKeyUp={e => {
-            updatePreview();
-          }}
+          onKeyUp={updatePreview}
           onBlur={e => {
             setStatus(undefined);
           }}
