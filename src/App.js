@@ -74,27 +74,33 @@ function Content({ userSession }) {
     userSession && userSession.isUserSignedIn() && userSession.loadUserData().decentralizedID;
   return (
     <>
-      {!authenticated && <Landing />}
-      {decentralizedID && (
-        <>
-          <Router>
-            <AppBody path="/">
+      <Router>
+        <AppBody path="/">
+          <SendManyCyclePayout
+            path="/cycle/:cycleId"
+            decentralizedID={decentralizedID}
+            userSession={userSession}
+          />
+          <SendManyDetails
+            path="/txid/:txId"
+            decentralizedID={decentralizedID}
+            userSession={userSession}
+          />
+          {!authenticated && <Landing path="/" />}
+          {decentralizedID && (
+            <>
               <SendMany path="/" decentralizedID={decentralizedID} userSession={userSession} />
-              <SendManyDetails
-                path="/txid/:txId"
-                decentralizedID={decentralizedID}
-                userSession={userSession}
-              />
+
               <SendManyCyclePayout
                 path="/cycle/:cycleId"
                 decentralizedID={decentralizedID}
                 userSession={userSession}
               />
               <MyProfile path="/me" decentralizedID={decentralizedID} userSession={userSession} />
-            </AppBody>
-          </Router>
-        </>
-      )}
+            </>
+          )}
+        </AppBody>
+      </Router>
     </>
   );
 }

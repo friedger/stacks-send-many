@@ -8,19 +8,20 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
   const spinner = useRef();
   const [status, setStatus] = useState();
   const [tx, setTx] = useState();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    spinner.current.classList.remove('d-none');
+    setLoading(true);
     getTx(txId, userSession)
       .then(async transaction => {
         setStatus(undefined);
         setTx(transaction);
-        spinner.current.classList.add('d-none');
+        setLoading(false);
       })
       .catch(e => {
         setStatus('Failed to get transactions', e);
         console.log(e);
-        spinner.current?.classList.add('d-none');
+        setLoading(false);
       });
   }, [txId, userSession]);
 
@@ -54,7 +55,9 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
       <div
         ref={spinner}
         role="status"
-        className="d-none spinner-border spinner-border-sm text-info align-text-top mr-2"
+        className={`${
+          loading ? '' : 'd-none'
+        } spinner-border spinner-border-sm text-info align-text-top mr-2`}
       />
       {tx && tx.apiData && (
         <>
@@ -62,9 +65,7 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
           <br />
           from{' '}
           <span
-            className={`${
-              tx.apiData.sender_address === ownerStxAddress ? 'font-weight-bold' : ''
-            }`}
+            className={`${tx.apiData.sender_address === ownerStxAddress ? 'font-weight-bold' : ''}`}
           >
             <Address addr={tx.apiData.sender_address} />
           </span>
@@ -88,7 +89,7 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
           );
         })}
       {tx && !tx.apiData && tx.data && <>Transaction not found on server.</>}
-      {!tx && <>No transaction found with id {txId}.</>}
+      {!loading && !tx && <>No transaction found with id {txId}.</>}
       {status && (
         <>
           <div>{status}</div>
