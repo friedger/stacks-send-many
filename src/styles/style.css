@@ -1,0 +1,57 @@
+/* Globals */
+
+:root {
+  /* https://projects.invisionapp.com/boards/HE2VVROFSGB27 */
+  --brand-background: #270f34;
+  --brand-lines: #4b3457;
+  /* Blockstack colors */
+  --brand-dark: #211f6d;
+  --brand-mild: #c4d8e5;
+  --brand-greyish: #f1f6f9;
+  --brand-bright: #3700ff;
+  --brand-accent: #00d4ff;
+}
+
+html,
+body {
+  background-color: #f4f4fc;
+}
+
+inspect {
+  border: thin solid red;
+}
+
+.Landing {
+  background-color: azure;
+}
+
+.Landing .jumbotron {
+  opacity: 0.92;
+}
+
+.navbar-dark {
+  background-color: var(--brand-bright) !important;
+}
+
+/* Avatar */
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+/* Scaffolding */
+
+#App {
+  min-height: 100vh;
+}
+
+.panel-landing {
+  max-width: 50em;
+  margin: auto;
+}
+
+.monster {
+  filter: grayscale(100);
+}
