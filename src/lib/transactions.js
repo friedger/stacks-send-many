@@ -89,22 +89,9 @@ async function getTxWithStorage(txId, storage) {
   }
 }
 
-async function getTxWithoutStorage(txId) {
-  try {
-    return await createTxWithApiData(txId, {});
-  } catch (e) {
-    console.log(e);
-    return {};
-  }
-}
-
 export async function getTx(txId, userSession) {
-  if (userSession && userSession.isUserSignedIn()) {
-    const storage = new Storage({ userSession });
-    return getTxWithStorage(txId, storage);
-  } else {
-    return getTxWithoutStorage(txId);
-  }
+  const storage = new Storage({ userSession });
+  return getTxWithStorage(txId, storage);
 }
 
 async function createTxWithApiData(txId, tx, storage) {
@@ -120,7 +107,7 @@ async function createTxWithApiData(txId, tx, storage) {
     console.log(apiData.event_count);
   }
   const txWithApiData = { ...tx, apiData: { ...apiData, events } };
-  if (storage && apiData.tx_status !== 'pending') {
+  if (apiData.tx_status !== 'pending') {
     await storage.putFile(`txs/${txId}.json`, JSON.stringify(txWithApiData));
   }
   return txWithApiData;

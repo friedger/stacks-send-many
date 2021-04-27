@@ -8,20 +8,19 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
   const spinner = useRef();
   const [status, setStatus] = useState();
   const [tx, setTx] = useState();
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
+    spinner.current.classList.remove('d-none');
     getTx(txId, userSession)
       .then(async transaction => {
         setStatus(undefined);
         setTx(transaction);
-        setLoading(false);
+        spinner.current.classList.add('d-none');
       })
       .catch(e => {
         setStatus('Failed to get transactions', e);
         console.log(e);
-        setLoading(false);
+        spinner.current?.classList.add('d-none');
       });
   }, [txId, userSession]);
 
@@ -41,7 +40,7 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
         : 1
     );
   const showMemo =
-    tx && tx.apiData && tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
+    tx && tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
   const memos = showMemo
     ? new Array(
         ...new Set(
@@ -55,9 +54,7 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
       <div
         ref={spinner}
         role="status"
-        className={`${
-          loading ? '' : 'd-none'
-        } spinner-border spinner-border-sm text-info align-text-top mr-2`}
+        className="d-none spinner-border spinner-border-sm text-info align-text-top mr-2"
       />
       {tx && tx.apiData && (
         <>
@@ -65,7 +62,9 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
           <br />
           from{' '}
           <span
-            className={`${tx.apiData.sender_address === ownerStxAddress ? 'font-weight-bold' : ''}`}
+            className={`${
+              tx.apiData.sender_address === ownerStxAddress ? 'font-weight-bold' : ''
+            }`}
           >
             <Address addr={tx.apiData.sender_address} />
           </span>
@@ -88,8 +87,8 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
             </div>
           );
         })}
-      {tx && !tx.apiData && tx.data && <>Transaction not found on network.</>}
-      {!loading && (!tx || !tx.apiData) && <>No transaction found with id {txId}.</>}
+      {tx && !tx.apiData && tx.data && <>Transaction not found on server.</>}
+      {!tx && <>No transaction found with id {txId}.</>}
       {status && (
         <>
           <div>{status}</div>

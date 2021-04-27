@@ -9,13 +9,11 @@ export function useStxAddresses(userSession) {
   const [ownerStxAddress, setOwnerStxAddress] = useState();
   const [appStxAddress, setAppStxAddress] = useState();
   useEffect(() => {
-    if (userSession) {
-      getUserData(userSession).then(userData => {
-        const { address } = getStacksAccount(userData.appPrivateKey);
-        setAppStxAddress(addressToString(address));
-        setOwnerStxAddress(userData.profile.stxAddress[testnet || mocknet ? 'testnet' : 'mainnet']);
-      });
-    }
+    getUserData(userSession).then(userData => {
+      const { address } = getStacksAccount(userData.appPrivateKey);
+      setAppStxAddress(addressToString(address));
+      setOwnerStxAddress(userData.profile.stxAddress[testnet || mocknet ? 'testnet' : 'mainnet']);
+    });
   }, [userSession]);
 
   return { ownerStxAddress, appStxAddress };

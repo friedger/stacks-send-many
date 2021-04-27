@@ -10,7 +10,7 @@ import {
   FungibleConditionCode,
 } from '@stacks/transactions';
 
-import { CONTRACT_ADDRESS, NETWORK, testnet } from '../lib/constants';
+import { CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { fetchAccount } from '../lib/account';
 import { userSessionState } from '../lib/auth';
 import { useStxAddresses } from '../lib/hooks';
@@ -20,20 +20,53 @@ import { saveTxData, TxStatus } from '../lib/transactions';
 import { c32addressDecode } from 'c32check';
 import BigNum from 'bn.js';
 import { SendManyInput } from './SendManyInput';
-import { Address } from './Address';
-import { Amount } from './Amount';
+
+const addRows = (index, onKeyUp) => {
+  return <SendManyInput key={index} onKeyUp={onKeyUp} />;
+};
 
 export function SendManyButton() {
   const userSession = useAtomValue(userSessionState);
+  const textfield = useRef();
   const spinner = useRef();
   const [status, setStatus] = useState();
   const [account, setAccount] = useState();
   const [txId, setTxId] = useState();
   const [preview, setPreview] = useState();
   const [loading, setLoading] = useState(false);
-  const [rows, setRows] = useState([{ to: '', stx: '0', memo: '' }]);
+  const [rows, setRows] = useState();
   const { ownerStxAddress } = useStxAddresses(userSession);
   const { doContractCall } = useConnect();
+
+  const updatePreview = async () => {
+    const { parts, total } = getParts();
+    setPreview(
+      <>
+        {parts.map(p => {
+          try {
+            c32addressDecode(p.to);
+            return (
+              <>
+                {p.to}: {p.ustx / 1000000}STX <br />
+              </>
+            );
+          } catch (e) {
+            return (
+              <>
+                ...: {p.ustx / 1000000}STX
+                <br />
+              </>
+            );
+          }
+        })}{' '}
+        Total: {total / 1000000}
+        <br />
+        {total + 1000 > account.balance && (
+          <>That is more than you have ({account.balance / 1000000})</>
+        )}
+      </>
+    );
+  };
 
   useEffect(() => {
     if (userSession?.isUserSignedIn() && ownerStxAddress) {
@@ -46,49 +79,28 @@ export function SendManyButton() {
           setAccount(acc);
           console.log({ acc });
         });
+      // FIXME: dynamically add SendManyInput with model
+      //setRows([addRows(0, updatePreview), addRows(1, updatePreview)]);
     }
   }, [userSession, ownerStxAddress]);
 
-  const updatePreview = async ({ parts, total }) => {
-    setPreview(
-      <>
-        {parts.map(p => {
-          try {
-            c32addressDecode(p.to);
-            return (
-              <>
-                <Address addr={p.to} />: <Amount ustx={p.ustx} /> <br />
-              </>
-            );
-          } catch (e) {
-            return (
-              <>
-                ...: <Amount ustx={p.ustx} />
-                <br />
-              </>
-            );
-          }
-        })}{' '}
-        Total: <Amount ustx={total} />
-        <br />
-        {total + 1000 > account.balance && (
-          <>That is more than you have ({account.balance / 1000000})</>
-        )}
-      </>
-    );
-  };
-
-  const getPartsFromRows = currentRows => {
-    const parts = currentRows.map(r => {
-      return { ...r, ustx: Math.floor(parseFloat(r.stx) * 1000000) };
+  const getParts = () => {
+    let parts = textfield.current.value.split('\n');
+    parts = parts.map(s => {
+      const lineParts = s.split(';').map(lp => lp.trim());
+      return { to: lineParts[0], ustx: Math.floor(parseFloat(lineParts[1]) * 1000000) };
     });
-    const total = parts.reduce((sum, r) => (isNaN(r.ustx) ? sum : (sum += r.ustx)), 0);
+    console.log({ parts });
+    parts = parts.filter(p => p.to && p.ustx > 0);
+    console.log({ parts });
+    const total = parts.reduce((sum, p) => (sum += p.ustx), 0);
+    console.log({ parts, total });
     return { parts, total };
   };
 
   const sendAction = async () => {
     setLoading(true);
-    const { parts, total } = getPartsFromRows(rows);
+    const { parts, total } = getParts();
     const contractAddress = CONTRACT_ADDRESS;
     const contractName = 'send-many';
     const functionName = 'send-many';
@@ -142,39 +154,22 @@ export function SendManyButton() {
     }
   };
 
-  const addNewRow = () => {
-    const newRows = [...rows];
-    newRows.push({ to: '', stx: '0', memo: '' });
-    console.log(newRows);
-    setRows(newRows);
-  };
-
-  const updateRow = (row, index) => {
-    console.log({ row });
-    const newRows = [...rows];
-    newRows[index] = row;
-    console.log(newRows);
-    setRows(newRows);
-    return newRows;
-  };
-
-  const updateModel = index => {
-    return row => {
-      const rows = updateRow(row, index);
-      updatePreview(getPartsFromRows(rows));
-    };
-  };
-
   return (
     <div>
-      Send {testnet ? 'Test' : ''} STXs
+      Send Test STXs
       <div className="NoteField">
-        {rows.map((row, index) => {
-          return (
-            <SendManyInput key={index} row={row} index={index} updateModel={updateModel(index)} />
-          );
-        })}
-        <button onClick={e => addNewRow()}>Add row</button>
+        {addRows(0, updatePreview)}
+        <textarea
+          type="text"
+          ref={textfield}
+          className="form-control"
+          defaultValue={''}
+          disabled={!account}
+          onKeyUp={updatePreview}
+          onBlur={e => {
+            setStatus(undefined);
+          }}
+        />
         <br />
         <div>{preview}</div>
         <br />

@@ -1,38 +1,35 @@
 import { hexToCV } from '@stacks/transactions';
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { CONTRACT_ADDRESS } from '../lib/constants';
 
 import { getTx } from '../lib/transactions';
-import { Address } from './Address';
-import { Amount } from './Amount';
 
 export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
+  const spinner = useRef();
   const [status, setStatus] = useState();
   const [tx, setTx] = useState();
-  const [progress, setProgress] = useState(100);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (txList && txList.length > 0) {
-      setProgress(0);
+      setLoading(true);
 
       const loadTxs = async () => {
         try {
-          setProgress(100 / (txList.length + 1));
           const firstTx = await getTx(txList[0], userSession);
           console.log(firstTx.apiData.events.length, firstTx.apiData.event_count);
           for (let i = 1; i < txList.length; i++) {
-            setProgress(((i + 1) * 100) / (txList.length + 1));
             const transaction = await getTx(txList[i], userSession);
             firstTx.apiData.events = firstTx.apiData.events.concat(transaction.apiData.events);
             firstTx.apiData.event_count += transaction.apiData.event_count;
             console.log(firstTx.apiData.events.length, firstTx.apiData.event_count);
           }
           setTx(firstTx);
-          setProgress(100);
+          setLoading(false);
         } catch (e) {
           setStatus(`Failed to get transactions`);
           console.log(e);
-          setProgress(100);
+          setLoading(false);
         }
       };
       loadTxs();
@@ -67,16 +64,13 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
   const showMemoPerRecipient = showMemo && memos.length > 1;
   return (
     <div>
-      <div className={`progress ${progress < 100 ? '' : 'd-none'}`}>
-        <div
-          className="progress-bar"
-          role="progressbar"
-          style={{ width: `${progress}%` }}
-          aria-valuenow={progress}
-          aria-valuemin="0"
-          aria-valuemax="100"
-        />
-      </div>
+      <div
+        ref={spinner}
+        role="status"
+        className={`${
+          loading ? '' : 'd-none'
+        } spinner-border spinner-border-sm text-info align-text-top mr-2`}
+      />
       {tx && tx.apiData && (
         <>
           {tx.apiData.burn_block_time_iso} ({tx.apiData.tx_status})
@@ -107,7 +101,7 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
           );
         })}
       {tx && !tx.apiData && tx.data && <>Transaction not found on server.</>}
-      {progress >= 100 && !tx && <>No transactions found with id {JSON.stringify(txList)}.</>}
+      {!loading && !tx && <>No transactions found with id {JSON.stringify(txList)}.</>}
       {status && (
         <>
           <div>{status}</div>
@@ -132,7 +126,12 @@ function StxTransfer({ asset, ownerStxAddress, memo }) {
           asset.recipient === ownerStxAddress ? 'font-weight-bold' : ''
         }`}
       >
-        <Amount ustx={asset.amount} />
+        {(asset.amount / 1000000).toLocaleString(undefined, {
+          style: 'decimal',
+          minimumFractionDigits: 6,
+          maximumFractionDigits: 6,
+        })}
+        Ӿ
       </div>
       {memo && (
         <div className="col-xs-12 col-md-12">
@@ -140,5 +139,12 @@ function StxTransfer({ asset, ownerStxAddress, memo }) {
         </div>
       )}
     </div>
+  );
+}
+function Address({ addr }) {
+  return (
+    <>
+      {addr.substr(0, 5)}...{addr.substr(addr.length - 5)}
+    </>
   );
 }

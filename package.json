@@ -16,13 +16,16 @@
     "@stacks/profile": "^1.2.3",
     "@stacks/storage": "^1.3.3",
     "@stacks/transactions": "^1.4.1",
+    "@types/react": "^17.0.4",
+    "@types/react-dom": "^17.0.3",
     "bn.js": "^5.2.0",
     "c32check": "^1.1.2",
     "jotai": "^0.16.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-input-switch": "^2.2.2",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "yarn": "^1.22.10"
   },
   "prettier": "@stacks/prettier-config",
   "scripts": {
