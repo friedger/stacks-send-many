@@ -168,18 +168,23 @@ export function SendManyButton() {
   return (
     <div>
       Send {testnet ? 'Test' : ''} STXs
-      <div className="NoteField">
+      <div className="NoteField"> 
         {rows.map((row, index) => {
           return (
             <SendManyInput key={index} row={row} index={index} updateModel={updateModel(index)} />
           );
-        })}
-        <button onClick={e => addNewRow()}>Add row</button>
+        })} 
+        <div className="row">
+          <div className="col-md-12 col-xs-12 col-lg-12 text-right pb-2">
+            <input  onClick={e => addNewRow()} type="button" value="Add New Field" class="btn btn-primary" id="addNewField"/>
+            <br/>
+          </div>
+        </div>
         <br />
         <div>{preview}</div>
         <br />
         <div className="input-group">
-          <button className="btn btn-outline-secondary" type="button" onClick={sendAction}>
+          <button className="btn btn-primary" type="button" onClick={sendAction}>
             <div
               ref={spinner}
               role="status"
