@@ -168,8 +168,7 @@ export function SendManyButton() {
   return (
     <div>
       Send {testnet ? 'Test' : ''} STXs
-      <div className="NoteField">
-           
+      <div className="NoteField"> 
         {rows.map((row, index) => {
           return (
             <SendManyInput key={index} row={row} index={index} updateModel={updateModel(index)} />

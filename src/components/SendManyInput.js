@@ -9,7 +9,6 @@ export function SendManyInput({ index, row, updateModel }) {
       to: to.current.value.trim(),
       stx: stxValue.current.value.trim(),
       memo: memo.current.value.trim(),
-
     };
     return value;
   };
