@@ -9,6 +9,7 @@ export function SendManyInput({ index, row, updateModel }) {
       to: to.current.value.trim(),
       stx: stxValue.current.value.trim(),
       memo: memo.current.value.trim(),
+
     };
     return value;
   };
@@ -19,24 +20,19 @@ export function SendManyInput({ index, row, updateModel }) {
         <div className="col-md-5 col-xs-5 col-lg-5">
           <div className="form-label-group">
             <input ref={to} value={row.to} onChange={e => updateModel(getRow())} placeholder="Wallet Address #1" type="text" className="form-control" required="" autofocus=""/>
-            <label for="inputEmail">Wallet Address #1</label>
+            <label for="inputEmail">Wallet Address #{index+1}</label>
           </div>
         </div>
+        <div className="col-md-4 col-xs-4 col-lg-4">
+          <div className="form-label-group">
+            <input ref={stxValue} value={row.stx} onChange={e => updateModel(getRow())} placeholder="0" type="text" maxlength="10" className="form-control" required="" autofocus=""/>
+            <label for="inputEmail">Amount #{index+1}</label>
+          </div>
+        </div> 
         <div className="col-md-3 col-xs-3 col-lg-3">
           <div className="form-label-group">
             <input ref={memo} value={row.memo} onChange={e => updateModel(getRow())} placeholder="0" type="text" className="form-control" required="" autofocus=""/>
-            <label for="inputEmail">Memo Tag #1</label>
-          </div>
-        </div>
-        <div className="col-md-3 col-xs-3 col-lg-3">
-          <div className="form-label-group">
-            <input ref={stxValue} value={row.stx} onChange={e => updateModel(getRow())} placeholder="0" type="text" maxlength="10" className="form-control" required="" autofocus=""/>
-            <label for="inputEmail">Amount #1</label>
-          </div>
-        </div> 
-        <div className="col-md-1 col-xs-1 col-lg-1">
-          <div className="form-label-group">
-          <input type="button" class="btn btn-danger btn-sm pt-0 pb-0" value="X"/>
+            <label for="inputEmail">Memo Tag #{index+1}</label>
           </div>
         </div>
       </div> 
