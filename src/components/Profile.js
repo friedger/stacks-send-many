@@ -76,50 +76,6 @@ export default function Profile({ stxAddresses, userSession }) {
           )}
         </div>
       </div>
-
-
-      <div className="avatar-section text-center">
-        <img
-          src={proxyUrl((person && person.avatarUrl()) || avatarFallbackImage)}
-          className="img-rounded avatar"
-          id="avatar-image"
-          alt="Avatar"
-        />
-      </div>
-      <div className="text-center mt-2">
-        Hello,{' '}
-        <span id="heading-name">{(person && person.name()) || username || 'Stacks User'}</span>!
-      </div>
-      {username && (
-        <>
-          Your Blockstack username is {username} <br />
-        </>
-      )}
-      <div className="pt-4">
-        Your own Stacks address:
-        <br />
-        <StxProfile
-          stxAddress={stxAddresses.ownerStxAddress}
-          updateStatus={updateStatus}
-          showAddress
-        ></StxProfile>
-      </div>
-      <div className="pt-4">
-        Your STX hodl address for Send Many app:
-        <br />
-        <StxProfile
-          stxAddress={stxAddresses.appStxAddress}
-          updateStatus={updateStatus}
-          showAddress
-        ></StxProfile>
-      </div>
-
-      {status && (
-        <>
-          <br />
-          <div>{status}</div>
-        </>
-      )}
     </div>
   );
 }

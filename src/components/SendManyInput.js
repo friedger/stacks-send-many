@@ -36,7 +36,7 @@ export function SendManyInput({ index, row, updateModel }) {
         </div> 
         <div className="col-md-1 col-xs-1 col-lg-1">
           <div className="form-label-group">
-          <input type="button" class="removeField btn btn-danger btn-sm" value="X"/>
+          <input type="button" class="btn btn-danger btn-sm pt-0 pb-0" value="X"/>
           </div>
         </div>
       </div> 
