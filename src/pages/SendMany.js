@@ -1,6 +1,7 @@
 import React from 'react';
 import { SendManyButton } from '../components/SendManyButton';
 import { SendManyTxList } from '../components/SendManyTxList';
+import { testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
 export default function SendMany({ userSession }) {
@@ -10,7 +11,7 @@ export default function SendMany({ userSession }) {
       <div className="lead row mt-5">
         <div className="col-xs-10 col-md-8 mx-auto px-4">
           <h1 className="card-title">Send Many</h1>
-          Send STX to many addresses in one transaction.
+          Send {testnet ? 'Test' : ''} STX to many addresses in one transaction.
         </div>
         <div className="col-xs-10 col-md-8 mx-auto mb-4 px-4">
           <SendManyButton ownerStxAddress={ownerStxAddress} />

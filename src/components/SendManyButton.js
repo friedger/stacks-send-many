@@ -11,7 +11,7 @@ import {
   bufferCVFromString,
 } from '@stacks/transactions';
 
-import { CONTRACT_ADDRESS, NETWORK, testnet } from '../lib/constants';
+import { CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { fetchAccount } from '../lib/account';
 import { userSessionState } from '../lib/auth';
 import { useStxAddresses } from '../lib/hooks';
@@ -195,7 +195,6 @@ export function SendManyButton() {
 
   return (
     <div>
-      Send {testnet ? 'Test' : ''} STXs
       <div className="NoteField">
         {rows.map((row, index) => {
           return (
