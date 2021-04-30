@@ -55,3 +55,9 @@ inspect {
 .monster {
   filter: grayscale(100);
 }
+
+
+.text-right
+{
+  text-align:right;
+}

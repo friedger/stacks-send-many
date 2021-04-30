@@ -29,48 +29,53 @@ export default function Profile({ stxAddresses, userSession }) {
 
   return (
     <div className="Profile">
-      <div className="avatar-section text-center">
-        <img
-          src={proxyUrl((person && person.avatarUrl()) || avatarFallbackImage)}
-          className="img-rounded avatar"
-          id="avatar-image"
-          alt="Avatar"
-        />
-      </div>
-      <div className="text-center mt-2">
-        Hello,{' '}
-        <span id="heading-name">{(person && person.name()) || username || 'Stacks User'}</span>!
-      </div>
-      {username && (
-        <>
-          Your Blockstack username is {username} <br />
-        </>
-      )}
-      <div className="pt-4">
-        Your own Stacks address:
-        <br />
-        <StxProfile
-          stxAddress={stxAddresses.ownerStxAddress}
-          updateStatus={updateStatus}
-          showAddress
-        ></StxProfile>
-      </div>
-      <div className="pt-4">
-        Your STX hodl address for Send Many app:
-        <br />
-        <StxProfile
-          stxAddress={stxAddresses.appStxAddress}
-          updateStatus={updateStatus}
-          showAddress
-        ></StxProfile>
-      </div>
+      <div className="row no-gutters">
+        <div className="col-sm-12 col-md-4  text-center justify-content-center bg-secondary p-4">
+          <img
+            src={(person && person.avatarUrl() || avatarFallbackImage)}
+            className="img-rounded avatar mb-2"
+            id="avatar-image"
+            alt="Avatar"
+          />  
+          <hr/>
+          <h5 className="text-white">Hello, {' '}
+            <span id="heading-name">{(person && person.name()) || username || 'Stacks User'}</span>!
+          </h5>
+          <span class="text-white">Welcome to Send Many!</span>
+          {username && (
+            <>
+              Your Blockstack username is <span class="font-weight-bold">{username}</span> <br />
+            </>
+          )}
+        </div>
+        <div className="col-sm-12 col-md-8 bg-light p-4">
+          <div>
+            Your own Stacks address:
+            <br />
+            <StxProfile
+              stxAddress={stxAddresses.ownerStxAddress}
+              updateStatus={updateStatus}
+              showAddress
+            ></StxProfile>
+          </div>
+          <div className="pt-4">
+            Your STX hodl address for Send Many app:
+            <br />
+            <StxProfile
+              stxAddress={stxAddresses.appStxAddress}
+              updateStatus={updateStatus}
+              showAddress
+            ></StxProfile>
+          </div>
 
-      {status && (
-        <>
-          <br />
-          <div>{status}</div>
-        </>
-      )}
+          {status && (
+            <>
+              <br />
+              <div>{status}</div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -150,7 +155,7 @@ function StxProfile({ stxAddress, updateStatus, showAddress }) {
         </>
       )}
       <button
-        className="btn btn-outline-secondary mt-1"
+        className="btn btn-primary mr-1 mt-1"
         onClick={e => {
           onRefreshBalance(stxAddress);
         }}
@@ -165,7 +170,7 @@ function StxProfile({ stxAddress, updateStatus, showAddress }) {
       {showAddress && (
         <>
           <button
-            className="btn btn-outline-secondary mt-1"
+            className="btn btn-info mt-1"
             onClick={() => {
               claimTestTokens(stxAddress);
             }}
