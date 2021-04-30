@@ -62,7 +62,29 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
             <DownloadLink
               label="Export"
               filename="transactions.json"
-              exportFile={() => JSON.stringify(getTxs(userSession))}
+              exportFile={async () => {
+                const txs = await getTxs(userSession);
+                const exportedTxs = txs
+                  .filter(tx => tx.apiData && tx.apiData.tx_status === 'success')
+                  .reduce((result, tx) => {
+                    console.log(tx)
+                    return result.concat(
+                      tx.apiData.events
+                        .filter(e => e.event_type === 'stx_asset')
+                        .map(e => {
+                          const exportedTx = {
+                            recipient: e.asset.recipient,
+                            amount: e.asset.amount / 1000000,
+                            timestamp: tx.apiData.burn_block_time_iso,
+                            explorer_url: `https://explorer.stacks.co/txid/${tx.apiData.tx_id}`,
+                            send_many_url: `https://stacks-send-many.pages.dev/txid/${tx.apiData.tx_id}`,
+                          };
+                          return exportedTx;
+                        })
+                    );
+                  }, []);
+                return JSON.stringify(exportedTxs);
+              }}
             />
           </div>
         </>
