@@ -8,6 +8,7 @@ import {
   PostConditionMode,
   makeStandardSTXPostCondition,
   FungibleConditionCode,
+  bufferCVFromString,
 } from '@stacks/transactions';
 
 import { CONTRACT_ADDRESS, NETWORK, testnet } from '../lib/constants';
@@ -49,7 +50,7 @@ export function SendManyButton() {
     }
   }, [userSession, ownerStxAddress]);
 
-  const updatePreview = async ({ parts, total }) => {
+  const updatePreview = async ({ parts, total, hasMemos }) => {
     setPreview(
       <>
         {parts.map(p => {
@@ -71,6 +72,12 @@ export function SendManyButton() {
         })}{' '}
         Total: <Amount ustx={total} />
         <br />
+        {hasMemos && (
+          <>
+            Sending with memos.
+            <br />
+          </>
+        )}
         {total + 1000 > account.balance && (
           <>That is more than you have ({account.balance / 1000000})</>
         )}
@@ -82,15 +89,26 @@ export function SendManyButton() {
     const parts = currentRows.map(r => {
       return { ...r, ustx: Math.floor(parseFloat(r.stx) * 1000000) };
     });
-    const total = parts.reduce((sum, r) => (isNaN(r.ustx) ? sum : (sum += r.ustx)), 0);
-    return { parts, total };
+    const { total, hasMemos } = parts.reduce(
+      (previous, r) => {
+        return {
+          total: isNaN(r.ustx) ? previous.total : (previous.total += r.ustx),
+          hasMemos: previous.hasMemos || r.memo,
+        };
+      },
+      {
+        total: 0,
+        hasMemos: false,
+      }
+    );
+    return { parts, total, hasMemos };
   };
 
   const sendAction = async () => {
     setLoading(true);
-    const { parts, total } = getPartsFromRows(rows);
+    const { parts, total, hasMemos } = getPartsFromRows(rows);
     const contractAddress = CONTRACT_ADDRESS;
-    const contractName = 'send-many';
+    const contractName = hasMemos ? 'send-many-memo' : 'send-many';
     const functionName = 'send-many';
     const functionArgs = [
       listCV(
@@ -102,7 +120,9 @@ export function SendManyButton() {
           } else {
             to = contractPrincipalCV(toParts[0], toParts[1]);
           }
-          return tupleCV({ to, ustx: uintCV(parseInt(p.ustx)) });
+          return hasMemos
+            ? tupleCV({ to, ustx: uintCV(parseInt(p.ustx)), memo: bufferCVFromString(p.memo) })
+            : tupleCV({ to, ustx: uintCV(parseInt(p.ustx)) });
         })
       ),
     ];
@@ -165,13 +185,28 @@ export function SendManyButton() {
     };
   };
 
+  const maybeAddNewRow = index => {
+    return () => {
+      if (index === rows.length - 1) {
+        addNewRow();
+      }
+    };
+  };
+
   return (
     <div>
       Send {testnet ? 'Test' : ''} STXs
       <div className="NoteField">
         {rows.map((row, index) => {
           return (
-            <SendManyInput key={index} row={row} index={index} updateModel={updateModel(index)} />
+            <SendManyInput
+              key={index}
+              row={row}
+              index={index}
+              updateModel={updateModel(index)}
+              maybeAddNewRow={maybeAddNewRow(index)}
+              lastRow={index === rows.length - 1}
+            />
           );
         })}
         <div className="row">
@@ -187,9 +222,7 @@ export function SendManyButton() {
             <br />
           </div>
         </div>
-        <br />
         <div>{preview}</div>
-        <br />
         <div className="input-group">
           <button className="btn btn-primary" type="button" onClick={sendAction}>
             <div

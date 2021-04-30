@@ -24,7 +24,8 @@ export default function SendMany({ userSession }) {
           </div>
           <ul className="list-group list-group-flush">
             <li className="list-group-item">
-              Enter recipients and amounts one per line, separate both with semicolon
+              Enter recipients and amounts one per line, separate both with semicolon. If all memo
+              field are empty "send-many" contract is used. Otherwise, "send-many-memo" is used.
             </li>
             <li className="list-group-item">Review the data</li>
             <li className="list-group-item">Click send</li>

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-export function SendManyInput({ index, row, updateModel }) {
+export function SendManyInput({ index, row, updateModel, maybeAddNewRow, lastRow }) {
   const to = useRef();
   const stxValue = useRef();
   const memo = useRef();
@@ -22,11 +22,11 @@ export function SendManyInput({ index, row, updateModel }) {
               ref={to}
               value={row.to}
               onChange={e => updateModel(getRow())}
-              placeholder="Wallet Address #1"
+              placeholder={``}
               type="text"
               className="form-control"
               required=""
-              autofocus=""
+              autofocus={lastRow ? "" : undefined}
             />
             <label for="inputEmail">Wallet Address #{index + 1}</label>
           </div>
@@ -37,12 +37,11 @@ export function SendManyInput({ index, row, updateModel }) {
               ref={stxValue}
               value={row.stx}
               onChange={e => updateModel(getRow())}
-              placeholder="0"
+              placeholder={``}
               type="text"
-              maxlength="10"
+              maxLength="10"
               className="form-control"
               required=""
-              autofocus=""
             />
             <label for="inputEmail">Amount #{index + 1}</label>
           </div>
@@ -53,13 +52,16 @@ export function SendManyInput({ index, row, updateModel }) {
               ref={memo}
               value={row.memo}
               onChange={e => updateModel(getRow())}
-              placeholder="0"
+              placeholder={``}
               type="text"
+              maxLength="34"
               className="form-control"
               required=""
-              autofocus=""
+              onKeyUp={e => {
+                if (e.key === 'Enter') maybeAddNewRow();
+              }}
             />
-            <label for="inputEmail">Memo Tag #{index + 1}</label>
+            <label for="inputEmail">Memo #{index + 1}</label>
           </div>
         </div>
       </div>
