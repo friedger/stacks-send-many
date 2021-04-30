@@ -12761,7 +12761,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -13063,6 +13063,13 @@ react-dom@^17.0.2:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     scheduler "^0.20.2"
+
+react-download-link@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-download-link/-/react-download-link-2.3.0.tgz#5b03e475bf12e6587d4a003ed146ce313f811c0d"
+  integrity sha512-0aoj2DJFBfiD9jtdIn+WAseO1GSYmgkB5y5Ljt3DeC7j1RUlx0rR5y4S+wZwdxGhvgFogCzyh5Pa4W4YE+Pg/Q==
+  dependencies:
+    prop-types "^15.6.0"
 
 react-error-overlay@^6.0.9:
   version "6.0.9"
