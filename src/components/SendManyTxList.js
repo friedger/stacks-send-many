@@ -62,7 +62,7 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
             <DownloadLink
               label="Export"
               filename="transactions.json"
-              exportFile={() => getTxs(userSession)}
+              exportFile={() => JSON.stringify(getTxs(userSession))}
             />
           </div>
         </>
