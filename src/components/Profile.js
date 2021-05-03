@@ -25,18 +25,17 @@ export default function Profile({ stxAddresses, userSession }) {
   };
 
   const avatarFallbackImage = 'https://s3.amazonaws.com/onename/avatar-placeholder.png';
-  const proxyUrl = url => '/proxy/' + url.replace(/^https?:\/\//i, '');
 
   return (
     <div className="Profile">
       <div className="row no-gutters">
         <div className="col-sm-12 col-md-4  text-center justify-content-center bg-secondary p-4">
           <img
-            src={(person && person.avatarUrl() || avatarFallbackImage)}
+            src={((person && person.avatarUrl()) || avatarFallbackImage)}
             className="img-rounded avatar mb-2"
             id="avatar-image"
             alt="Avatar"
-          />  
+          />
           <hr/>
           <h5 className="text-white">Hello, {' '}
             <span id="heading-name">{(person && person.name()) || username || 'Stacks User'}</span>!
