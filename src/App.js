@@ -29,6 +29,7 @@ export default function App(props) {
         <a className="navbar-brand" href="/">
           <img src="/android-icon-96x96.png" alt="Logo" />
         </a>
+        <h1>Send Many</h1>
         <Auth className="ml-auto" userSession={userSession} />
       </nav>
 
@@ -60,7 +61,7 @@ function AppBody(props) {
   return (
     <div>
       <nav className="navbar navbar-expand-md nav-pills nav-justified mx-auto">
-        <NavLink to="/">Send Many</NavLink>
+        <NavLink to="/">Send</NavLink>
         <NavLink to="/me">Profile</NavLink>
       </nav>
       {props.children}

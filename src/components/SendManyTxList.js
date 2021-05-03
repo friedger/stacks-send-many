@@ -1,14 +1,11 @@
-import { cvToString } from '@stacks/transactions';
 import React, { useRef, useState, useEffect, Fragment } from 'react';
 
 import { getTxs } from '../lib/transactions';
-import BigNum from 'bn.js';
 import DownloadLink from 'react-download-link';
 
 export function SendManyTxList({ ownerStxAddress, userSession }) {
   const spinner = useRef();
   const [status, setStatus] = useState();
-  const [exporting, setExporting] = useState(false);
   const [txs, setTxs] = useState();
 
   useEffect(() => {
@@ -25,10 +22,6 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
       });
   }, [userSession]);
 
-  const exportAction = async () => {
-    setExporting(true);
-    await userSession;
-  };
   return (
     <div>
       <h5>Recent Send Many transactions</h5>
@@ -67,7 +60,7 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
                 const exportedTxs = txs
                   .filter(tx => tx.apiData && tx.apiData.tx_status === 'success')
                   .reduce((result, tx) => {
-                    console.log(tx)
+                    console.log(tx);
                     return result.concat(
                       tx.apiData.events
                         .filter(e => e.event_type === 'stx_asset')

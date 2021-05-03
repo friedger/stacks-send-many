@@ -10,7 +10,6 @@ export default function SendMany({ userSession }) {
     <main className="panel-welcome mt-5 container">
       <div className="lead row mt-5">
         <div className="col-xs-10 col-md-8 mx-auto px-4">
-          <h1 className="card-title">Send Many</h1>
           Send {testnet ? 'Test' : ''} STX to many addresses in one transaction.
         </div>
         <div className="col-xs-10 col-md-8 mx-auto mb-4 px-4">
