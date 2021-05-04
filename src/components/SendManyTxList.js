@@ -1,20 +1,25 @@
 import React, { useRef, useState, useEffect, Fragment } from 'react';
 
-import { getTxs } from '../lib/transactions';
+import { getTxs, getTxsAsJSON } from '../lib/transactions';
 import DownloadLink from 'react-download-link';
+import _groupBy from 'lodash.groupby';
+import { Tx } from './Tx';
+
+function dateOfTx(tx) {
+  return tx.apiData.burn_block_time_iso.substring(0, 10);
+}
 
 export function SendManyTxList({ ownerStxAddress, userSession }) {
   const spinner = useRef();
   const [status, setStatus] = useState();
-  const [txs, setTxs] = useState();
+  const [txsByDate, setTxsByDate] = useState();
 
   useEffect(() => {
     setStatus('Loading');
     getTxs(userSession)
       .then(async transactions => {
         setStatus(undefined);
-        console.log(transactions);
-        setTxs(transactions);
+        setTxsByDate(_groupBy(transactions, dateOfTx));
       })
       .catch(e => {
         setStatus('Failed to get transactions', e);
@@ -22,6 +27,7 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
       });
   }, [userSession]);
 
+  const dates = txsByDate ? Object.keys(txsByDate) : undefined;
   return (
     <div>
       <h5>Recent Send Many transactions</h5>
@@ -30,24 +36,21 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
         role="status"
         className="d-none spinner-border spinner-border-sm text-info align-text-top mr-2"
       />
-      {txs && txs.length > 0 && (
+      {dates && dates.length > 0 && (
         <>
-          {txs.map((tx, key) => {
-            const transaction = tx.data;
-            const status = tx.apiData;
+          {dates.map((date, key) => {
             return (
               <>
-                <div key={key}>
-                  <a href={`/txid/${transaction.txId}`}>
-                    {status ? (
-                      <>
-                        {status.burn_block_time_iso} ({status.tx_status})
-                      </>
-                    ) : (
-                      transaction.txId
-                    )}
-                  </a>
-                </div>
+                {date}
+                {txsByDate[date].map((tx, txKey) => {
+                  return (
+                    <>
+                      <div key={txKey}>
+                        <Tx tx={tx} />
+                      </div>
+                    </>
+                  );
+                })}
               </>
             );
           })}
@@ -56,33 +59,14 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
               label="Export"
               filename="transactions.json"
               exportFile={async () => {
-                const txs = await getTxs(userSession);
-                const exportedTxs = txs
-                  .filter(tx => tx.apiData && tx.apiData.tx_status === 'success')
-                  .reduce((result, tx) => {
-                    console.log(tx);
-                    return result.concat(
-                      tx.apiData.events
-                        .filter(e => e.event_type === 'stx_asset')
-                        .map(e => {
-                          const exportedTx = {
-                            recipient: e.asset.recipient,
-                            amount: e.asset.amount / 1000000,
-                            timestamp: tx.apiData.burn_block_time_iso,
-                            explorer_url: `https://explorer.stacks.co/txid/${tx.apiData.tx_id}`,
-                            send_many_url: `https://stacks-send-many.pages.dev/txid/${tx.apiData.tx_id}`,
-                          };
-                          return exportedTx;
-                        })
-                    );
-                  }, []);
-                return JSON.stringify(exportedTxs);
+                const txs = await getTxsAsJSON(userSession);
+                return JSON.stringify(txs);
               }}
             />
           </div>
         </>
       )}
-      {!status && (!txs || txs.length === 0) && <>No transactions yet.</>}
+      {!status && (!dates || dates.length === 0) && <>No transactions yet.</>}
       {status && (
         <>
           <div>{status}</div>

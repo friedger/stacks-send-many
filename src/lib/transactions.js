@@ -61,8 +61,9 @@ export async function getTxs(userSession) {
   const storage = new Storage({ userSession });
   let indexArray;
   try {
-    const indexFile = await storage.getFile(indexFileName);
+    let indexFile = await storage.getFile(indexFileName);
     indexArray = JSON.parse(indexFile);
+    indexArray = ['0x947a2b9355551666f9855654390671092b1d7aedd2e8f04c95b4fcc948b9f07f'];
     return Promise.all(
       indexArray.map(async txId => {
         return getTxWithStorage(txId, storage);
@@ -73,17 +74,43 @@ export async function getTxs(userSession) {
     return [];
   }
 }
+
+export async function getTxsAsJSON(userSession) {
+  const txs = await getTxs(userSession);
+  const txsAsJSON = txs
+    .filter(tx => tx.apiData && tx.apiData.tx_status === 'success')
+    .reduce((result, tx) => {
+      return result.concat(
+        tx.apiData.events
+          .filter(e => e.event_type === 'stx_asset')
+          .map(e => {
+            const exportedTx = {
+              recipient: e.asset.recipient,
+              amount: e.asset.amount / 1000000,
+              timestamp: tx.apiData.burn_block_time_iso,
+              explorer_url: `https://explorer.stacks.co/txid/${tx.apiData.tx_id}`,
+              send_many_url: `https://stacks-send-many.pages.dev/txid/${tx.apiData.tx_id}`,
+            };
+            return exportedTx;
+          })
+      );
+    }, []);
+  return txsAsJSON;
+}
 async function getTxWithStorage(txId, storage) {
   try {
     const txFile = await storage.getFile(`txs/${txId}.json`);
     let tx = JSON.parse(txFile);
+    if (!tx.data) {
+      tx = { data: { txId } };
+    }
     if (!tx.apiData || tx.apiData.tx_status === 'pending') {
       tx = await createTxWithApiData(txId, tx, storage);
     }
     return tx;
   } catch (e) {
     console.log(e);
-    let tx = {};
+    let tx = { data: { txId } };
     tx = await createTxWithApiData(txId, tx, storage);
     return tx;
   }
