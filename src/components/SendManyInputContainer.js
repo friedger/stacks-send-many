@@ -24,7 +24,7 @@ import { SendManyInput } from './SendManyInput';
 import { Address } from './Address';
 import { Amount } from './Amount';
 
-export function SendManyButton() {
+export function SendManyInputContainer() {
   const userSession = useAtomValue(userSessionState);
   const spinner = useRef();
   const [status, setStatus] = useState();
