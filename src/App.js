@@ -60,12 +60,7 @@ const NavLink = props => {
 function AppBody(props) {
   return (
     <div>
-      <nav className="navbar navbar-expand-md nav-pills nav-justified mx-auto">
-        <NavLink to="/">Send</NavLink>
-        <NavLink to="/me">Profile</NavLink>
-      </nav>
       {props.children}
-      <div>{NETWORK.coreApiUrl}</div>
     </div>
   );
 }

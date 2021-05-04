@@ -1,14 +1,24 @@
 import React from 'react';
+import Profile from '../components/Profile';
 import { SendManyButton } from '../components/SendManyButton';
 import { SendManyTxList } from '../components/SendManyTxList';
 import { testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
 export default function SendMany({ userSession }) {
-  const { ownerStxAddress } = useStxAddresses();
+  const { ownerStxAddress, appStxAddress } = useStxAddresses(userSession);
   return (
     <main className="panel-welcome mt-5 container">
       <div className="lead row mt-5">
+        <div className="col-xs-10 col-md-8 mx-auto px-4">
+          <Profile
+            stxAddresses={{
+              ownerStxAddress,
+              appStxAddress
+            }}
+            userSession={userSession}
+          />
+        </div>
         <div className="col-xs-10 col-md-8 mx-auto px-4">
           Send {testnet ? 'Test' : ''} STX to many addresses in one transaction.
         </div>

@@ -38,10 +38,7 @@ export default function Landing(props) {
                   <a href="https://explorer.stacks.co" target="_blank" rel="noopener noreferrer">
                     Stacks
                   </a>{' '}
-                  is blockchain based on Proof of Transfer. The testnet is initiated by Blockstack
-                  PBC, a New York based public benefit corporation. It is connected to the public
-                  bitcoin testnet. This does not use real STXs or Bitcoin. Stacks addresses on
-                  testnet start with ST..
+                  is blockchain based on Proof of Transfer.
                 </div>
               </div>
             </div>

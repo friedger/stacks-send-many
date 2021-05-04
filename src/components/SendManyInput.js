@@ -26,9 +26,9 @@ export function SendManyInput({ index, row, updateModel, maybeAddNewRow, lastRow
               type="text"
               className="form-control"
               required=""
-              autofocus={lastRow ? "" : undefined}
+              autoFocus={lastRow ? '' : undefined}
             />
-            <label for="inputEmail">Wallet Address #{index + 1}</label>
+            <label>Wallet Address #{index + 1}</label>
           </div>
         </div>
         <div className="col-md-4 col-xs-4 col-lg-4">
@@ -43,7 +43,7 @@ export function SendManyInput({ index, row, updateModel, maybeAddNewRow, lastRow
               className="form-control"
               required=""
             />
-            <label for="inputEmail">Amount #{index + 1}</label>
+            <label>Amount #{index + 1}</label>
           </div>
         </div>
         <div className="col-md-3 col-xs-3 col-lg-3">
@@ -61,7 +61,7 @@ export function SendManyInput({ index, row, updateModel, maybeAddNewRow, lastRow
                 if (e.key === 'Enter') maybeAddNewRow();
               }}
             />
-            <label for="inputEmail">Memo #{index + 1}</label>
+            <label>Memo #{index + 1}</label>
           </div>
         </div>
       </div>
