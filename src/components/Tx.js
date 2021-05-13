@@ -1,5 +1,6 @@
 import { hexToCV } from '@stacks/transactions';
 import React from 'react';
+import { Address } from './Address';
 import { Amount } from './Amount';
 export function Tx({ tx }) {
   const apiData = tx.apiData;
@@ -23,21 +24,29 @@ export function Tx({ tx }) {
   console.log(tx.apiData);
   const total = txEvents.reduce((sum, e) => sum + e.asset.amount, 0);
   return (
-    <div className="small">
-      {txId.substr(0, 7)}...{txId.substr(58)}
-      {total}
-      <i className="p-1 bi bi-clipboard" title="copy" onClick={copyToClipboard}></i>
-      <i className="p-1 bi bi-link" title="Details" onClick={openTx}></i>
-      <i className="p-1 bi bi-link-45deg" title="Explorer" onClick={openTxInExplorer}></i>
+    <div className="small container">
+      <div className="row">
+        <div className="col-8">
+          {txId.substr(0, 7)}...{txId.substr(58)}
+          <i className="p-1 bi bi-clipboard" title="copy" onClick={copyToClipboard}></i>
+          <i className="p-1 bi bi-link" title="Details" onClick={openTx}></i>
+          <i className="p-1 bi bi-link-45deg" title="Explorer" onClick={openTxInExplorer}></i>
+        </div>
+        <div className="col-4 right small">
+          <Amount ustx={total} />
+        </div>
+      </div>
+
       {txEvents &&
         txEvents.map((event, key) => {
-          const memo = hexToCV(
-            tx.apiData.events[event.event_index + 1].contract_log.value.hex
-          ).buffer.toString();
           return (
-            <div key={key} className="container">
-              <Amount ustx={event.asset.amount} />
-              {memo && memo}
+            <div key={key} className="row">
+              <div className="col-8">
+                <Address addr={event.asset.recipient} />
+              </div>
+              <div className="col-4 text-danger small justify-content-center">
+                <Amount ustx={-1 * event.asset.amount} />
+              </div>
             </div>
           );
         })}
