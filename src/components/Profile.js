@@ -48,7 +48,10 @@ export default function Profile({ stxAddresses, userSession }) {
               addressType="appAddress"
               showAddress
             ></StxProfile>
-        </div>
+
+            <hr/>
+          </div>
+        
         <div className="offset-md-1 col-sm-12 col-md-7 bg-light p-4 mr-n4 mt-2">
             
           <div className="col-xs-10 col-md-12 mx-auto px-4 mb-4">
@@ -58,12 +61,24 @@ export default function Profile({ stxAddresses, userSession }) {
             <SendManyInputContainer ownerStxAddress={stxAddresses.ownerStxAddress} />
           </div>
         </div> 
-        <div className="offset-md-5 col-sm-12 col-md-7 bg-light p-4 mt-4">
+        <div className="col-sm-12 col-md-4 bg-light p-4 mt-2">
+            <h4>Instructions</h4>
+            <ol class="list-group small">
+              <li>Enter recipients and amounts one per line, separate both with semicolon. If all memo
+              field are empty "send-many" contract is used. Otherwise, "send-many-memo" is used.</li>
+              <li>Review the data</li>
+              <li>Click send</li>
+              <li>
+                Follow the instructions on your wallet to complete the transaction.
+              </li>
+            </ol>
+        </div>
+        <div className="offset-md-1 col-sm-12 col-md-6 bg-light p-4 mt-4">
           <div className="col-xs-10 col-md-12 mx-auto mb-4 px-4">
             
             <SendManyTxList ownerStxAddress={stxAddresses.ownerStxAddress} userSession={userSession} />
           </div>
-        </div> 
+        </div>  
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ export default function SendMany({ userSession }) {
   return (
     <main className="panel-welcome mt-5 container">
       <div className="lead row mt-5">
-        <div className="col-xs-10 col-md-12 mx-auto px-4">
+        <div className="col-xs-10 col-md-12 mx-auto px-4 mb-4">
           <Profile
             stxAddresses={{
               ownerStxAddress,
@@ -18,22 +18,6 @@ export default function SendMany({ userSession }) {
             }}
             userSession={userSession}
           />
-        </div>
-        <div className="card col-md-12 mx-auto mt-5 mb-5 text-center px-0 border-warning">
-          <div className="card-header">
-            <h5 className="card-title">Instructions</h5>
-          </div>
-          <ul className="list-group list-group-flush">
-            <li className="list-group-item">
-              Enter recipients and amounts one per line, separate both with semicolon. If all memo
-              field are empty "send-many" contract is used. Otherwise, "send-many-memo" is used.
-            </li>
-            <li className="list-group-item">Review the data</li>
-            <li className="list-group-item">Click send</li>
-            <li className="list-group-item">
-              Follow the instructions on your wallet to complete the transaction.
-            </li>
-          </ul>
         </div>
       </div>
     </main>
