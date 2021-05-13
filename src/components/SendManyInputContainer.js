@@ -211,7 +211,7 @@ export function SendManyInputContainer() {
               onClick={e => addNewRow()}
               disabled={rows.length > 199}
               type="button"
-              value="Add New Field"
+              value="Add New Recipient"
               className="btn btn-dark"
               id="addNewField"
             />

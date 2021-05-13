@@ -6,7 +6,7 @@ import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';
 
 function dateOfTx(tx) {
-  return tx.apiData.burn_block_time_iso.substring(0, 10);
+  return tx.apiData?.burn_block_time_iso?.substring(0, 10) || 'pending';
 }
 
 export function SendManyTxList({ ownerStxAddress, userSession }) {
@@ -40,18 +40,18 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
         <>
           {dates.map((date, key) => {
             return (
-              <>
-                {date}
+              <Fragment key={key}>
+                <div className="small">{date}</div>
                 {txsByDate[date].map((tx, txKey) => {
                   return (
                     <>
-                      <div key={txKey}>
+                      <div className="bg-white p-2 m-2" key={txKey}>
                         <Tx tx={tx} />
                       </div>
                     </>
                   );
                 })}
-              </>
+              </Fragment>
             );
           })}
           <div className="input-group">

@@ -5,7 +5,7 @@ import {
   Configuration,
   InfoApi,
 } from '@stacks/blockchain-api-client';
-import { StacksTestnet } from '@stacks/network';
+import { StacksTestnet, StacksMainnet } from '@stacks/network';
 
 export const testnet = window.location.search.includes('chain=testnet');
 export const localMocknet = !testnet && window.location.search.includes('mocknet=local');
@@ -44,7 +44,7 @@ export const STACKS_API_WS_URL = localNode
   : 'ws://stacks-node-api.testnet.stacks.co/';
 export const STACKS_API_ACCOUNTS_URL = `${STACK_API_URL}/v2/accounts`;
 
-export const NETWORK = new StacksTestnet();
+export const NETWORK = mainnet ? new StacksMainnet() : new StacksTestnet();
 NETWORK.coreApiUrl = STACK_API_URL;
 
 const basePath = STACK_API_URL;
