@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import Landing from './pages/Landing';
 import { Connect } from '@stacks/connect-react';
 import { Router } from '@reach/router';
-import MyProfile from './pages/MyProfile';
 import Auth from './components/Auth';
 import { userDataState, userSessionState, useConnect } from './lib/auth';
 import { useAtom } from 'jotai';
@@ -10,6 +9,14 @@ import SendMany from './pages/SendMany';
 import SendManyDetails from './pages/SendManyDetails';
 import SendManyCyclePayout from './pages/SendManyCyclePayout';
 import { Rate } from './components/Rate';
+import { Network } from './components/Network';
+import metaverse from './styles/metaverse.png';
+
+const styles = {
+  backgroundPosition: 'center',
+  backgroundSize: 'cover',
+  backgroundImage: `url(${metaverse})`,
+};
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -25,14 +32,14 @@ export default function App(props) {
 
   return (
     <Connect authOptions={authOptions}>
-      <nav className="navbar sticky-top navbar-dark text-light">
+      <nav className="navbar sticky-top navbar-dark text-light" style={styles}>
         <a className="navbar-brand" href="/">
           <img src="/stacks.png" width="100" alt="Logo" />
         </a>
         <h1>Send Many</h1>
         <div>
           <Rate />
-          <br />
+          <Network />
           <Auth className="ml-auto" userSession={userSession} />
         </div>
       </nav>
@@ -73,7 +80,6 @@ function Content({ userSession }) {
                 decentralizedID={decentralizedID}
                 userSession={userSession}
               />
-              <MyProfile path="/me" decentralizedID={decentralizedID} userSession={userSession} />
             </>
           )}
         </AppBody>

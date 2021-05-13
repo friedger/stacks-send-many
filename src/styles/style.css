@@ -56,15 +56,12 @@ inspect {
   filter: grayscale(100);
 }
 
-
-.text-right
-{
-  text-align:right;
+.text-right {
+  text-align: right;
 }
 
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css");
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css');
 
-.balance
-{
-  font-size:20pt;
+.balance {
+  font-size: 20pt;
 }
