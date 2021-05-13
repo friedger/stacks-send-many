@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import Landing from './pages/Landing';
 import { Connect } from '@stacks/connect-react';
-import { Link, Router } from '@reach/router';
+import { Router } from '@reach/router';
 import MyProfile from './pages/MyProfile';
-import { NETWORK } from './lib/constants';
 import Auth from './components/Auth';
 import { userDataState, userSessionState, useConnect } from './lib/auth';
 import { useAtom } from 'jotai';
