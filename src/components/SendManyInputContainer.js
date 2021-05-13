@@ -215,15 +215,15 @@ export function SendManyInputContainer() {
               disabled={rows.length > 199}
               type="button"
               value="Add New Field"
-              class="btn btn-primary"
+              class="btn btn-dark rounded-0"
               id="addNewField"
             />
             <br />
           </div>
         </div>
         <div>{preview}</div>
-        <div className="input-group">
-          <button className="btn btn-primary" type="button" onClick={sendAction}>
+        <div className="input-group mt-2">
+          <button className="btn btn-block btn-primary" type="button" onClick={sendAction}>
             <div
               ref={spinner}
               role="status"

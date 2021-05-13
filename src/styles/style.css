@@ -14,7 +14,7 @@
 
 html,
 body {
-  background-color: #f4f4fc;
+  background-color: #fff;
 }
 
 inspect {
@@ -30,7 +30,7 @@ inspect {
 }
 
 .navbar-dark {
-  background-color: var(--brand-bright) !important;
+  background-color: #343434;
 }
 
 /* Avatar */
@@ -63,3 +63,8 @@ inspect {
 }
 
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css");
+
+.balance
+{
+  font-size:20pt;
+}

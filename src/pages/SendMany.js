@@ -10,7 +10,7 @@ export default function SendMany({ userSession }) {
   return (
     <main className="panel-welcome mt-5 container">
       <div className="lead row mt-5">
-        <div className="col-xs-10 col-md-8 mx-auto px-4">
+        <div className="col-xs-10 col-md-12 mx-auto px-4">
           <Profile
             stxAddresses={{
               ownerStxAddress,
@@ -19,16 +19,7 @@ export default function SendMany({ userSession }) {
             userSession={userSession}
           />
         </div>
-        <div className="col-xs-10 col-md-8 mx-auto px-4">
-          Send {testnet ? 'Test' : ''} STX to many addresses in one transaction.
-        </div>
-        <div className="col-xs-10 col-md-8 mx-auto mb-4 px-4">
-          <SendManyInputContainer ownerStxAddress={ownerStxAddress} />
-        </div>
-        <div className="col-xs-10 col-md-8 mx-auto mb-4 px-4">
-          <SendManyTxList ownerStxAddress={ownerStxAddress} userSession={userSession} />
-        </div>
-        <div className="card col-md-8 mx-auto mt-5 mb-5 text-center px-0 border-warning">
+        <div className="card col-md-12 mx-auto mt-5 mb-5 text-center px-0 border-warning">
           <div className="card-header">
             <h5 className="card-title">Instructions</h5>
           </div>

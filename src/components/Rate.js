@@ -11,8 +11,10 @@ export function Rate() {
 
   console.log(stxUsd);
   return (
-    <div className="rounded border-secondary d-flex justify-content-center bg-secondary">
-      <small className="text-dark">Ӿ </small> ${stxUsd.value} {stxUsd.loading ? '...' : ''}
+    <div className="rounded border-secondary d-flex justify-content-around bg-secondary">
+      <img src="stacks.png" width="25" height="25"/>
+      <span>=</span>
+       ${stxUsd.value} {stxUsd.loading ? '...' : ''}
     </div>
   );
 }

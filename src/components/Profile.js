@@ -3,7 +3,10 @@ import { Person } from '@stacks/profile';
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { fetchAccount } from '../lib/account';
 import { STACK_API_URL } from '../lib/constants';
+import { SendManyInputContainer } from '../components/SendManyInputContainer';
+import { SendManyTxList } from '../components/SendManyTxList';
 import { TxStatus } from '../lib/transactions';
+import { testnet } from '../lib/constants';
 
 // Demonstrating BlockstackContext for legacy React Class Components.
 
@@ -28,58 +31,45 @@ export default function Profile({ stxAddresses, userSession }) {
 
   return (
     <div className="Profile">
-      <div className="row no-gutters">
-        <div className="col-sm-12 col-md-4  text-center justify-content-center bg-secondary p-4">
-          <img
-            src={((person && person.avatarUrl()) || avatarFallbackImage)}
-            className="img-rounded avatar mb-2"
-            id="avatar-image"
-            alt="Avatar"
-          />
-          <hr/>
-          <h5 className="text-white">Hello, {' '}
-            <span id="heading-name">{(person && person.name()) || username || 'Stacks User'}</span>!
-          </h5>
-          <span class="text-white">Welcome to Send Many!</span>
-          {username && (
-            <>
-              Your Blockstack username is <span class="font-weight-bold">{username}</span> <br />
-            </>
-          )}
-        </div>
-        <div className="col-sm-12 col-md-8 bg-light p-4">
-          <div>
-            Your own Stacks address:
-            <br />
-            <StxProfile
+      <div className="row">
+      
+        <div className="col-sm-12 col-md-4 bg-light p-4 mt-2">
+          <StxProfile
               stxAddress={stxAddresses.ownerStxAddress}
               updateStatus={updateStatus}
+              addressType="ownAddress"
               showAddress
             ></StxProfile>
-          </div>
-          <div className="pt-4">
-            Your STX hodl address for Send Many app:
-            <br />
+
+            <hr/>
             <StxProfile
               stxAddress={stxAddresses.appStxAddress}
               updateStatus={updateStatus}
+              addressType="appAddress"
               showAddress
             ></StxProfile>
-          </div>
-
-          {status && (
-            <>
-              <br />
-              <div>{status}</div>
-            </>
-          )}
         </div>
+        <div className="offset-md-1 col-sm-12 col-md-7 bg-light p-4 mr-n4 mt-2">
+            
+          <div className="col-xs-10 col-md-12 mx-auto px-4 mb-4">
+            <h3 className="font-weight-bold">Send {testnet ? 'Test' : ''} Stacks (STX)</h3>
+          </div>
+          <div className="col-xs-10 col-md-12 mx-auto mb-4 px-4">
+            <SendManyInputContainer ownerStxAddress={stxAddresses.ownerStxAddress} />
+          </div>
+        </div> 
+        <div className="offset-md-5 col-sm-12 col-md-7 bg-light p-4 mt-4">
+          <div className="col-xs-10 col-md-12 mx-auto mb-4 px-4">
+            
+            <SendManyTxList ownerStxAddress={stxAddresses.ownerStxAddress} userSession={userSession} />
+          </div>
+        </div> 
       </div>
     </div>
   );
 }
 
-function StxProfile({ stxAddress, updateStatus, showAddress }) {
+function StxProfile({ stxAddress, updateStatus, showAddress, addressType }) {
   const [txId, setTxId] = useState();
   const spinner = useRef();
   const faucetSpinner = useRef();
@@ -142,19 +132,24 @@ function StxProfile({ stxAddress, updateStatus, showAddress }) {
 
   return (
     <>
+          <a className="navbar-brand" href="/">
+            <img src="/stacks.png" width="50" alt="Logo" />
+          </a>
+          <span className="font-weight-bold">Account 1#</span> <span className="small">{addressType == "appAddress" ? "(app wallet)" : "(your own wallet)"}</span><br/>
+          
       {stxAddress && showAddress && (
         <>
-          {stxAddress} <br />
+          <span class="small">Total balance:</span> <a href={"https://explorer.stacks.co/address/"+stxAddress} class="small">View on Explorer ↗</a><br/>
         </>
       )}
       {profileState.account && (
         <>
-          You balance: {profileState.account.balance}uSTX.
+          <span class="font-weight-bold balance">{profileState.account.balance} STX</span>
           <br />
         </>
       )}
       <button
-        className="btn btn-primary mr-1 mt-1"
+        className="btn btn-sm btn-primary mr-1 mt-1"
         onClick={e => {
           onRefreshBalance(stxAddress);
         }}
@@ -169,7 +164,7 @@ function StxProfile({ stxAddress, updateStatus, showAddress }) {
       {showAddress && (
         <>
           <button
-            className="btn btn-info mt-1"
+            className="btn btn-sm btn-info mt-1"
             onClick={() => {
               claimTestTokens(stxAddress);
             }}
@@ -184,7 +179,7 @@ function StxProfile({ stxAddress, updateStatus, showAddress }) {
           <br />
           <TxStatus txId={txId} resultPrefix="Tokens transferred? " />
         </>
-      )}
+      )} 
     </>
   );
 }

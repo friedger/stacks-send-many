@@ -25,9 +25,9 @@ export default function App(props) {
 
   return (
     <Connect authOptions={authOptions}>
-      <nav className="navbar sticky-top navbar-dark bg-dark text-light">
+      <nav className="navbar sticky-top navbar-dark text-light">
         <a className="navbar-brand" href="/">
-          <img src="/android-icon-96x96.png" alt="Logo" />
+          <img src="/stacks.png" width="100" alt="Logo" />
         </a>
         <h1>Send Many</h1>
         <div>
