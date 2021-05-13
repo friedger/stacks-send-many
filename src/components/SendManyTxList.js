@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, Fragment } from 'react';
 
-import { getTxs, getTxsAsJSON } from '../lib/transactions';
+import { getTxs, getTxsAsCSV, getTxsAsJSON } from '../lib/transactions';
 import DownloadLink from 'react-download-link';
 import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';
@@ -56,11 +56,18 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
           })}
           <div className="input-group">
             <DownloadLink
-              label="Export"
+              label="Export as JSON"
               filename="transactions.json"
               exportFile={async () => {
                 const txs = await getTxsAsJSON(userSession);
                 return JSON.stringify(txs);
+              }}
+            />
+            <DownloadLink
+              label="Export as CSV"
+              filename="transactions.csv"
+              exportFile={async () => {
+                return await getTxsAsCSV(userSession);
               }}
             />
           </div>

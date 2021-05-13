@@ -1,7 +1,14 @@
 import { serializeCV, hexToCV as stacksHexToCV } from '@stacks/transactions';
 import { connectWebSocketClient } from '@stacks/blockchain-api-client';
 import React, { useState, useEffect, useRef } from 'react';
-import { mocknet, STACKS_API_WS_URL, STACK_API_URL, transactionsApi } from './constants';
+import {
+  mainnet,
+  mocknet,
+  STACKS_API_WS_URL,
+  STACK_API_URL,
+  testnet,
+  transactionsApi,
+} from './constants';
 import { Storage } from '@stacks/storage';
 
 export function resultToStatus(result) {
@@ -39,7 +46,11 @@ export function txUrl(txId) {
   }
 }
 
-const indexFileName = 'index.json';
+const indexFileName = mainnet
+  ? 'index-mainnet.json'
+  : testnet
+  ? 'index-testnet.json'
+  : 'index-mocknet.json';
 
 export async function saveTxData(data, userSession) {
   console.log(JSON.stringify(data));
@@ -63,7 +74,6 @@ export async function getTxs(userSession) {
   try {
     let indexFile = await storage.getFile(indexFileName);
     indexArray = JSON.parse(indexFile);
-    indexArray = ['0x947a2b9355551666f9855654390671092b1d7aedd2e8f04c95b4fcc948b9f07f'];
     return Promise.all(
       indexArray.map(async txId => {
         return getTxWithStorage(txId, storage);
@@ -73,6 +83,27 @@ export async function getTxs(userSession) {
     console.log(e);
     return [];
   }
+}
+
+export async function getTxsAsCSV(userSession) {
+  const txs = await getTxs(userSession);
+  const txsAsCSV = txs
+    .filter(tx => tx.apiData && tx.apiData.tx_status === 'success')
+    .reduce((result, tx) => {
+      return (
+        result +
+        tx.apiData.events
+          .filter(e => e.event_type === 'stx_asset')
+          .map(e => {
+            return `${e.asset.recipient}, ${e.asset.amount / 1000000}, ${
+              tx.apiData.burn_block_time_iso
+            }, https://explorer.stacks.co/txid/${
+              tx.apiData.tx_id
+            }, https://stacks-send-many.pages.dev/txid/${tx.apiData.tx_id}\n`;
+          })
+      );
+    }, 'recipient, amount, timestamp, explorer_url, send_many_url\n');
+  return txsAsCSV;
 }
 
 export async function getTxsAsJSON(userSession) {
@@ -97,6 +128,7 @@ export async function getTxsAsJSON(userSession) {
     }, []);
   return txsAsJSON;
 }
+
 async function getTxWithStorage(txId, storage) {
   try {
     const txFile = await storage.getFile(`txs/${txId}.json`);

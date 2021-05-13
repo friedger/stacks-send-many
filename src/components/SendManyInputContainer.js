@@ -236,7 +236,7 @@ export function SendManyInputContainer() {
         </div>
       </div>
       <div>
-        <TxStatus txId={txId} resultPrefix="Offer placed in block " />
+        <TxStatus txId={txId} resultPrefix="Transfers executed " />
       </div>
       {status && (
         <>

@@ -10,6 +10,7 @@ import { useAtom } from 'jotai';
 import SendMany from './pages/SendMany';
 import SendManyDetails from './pages/SendManyDetails';
 import SendManyCyclePayout from './pages/SendManyCyclePayout';
+import { Rate } from './components/Rate';
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -30,7 +31,11 @@ export default function App(props) {
           <img src="/android-icon-96x96.png" alt="Logo" />
         </a>
         <h1>Send Many</h1>
-        <Auth className="ml-auto" userSession={userSession} />
+        <div>
+          <Rate />
+          <br />
+          <Auth className="ml-auto" userSession={userSession} />
+        </div>
       </nav>
 
       <Content userSession={userSession} />
@@ -38,31 +43,8 @@ export default function App(props) {
   );
 }
 
-const NavLink = props => {
-  return (
-    <Link
-      {...props}
-      getProps={({ isCurrent }) => {
-        // the object returned here is passed to the
-        // anchor element's props
-        if (isCurrent) {
-          return {
-            className: 'nav-item nav-link px-4 active',
-          };
-        } else {
-          return { className: 'nav-item nav-link px-4' };
-        }
-      }}
-    />
-  );
-};
-
 function AppBody(props) {
-  return (
-    <div>
-      {props.children}
-    </div>
-  );
+  return <div>{props.children}</div>;
 }
 function Content({ userSession }) {
   const authenticated = userSession && userSession.isUserSignedIn();
