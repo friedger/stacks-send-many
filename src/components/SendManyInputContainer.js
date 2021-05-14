@@ -165,15 +165,12 @@ export function SendManyInputContainer() {
   const addNewRow = () => {
     const newRows = [...rows];
     newRows.push({ to: '', stx: '0', memo: '' });
-    console.log(newRows);
     setRows(newRows);
   };
 
   const updateRow = (row, index) => {
-    console.log({ row });
     const newRows = [...rows];
     newRows[index] = row;
-    console.log(newRows);
     setRows(newRows);
     return newRows;
   };
@@ -214,11 +211,10 @@ export function SendManyInputContainer() {
               onClick={e => addNewRow()}
               disabled={rows.length > 199}
               type="button"
-              value="Add New Field"
-              class="btn btn-dark rounded-0"
+              value="Add New Recipient"
+              className="btn btn-dark"
               id="addNewField"
             />
-            <br />
           </div>
         </div>
         <div>{preview}</div>
