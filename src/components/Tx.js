@@ -22,7 +22,7 @@ export function Tx({ tx }) {
       return event.event_type === 'stx_asset';
     });
   console.log(tx.apiData);
-  const total = txEvents.reduce((sum, e) => sum + e.asset.amount, 0);
+  const total = txEvents.reduce((sum, e) => sum + parseInt(e.asset.amount), 0);
   return (
     <div className="small container">
       <div className="row">
@@ -44,7 +44,7 @@ export function Tx({ tx }) {
               <div className="col-8">
                 <Address addr={event.asset.recipient} />
               </div>
-              <div className="col-4 text-danger small justify-content-center">
+              <div className="col-3 text-danger text-right small" >
                 <Amount ustx={-1 * event.asset.amount} />
               </div>
             </div>

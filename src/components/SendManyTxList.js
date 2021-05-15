@@ -39,7 +39,7 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
             <div className="form-row align-items-center">
               <div className="col-auto mb-2 input-group bg-white input-group-sm">
                 <div className="input-group-prepend bg-white">
-                  <img src="/search.png" width="32" height="31" className="p-2 input-group-text bg-white" id="inputGroup-sizing-sm"/>
+                  <img src="/search.png" width="32" height="31" className="p-2 input-group-text bg-white" alt="search" id="inputGroup-sizing-sm"/>
                 </div>
                 <input type="text" className="form-control mr-2" placeholder="Search for address, date, amount"/>
                 <div  className="btn-group" role="group">
@@ -47,7 +47,7 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
                   <button className="btn btn-sm btn-dark dropdown-toggle mb-2" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Export
                   </button>
-                  <div className="dropdown-menu" aria-labelledby="dropdownMenuButton"> 
+                  <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <DownloadLink
                       label="Export as JSON"
                       filename="transactions.json"
@@ -102,7 +102,7 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
               </Fragment>
               </div>
             );
-          })} 
+          })}
         </>
       )}
       {!status && (!dates || dates.length === 0) && <>No transactions yet.</>}
@@ -112,6 +112,6 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
         </>
       )}
     </div>
-      
-  );  
+
+  );
 }
