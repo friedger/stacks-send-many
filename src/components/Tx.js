@@ -26,13 +26,13 @@ export function Tx({ tx }) {
   return (
     <div className="small container">
       <div className="row">
-        <div className="col-8">
+        <div className="col-9">
           {txId.substr(0, 7)}...{txId.substr(58)}
           <i className="p-1 bi bi-clipboard" title="copy" onClick={copyToClipboard}></i>
           <i className="p-1 bi bi-link" title="Details" onClick={openTx}></i>
           <i className="p-1 bi bi-link-45deg" title="Explorer" onClick={openTxInExplorer}></i>
         </div>
-        <div className="col-4 right small">
+        <div className="col-3 text-right small">
           <Amount ustx={total} />
         </div>
       </div>

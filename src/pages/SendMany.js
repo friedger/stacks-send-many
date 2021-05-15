@@ -32,7 +32,7 @@ export default function SendMany({ userSession }) {
                 </div>
               </div>
 
-              <div className="offset-md-1 col-sm-12 col-md-7 p-4 mr-n4 my-2">
+              <div className="col-sm-12 col-md-8 p-4 mr-n4 my-2">
                 <div className="col-xs-10 col-md-12 mx-auto py-4 bg-light">
                   <h3 className="font-weight-bold">Send {testnet ? 'Test' : ''} Stacks (STX)</h3>
                   <SendManyInputContainer ownerStxAddress={ownerStxAddress} />

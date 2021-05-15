@@ -89,35 +89,9 @@ export function Profile({ stxAddress, updateStatus, showAddress }) {
           <Amount className="font-weight-bold balance" ustx={profileState.account.balance} />
           <br />
         </>
-      )}
-      <button
-        className="btn btn-sm btn-primary mr-1 mt-1"
-        onClick={e => {
-          onRefreshBalance(stxAddress);
-        }}
-      >
-        <div
-          ref={spinner}
-          role="status"
-          className="d-none spinner-border spinner-border-sm text-info align-text-top mr-2"
-        />
-        Refresh balance
-      </button>
+      )} 
       {testnet && (
         <>
-          <button
-            className="btn btn-sm btn-info mt-1"
-            onClick={() => {
-              claimTestTokens(stxAddress);
-            }}
-          >
-            <div
-              ref={faucetSpinner}
-              role="status"
-              className="d-none spinner-border spinner-border-sm text-info align-text-top mr-2"
-            />
-            Claim test tokens from faucet
-          </button>
           <br />
           <TxStatus txId={txId} resultPrefix="Tokens transferred? " />
         </>
