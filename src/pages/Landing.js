@@ -44,8 +44,8 @@ export default function Landing(props) {
                   transfers easily, search them, export them and share links to individual amounts.
                 </p>
                 <p className="cart-text mb-3">
-                  For testing purposes you can use testnet by attaching <pre>?chain=testnet</pre> in
-                  the address bar.
+                  For testing purposes, you can use testnet by appending <code>?chain=testnet</code>{' '}
+                  in the address bar.
                 </p>
               </div>
 

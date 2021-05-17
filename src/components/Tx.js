@@ -27,7 +27,7 @@ export function Tx({ tx, onDetailsPage, hideEvents }) {
   return (
     <div className="small container">
       <div className="row">
-        <div className="col-9">
+        <div className="col-lg-7 col-xs-12">
           <span title={txId}>
             {txId.substr(0, 7)}...{txId.substr(58)}
           </span>
@@ -51,11 +51,11 @@ export function Tx({ tx, onDetailsPage, hideEvents }) {
           ></i>
         </div>
         {total > 0 ? (
-          <div className="col-3 text-danger text-right small">
+          <div className="col-lg-5 col-xs-12 text-danger text-right small">
             <Amount ustx={-1 * total} />
           </div>
         ) : (
-          <div className="col-3 text-right small">{(tx.apiData && tx.apiData.tx_status) || ''}</div>
+          <div className="col-lg-5 col-xs-12 text-right small">{(tx.apiData && tx.apiData.tx_status) || ''}</div>
         )}
       </div>
 
