@@ -4,7 +4,7 @@ import { getTxs, getTxsAsCSV, getTxsAsJSON } from '../lib/transactions';
 import DownloadLink from 'react-download-link';
 import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';
-import { chainSuffix, mainnet, testnet } from '../lib/constants';
+import { chainSuffix } from '../lib/constants';
 
 function dateOfTx(tx) {
   return tx.apiData?.burn_block_time_iso?.substring(0, 10) || 'pending';
@@ -71,7 +71,9 @@ export function SendManyTxList({ userSession }) {
       });
   }, [userSession, filterAndGroup]);
 
-  const dates = filteredTxsByDate ? Object.keys(filteredTxsByDate).sort((a, b) => a < b) : undefined;
+  const dates = filteredTxsByDate
+    ? Object.keys(filteredTxsByDate).sort((a, b) => a < b)
+    : undefined;
   return (
     <div>
       <div className="row m-2">
@@ -190,9 +192,7 @@ export function SendManyTxList({ userSession }) {
         searchRef.current.value.trim() &&
         searchRef.current.value.trim().startsWith('0x') &&
         searchRef.current.value.trim().length === 66 ? (
-          <a
-            href={`/txid/${searchRef.current.value.trim()}${chainSuffix}`}
-          >
+          <a href={`/txid/${searchRef.current.value.trim()}${chainSuffix}`}>
             See transaction details
           </a>
         ) : (
