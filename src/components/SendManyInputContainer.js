@@ -123,7 +123,11 @@ export function SendManyInputContainer() {
             to = contractPrincipalCV(toParts[0], toParts[1]);
           }
           return hasMemos
-            ? tupleCV({ to, ustx: uintCV(parseInt(p.ustx)), memo: bufferCVFromString(p.memo) })
+            ? tupleCV({
+                to,
+                ustx: uintCV(parseInt(p.ustx)),
+                memo: bufferCVFromString(p.memo.trim()),
+              })
             : tupleCV({ to, ustx: uintCV(parseInt(p.ustx)) });
         })
       ),

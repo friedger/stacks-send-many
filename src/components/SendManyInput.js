@@ -8,7 +8,7 @@ export function SendManyInput({ index, row, updateModel, maybeAddNewRow, lastRow
     const value = {
       to: to.current.value.trim(),
       stx: stxValue.current.value.trim(),
-      memo: memo.current.value.trim(),
+      memo: memo.current.value,
     };
     return value;
   };
