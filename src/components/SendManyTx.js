@@ -1,8 +1,10 @@
 import { hexToCV } from '@stacks/transactions';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { CONTRACT_ADDRESS } from '../lib/constants';
 
 import { getTx } from '../lib/transactions';
+import { Address } from './Address';
+import { Tx } from './Tx';
 
 export function SendManyTx({ ownerStxAddress, userSession, txId }) {
   const spinner = useRef();
@@ -16,6 +18,7 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
       .then(async transaction => {
         setStatus(undefined);
         setTx(transaction);
+        console.log({ transaction });
         setLoading(false);
       })
       .catch(e => {
@@ -43,6 +46,7 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
   const showMemo =
     tx &&
     tx.apiData &&
+    tx.apiData.contract_call &&
     tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
   const memos = showMemo
     ? new Array(
@@ -62,8 +66,8 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
         } spinner-border spinner-border-sm text-info align-text-top mr-2`}
       />
       {tx && tx.apiData && (
-        <>
-          {tx.apiData.burn_block_time_iso} ({tx.apiData.tx_status})
+        <div className="p-2 mx-n4 mt-2 mb-2 bg-light">
+          {tx.apiData.burn_block_time_iso?.substring(0, 10) || 'pending'} ({tx.apiData.tx_status})
           <br />
           from{' '}
           <span
@@ -72,24 +76,14 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
             <Address addr={tx.apiData.sender_address} />
           </span>
           <br />
-          {showMemo && !showMemoPerRecipient && <>"{hexToCV(memos[0]).buffer.toString()}"</>}
-        </>
-      )}
-
-      {txEvents &&
-        txEvents.map((event, key) => {
-          const memo =
-            showMemo &&
-            showMemoPerRecipient &&
-            hexToCV(
-              tx.apiData.events[event.event_index + 1].contract_log.value.hex
-            ).buffer.toString();
-          return (
-            <div key={key} className="container">
-              <StxTransfer asset={event.asset} ownerStxAddress={ownerStxAddress} memo={memo} />
+          {showMemo && !showMemoPerRecipient && <b>"{hexToCV(memos[0]).buffer.toString()}"</b>}
+          <div className="list-group m-2">
+            <div className="list-group-item">
+              <Tx tx={tx} onDetailsPage />
             </div>
-          );
-        })}
+          </div>
+        </div>
+      )}
       {tx && !tx.apiData && tx.data && <>Transaction not found on network.</>}
       {!loading && (!tx || !tx.apiData) && <>No transaction found with id {txId}.</>}
       {status && (
@@ -98,43 +92,5 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
         </>
       )}
     </div>
-  );
-}
-
-function StxTransfer({ asset, ownerStxAddress, memo }) {
-  return (
-    <div className="row">
-      <div
-        className={`col-xs-12 col-md-6 text-right" ${
-          asset.recipient === ownerStxAddress ? 'font-weight-bold' : ''
-        }`}
-      >
-        {'->'} <Address addr={asset.recipient} ownerStxAddress={ownerStxAddress} />
-      </div>
-      <div
-        className={`col-xs-12 col-md-6 text-right ${
-          asset.recipient === ownerStxAddress ? 'font-weight-bold' : ''
-        }`}
-      >
-        {(asset.amount / 1000000).toLocaleString(undefined, {
-          style: 'decimal',
-          minimumFractionDigits: 6,
-          maximumFractionDigits: 6,
-        })}
-        Ӿ
-      </div>
-      {memo && (
-        <div className="col-xs-12 col-md-12">
-          <small>{memo}</small>
-        </div>
-      )}
-    </div>
-  );
-}
-function Address({ addr }) {
-  return (
-    <>
-      {addr.substr(0, 5)}...{addr.substr(addr.length - 5)}
-    </>
   );
 }

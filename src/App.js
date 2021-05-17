@@ -32,7 +32,7 @@ export default function App(props) {
 
   return (
     <Connect authOptions={authOptions}>
-      <nav className="navbar sticky-top navbar-dark text-light" style={styles}>
+      <nav className="navbar sticky-top navbar-dark text-light p-2" style={styles}>
         <a className="navbar-brand" href="/">
           <img src="/stacks.png" width="100" alt="Logo" />
         </a>

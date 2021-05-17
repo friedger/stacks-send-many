@@ -5,6 +5,7 @@ import { CONTRACT_ADDRESS } from '../lib/constants';
 import { getTx } from '../lib/transactions';
 import { Address } from './Address';
 import { Amount } from './Amount';
+import { Tx } from './Tx';
 
 export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
   const [status, setStatus] = useState();
@@ -79,7 +80,7 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
       </div>
       {tx && tx.apiData && (
         <>
-          {tx.apiData.burn_block_time_iso} ({tx.apiData.tx_status})
+          {tx.apiData.burn_block_time_iso?.substring(0, 10) || 'pending'} ({tx.apiData.tx_status})
           <br />
           from{' '}
           <span
@@ -88,56 +89,21 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
             <Address addr={tx.apiData.sender_address} />
           </span>
           <br />
-          {showMemo && !showMemoPerRecipient && <>"{hexToCV(memos[0]).buffer.toString()}"</>}
+          {showMemo && !showMemoPerRecipient && <b>"{hexToCV(memos[0]).buffer.toString()}"</b>}
+          <div className="list-group m-2">
+            <div className="list-group-item">
+              <Tx tx={tx} onDetailsPage />
+            </div>
+          </div>
         </>
       )}
 
-      {txEvents &&
-        txEvents.map((event, key) => {
-          const memo =
-            showMemo &&
-            showMemoPerRecipient &&
-            hexToCV(
-              tx.apiData.events[event.event_index + 1].contract_log.value.hex
-            ).buffer.toString();
-          return (
-            <div key={key} className="container">
-              <StxTransfer asset={event.asset} ownerStxAddress={ownerStxAddress} memo={memo} />
-            </div>
-          );
-        })}
       {tx && !tx.apiData && tx.data && <>Transaction not found on server.</>}
       {progress >= 100 && !tx && <>No transactions found with id {JSON.stringify(txList)}.</>}
       {status && (
         <>
           <div>{status}</div>
         </>
-      )}
-    </div>
-  );
-}
-
-function StxTransfer({ asset, ownerStxAddress, memo }) {
-  return (
-    <div className="row">
-      <div
-        className={`col-xs-12 col-md-6 text-right" ${
-          asset.recipient === ownerStxAddress ? 'font-weight-bold' : ''
-        }`}
-      >
-        {'->'} <Address addr={asset.recipient} ownerStxAddress={ownerStxAddress} />
-      </div>
-      <div
-        className={`col-xs-12 col-md-6 text-right ${
-          asset.recipient === ownerStxAddress ? 'font-weight-bold' : ''
-        }`}
-      >
-        <Amount ustx={asset.amount} />
-      </div>
-      {memo && (
-        <div className="col-xs-12 col-md-12">
-          <small>{memo}</small>
-        </div>
       )}
     </div>
   );

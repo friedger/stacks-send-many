@@ -1,9 +1,10 @@
-import React, { useRef, useState, useEffect, Fragment } from 'react';
+import React, { useRef, useState, useEffect, Fragment, useCallback } from 'react';
 
 import { getTxs, getTxsAsCSV, getTxsAsJSON } from '../lib/transactions';
 import DownloadLink from 'react-download-link';
 import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';
+import { mainnet, testnet } from '../lib/constants';
 
 function dateOfTx(tx) {
   return tx.apiData?.burn_block_time_iso?.substring(0, 10) || 'pending';
@@ -11,6 +12,10 @@ function dateOfTx(tx) {
 
 function foundInSenderAddress(tx, search) {
   return tx.apiData && tx.apiData.sender_address.indexOf(search) >= 0;
+}
+
+function foundInTxId(tx, search) {
+  return tx.apiData && tx.apiData.tx_id.indexOf(search) >= 0;
 }
 
 function foundInEvents(tx, search) {
@@ -24,21 +29,41 @@ function foundInEvents(tx, search) {
   );
 }
 
-export function SendManyTxList({ ownerStxAddress, userSession }) {
+export function SendManyTxList({ userSession }) {
   const [status, setStatus] = useState();
   const searchRef = useRef();
   const [txs, setTxs] = useState();
   const [filteredTxsByDate, setFilteredTxsByDate] = useState();
   const [exportFormat, setExportFormat] = useState('csv');
   const [exporting, setExporting] = useState(false);
+
+  const filter = search => t => {
+    return (
+      !search ||
+      foundInSenderAddress(t, search) ||
+      foundInTxId(t, search) ||
+      foundInEvents(t, search)
+    );
+  };
+  const filterAndGroup = useCallback((txs, search) => {
+    if (!txs) return;
+    setFilteredTxsByDate(_groupBy(txs.transactions.filter(filter(search)), dateOfTx));
+  }, []);
+
   useEffect(() => {
     setStatus('Loading');
     getTxs(userSession)
       .then(async transactions => {
+        console.log('txs found.');
         setStatus(undefined);
         const txsByDate = _groupBy(transactions, dateOfTx);
-        setTxs({ transactions, txsByDate });
-        setFilteredTxsByDate(txsByDate);
+        const txsObject = { transactions, txsByDate };
+        setTxs(txsObject);
+        if (searchRef.current.value.trim()) {
+          filterAndGroup(txsObject, searchRef.current.value.trim());
+        } else {
+          setFilteredTxsByDate(txsByDate);
+        }
       })
       .catch(e => {
         setStatus('Failed to get transactions', e);
@@ -46,13 +71,6 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
       });
   }, [userSession]);
 
-  const filter = search => t => {
-    return !search || foundInSenderAddress(t, search) || foundInEvents(t, search);
-  };
-  const filterAndGroup = search => {
-    if (!txs) return;
-    setFilteredTxsByDate(_groupBy(txs.transactions.filter(filter(search)), dateOfTx));
-  };
   const dates = filteredTxsByDate ? Object.keys(filteredTxsByDate).sort() : undefined;
   return (
     <div>
@@ -78,7 +96,7 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
                 className="input-group form-control"
                 placeholder="Search for address, date, amount"
                 onChange={e => {
-                  filterAndGroup(e.target.value);
+                  filterAndGroup(txs, e.target.value);
                 }}
               />
             </div>
@@ -154,7 +172,7 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
                   {filteredTxsByDate[date].map((tx, txKey) => {
                     return (
                       <Fragment key={txKey}>
-                        <div className="p-2 mx-n4 mt-2 mb-2" key={txKey}>
+                        <div className="p-2 mx-n4 my-2" key={txKey}>
                           <Tx tx={tx} />
                         </div>
                       </Fragment>
@@ -166,7 +184,22 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
           })}
         </>
       )}
-      {!status && (!dates || dates.length === 0) && <>No transactions yet.</>}
+      {!status &&
+        (!dates || dates.length === 0) &&
+        (searchRef.current &&
+        searchRef.current.value.trim() &&
+        searchRef.current.value.trim().startsWith('0x') &&
+        searchRef.current.value.trim().length === 66 ? (
+          <a
+            href={`/txid/${searchRef.current.value.trim()}?chain=${
+              mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet'
+            }`}
+          >
+            See transaction details
+          </a>
+        ) : (
+          <>No transactions yet</>
+        ))}
       {status && <div className="m-2">{status}</div>}
     </div>
   );
