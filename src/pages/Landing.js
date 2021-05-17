@@ -11,7 +11,6 @@ export default function Landing(props) {
       <div className="jumbotron jumbotron-fluid pt-3 mb-0">
         <div className="container">
           <div className="panel-landing text-center mt-3">
-            <h1 className="landing-heading">Send Many</h1>
             <p className="lead">
               A UI to interact with the smart contract "send-many" and "send-many-memo"
             </p>
@@ -31,24 +30,19 @@ export default function Landing(props) {
 
             <div className="card mt-4 border-info">
               <div className="card-header">
-                <h5 className="card-title">About Stacks</h5>
-              </div>
-              <div className="row">
-                <div className="col col-md-12 p-4">
-                  <a href="https://explorer.stacks.co" target="_blank" rel="noopener noreferrer">
-                    Stacks
-                  </a>{' '}
-                  is blockchain based on Proof of Transfer.
-                </div>
-              </div>
-            </div>
-
-            <div className="card mt-4 border-info">
-              <div className="card-header">
-                <h5 className="card-title">Send Many</h5>
+                <h5 className="card-title">Efficient STX transfers</h5>
               </div>
               <div className="card-body">
-                <p className="card-text mb-3">Make and view bulk STX transfers.</p>
+                <p className="card-text mb-3">
+                  Stacks can be transferred to individual users one by one using the stacks transfer
+                  function. However, for organisations or exchanges it can be more efficient to send
+                  stacks tokens to many users in one go. This can be done through a smart contract.
+                  There is one contract for transfers with a memo and one for transfers without.
+                </p>
+                <p className="card-text mb-3">
+                  This app provides a web interface for these two contracts. User can make bulk
+                  transfers easily, search them, export them and share links to individual amounts.
+                </p>
               </div>
 
               <p className="card-link mb-5">

@@ -54,7 +54,6 @@ export function SendManyTxList({ userSession }) {
     setStatus('Loading');
     getTxs(userSession)
       .then(async transactions => {
-        console.log('txs found.');
         setStatus(undefined);
         const txsByDate = _groupBy(transactions, dateOfTx);
         const txsObject = { transactions, txsByDate };
