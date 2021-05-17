@@ -23,6 +23,7 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
           for (let i = 1; i < txList.length; i++) {
             setProgress(((i + 1) * 100) / (txList.length + 1));
             const transaction = await getTx(txList[i], userSession);
+            firstTx.apiData.events = firstTx.apiData.events.concat(transaction.apiData.events);
             txs.push(transaction);
           }
           setAllTxs({ firstTx, txs });
@@ -105,8 +106,9 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
           {showMemo && !showMemoPerRecipient && <b>"{hexToCV(memos[0]).buffer.toString()}"</b>}
           <div className="list-group m-2">
             <div className="list-group-item">
+              <Tx tx={allTxs.firstTx} onDetailsPage hideEvents />
               {allTxs.txs.map((tx, key) => (
-                <Tx tx={tx} key={key} onDetailsPage hideHeader={tx !== allTxs.firstTx} />
+                <Tx tx={tx} key={key} onDetailsPage hideHeader />
               ))}
             </div>
           </div>
