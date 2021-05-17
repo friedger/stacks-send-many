@@ -108,7 +108,6 @@ export async function getTxsAsCSV(userSession, filter) {
           }, '')
       );
     }, 'recipient, amount, timestamp, explorer_url, send_many_url\n');
-  console.log(txsAsCSV);
   return txsAsCSV;
 }
 

@@ -18,7 +18,6 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
       .then(async transaction => {
         setStatus(undefined);
         setTx(transaction);
-        console.log({ transaction });
         setLoading(false);
       })
       .catch(e => {

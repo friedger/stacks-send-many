@@ -4,6 +4,7 @@ import { CONTRACT_ADDRESS } from '../lib/constants';
 
 import { getTx } from '../lib/transactions';
 import { Address } from './Address';
+import { Amount } from './Amount';
 import { Tx } from './Tx';
 
 export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
@@ -40,9 +41,8 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
 
   const txEvents = allTxs
     ? allTxs.txs.reduce((result, tx) => {
-        console.log({ tx });
         if (tx.apiData) {
-          result.concat(
+          result = result.concat(
             tx.apiData.events.filter(event => {
               return event.event_type === 'stx_asset';
             })
@@ -77,6 +77,13 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
     : [];
   const memos = showMemo ? new Array(...new Set(duplicateMemos)) : [];
   const showMemoPerRecipient = showMemo && memos.length > 1;
+  const total = allTxs
+    ? allTxs.firstTx.apiData.events
+        .filter(event => {
+          return event.event_type === 'stx_asset';
+        })
+        .reduce((sum, e) => sum + parseInt(e.asset.amount), 0)
+    : 0;
   return (
     <div>
       <div className={`progress ${progress < 100 ? '' : 'd-none'}`}>
@@ -104,9 +111,13 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
           </span>
           <br />
           {showMemo && !showMemoPerRecipient && <b>"{hexToCV(memos[0]).buffer.toString()}"</b>}
+          {total && (
+            <div className="p-4">
+              Total transfer <Amount ustx={total} />
+            </div>
+          )}
           <div className="list-group m-2">
             <div className="list-group-item">
-              <Tx tx={allTxs.firstTx} onDetailsPage hideEvents />
               {allTxs.txs.map((tx, key) => (
                 <Tx tx={tx} key={key} onDetailsPage hideHeader />
               ))}

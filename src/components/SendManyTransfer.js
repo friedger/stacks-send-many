@@ -21,7 +21,6 @@ export function SendManyTransfer({ userSession, txId, eventIndex }) {
         setStatus(undefined);
         setTx(transaction);
         setEvent(transaction.apiData.events[eventIndex]);
-        console.log({ transaction, event });
         setLoading(false);
       })
       .catch(e => {

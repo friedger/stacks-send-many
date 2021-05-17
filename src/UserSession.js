@@ -25,7 +25,6 @@ export function putStxAddress(userSession, address) {
         console.log(r);
         console.log('STX address NOT published, retrying');
         storage.getFile(STX_JSON_PATH, { decrypt: false }).then(s => {
-          console.log({ s });
           userSession
             .putFile(STX_JSON_PATH, JSON.stringify({ address }), {
               encrypt: false,
