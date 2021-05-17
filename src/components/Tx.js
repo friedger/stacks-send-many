@@ -1,7 +1,10 @@
 import React from 'react';
+import { chainSuffix } from '../lib/constants';
 import { Address } from './Address';
 import { Amount } from './Amount';
-export function Tx({ tx, onDetailsPage }) {
+import { AmountFiat } from './AmountFiat';
+import { AmountStx } from './AmountStx';
+export function Tx({ tx, onDetailsPage, hideEvents }) {
   const apiData = tx.apiData;
   const txId = apiData.tx_id;
   const copyToClipboard = () => {
@@ -52,15 +55,25 @@ export function Tx({ tx, onDetailsPage }) {
         </div>
       </div>
 
-      {txEvents &&
+      {!hideEvents &&
+        txEvents &&
         txEvents.map((event, key) => {
           return (
-            <div key={key} className="row">
+            <div
+              onClick={() =>
+                (window.location.href = `/txid/${tx.apiData.tx_id}/${event.event_index}${chainSuffix}`)
+              }
+              key={key}
+              className="row"
+              role="button"
+            >
               <div className="col-8">
                 <Address addr={event.asset.recipient} />
               </div>
-              <div className="col-3 text-right small">
-                <Amount ustx={event.asset.amount} />
+              <div className="col-4 text-right small">
+                <AmountStx ustx={event.asset.amount} />
+                <br />
+                (<AmountFiat ustx={event.asset.amount} />)
               </div>
             </div>
           );

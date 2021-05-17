@@ -4,7 +4,6 @@ import { CONTRACT_ADDRESS } from '../lib/constants';
 
 import { getTx } from '../lib/transactions';
 import { Address } from './Address';
-import { Amount } from './Amount';
 import { Tx } from './Tx';
 
 export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {

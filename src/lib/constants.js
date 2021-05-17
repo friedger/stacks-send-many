@@ -12,6 +12,7 @@ export const localMocknet = !testnet && window.location.search.includes('mocknet
 export const mainnet =
   (!testnet && !localMocknet) || window.location.search.includes('chain=mainnet');
 
+export const chainSuffix = `?chain=${mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet'}`;
 export const beta = window.location.search.includes('authorigin=beta');
 export const localNode = localMocknet;
 export const localAuth = false;

@@ -4,7 +4,7 @@ import { getTxs, getTxsAsCSV, getTxsAsJSON } from '../lib/transactions';
 import DownloadLink from 'react-download-link';
 import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';
-import { mainnet, testnet } from '../lib/constants';
+import { chainSuffix, mainnet, testnet } from '../lib/constants';
 
 function dateOfTx(tx) {
   return tx.apiData?.burn_block_time_iso?.substring(0, 10) || 'pending';
@@ -58,8 +58,9 @@ export function SendManyTxList({ userSession }) {
         const txsByDate = _groupBy(transactions, dateOfTx);
         const txsObject = { transactions, txsByDate };
         setTxs(txsObject);
-        if (searchRef.current.value.trim()) {
-          filterAndGroup(txsObject, searchRef.current.value.trim());
+        const searchTerm = searchRef.current.value.trim();
+        if (searchTerm) {
+          filterAndGroup(txsObject, searchTerm);
         } else {
           setFilteredTxsByDate(txsByDate);
         }
@@ -68,7 +69,7 @@ export function SendManyTxList({ userSession }) {
         setStatus('Failed to get transactions', e);
         console.log(e);
       });
-  }, [userSession]);
+  }, [userSession, filterAndGroup]);
 
   const dates = filteredTxsByDate ? Object.keys(filteredTxsByDate).sort() : undefined;
   return (
@@ -93,7 +94,7 @@ export function SendManyTxList({ userSession }) {
                 type="text"
                 ref={searchRef}
                 className="input-group form-control"
-                placeholder="Search for address, date, amount"
+                placeholder="Search for tx, address, date, amount"
                 onChange={e => {
                   filterAndGroup(txs, e.target.value);
                 }}
@@ -190,9 +191,7 @@ export function SendManyTxList({ userSession }) {
         searchRef.current.value.trim().startsWith('0x') &&
         searchRef.current.value.trim().length === 66 ? (
           <a
-            href={`/txid/${searchRef.current.value.trim()}?chain=${
-              mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet'
-            }`}
+            href={`/txid/${searchRef.current.value.trim()}${chainSuffix}`}
           >
             See transaction details
           </a>

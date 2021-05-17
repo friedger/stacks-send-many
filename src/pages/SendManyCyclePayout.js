@@ -1,5 +1,6 @@
 import React from 'react';
 import { SendManyGroupTxs } from '../components/SendManyGroupTxs';
+import { chainSuffix } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
 const cycles = {
@@ -49,7 +50,7 @@ export default function SendManyDetails({ userSession, cycleId }) {
               Payout data available for cylces:{' '}
               {Object.keys(cycles).map(cycleId => (
                 <>
-                  <a href={`/cycle/${cycleId}`}>#{cycleId}</a>{' '}
+                  <a href={`/cycle/${cycleId}${chainSuffix}`}>#{cycleId}</a>{' '}
                 </>
               ))}
             </>
