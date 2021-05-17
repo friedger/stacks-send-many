@@ -50,9 +50,13 @@ export function Tx({ tx, onDetailsPage, hideEvents }) {
             onClick={openTxInExplorer}
           ></i>
         </div>
-        <div className="col-3 text-danger text-right small">
-          <Amount ustx={-1 * total} />
-        </div>
+        {total > 0 ? (
+          <div className="col-3 text-danger text-right small">
+            <Amount ustx={-1 * total} />
+          </div>
+        ) : (
+          <div className="col-3 text-right small">{(tx.apiData && tx.apiData.tx_status) || ''}</div>
+        )}
       </div>
 
       {!hideEvents &&

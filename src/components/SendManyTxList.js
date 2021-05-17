@@ -71,7 +71,7 @@ export function SendManyTxList({ userSession }) {
       });
   }, [userSession, filterAndGroup]);
 
-  const dates = filteredTxsByDate ? Object.keys(filteredTxsByDate).sort() : undefined;
+  const dates = filteredTxsByDate ? Object.keys(filteredTxsByDate).sort((a, b) => a < b) : undefined;
   return (
     <div>
       <div className="row m-2">
