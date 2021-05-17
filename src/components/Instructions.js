@@ -4,7 +4,7 @@ export function Instructions() {
       <h4>Instructions</h4>
       <ol className="list-group small">
         <li>
-          Enter recipients and amounts one per line, separate both with semicolon. If all memo field
+          Enter recipients and amounts one per line. If all memo field
           are empty "send-many" contract is used. Otherwise, "send-many-memo" is used.
         </li>
         <li>Review the data</li>
