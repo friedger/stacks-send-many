@@ -72,7 +72,8 @@ export async function getTxs(userSession) {
   const storage = new Storage({ userSession });
   let indexArray;
   try {
-    let indexFile = await storage.getFile(indexFileName);
+    let indexFile;
+    indexFile = await storage.getFile(indexFileName);
     indexArray = JSON.parse(indexFile);
     return Promise.all(
       indexArray.map(async txId => {
@@ -85,31 +86,37 @@ export async function getTxs(userSession) {
   }
 }
 
-export async function getTxsAsCSV(userSession) {
+export async function getTxsAsCSV(userSession, filter) {
   const txs = await getTxs(userSession);
   const txsAsCSV = txs
     .filter(tx => tx.apiData && tx.apiData.tx_status === 'success')
+    .filter(filter)
     .reduce((result, tx) => {
       return (
         result +
         tx.apiData.events
           .filter(e => e.event_type === 'stx_asset')
-          .map(e => {
-            return `${e.asset.recipient}, ${e.asset.amount / 1000000}, ${
-              tx.apiData.burn_block_time_iso
-            }, https://explorer.stacks.co/txid/${
-              tx.apiData.tx_id
-            }, https://stacks-send-many.pages.dev/txid/${tx.apiData.tx_id}\n`;
-          })
+          .reduce((eventResult, e) => {
+            return (
+              eventResult +
+              `${e.asset.recipient}, ${e.asset.amount / 1000000}, ${
+                tx.apiData.burn_block_time_iso
+              }, https://explorer.stacks.co/txid/${
+                tx.apiData.tx_id
+              }, https://stacks-send-many.pages.dev/txid/${tx.apiData.tx_id}\n`
+            );
+          }, '')
       );
     }, 'recipient, amount, timestamp, explorer_url, send_many_url\n');
+  console.log(txsAsCSV);
   return txsAsCSV;
 }
 
-export async function getTxsAsJSON(userSession) {
+export async function getTxsAsJSON(userSession, filter) {
   const txs = await getTxs(userSession);
   const txsAsJSON = txs
     .filter(tx => tx.apiData && tx.apiData.tx_status === 'success')
+    .filter(filter)
     .reduce((result, tx) => {
       return result.concat(
         tx.apiData.events

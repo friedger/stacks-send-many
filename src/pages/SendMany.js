@@ -3,7 +3,7 @@ import { Instructions } from '../components/Instructions';
 import { Profile } from '../components/Profile';
 import { SendManyInputContainer } from '../components/SendManyInputContainer';
 import { SendManyTxList } from '../components/SendManyTxList';
-import { testnet } from '../lib/constants';
+import { mocknet, testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
 export default function SendMany({ userSession }) {
@@ -12,8 +12,8 @@ export default function SendMany({ userSession }) {
     return <div>Loading</div>;
   }
   return (
-    <main className="panel-welcome mt-5 container">
-      <div className="lead row mt-5">
+    <main className="panel-welcome mt-2 container">
+      <div className="lead row mt-2">
         <div className="col-xs-10 col-md-12 mx-auto px-1 mb-4">
           <div className="Profile">
             <div className="row">
@@ -32,9 +32,11 @@ export default function SendMany({ userSession }) {
                 </div>
               </div>
 
-              <div className="col-sm-12 col-md-8 p-4 mr-n4 my-2">
-                <div className="col-xs-10 col-md-12 mx-auto py-4 bg-light">
-                  <h3 className="font-weight-bold">Send {testnet ? 'Test' : ''} Stacks (STX)</h3>
+              <div className="col-sm-12 col-md-8 p-4 container">
+                <div className="col-xs-10 col-md-12 p-2 bg-light">
+                  <h3 className="font-weight-bold">
+                    Send {testnet || mocknet ? 'Test' : ''} Stacks (STX)
+                  </h3>
                   <SendManyInputContainer ownerStxAddress={ownerStxAddress} />
                 </div>
                 <div className="col-xs-10 col-md-12 mx-auto my-4 py-4 bg-light">

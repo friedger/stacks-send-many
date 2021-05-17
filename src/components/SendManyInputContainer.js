@@ -79,7 +79,9 @@ export function SendManyInputContainer() {
           </>
         )}
         {total + 1000 > account.balance && (
-          <>That is more than you have ({account.balance / 1000000})</>
+          <small>
+            That is more than you have. You have <Amount ustx={account.balance} />
+          </small>
         )}
       </>
     );

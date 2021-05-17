@@ -9,17 +9,36 @@ function dateOfTx(tx) {
   return tx.apiData?.burn_block_time_iso?.substring(0, 10) || 'pending';
 }
 
-export function SendManyTxList({ ownerStxAddress, userSession }) {
-  const spinner = useRef();
-  const [status, setStatus] = useState();
-  const [txsByDate, setTxsByDate] = useState();
+function foundInSenderAddress(tx, search) {
+  return tx.apiData && tx.apiData.sender_address.indexOf(search) >= 0;
+}
 
+function foundInEvents(tx, search) {
+  return (
+    tx.apiData &&
+    tx.apiData.events.findIndex(
+      e =>
+        e.event_type === 'stx_asset' &&
+        (e.asset.recipient.indexOf(search) >= 0 || e.asset.amount.indexOf(search) >= 0)
+    ) >= 0
+  );
+}
+
+export function SendManyTxList({ ownerStxAddress, userSession }) {
+  const [status, setStatus] = useState();
+  const searchRef = useRef();
+  const [txs, setTxs] = useState();
+  const [filteredTxsByDate, setFilteredTxsByDate] = useState();
+  const [exportFormat, setExportFormat] = useState('csv');
+  const [exporting, setExporting] = useState(false);
   useEffect(() => {
     setStatus('Loading');
     getTxs(userSession)
       .then(async transactions => {
         setStatus(undefined);
-        setTxsByDate(_groupBy(transactions, dateOfTx));
+        const txsByDate = _groupBy(transactions, dateOfTx);
+        setTxs({ transactions, txsByDate });
+        setFilteredTxsByDate(txsByDate);
       })
       .catch(e => {
         setStatus('Failed to get transactions', e);
@@ -27,91 +46,128 @@ export function SendManyTxList({ ownerStxAddress, userSession }) {
       });
   }, [userSession]);
 
-  const dates = txsByDate ? Object.keys(txsByDate) : undefined;
+  const filter = search => t => {
+    return !search || foundInSenderAddress(t, search) || foundInEvents(t, search);
+  };
+  const filterAndGroup = search => {
+    if (!txs) return;
+    setFilteredTxsByDate(_groupBy(txs.transactions.filter(filter(search)), dateOfTx));
+  };
+  const dates = filteredTxsByDate ? Object.keys(filteredTxsByDate).sort() : undefined;
   return (
     <div>
-      <div className="row">
-        <div className="col-6 mb-4">
+      <div className="row m-2">
+        <div className="col-6">
           <h5>Recent Send Many transactions</h5>
         </div>
-        <div className="col-6">
-          <form>
-            <div className="form-row align-items-center">
-              <div className="col-auto mb-2 input-group bg-white input-group-sm">
-                <div className="input-group-prepend bg-white">
-                  <img src="/search.png" width="32" height="31" className="p-2 input-group-text bg-white" alt="search" id="inputGroup-sizing-sm"/>
-                </div>
-                <input type="text" className="form-control mr-2" placeholder="Search for address, date, amount"/>
-                <div  className="btn-group" role="group">
-                <div className="dropdown">
-                  <button className="btn btn-sm btn-dark dropdown-toggle mb-2" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Export
-                  </button>
-                  <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <div className="col-6 container">
+          <div className="row">
+            <div className="col-12 input-group bg-white input-group-sm">
+              <div className="input-group-prepend bg-white">
+                <img
+                  src="/search.png"
+                  width="32"
+                  height="32"
+                  className="p-2 input-group-text bg-white"
+                  alt="search"
+                />
+              </div>
+              <input
+                type="text"
+                ref={searchRef}
+                className="input-group form-control"
+                placeholder="Search for address, date, amount"
+                onChange={e => {
+                  filterAndGroup(e.target.value);
+                }}
+              />
+            </div>
+            <div className="col-12 text-right">
+              <div className="input-group mt-2">
+                <div className="input-group-prepend">
+                  {exportFormat === 'csv' ? (
                     <DownloadLink
-                      label="Export as JSON"
-                      filename="transactions.json"
-                      className="dropdown-item text-decoration-none text-dark"
-                      exportFile={async () => {
-                        const txs = await getTxsAsJSON(userSession);
-                        return JSON.stringify(txs);
-                      }}
-                    />
-                    <DownloadLink
-                      label="Export as CSV"
+                      style={{ textDecoration: '' }}
+                      className="btn btn-dark m-0"
+                      tagName="button"
+                      label="Export"
                       filename="transactions.csv"
-                      className="dropdown-item text-decoration-none text-dark"
                       exportFile={async () => {
-                        return await getTxsAsCSV(userSession);
+                        setExporting(true);
+                        const result = await getTxsAsCSV(
+                          userSession,
+                          filter(searchRef.current.value.trim())
+                        );
+                        setExporting(false);
+                        return result;
                       }}
                     />
-                  </div>
+                  ) : (
+                    <DownloadLink
+                      style={{ textDecoration: '' }}
+                      className="btn btn-dark m-0"
+                      tagName="button"
+                      label="Export"
+                      filename="transactions.json"
+                      exportFile={async () => {
+                        setExporting(true);
+                        const txs = await getTxsAsJSON(
+                          userSession,
+                          filter(searchRef.current.value.trim())
+                        );
+                        const result = JSON.stringify(txs);
+                        setExporting(false);
+                        return result;
+                      }}
+                    />
+                  )}
                 </div>
-                </div>
+                <select
+                  className="form-control"
+                  value={exportFormat}
+                  onChange={e => setExportFormat(e.target.value)}
+                  aria-label="Export format"
+                >
+                  <option value="csv">as CSV</option>
+                  <option value="json">as JSON</option>
+                </select>
               </div>
             </div>
-          </form>
+          </div>
         </div>
       </div>
       <div
-        ref={spinner}
         role="status"
-        className="d-none spinner-border spinner-border-sm text-info align-text-top mr-2"
+        className={`${
+          exporting ? '' : 'd-none'
+        } spinner-border spinner-border-sm text-info align-text-top mr-2 inline`}
       />
       {dates && dates.length > 0 && (
         <>
           {dates.map((date, key) => {
             return (
-              <div className="list-group" id="transactions">
-              <Fragment key={key}>
+              <div className="list-group m-2" id="transactions" key={key}>
                 <div className="list-group-item">
-                <div className="d-flex w-100 justify-content-between">
-                  <span className="small">{date}</span>
-                  <span className="small font-weight-bold">Total: </span>
+                  <div className="d-flex w-100 justify-content-between">
+                    <span className="small">{date}</span>
+                  </div>
+                  {filteredTxsByDate[date].map((tx, txKey) => {
+                    return (
+                      <Fragment key={txKey}>
+                        <div className="p-2 mx-n4 mt-2 mb-2" key={txKey}>
+                          <Tx tx={tx} />
+                        </div>
+                      </Fragment>
+                    );
+                  })}
                 </div>
-                {txsByDate[date].map((tx, txKey) => {
-                  return (
-                    <>
-                      <div className="p-2 mx-n4 mt-2 mb-2" key={txKey}>
-                        <Tx tx={tx} />
-                      </div>
-                    </>
-                  );
-                })}
-                </div>
-              </Fragment>
               </div>
             );
           })}
         </>
       )}
       {!status && (!dates || dates.length === 0) && <>No transactions yet.</>}
-      {status && (
-        <>
-          <div>{status}</div>
-        </>
-      )}
+      {status && <div className="m-2">{status}</div>}
     </div>
-
   );
 }

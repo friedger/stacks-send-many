@@ -1,4 +1,3 @@
-import { hexToCV } from '@stacks/transactions';
 import React from 'react';
 import { Address } from './Address';
 import { Amount } from './Amount';
@@ -21,7 +20,6 @@ export function Tx({ tx }) {
     tx.apiData.events.filter(event => {
       return event.event_type === 'stx_asset';
     });
-  console.log(tx.apiData);
   const total = txEvents.reduce((sum, e) => sum + parseInt(e.asset.amount), 0);
   return (
     <div className="small container">
@@ -44,7 +42,7 @@ export function Tx({ tx }) {
               <div className="col-8">
                 <Address addr={event.asset.recipient} />
               </div>
-              <div className="col-3 text-danger text-right small" >
+              <div className="col-3 text-danger text-right small">
                 <Amount ustx={-1 * event.asset.amount} />
               </div>
             </div>
