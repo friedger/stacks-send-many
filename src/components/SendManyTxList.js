@@ -80,12 +80,12 @@ export function SendManyTxList({ userSession }) {
         </div>
         <div className="col-6 container">
           <div className="row">
-            <div className="col-12 input-group bg-white input-group-sm">
+            <div className="col-md-6 col-xs-12 input-group input-group-sm p-0">
               <div className="input-group-prepend bg-white">
                 <img
                   src="/search.png"
                   width="32"
-                  height="32"
+                  height="31"
                   className="p-2 input-group-text bg-white"
                   alt="search"
                 />
@@ -100,13 +100,13 @@ export function SendManyTxList({ userSession }) {
                 }}
               />
             </div>
-            <div className="col-12 text-right">
-              <div className="input-group mt-2">
+            <div className="col-md-6 col-xs-12 text-right pl-1">
+              <div className="input-group">
                 <div className="input-group-prepend">
                   {exportFormat === 'csv' ? (
                     <DownloadLink
                       style={{ textDecoration: '' }}
-                      className="btn btn-dark m-0"
+                      className="btn btn-dark m-0 btn-sm"
                       tagName="button"
                       label="Export"
                       filename="transactions.csv"
@@ -123,7 +123,7 @@ export function SendManyTxList({ userSession }) {
                   ) : (
                     <DownloadLink
                       style={{ textDecoration: '' }}
-                      className="btn btn-dark m-0"
+                      className="btn btn-dark m-0 btn-sm"
                       tagName="button"
                       label="Export"
                       filename="transactions.json"
@@ -141,7 +141,7 @@ export function SendManyTxList({ userSession }) {
                   )}
                 </div>
                 <select
-                  className="form-control"
+                  className="form-control custom-select-sm small"
                   value={exportFormat}
                   onChange={e => setExportFormat(e.target.value)}
                   aria-label="Export format"

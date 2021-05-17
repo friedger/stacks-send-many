@@ -33,8 +33,8 @@ export default function SendMany({ userSession }) {
               </div>
 
               <div className="col-sm-12 col-md-8 p-4 container">
-                <div className="col-xs-10 col-md-12 p-2 bg-light">
-                  <h3 className="font-weight-bold">
+                <div className="col-xs-10 col-md-12 p-2 bg-light p-4">
+                  <h3 className="font-weight-bold mb-4">
                     Send {testnet || mocknet ? 'Test' : ''} Stacks (STX)
                   </h3>
                   <SendManyInputContainer ownerStxAddress={ownerStxAddress} />
