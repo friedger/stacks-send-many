@@ -4,7 +4,7 @@ import { Address } from './Address';
 import { Amount } from './Amount';
 import { AmountFiat } from './AmountFiat';
 import { AmountStx } from './AmountStx';
-export function Tx({ tx, onDetailsPage, hideEvents }) {
+export function Tx({ tx, onDetailsPage, hideEvents, hideHeader }) {
   const apiData = tx.apiData;
   const txId = apiData.tx_id;
   const copyToClipboard = () => {
@@ -26,38 +26,42 @@ export function Tx({ tx, onDetailsPage, hideEvents }) {
   const total = txEvents.reduce((sum, e) => sum + parseInt(e.asset.amount), 0);
   return (
     <div className="small container">
-      <div className="row">
-        <div className="col-lg-7 col-xs-12">
-          <span title={txId}>
-            {txId.substr(0, 7)}...{txId.substr(58)}
-          </span>
-          <i
-            className="p-1 bi bi-clipboard"
-            role="button"
-            title="copy"
-            onClick={copyToClipboard}
-          ></i>
-          <i
-            className={`${onDetailsPage ? 'd-none' : ''} p-1 bi bi-link`}
-            role="button"
-            title="details"
-            onClick={openTx}
-          ></i>
-          <i
-            className="p-1 bi bi-link-45deg"
-            role="button"
-            title="explorer"
-            onClick={openTxInExplorer}
-          ></i>
-        </div>
-        {total > 0 ? (
-          <div className="col-lg-5 col-xs-12 text-danger text-right small">
-            <Amount ustx={-1 * total} />
+      {!hideHeader && (
+        <div className="row">
+          <div className="col-lg-7 col-xs-12">
+            <span title={txId}>
+              {txId.substr(0, 7)}...{txId.substr(58)}
+            </span>
+            <i
+              className="p-1 bi bi-clipboard"
+              role="button"
+              title="copy"
+              onClick={copyToClipboard}
+            ></i>
+            <i
+              className={`${onDetailsPage ? 'd-none' : ''} p-1 bi bi-link`}
+              role="button"
+              title="details"
+              onClick={openTx}
+            ></i>
+            <i
+              className="p-1 bi bi-link-45deg"
+              role="button"
+              title="explorer"
+              onClick={openTxInExplorer}
+            ></i>
           </div>
-        ) : (
-          <div className="col-lg-5 col-xs-12 text-right small">{(tx.apiData && tx.apiData.tx_status) || ''}</div>
-        )}
-      </div>
+          {total > 0 ? (
+            <div className="col-lg-5 col-xs-12 text-danger text-right small">
+              <Amount ustx={-1 * total} />
+            </div>
+          ) : (
+            <div className="col-lg-5 col-xs-12 text-right small">
+              {(tx.apiData && tx.apiData.tx_status) || ''}
+            </div>
+          )}
+        </div>
+      )}
 
       {!hideEvents &&
         txEvents &&

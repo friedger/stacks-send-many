@@ -21,7 +21,7 @@ export function SendManyTransfer({ userSession, txId, eventIndex }) {
         setStatus(undefined);
         setTx(transaction);
         setEvent(transaction.apiData.events[eventIndex]);
-        console.log({ transaction });
+        console.log({ transaction, event });
         setLoading(false);
       })
       .catch(e => {
@@ -62,9 +62,9 @@ export function SendManyTransfer({ userSession, txId, eventIndex }) {
               <b>"{hexToCV(memos[0]).buffer.toString()}"</b>
             </>
           )}
-          {event && (
-            <div className="list-group m-4">
-              <div className="list-group-item">
+          <div className="list-group m-4">
+            <div className="list-group-item container">
+              {event ? (
                 <div className="row">
                   <div className="col-8">
                     <small>
@@ -92,9 +92,11 @@ export function SendManyTransfer({ userSession, txId, eventIndex }) {
                     <Amount ustx={event.asset.amount} />
                   </div>
                 </div>
-              </div>
+              ) : (
+                <>Invalid event index {eventIndex}</>
+              )}
             </div>
-          )}
+          </div>
           <div className="p-2">
             This STX transfer is part of following transaction:
             <Tx tx={tx} hideEvents />

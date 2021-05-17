@@ -8,7 +8,7 @@ import { Tx } from './Tx';
 
 export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
   const [status, setStatus] = useState();
-  const [tx, setTx] = useState();
+  const [allTxs, setAllTxs] = useState();
   const [progress, setProgress] = useState(100);
 
   useEffect(() => {
@@ -19,15 +19,13 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
         try {
           setProgress(100 / (txList.length + 1));
           const firstTx = await getTx(txList[0], userSession);
-          console.log(firstTx.apiData.events.length, firstTx.apiData.event_count);
+          const txs = [firstTx];
           for (let i = 1; i < txList.length; i++) {
             setProgress(((i + 1) * 100) / (txList.length + 1));
             const transaction = await getTx(txList[i], userSession);
-            firstTx.apiData.events = firstTx.apiData.events.concat(transaction.apiData.events);
-            firstTx.apiData.event_count += transaction.apiData.event_count;
-            console.log(firstTx.apiData.events.length, firstTx.apiData.event_count);
+            txs.push(transaction);
           }
-          setTx(firstTx);
+          setAllTxs({ firstTx, txs });
           setProgress(100);
         } catch (e) {
           setStatus(`Failed to get transactions`);
@@ -39,12 +37,19 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
     }
   }, [txList, userSession]);
 
-  const txEvents =
-    tx &&
-    tx.apiData &&
-    tx.apiData.events.filter(event => {
-      return event.event_type === 'stx_asset';
-    });
+  const txEvents = allTxs
+    ? allTxs.txs.reduce((result, tx) => {
+        console.log({ tx });
+        if (tx.apiData) {
+          result.concat(
+            tx.apiData.events.filter(event => {
+              return event.event_type === 'stx_asset';
+            })
+          );
+        }
+        return result;
+      }, [])
+    : [];
   txEvents &&
     txEvents.sort((e1, e2) =>
       (e1.asset.recipient !== ownerStxAddress && e2.asset.recipient !== ownerStxAddress) ||
@@ -55,15 +60,21 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
         : 1
     );
   const showMemo =
-    tx && tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
-  const memos = showMemo
-    ? new Array(
-        ...new Set(
-          tx.apiData.events.filter((_, index) => index % 2 === 1).map(e => e.contract_log.value.hex)
-        )
+    allTxs &&
+    allTxs.firstTx &&
+    allTxs.firstTx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
+  const duplicateMemos = allTxs
+    ? allTxs.txs.reduce(
+        (result, tx) =>
+          result.concat(
+            tx.apiData.events
+              .filter((_, index) => index % 2 === 1)
+              .map(e => e.contract_log.value.hex)
+          ),
+        []
       )
     : [];
-  console.log(txEvents);
+  const memos = showMemo ? new Array(...new Set(duplicateMemos)) : [];
   const showMemoPerRecipient = showMemo && memos.length > 1;
   return (
     <div>
@@ -77,28 +88,37 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
           aria-valuemax="100"
         />
       </div>
-      {tx && tx.apiData && (
+      {allTxs && allTxs.firstTx && allTxs.firstTx.apiData && (
         <>
-          {tx.apiData.burn_block_time_iso?.substring(0, 10) || 'pending'} ({tx.apiData.tx_status})
+          {allTxs.firstTx.apiData.burn_block_time_iso?.substring(0, 10) || 'pending'} (
+          {allTxs.firstTx.apiData.tx_status})
           <br />
           from{' '}
           <span
-            className={`${tx.apiData.sender_address === ownerStxAddress ? 'font-weight-bold' : ''}`}
+            className={`${
+              allTxs.firstTx.apiData.sender_address === ownerStxAddress ? 'font-weight-bold' : ''
+            }`}
           >
-            <Address addr={tx.apiData.sender_address} />
+            <Address addr={allTxs.firstTx.apiData.sender_address} />
           </span>
           <br />
           {showMemo && !showMemoPerRecipient && <b>"{hexToCV(memos[0]).buffer.toString()}"</b>}
           <div className="list-group m-2">
             <div className="list-group-item">
-              <Tx tx={tx} onDetailsPage />
+              {allTxs.txs.map((tx, key) => (
+                <Tx tx={tx} key={key} onDetailsPage hideHeader={tx !== allTxs.firstTx} />
+              ))}
             </div>
           </div>
         </>
       )}
 
-      {tx && !tx.apiData && tx.data && <>Transaction not found on server.</>}
-      {progress >= 100 && !tx && <>No transactions found with id {JSON.stringify(txList)}.</>}
+      {allTxs && allTxs.firstTx && !allTxs.firstTx.apiData && allTxs.firstTx.data && (
+        <>Transaction not found on server.</>
+      )}
+      {progress >= 100 && allTxs && !allTxs.firstTx && (
+        <>No transactions found with id {JSON.stringify(txList)}.</>
+      )}
       {status && (
         <>
           <div>{status}</div>
