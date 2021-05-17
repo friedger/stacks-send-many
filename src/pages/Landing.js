@@ -43,6 +43,10 @@ export default function Landing(props) {
                   This app provides a web interface for these two contracts. User can make bulk
                   transfers easily, search them, export them and share links to individual amounts.
                 </p>
+                <p className="cart-text mb-3">
+                  For testing purposes you can use testnet by attaching <pre>?chain=testnet</pre> in
+                  the address bar.
+                </p>
               </div>
 
               <p className="card-link mb-5">
