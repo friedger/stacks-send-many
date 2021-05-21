@@ -37,7 +37,7 @@ export default function App(props) {
         <a className="navbar-brand" href="/">
           <img src="/stacks.png" width="100" alt="Logo" />
         </a>
-        <h1>Send Many</h1>
+        <h1>CityCoins</h1>
         <div>
           <Rate />
           <Network />
