@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Support a city by mining, buying, or holding their citycoin, all while generating yield in STX and BTC.",
   "author": "Jason Schrader",
-  "license": "GPLV3",
+  "license": "GPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/citycoins/citycoin-ui.git"
