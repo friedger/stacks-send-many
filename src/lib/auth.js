@@ -28,7 +28,7 @@ export const useConnect = () => {
     redirectTo: '/',
     manifestPath: '/manifest.json',
     appDetails: {
-      name: 'Send Many',
+      name: 'CityCoins',
       icon: '/android-icon-192x192.png',
     },
   };
