@@ -38,10 +38,11 @@ inspect {
 }
 
 .btn-primary:hover {
-  background-color: #4166dc;
+  background-color: #000000;
 }
 
-.navbar-dark {
+.navbar-dark,
+.bg-footer {
   background-color: #000000;
 }
 
