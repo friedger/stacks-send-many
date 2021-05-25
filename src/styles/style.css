@@ -65,3 +65,9 @@ inspect {
 .balance {
   font-size: 20pt;
 }
+
+/* Adjust sticky top for profile */
+
+.sticky-top-profile {
+  top: 115px;
+}

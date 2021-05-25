@@ -202,11 +202,11 @@ export function CityCoinContainer() {
   return (
     <div>
       <hr />
-      <div class="mb-3">
+      <div className="mb-3">
         <CityCoinRegister />
       </div>
       <hr />
-      <div class="mb-3">
+      <div className="mb-3">
         <CityCoinMining />
       </div>
       <hr />

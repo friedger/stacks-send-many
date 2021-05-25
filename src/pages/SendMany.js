@@ -1,14 +1,9 @@
 import React from 'react';
-import { Instructions } from '../components/Instructions';
 import { Profile } from '../components/Profile';
-import { SendManyInputContainer } from '../components/SendManyInputContainer';
 import { CityCoinContainer } from '../components/CityCoinContainer'
 import { SendManyTxList } from '../components/SendManyTxList';
 import { mocknet, testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
-import { CityCoinRegister } from '../components/CityCoinRegister';
-import { CityCoinMining } from '../components/CityCoinMining';
-import { CityCoinStacking } from '../components/CityCoinStacking';
 
 export default function SendMany({ userSession }) {
   const { ownerStxAddress } = useStxAddresses(userSession);
@@ -19,10 +14,10 @@ export default function SendMany({ userSession }) {
     <main className="panel-welcome mt-2 container">
       <div className="lead row mt-2">
         <div className="col-xs-10 col-md-12 mx-auto px-1 mb-4">
-          <div className="Profile">
+          <div className="Profile position-sticky">
             <div className="row">
               <div className="col-sm-12 col-md-4 ">
-                <div className="p-4 m-4 mx-auto bg-light rounded">
+                <div className="p-4 m-4 mx-auto bg-light rounded sticky-top sticky-top-profile">
                   <Profile
                     stxAddress={ownerStxAddress}
                     updateStatus={s => {
@@ -30,9 +25,6 @@ export default function SendMany({ userSession }) {
                     }}
                     showAddress
                   />
-                </div>
-                <div className="p-4 m-4 mx-auto bg-light rounded">
-                  <Instructions />
                 </div>
               </div>
 
