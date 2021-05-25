@@ -33,9 +33,9 @@ export default function App(props) {
 
   return (
     <Connect authOptions={authOptions}>
-      <nav className="navbar sticky-top navbar-dark text-light p-2" style={styles}>
+      <nav className="navbar sticky-top navbar-dark text-light p-2">
         <a className="navbar-brand" href="/">
-          <img src="/stacks.png" width="100" alt="Logo" />
+          <img src="/citycoins_icon_white.png" width="100" alt="Logo" />
         </a>
         <h1>CityCoins</h1>
         <div>
