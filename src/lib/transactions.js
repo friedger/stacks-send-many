@@ -2,6 +2,7 @@ import { serializeCV, hexToCV as stacksHexToCV } from '@stacks/transactions';
 import { connectWebSocketClient } from '@stacks/blockchain-api-client';
 import React, { useState, useEffect, useRef } from 'react';
 import {
+  chainSuffix,
   mainnet,
   mocknet,
   STACKS_API_WS_URL,
@@ -242,7 +243,7 @@ export function TxStatus({ txId, resultPrefix }) {
       {processingResult.loading && (
         <>
           Checking transaction status:{' '}
-          <a href={`https://explorer.stacks.co/txid/${normalizedTxId}?chain=testnet`}>
+          <a href={`https://explorer.stacks.co/txid/${normalizedTxId}${chainSuffix}`}>
             {normalizedTxId}
           </a>
         </>
