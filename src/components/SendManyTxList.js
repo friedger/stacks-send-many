@@ -7,7 +7,7 @@ import { Tx } from './Tx';
 import { chainSuffix } from '../lib/constants';
 
 function dateOfTx(tx) {
-  return tx.apiData?.burn_block_time_iso?.substring(0, 10) || 'pending';
+  return tx.apiData?.burn_block_time_iso?.substring(0, 10) || 'unconfirmed';
 }
 
 function foundInSenderAddress(tx, search) {
