@@ -1,7 +1,7 @@
 import React from 'react';
 import { useConnect } from '../lib/auth';
 
-// Landing page demonstrating Blockstack connect for registration
+// Landing page with Stacks Connect for authentication
 
 export default function Landing(props) {
   const { handleOpenAuth } = useConnect();
@@ -11,17 +11,17 @@ export default function Landing(props) {
       <div className="jumbotron jumbotron-fluid pt-3 mb-0">
         <div className="container">
           <div className="panel-landing text-center mt-3">
-            <p className="lead">
-              A UI to interact with the CityCoins smart contract.
+            <p className="lead font-weight-bold">
+              A UI to interact with a CityCoin smart contract.
             </p>
 
             <p className="alert alert-info  border-info">
-              CityCoins are a way to support a city by mining, buying, or holding their citycoin, all while generating yield in STX and BTC.
+              CityCoins are a new way to support a city by mining, buying, or holding their CityCoin.
             </p>
 
             <div className="card mt-4 border-info">
               <div className="card-header">
-                <h5 className="card-title">Proof of Transfer with Purpose</h5>
+                <h5 className="card-title">Proof of Transfer Repurposed</h5>
               </div>
               <div className="card-body">
                 <p className="card-text mb-3 text-left">

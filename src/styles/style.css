@@ -1,15 +1,14 @@
 /* Globals */
 
 :root {
-  /* https://projects.invisionapp.com/boards/HE2VVROFSGB27 */
   --brand-background: #270f34;
   --brand-lines: #4b3457;
   /* Blockstack colors */
   --brand-dark: #211f6d;
   --brand-mild: #c4d8e5;
   --brand-greyish: #f1f6f9;
-  --brand-bright: #3700ff;
-  --brand-accent: #00d4ff;
+  --brand-bright: #3059D9;
+  --brand-accent: #F7C600;
 }
 
 html,
@@ -29,8 +28,22 @@ inspect {
   opacity: 0.92;
 }
 
-.navbar-dark {
-  background-color: #343434;
+.bg-primary {
+  background-color: #3059D9 !important;
+}
+
+.btn-primary {
+  background-color: #3059D9;
+  border-color: #3059D9;
+}
+
+.btn-primary:hover {
+  background-color: #000000;
+}
+
+.navbar-dark,
+.bg-footer {
+  background-color: #000000;
 }
 
 /* Avatar */
@@ -64,4 +77,10 @@ inspect {
 
 .balance {
   font-size: 20pt;
+}
+
+/* Adjust sticky top for profile */
+
+.sticky-top-profile {
+  top: 115px;
 }
