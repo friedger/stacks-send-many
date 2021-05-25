@@ -27,6 +27,13 @@ const cycles = {
     '0xd14c641281eeb11da1329d9b9e488710f20959c15d276b7400ceb10e1b3c0a14',
     '0x6c0029aa859d719d65b635eadfae28b2e941c91000df0a49e5d7034268eab755',
   ],
+  8: [
+    '0x273fc0b873c4ec7b78064b33251de8b1f358bfcb260ca0691541b2dd5b36a9a2',
+    '0xb4e9ce8ade0dd0f1539c6b55b175e530a499f963793a240a12c856a105341710',
+    '0x3f51493034a6962430cb8f728612bb8ef221342fc6658633705c2e756a426cd7',
+    '0x7dd6e079036232a5e832a0516f2bf87c9edbd97683f4ac16649f9d0e41aeca03',
+    '0xa81402d4cf2d8e3d42b42066c5cd7c30eb642d24c1799c2d5f37449fb38bc343',
+  ],
 };
 export default function SendManyDetails({ userSession, cycleId }) {
   const { ownerStxAddress } = useStxAddresses();
