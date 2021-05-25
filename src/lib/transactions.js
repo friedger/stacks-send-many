@@ -43,7 +43,7 @@ export function txUrl(txId) {
   if (mocknet) {
     return `${STACK_API_URL}/extended/v1/tx/0x${txId}`;
   } else {
-    return `https://explorer.stacks.co/txid/0x${txId}?chain=testnet`;
+    return `https://explorer.stacks.co/txid/0x${txId}${chainSuffix}`;
   }
 }
 
