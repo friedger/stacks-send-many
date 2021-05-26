@@ -25,14 +25,16 @@ export const authOrigin = localAuth
   ? 'https://pr-725.app.stacks.engineering/'
   : 'https://app.blockstack.org';
 
+// TODO: update mocknet address?
 export const CONTRACT_ADDRESS = mocknet
   ? 'STB44HYPYAT2BB2QE513NSP81HTMYWBJP02HPGK6' //ADDR1 from Stacks.toml
   : testnet
-  ? 'STR8P3RD1EHA8AA37ERSSSZSWKS9T2GYQFGXNA4C'
-  : 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE';
+  ? 'STAP1KAFW2BBAD840FSPJJJ7EVYXPCEMXQYAKNPS'
+  : 'SPAP1KAFW2BBAD840FSPJJJ7EVYXPCEMXNH3GNT9';
 export const GENESIS_CONTRACT_ADDRESS = 'ST000000000000000000002AMW42H';
 export const BNS_CONTRACT_NAME = 'bns';
 
+// TODO: add Freehold API endpoint?
 export const STACK_API_URL = localNode
   ? 'http://localhost:3999'
   : mainnet
