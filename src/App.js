@@ -10,14 +10,7 @@ import SendManyDetails from './pages/SendManyDetails';
 import SendManyCyclePayout from './pages/SendManyCyclePayout';
 import { Rate } from './components/Rate';
 import { Network } from './components/Network';
-import metaverse from './styles/metaverse.png';
 import SendManyTransferDetails from './pages/SendManyTransferDetails';
-
-const styles = {
-  backgroundPosition: 'center',
-  backgroundSize: 'cover',
-  backgroundImage: `url(${metaverse})`,
-};
 
 export default function App(props) {
   const { authOptions } = useConnect();
