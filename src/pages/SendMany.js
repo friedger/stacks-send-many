@@ -17,7 +17,7 @@ export default function SendMany({ userSession }) {
           <div className="Profile position-sticky">
             <div className="row">
               <div className="col-sm-12 col-md-4 ">
-                <div className="p-4 m-4 mx-auto bg-light rounded sticky-top sticky-top-profile">
+                <div className="shadow p-4 m-4 mx-auto bg-light rounded sticky-top sticky-top-profile">
                   <Profile
                     stxAddress={ownerStxAddress}
                     updateStatus={s => {
@@ -29,10 +29,7 @@ export default function SendMany({ userSession }) {
               </div>
 
               <div className="col-sm-12 col-md-8 p-4 container">
-                <div className="col-xs-10 col-md-12 p-2 bg-light p-4 rounded">
-                  <h3 className="font-weight-bold mb-4">
-                    CityCoin Functions
-                  </h3>
+                <div className="col-xs-10 col-md-12 p-2 bg-white p-4 shadow rounded">
                   <CityCoinContainer />
                 </div>
                 <div className="col-xs-10 col-md-12 mx-auto my-4 py-4 bg-light rounded">

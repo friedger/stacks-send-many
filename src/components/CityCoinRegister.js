@@ -3,11 +3,9 @@ export function CityCoinRegister() {
     width: '10%',
   };
 
-  
-
   return (
     <>
-      <h4>Activate CityCoin Mining</h4>
+      <h3>Activate CityCoin Mining</h3>
       <p>Before mining can begin, at least 20 miners must register with the contract to signal activation.</p>
       <ul>
         <li>Miners Registered: 2</li>

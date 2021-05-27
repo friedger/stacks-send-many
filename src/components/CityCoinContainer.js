@@ -200,21 +200,20 @@ export function CityCoinContainer() {
   };
 
   return (
-    <div>
-      <hr />
-      <div className="mb-3">
+    <div>   
+      <div>
         <CityCoinRegister />
       </div>
-      <hr />
-      <div className="mb-3">
+      <br /><hr /><br />
+      <div>
         <CityCoinMining />
       </div>
-      <hr />
+      <br /><hr /><br />
       <div>
         <CityCoinStacking />
       </div>
-      <br /><br /><br /><br />
-      <p>Ignore items down here!</p>
+      <br /><hr /><br />
+      <h4>Old Section - to be removed</h4>
       <div className="NoteField">
         {rows.map((row, index) => {
           return (
