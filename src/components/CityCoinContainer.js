@@ -26,7 +26,7 @@ export function CityCoinContainer() {
       });
   }, []);
 
-  if (!miningActivated) {
+  if (miningActivated) {
     return (
       <div>
         <CityCoinRegister ownerStxAddress={ownerStxAddress} />
