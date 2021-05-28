@@ -1,8 +1,8 @@
 import React from 'react';
 import { Profile } from '../components/Profile';
 import { CityCoinContainer } from '../components/CityCoinContainer';
-import { SendManyTxList } from '../components/SendManyTxList';
 import { useStxAddresses } from '../lib/hooks';
+import { CityCoinTxList } from '../components/CityCoinTxList';
 
 export default function CityCoin({ userSession }) {
   const { ownerStxAddress } = useStxAddresses(userSession);
@@ -31,8 +31,8 @@ export default function CityCoin({ userSession }) {
                 <div className="col-xs-10 col-md-12 p-2 bg-white p-4 shadow rounded">
                   <CityCoinContainer />
                 </div>
-                <div className="col-xs-10 col-md-12 mx-auto my-4 py-4 bg-light rounded">
-                  <SendManyTxList ownerStxAddress={ownerStxAddress} userSession={userSession} />
+                <div className="col-xs-10 col-md-12 p-2 bg-white p-4 shadow rounded  mt-4">
+                  <CityCoinTxList />
                 </div>
               </div>
             </div>
