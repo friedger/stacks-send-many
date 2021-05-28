@@ -4,7 +4,7 @@ import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/consta
 import { TxStatus } from './TxStatus';
 import { uintCV } from '@stacks/transactions';
 
-export function CityCoinMining() {
+export function CityCoinMiningClaim() {
   const amountRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
@@ -29,42 +29,21 @@ export function CityCoinMining() {
 
   return (
     <>
-      <h3>Mine CityCoins</h3>
-      <p>
-        Mining CityCoins is done by spending STX in a given Stacks block. A winner is selected by a
-        VRF weighted by the miners' proportion of contributions that block. Rewards can be withdrawn
-        after 100 block maturity window.
-      </p>
-      <div className="input-group mb-3">
-        <input
-          type="text"
-          className="form-control"
-          ref={amountRef}
-          aria-label="Amount in STX"
-          placeholder="Amount in STX"
-        />
-        <div className="input-group-append">
-          <span className="input-group-text">STX</span>
-        </div>
-      </div>
-      <div className="input-group mb-3">
-        <input
-          disabled
-          type="text"
-          className="form-control"
-          aria-label="Number of Blocks"
-          placeholder="Number of Blocks"
-        />
-      </div>
-      <button className="btn btn-block btn-primary" type="button" disabled={txId} onClick={mineAction}>
+      <h3>Claim Mining Rewards</h3>
+      <p>Available CityCoins to claim:</p>
+      <ul>
+        <li>250,000 MIA</li>
+      </ul>
+      <button className="btn btn-block btn-primary" type="button">
         <div
           role="status"
           className={`${
             loading ? '' : 'd-none'
           } spinner-border spinner-border-sm text-info align-text-top mr-2`}
         />
-        Mine
+        Claim Mining Rewards
       </button>
+      {txId && <TxStatus txId={txId} />}
     </>
   );
 }

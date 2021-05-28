@@ -20,12 +20,13 @@ import { useConnect } from '@stacks/connect-react';
 import { saveTxData } from '../lib/transactions';
 import { c32addressDecode } from 'c32check';
 import BigNum from 'bn.js';
-import { SendManyInput } from './SendManyInput';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { CityCoinRegister } from './CityCoinRegister';
 import { CityCoinMining } from './CityCoinMining';
+import { CityCoinMiningClaim } from './CityCoinMiningClaim';
 import { CityCoinStacking } from './CityCoinStacking';
+import { CityCoinStackingClaim } from './CityCoinStackingClaim';
 
 export function CityCoinContainer() {
   const userSession = useAtomValue(userSessionState);
@@ -182,7 +183,15 @@ export function CityCoinContainer() {
       </div>
       <br /><hr /><br />
       <div>
+        <CityCoinMiningClaim />
+      </div>
+      <br /><hr /><br />
+      <div>
         <CityCoinStacking />
+      </div>
+      <br /><hr /><br />
+      <div>
+        <CityCoinStackingClaim />
       </div>
     </div>
   );
