@@ -7,6 +7,18 @@ import {
   NETWORK,
 } from './constants';
 
+export async function getMiningActivationStatus() {
+  const result = await callReadOnlyFunction({
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CITYCOIN_CONTRACT_NAME,
+    functionName: 'get-mining-activation-status',
+    functionArgs: [],
+    network: NETWORK,
+    senderAddress: GENESIS_CONTRACT_ADDRESS,
+  });
+  return result.value;
+}
+
 export async function getRegisteredMinerId(address) {
   const result = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,

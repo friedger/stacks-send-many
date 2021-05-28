@@ -2,17 +2,24 @@ import React, { useEffect, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
-import { getRegisteredMinerId, getRegisteredMinerCount } from '../lib/citycoin';
+import {
+  getRegisteredMinerId,
+  getRegisteredMinerCount,
+  getRegisteredMinersThreshold,
+  getMiningActivationStatus,
+} from '../lib/citycoin';
 
 export function CityCoinRegister({ ownerStxAddress }) {
-  const styles = {
-    width: '10%',
-  };
-
   const [minerCount, setMinerCount] = useState();
+  const [minerId, setMinerId] = useState();
+  const [minerThreshold, setMinerThreshold] = useState();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const { doContractCall } = useConnect();
+
+  const styles = {
+    width: `${(minerCount / minerThreshold) * 100}%`,
+  };
 
   useEffect(() => {
     getRegisteredMinerCount()
@@ -20,7 +27,18 @@ export function CityCoinRegister({ ownerStxAddress }) {
         setMinerCount(result);
       })
       .catch(e => {
-        setMinerCount('NaN');
+        setMinerCount(0);
+        console.log(e);
+      });
+  }, []);
+
+  useEffect(() => {
+    getRegisteredMinersThreshold()
+      .then(result => {
+        setMinerThreshold(result);
+      })
+      .catch(e => {
+        setMinerThreshold(20);
         console.log(e);
       });
   }, []);
@@ -30,9 +48,10 @@ export function CityCoinRegister({ ownerStxAddress }) {
     ownerStxAddress &&
       getRegisteredMinerId(ownerStxAddress)
         .then(result => {
-          console.log(result);
+          setMinerId(result);
         })
         .catch(e => {
+          setMinerId(null);
           console.log(e);
         });
   }, [ownerStxAddress]);
@@ -59,30 +78,29 @@ export function CityCoinRegister({ ownerStxAddress }) {
     <>
       <h3>Activate CityCoin Mining</h3>
       <p>
-        Before mining can begin, at least 20 miners must register with the contract to signal
-        activation.
+        Before mining can begin, at least {minerThreshold} miners must register with the contract to
+        signal activation.
       </p>
       <ul>
         <li>Miners Registered: {minerCount}</li>
-        <li>Threshold: 20 Miners</li>
+        <li>Threshold: {minerThreshold} Miners</li>
       </ul>
       <div className="progress mb-3">
         <div
           className="progress-bar"
           role="progressbar"
           style={styles}
-          aria-valuenow="10"
+          aria-valuenow={(minerCount / minerThreshold) * 100}
           aria-valuemin="0"
           aria-valuemax="100"
         >
-          10%
+          {(minerCount / minerThreshold) * 100}%
         </div>
       </div>
-      <p>Countdown goes here once active</p>
       <button
         className="btn btn-block btn-primary"
         type="button"
-        disabled={txId}
+        disabled={txId || minerId}
         onClick={registerAction}
       >
         <div

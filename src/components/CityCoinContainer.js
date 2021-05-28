@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { userSessionState } from '../lib/auth';
 import { useStxAddresses } from '../lib/hooks';
 import { useAtomValue } from 'jotai/utils';
@@ -7,40 +7,56 @@ import { CityCoinMining } from './CityCoinMining';
 import { CityCoinMiningClaim } from './CityCoinMiningClaim';
 import { CityCoinStacking } from './CityCoinStacking';
 import { CityCoinStackingClaim } from './CityCoinStackingClaim';
+import { getMiningActivationStatus } from '../lib/citycoin';
 
 export function CityCoinContainer() {
   const userSession = useAtomValue(userSessionState);
   const { ownerStxAddress } = useStxAddresses(userSession);
 
-  return (
-    <div>
+  const [miningActivated, setMiningActivated] = useState();
+
+  useEffect(() => {
+    getMiningActivationStatus()
+      .then(result => {
+        setMiningActivated(result);
+      })
+      .catch(e => {
+        setMiningActivated(false);
+        console.log(e);
+      });
+  }, []);
+
+  if (!miningActivated) {
+    return (
       <div>
         <CityCoinRegister ownerStxAddress={ownerStxAddress} />
       </div>
-      <br />
-      <hr />
-      <br />
+    );
+  } else {
+    return (
       <div>
-        <CityCoinMining />
+        <div>
+          <CityCoinMining />
+        </div>
+        <br />
+        <hr />
+        <br />
+        <div>
+          <CityCoinMiningClaim />
+        </div>
+        <br />
+        <hr />
+        <br />
+        <div>
+          <CityCoinStacking />
+        </div>
+        <br />
+        <hr />
+        <br />
+        <div>
+          <CityCoinStackingClaim />
+        </div>
       </div>
-      <br />
-      <hr />
-      <br />
-      <div>
-        <CityCoinMiningClaim />
-      </div>
-      <br />
-      <hr />
-      <br />
-      <div>
-        <CityCoinStacking />
-      </div>
-      <br />
-      <hr />
-      <br />
-      <div>
-        <CityCoinStackingClaim />
-      </div>
-    </div>
-  );
+    );
+  }
 }
