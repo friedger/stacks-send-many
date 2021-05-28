@@ -1,7 +1,7 @@
 import React from 'react';
 import { AmountFiat } from './AmountFiat';
 import { AmountStx } from './AmountStx';
-import { AmountMia } from './AmountMia';
+import { AmountCityCoin } from './AmountCityCoin';
 
 export function Amount({ ustx, className }) {
   if (isNaN(ustx)) {
@@ -14,7 +14,7 @@ export function Amount({ ustx, className }) {
       </span>
       <hr />
       <span className={className}>
-        <AmountMia />
+        <AmountCityCoin />
       </span>
     </>
   );

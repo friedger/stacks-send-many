@@ -7,6 +7,18 @@ import {
   NETWORK,
 } from './constants';
 
+export async function getCityCoinBalance(address) {
+  const result = await callReadOnlyFunction({
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CITYCOIN_CONTRACT_NAME,
+    functionName: 'get-balance-of',
+    functionArgs: [standardPrincipalCV(address)],
+    network: NETWORK,
+    senderAddress: address,
+  });
+  return result.value.toNumber();
+}
+
 export async function getMiningActivationStatus() {
   const result = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
