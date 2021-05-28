@@ -6,12 +6,12 @@ import {
   getRegisteredMinerId,
   getRegisteredMinerCount,
   getRegisteredMinersThreshold,
-  getMiningActivationStatus,
 } from '../lib/citycoin';
 
 export function CityCoinRegister({ ownerStxAddress }) {
   const [minerCount, setMinerCount] = useState();
   const [minerId, setMinerId] = useState();
+  const [minerRegistered, setMinerRegistered] = useState();
   const [minerThreshold, setMinerThreshold] = useState();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
@@ -49,9 +49,11 @@ export function CityCoinRegister({ ownerStxAddress }) {
       getRegisteredMinerId(ownerStxAddress)
         .then(result => {
           setMinerId(result);
+          setMinerRegistered(true);
         })
         .catch(e => {
           setMinerId(null);
+          setMinerRegistered(false);
           console.log(e);
         });
   }, [ownerStxAddress]);
@@ -97,20 +99,23 @@ export function CityCoinRegister({ ownerStxAddress }) {
           {(minerCount / minerThreshold) * 100}%
         </div>
       </div>
-      <button
-        className="btn btn-block btn-primary"
-        type="button"
-        disabled={txId || minerId}
-        onClick={registerAction}
-      >
-        <div
-          role="status"
-          className={`${
-            loading ? '' : 'd-none'
-          } spinner-border spinner-border-sm text-info align-text-top mr-2`}
-        />
-        Register
-      </button>
+      {minerRegistered && <p>Registration Complete! ID: {minerId}</p>}
+      {!minerRegistered && (
+        <button
+          className="btn btn-block btn-primary"
+          type="button"
+          disabled={txId}
+          onClick={registerAction}
+        >
+          <div
+            role="status"
+            className={`${
+              loading ? '' : 'd-none'
+            } spinner-border spinner-border-sm text-info align-text-top mr-2`}
+          />
+          Register
+        </button>
+      )}
       {txId && <TxStatus txId={txId} />}
     </>
   );
