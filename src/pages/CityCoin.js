@@ -1,8 +1,7 @@
 import React from 'react';
 import { Profile } from '../components/Profile';
-import { CityCoinContainer } from '../components/CityCoinContainer'
+import { CityCoinContainer } from '../components/CityCoinContainer';
 import { SendManyTxList } from '../components/SendManyTxList';
-import { mocknet, testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
 export default function CityCoin({ userSession }) {

@@ -10,9 +10,10 @@ export function CityCoinMining() {
   const [loading, setLoading] = useState();
   const { doContractCall } = useConnect();
 
+  // TODO: add onCancel state
+
   const mineAction = async () => {
     setLoading(true);
-
     const amountUstxCV = uintCV(amountRef.current.value.trim());
     await doContractCall({
       contractAddress: CONTRACT_ADDRESS,
@@ -33,7 +34,7 @@ export function CityCoinMining() {
       <p>
         Mining CityCoins is done by spending STX in a given Stacks block. A winner is selected by a
         VRF weighted by the miners' proportion of contributions that block. Rewards can be withdrawn
-        after 100 block maturity window.
+        after a 100 block maturity window.
       </p>
       <div className="input-group mb-3">
         <input
@@ -56,7 +57,12 @@ export function CityCoinMining() {
           placeholder="Number of Blocks"
         />
       </div>
-      <button className="btn btn-block btn-primary" type="button" disabled={txId} onClick={mineAction}>
+      <button
+        className="btn btn-block btn-primary"
+        type="button"
+        disabled={txId}
+        onClick={mineAction}
+      >
         <div
           role="status"
           className={`${
@@ -65,6 +71,7 @@ export function CityCoinMining() {
         />
         Mine
       </button>
+      {txId && <TxStatus txId={txId} />}
     </>
   );
 }

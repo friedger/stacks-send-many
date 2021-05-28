@@ -20,7 +20,7 @@ export function CityCoinRegister({ ownerStxAddress }) {
         setMinerCount(result);
       })
       .catch(e => {
-        setMinerCount('unavailable');
+        setMinerCount('NaN');
         console.log(e);
       });
   }, []);
