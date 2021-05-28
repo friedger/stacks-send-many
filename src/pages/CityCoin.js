@@ -5,7 +5,7 @@ import { SendManyTxList } from '../components/SendManyTxList';
 import { mocknet, testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
-export default function SendMany({ userSession }) {
+export default function CityCoin({ userSession }) {
   const { ownerStxAddress } = useStxAddresses(userSession);
   if (!userSession || !ownerStxAddress) {
     return <div>Loading</div>;

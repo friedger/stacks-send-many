@@ -17,7 +17,7 @@ import { userSessionState } from '../lib/auth';
 import { useStxAddresses } from '../lib/hooks';
 import { useAtomValue } from 'jotai/utils';
 import { useConnect } from '@stacks/connect-react';
-import { saveTxData, TxStatus } from '../lib/transactions';
+import { saveTxData } from '../lib/transactions';
 import { c32addressDecode } from 'c32check';
 import BigNum from 'bn.js';
 import { SendManyInput } from './SendManyInput';
@@ -171,38 +171,10 @@ export function CityCoinContainer() {
     }
   };
 
-  const addNewRow = () => {
-    const newRows = [...rows];
-    newRows.push({ to: '', stx: '0', memo: '' });
-    setRows(newRows);
-  };
-
-  const updateRow = (row, index) => {
-    const newRows = [...rows];
-    newRows[index] = row;
-    setRows(newRows);
-    return newRows;
-  };
-
-  const updateModel = index => {
-    return row => {
-      const rows = updateRow(row, index);
-      updatePreview(getPartsFromRows(rows));
-    };
-  };
-
-  const maybeAddNewRow = index => {
-    return () => {
-      if (index === rows.length - 1) {
-        addNewRow();
-      }
-    };
-  };
-
   return (
     <div>   
       <div>
-        <CityCoinRegister />
+        <CityCoinRegister ownerStxAddress={ownerStxAddress} />
       </div>
       <br /><hr /><br />
       <div>
@@ -212,55 +184,6 @@ export function CityCoinContainer() {
       <div>
         <CityCoinStacking />
       </div>
-      <br /><hr /><br />
-      <h4>Old Section - to be removed</h4>
-      <div className="NoteField">
-        {rows.map((row, index) => {
-          return (
-            <SendManyInput
-              key={index}
-              row={row}
-              index={index}
-              updateModel={updateModel(index)}
-              maybeAddNewRow={maybeAddNewRow(index)}
-              lastRow={index === rows.length - 1}
-            />
-          );
-        })}
-        <div className="row">
-          <div className="col-md-12 col-xs-12 col-lg-12 text-right pb-2">
-            <input
-              onClick={e => addNewRow()}
-              disabled={rows.length > 199}
-              type="button"
-              value="Add New Recipient"
-              className="btn btn-dark"
-              id="addNewField"
-            />
-          </div>
-        </div>
-        <div>{preview}</div>
-        <div className="input-group mt-2">
-          <button className="btn btn-block btn-primary" type="button" onClick={sendAction}>
-            <div
-              ref={spinner}
-              role="status"
-              className={`${
-                loading ? '' : 'd-none'
-              } spinner-border spinner-border-sm text-info align-text-top mr-2`}
-            />
-            Send
-          </button>
-        </div>
-      </div>
-      <div>
-        <TxStatus txId={txId} resultPrefix="Transfers executed " />
-      </div>
-      {status && (
-        <>
-          <div>{status}</div>
-        </>
-      )}
     </div>
   );
 }

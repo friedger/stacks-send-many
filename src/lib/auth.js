@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { AppConfig, UserSession } from '@stacks/connect-react';
 import { showConnect } from '@stacks/connect';
-import { authOrigin } from './constants';
 import { atom, useAtom } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
 
@@ -22,7 +21,6 @@ export const useConnect = () => {
   };
 
   const authOptions = {
-    authOrigin: authOrigin,
     onFinish,
     userSession, // usersession is already in state, provide it here
     redirectTo: '/',

@@ -5,12 +5,9 @@ import { Router } from '@reach/router';
 import Auth from './components/Auth';
 import { userDataState, userSessionState, useConnect } from './lib/auth';
 import { useAtom } from 'jotai';
-import SendMany from './pages/SendMany';
-import SendManyDetails from './pages/SendManyDetails';
-import SendManyCyclePayout from './pages/SendManyCyclePayout';
+import CityCoin from './pages/CityCoin';
 import { Rate } from './components/Rate';
 import { Network } from './components/Network';
-import SendManyTransferDetails from './pages/SendManyTransferDetails';
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -54,31 +51,10 @@ function Content({ userSession }) {
     <>
       <Router>
         <AppBody path="/">
-          <SendManyCyclePayout
-            path="/cycle/:cycleId"
-            decentralizedID={decentralizedID}
-            userSession={userSession}
-          />
-          <SendManyDetails
-            path="/txid/:txId"
-            decentralizedID={decentralizedID}
-            userSession={userSession}
-          />
-          <SendManyTransferDetails
-            path="/txid/:txId/:eventIndex"
-            decentralizedID={decentralizedID}
-            userSession={userSession}
-          />
           {!authenticated && <Landing path="/" />}
           {decentralizedID && (
             <>
-              <SendMany path="/" decentralizedID={decentralizedID} userSession={userSession} />
-
-              <SendManyCyclePayout
-                path="/cycle/:cycleId"
-                decentralizedID={decentralizedID}
-                userSession={userSession}
-              />
+              <CityCoin path="/" decentralizedID={decentralizedID} userSession={userSession} />
             </>
           )}
         </AppBody>
