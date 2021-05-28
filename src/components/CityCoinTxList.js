@@ -1,4 +1,5 @@
 import { connectWebSocketClient } from '@stacks/blockchain-api-client';
+import { cvToString, hexToCV } from '@stacks/transactions';
 import React, { useEffect, useState } from 'react';
 import {
   accountsApi,
@@ -7,6 +8,7 @@ import {
   STACKS_API_WS_URL,
   transactionsApi,
 } from '../lib/constants';
+import { Address } from './Address';
 
 export function CityCoinTxList() {
   const [txs, setTxs] = useState();
@@ -84,11 +86,19 @@ export function CityCoinTxList() {
 }
 
 function RegisterTransaction({ tx }) {
-  return <>{tx.contract_call.function_name}</>;
+  return (
+    <>
+      {tx.contract_call.function_name} (<Address addr={tx.sender_address} />)
+    </>
+  );
 }
 
 function MineTransaction({ tx }) {
-  return <>{tx.contract_call.function_name}</>;
+  return (
+    <>
+      {tx.contract_call.function_name} {cvToString(tx.contract_call.function_args[0].hex)}
+    </>
+  );
 }
 
 function StackTransaction({ tx }) {
@@ -100,7 +110,11 @@ function ClaimTransaction({ tx }) {
 }
 
 function ClaimStackingTransaction({ tx }) {
-  return <>{tx.contract_call.function_name}</>;
+  return (
+    <>
+      {tx.contract_call.function_name} ({tx.events[0].asset.amount})
+    </>
+  );
 }
 
 function TransferTransaction({ tx }) {
