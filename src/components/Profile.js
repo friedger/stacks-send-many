@@ -19,7 +19,12 @@ export function Profile({ stxAddress, updateStatus, showAddress }) {
     <>
       <a className="navbar-brand" href="/">
         {stxAddress ? (
-          <svg className="rounded-circle bg-white" width="50" height="50" data-jdenticon-value={stxAddress} />
+          <svg
+            className="rounded-circle bg-white"
+            width="50"
+            height="50"
+            data-jdenticon-value={stxAddress}
+          />
         ) : (
           <img src="/stacks.png" width="50" height="50" alt="Logo" />
         )}
@@ -34,7 +39,11 @@ export function Profile({ stxAddress, updateStatus, showAddress }) {
       <hr />
       {profileState.account && (
         <>
-          <Amount className="font-weight-bold balance" ustx={profileState.account.balance} />
+          <Amount
+            className="font-weight-bold balance"
+            ustx={profileState.account.balance}
+            stxAddress={stxAddress}
+          />
         </>
       )}
     </>

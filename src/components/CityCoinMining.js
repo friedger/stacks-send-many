@@ -42,9 +42,9 @@ export function CityCoinMining() {
     <>
       <h3>Mine CityCoins</h3>
       <p>
-        Mining CityCoins is done by spending STX in a given Stacks block. A winner is selected by a
-        VRF weighted by the miners' proportion of contributions that block. Rewards can be withdrawn
-        after a 100 block maturity window.
+        Mining CityCoins is done by spending STX in a given Stacks block. A winner is selected
+        randomly weighted by the miners' proportion of contributions of that block. Rewards can be
+        withdrawn after a 100 block maturity window.
       </p>
       <form>
         <div className="input-group mb-3">

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { getCityCoinBalance } from '../lib/citycoin';
 
-export function AmountCityCoin() {
+export function AmountCityCoin({ stxAddress }) {
   const [cityCoinBalance, setCityCoinBalance] = useState();
 
   useEffect(() => {
-    getCityCoinBalance()
+    getCityCoinBalance(stxAddress)
       .then(result => {
         setCityCoinBalance(result);
       })
@@ -13,7 +13,7 @@ export function AmountCityCoin() {
         setCityCoinBalance(0);
         console.log(e);
       });
-  }, []);
+  }, [stxAddress]);
 
   return <span>{cityCoinBalance} &nbsp;$CITY</span>;
 }
