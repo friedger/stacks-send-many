@@ -5,7 +5,7 @@ import { TxStatus } from './TxStatus';
 import { uintCV } from '@stacks/transactions';
 
 export function CityCoinMining() {
-  const amountRef = useRef();
+  const amountRefMining = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const { doContractCall } = useConnect();
@@ -15,11 +15,11 @@ export function CityCoinMining() {
 
   const mineAction = async () => {
     setLoading(true);
-    if (amountRef.current.value === '') {
+    if (amountRefMining.current.value === '') {
       console.log('positive number required to mine');
       setLoading(false);
     } else {
-      const amountUstxCV = uintCV(amountRef.current.value.trim());
+      const amountUstxCV = uintCV(amountRefMining.current.value.trim());
       await doContractCall({
         contractAddress: CONTRACT_ADDRESS,
         contractName: CITYCOIN_CONTRACT_NAME,
@@ -50,11 +50,11 @@ export function CityCoinMining() {
           <input
             type="number"
             className="form-control"
-            ref={amountRef}
+            ref={amountRefMining}
             aria-label="Amount in STX"
             placeholder="Amount in STX"
             required
-            minlength="1"
+            minLength="1"
           />
           <div className="input-group-append">
             <span className="input-group-text">STX</span>
