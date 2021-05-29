@@ -4,7 +4,7 @@ import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/consta
 import { TxStatus } from './TxStatus';
 import { uintCV } from '@stacks/transactions';
 
-export function CityCoinMining() {
+export function CityCoinMining({ownerStxAddress}) {
   const amountRefMining = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();

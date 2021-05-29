@@ -53,7 +53,7 @@ export function CityCoinStackingClaim() {
             aria-label="Reward Cycle"
             placeholder="Reward Cycle"
             required
-            minlength="1"
+            minLength="1"
           />
         </div>
         <button className="btn btn-block btn-primary" type="button" onClick={claimAction}>

@@ -1,6 +1,7 @@
 import { ClarityType } from '@stacks/transactions';
 import { standardPrincipalCV, callReadOnlyFunction } from '@stacks/transactions';
 import {
+  accountsApi,
   CITYCOIN_CONTRACT_NAME,
   CONTRACT_ADDRESS,
   GENESIS_CONTRACT_ADDRESS,
@@ -69,4 +70,19 @@ export async function getRegisteredMinersThreshold() {
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
   return result.value.toNumber();
+}
+
+export async function getMiningTx(stxAddress) {
+  const response = await accountsApi.getAccountTransactions({ principal: stxAddress });
+  const txs = response.results.filter(
+    tx =>
+      tx.tx_status === 'success' &&
+      tx.tx_type === 'contract_call' &&
+      tx.contract_call.function_name === 'mine-tokens' &&
+      tx.contract_call.contract_id === `${CONTRACT_ADDRESS}.${CITYCOIN_CONTRACT_NAME}`
+  );
+  const count = txs.length;
+  console.log(txs);
+  // TODO check winning status
+  return { count, txs };
 }

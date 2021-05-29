@@ -44,7 +44,7 @@ export function CityCoinContainer() {
         <hr />
         <br />
         <div>
-          <CityCoinMiningClaim />
+          <CityCoinMiningClaim ownerStxAddress={ownerStxAddress} />
         </div>
         <br />
         <hr />
