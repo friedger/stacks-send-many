@@ -7,33 +7,34 @@ import { uintCV } from '@stacks/transactions';
 // TODO: how to know reward cycle to claim?
 // get from a getter?
 
-export async function CityCoinStackingClaim() {
+export function CityCoinStackingClaim() {
   const amountRefStackingReward = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const { doContractCall } = useConnect();
 
-  setLoading(true);
-  if (amountRefStackingReward.current.value === '') {
-    console.log('positive number required to claim stacking rewards');
-    setLoading(false);
-  } else {
-    const rewardCycleClaim = uintCV(amountRefStackingReward.current.value.trim());
-    await doContractCall({
-      contractAddress: CONTRACT_ADDRESS,
-      contractName: CITYCOIN_CONTRACT_NAME,
-      functionName: 'claim-stacking-reward',
-      functionArgs: [rewardCycleClaim],
-      network: NETWORK,
-      onCancel: () => {
-        setLoading(false);
-      },
-      onFinish: result => {
-        setLoading(false);
-        setTxId(result.txId);
-      },
-    });
-  }
+  const claimAction = async () => {
+    if (amountRefStackingReward.current.value === '') {
+      console.log('positive number required to claim stacking rewards');
+    } else {
+      setLoading(true);
+      const rewardCycleClaim = uintCV(amountRefStackingReward.current.value.trim());
+      await doContractCall({
+        contractAddress: CONTRACT_ADDRESS,
+        contractName: CITYCOIN_CONTRACT_NAME,
+        functionName: 'claim-stacking-reward',
+        functionArgs: [rewardCycleClaim],
+        network: NETWORK,
+        onCancel: () => {
+          setLoading(false);
+        },
+        onFinish: result => {
+          setLoading(false);
+          setTxId(result.txId);
+        },
+      });
+    }
+  };
 
   return (
     <>
@@ -55,7 +56,7 @@ export async function CityCoinStackingClaim() {
             minlength="1"
           />
         </div>
-        <button className="btn btn-block btn-primary" type="button" onClick={CityCoinStackingClaim}>
+        <button className="btn btn-block btn-primary" type="button" onClick={claimAction}>
           <div
             role="status"
             className={`${

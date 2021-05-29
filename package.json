@@ -5,11 +5,11 @@
   "author": "Jason Schrader",
   "contributors": [
     {
-    "name": "Friedger Müffke",
-    "email": "mail@friedger.de",
-    "url": "https://friedger.de/"
+      "name": "Friedger Müffke",
+      "email": "mail@friedger.de",
+      "url": "https://friedger.de/"
     }
-  ],  
+  ],
   "license": "GPL-3.0-or-later",
   "repository": {
     "type": "git",

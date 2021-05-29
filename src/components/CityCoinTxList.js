@@ -1,6 +1,7 @@
+import React, { Fragment, useEffect, useState } from 'react';
 import { connectWebSocketClient } from '@stacks/blockchain-api-client';
 import { cvToString, hexToCV } from '@stacks/transactions';
-import React, { useEffect, useState } from 'react';
+import _groupBy from 'lodash.groupby';
 import {
   accountsApi,
   CITYCOIN_CONTRACT_NAME,
@@ -19,7 +20,10 @@ export function CityCoinTxList() {
         principal: `${CONTRACT_ADDRESS}.${CITYCOIN_CONTRACT_NAME}`,
       });
       setTxs(
-        result.results.filter(tx => tx.tx_status === 'success' && tx.tx_type === 'contract_call')
+        _groupBy(
+          result.results.filter(tx => tx.tx_status === 'success' && tx.tx_type === 'contract_call'),
+          'block_height'
+        )
       );
     } catch (e) {
       console.log(e);
@@ -55,29 +59,31 @@ export function CityCoinTxList() {
     subscribe();
   }, []);
 
-  if (txs && txs.length > 0) {
+  if (txs) {
+    const blockHeights = txs ? Object.keys(txs).sort((a, b) => a < b) : undefined;
     return (
       <>
         <h3>Recent Activities</h3>
-        {txs.map((tx, key) => {
-          console.log({ tx, key });
-          switch (tx.contract_call.function_name) {
-            case 'register-miner':
-              return <RegisterTransaction key={key} tx={tx} />;
-            case 'mine-tokens':
-              return <MineTransaction key={key} tx={tx} />;
-            case 'stack-tokens':
-              return <StackTransaction key={key} tx={tx} />;
-            case 'claim-token-rewards':
-              return <ClaimTransaction key={key} tx={tx} />;
-            case 'claim-stacking-rewards':
-              return <ClaimStackingTransaction key={key} tx={tx} />;
-            case 'transfer':
-              return <TransferTransaction key={key} tx={tx} />;
-            default:
-              return null;
-          }
-        })}
+        <div className="container">
+          {blockHeights.map((blockHeight, key) => (
+            <Fragment key={key}>
+              <div>
+                Block #{blockHeight} (<Timestamp tx={txs[blockHeight][0]} />)
+              </div>
+
+              {txs[blockHeight].map((tx, txKey) => {
+                return (
+                  <Fragment key={txKey}>
+                    <div className="row pl-4">{transactionByType(tx)}</div>
+                    <div className="row pl-4 mb-2">
+                      <Details tx={tx} />
+                    </div>
+                  </Fragment>
+                );
+              })}
+            </Fragment>
+          ))}
+        </div>
       </>
     );
   } else {
@@ -85,38 +91,73 @@ export function CityCoinTxList() {
   }
 }
 
+function transactionByType(tx) {
+  switch (tx.contract_call.function_name) {
+    case 'register-miner':
+      return <RegisterTransaction tx={tx} />;
+    case 'mine-tokens':
+      return <MineTransaction tx={tx} />;
+    case 'stack-tokens':
+      return <StackTransaction tx={tx} />;
+    case 'claim-token-rewards':
+      return <ClaimTransaction tx={tx} />;
+    case 'claim-stacking-rewards':
+      return <ClaimStackingTransaction tx={tx} />;
+    case 'transfer':
+      return <TransferTransaction tx={tx} />;
+    default:
+      return null;
+  }
+}
+
 function RegisterTransaction({ tx }) {
-  return (
-    <>
-      {tx.contract_call.function_name} (<Address addr={tx.sender_address} />)
-    </>
-  );
+  return <div className="col-12">{tx.contract_call.function_name}</div>;
 }
 
 function MineTransaction({ tx }) {
   return (
-    <>
+    <div className="col-12">
       {tx.contract_call.function_name} {cvToString(tx.contract_call.function_args[0].hex)}
-    </>
+    </div>
   );
 }
 
 function StackTransaction({ tx }) {
-  return <>{tx.contract_call.function_name}</>;
+  return <div className="col-12">{tx.contract_call.function_name}</div>;
 }
 
 function ClaimTransaction({ tx }) {
-  return <>{tx.contract_call.function_name}</>;
+  return <div className="col-12">{tx.contract_call.function_name}</div>;
 }
 
 function ClaimStackingTransaction({ tx }) {
   return (
-    <>
+    <div className="col-12">
       {tx.contract_call.function_name} ({tx.events[0].asset.amount})
-    </>
+    </div>
   );
 }
 
 function TransferTransaction({ tx }) {
-  return <>{tx.contract_call.function_name}</>;
+  return <div className="col-12">{tx.contract_call.function_name}</div>;
+}
+
+function Details({ tx }) {
+  return (
+    <>
+      <div className="col-lg-6 col-md-12">
+        <small>
+          <Address addr={tx.sender_address} />
+        </small>
+      </div>
+      <div className="col-lg-6 col-md-12 text-right">
+        <small>{tx.tx_id.substr(0, 30)}...</small>
+      </div>
+    </>
+  );
+}
+
+function Timestamp({ tx }) {
+  const timestamp = new Date(tx.burn_block_time_iso)
+  return <>{timestamp.toLocaleString()}</>;
 }
