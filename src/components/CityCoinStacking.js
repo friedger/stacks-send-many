@@ -4,6 +4,8 @@ import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/consta
 import { TxStatus } from './TxStatus';
 import { uintCV } from '@stacks/transactions';
 
+// TODO: consider state for when stacking is active
+
 export function CityCoinStacking() {
   const amountRefStacking = useRef();
   const amountRefRewardCycles = useRef();

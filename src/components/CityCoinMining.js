@@ -12,6 +12,7 @@ export function CityCoinMining() {
 
   // TODO: add onCancel state for loading that works ?
   // TODO: add logic for wallet not enabled (aka not installed)
+  // TODO: consider state for when mining is active
 
   const mineAction = async () => {
     setLoading(true);
