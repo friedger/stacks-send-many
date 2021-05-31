@@ -11,7 +11,7 @@ export function AmountStx({ ustx, className }) {
         minimumFractionDigits: 6,
         maximumFractionDigits: 6,
       })}
-      Ӿ
+      &nbsp;Ӿ
     </span>
   );
 }

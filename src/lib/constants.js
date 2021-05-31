@@ -13,26 +13,23 @@ export const mainnet =
   (!testnet && !localMocknet) || window.location.search.includes('chain=mainnet');
 
 export const chainSuffix = `?chain=${mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet'}`;
-export const beta = window.location.search.includes('authorigin=beta');
 export const localNode = localMocknet;
 export const localAuth = false;
 export const mocknet = localMocknet;
 
-console.log({ localNode, localAuth, beta, mocknet, testnet, mainnet });
-export const authOrigin = localAuth
-  ? 'http://localhost:8080'
-  : beta
-  ? 'https://pr-725.app.stacks.engineering/'
-  : 'https://app.blockstack.org';
+console.log({ localNode, localAuth, mocknet, testnet, mainnet });
 
 export const CONTRACT_ADDRESS = mocknet
   ? 'STB44HYPYAT2BB2QE513NSP81HTMYWBJP02HPGK6' //ADDR1 from Stacks.toml
   : testnet
-  ? 'STR8P3RD1EHA8AA37ERSSSZSWKS9T2GYQFGXNA4C'
-  : 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE';
+  ? 'ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A'
+  : 'SPAP1KAFW2BBAD840FSPJJJ7EVYXPCEMXNH3GNT9'; // TODO: UPDATE
 export const GENESIS_CONTRACT_ADDRESS = 'ST000000000000000000002AMW42H';
 export const BNS_CONTRACT_NAME = 'bns';
 
+export const CITYCOIN_CONTRACT_NAME = 'golden-gray-reptile';
+
+// TODO: add Freehold API endpoint?
 export const STACK_API_URL = localNode
   ? 'http://localhost:3999'
   : mainnet
