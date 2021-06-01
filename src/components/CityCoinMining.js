@@ -4,7 +4,7 @@ import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/consta
 import { TxStatus } from './TxStatus';
 import { uintCV } from '@stacks/transactions';
 
-export function CityCoinMining({ownerStxAddress}) {
+export function CityCoinMining({ ownerStxAddress }) {
   const amountRefMining = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
@@ -61,15 +61,13 @@ export function CityCoinMining({ownerStxAddress}) {
             <span className="input-group-text">STX</span>
           </div>
         </div>
-        <div className="input-group mb-3">
-          <input
-            disabled
-            type="text"
-            className="form-control"
-            aria-label="Number of Blocks"
-            placeholder="Number of Blocks"
-          />
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="mine30Blocks" />
+          <label class="form-check-label" for="mine30Blocks">
+            Mine for 30 blocks
+          </label>
         </div>
+        <br />
         <button
           className="btn btn-block btn-primary"
           type="button"
