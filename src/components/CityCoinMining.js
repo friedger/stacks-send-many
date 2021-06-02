@@ -61,9 +61,9 @@ export function CityCoinMining({ ownerStxAddress }) {
             <span className="input-group-text">STX</span>
           </div>
         </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="mine30Blocks" />
-          <label class="form-check-label" for="mine30Blocks">
+        <div className="form-check">
+          <input className="form-check-input" type="checkbox" value="" id="mine30Blocks" />
+          <label className="form-check-label" htmlFor="mine30Blocks">
             Mine for 30 blocks
           </label>
         </div>

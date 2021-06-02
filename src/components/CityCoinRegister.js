@@ -62,12 +62,12 @@ export function CityCoinRegister({ ownerStxAddress }) {
 
   const registerAction = async () => {
     setLoading(true);
-    const minerMemoRefCV = bufferCVFromString(minerMemoRef.current.value.trim());
+    const minerMemoCV = bufferCVFromString(minerMemoRef.current.value.trim());
     await doContractCall({
       contractAddress: CONTRACT_ADDRESS,
       contractName: CITYCOIN_CONTRACT_NAME,
       functionName: 'register-miner',
-      functionArgs: [someCV(minerMemoRefCV)],
+      functionArgs: [someCV(minerMemoCV)],
       network: NETWORK,
       onFinish: result => {
         setLoading(false);

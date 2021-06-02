@@ -82,15 +82,37 @@ export async function getMiningTx(stxAddress) {
       tx.contract_call.function_name === 'mine-tokens' &&
       tx.contract_call.contract_id === `${CONTRACT_ADDRESS}.${CITYCOIN_CONTRACT_NAME}`
   );
-  const count = txs.length;
+  const minerId = await getRegisteredMinerId(stxAddress);
+  console.log({ minerId });
+  const winningTxs = [];
   console.log(txs);
   for (let tx of txs) {
-    await callReadOnlyFunction({
+    const randomSample = await callReadOnlyFunction({
       contractAddress: CONTRACT_ADDRESS,
       contractName: CITYCOIN_CONTRACT_NAME,
-      functionName:"claim-token-reward",
-      functionArgs:[uintCV(tx.block_height)]
-    })
+      functionName: 'get-random-uint-at-block',
+      functionArgs: [uintCV(tx.block_height + 100)],
+      senderAddress: CONTRACT_ADDRESS,
+      network: NETWORK,
+    });
+    console.log({ randomSample: randomSample.value.value.toString('hex') });
+
+    const blockWinner = await callReadOnlyFunction({
+      contractAddress: CONTRACT_ADDRESS,
+      contractName: CITYCOIN_CONTRACT_NAME,
+      functionName: 'get-block-winner',
+      functionArgs: [uintCV(tx.block_height), uintCV(randomSample.value.value.toString())],
+      senderAddress: CONTRACT_ADDRESS,
+      network: NETWORK,
+    });
+    if (
+      blockWinner.type === ClarityType.OptionalSome &&
+      blockWinner.value.data['miner-id'].value === minerId.value
+    ) {
+      winningTxs.push({ tx, winner: blockWinner.value });
+    } else {
+      console.log('unlucky on block ', tx.block_height);
+    }
   }
-  return { count, txs };
+  return { count: winningTxs.length, txs: winningTxs };
 }
