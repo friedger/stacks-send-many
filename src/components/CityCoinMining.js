@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
-import { uintCV } from '@stacks/transactions';
+import { noneCV, uintCV } from '@stacks/transactions';
 
 export function CityCoinMining({ ownerStxAddress }) {
   const amountRefMining = useRef();
@@ -25,7 +25,7 @@ export function CityCoinMining({ ownerStxAddress }) {
         contractAddress: CONTRACT_ADDRESS,
         contractName: CITYCOIN_CONTRACT_NAME,
         functionName: 'mine-tokens',
-        functionArgs: [amountUstxCV],
+        functionArgs: [amountUstxCV, noneCV()],
         network: NETWORK,
         onCancel: () => {
           setLoading(false);
