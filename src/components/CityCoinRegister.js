@@ -7,13 +7,13 @@ import {
   getRegisteredMinerCount,
   getRegisteredMinersThreshold,
 } from '../lib/citycoin';
-import { bufferCVFromString, stringUtf8CV } from '@stacks/transactions';
+import { bufferCVFromString, someCV, stringUtf8CV } from '@stacks/transactions';
 
 export function CityCoinRegister({ ownerStxAddress }) {
   const minerMemoRef = useRef();
   const [minerCount, setMinerCount] = useState();
-  const [minerId, setMinerId] = useState();
-  const [minerRegistered, setMinerRegistered] = useState();
+  const [minerId, setMinerId] = useState(null);
+  const [minerRegistered, setMinerRegistered] = useState(false);
   const [minerThreshold, setMinerThreshold] = useState();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
@@ -50,12 +50,12 @@ export function CityCoinRegister({ ownerStxAddress }) {
     ownerStxAddress &&
       getRegisteredMinerId(ownerStxAddress)
         .then(result => {
-          setMinerId(result);
-          setMinerRegistered(true);
+          if (result) {
+            setMinerId(result);
+            setMinerRegistered(true);
+          }
         })
         .catch(e => {
-          setMinerId(null);
-          setMinerRegistered(false);
           console.log(e);
         });
   }, [ownerStxAddress]);
@@ -67,7 +67,7 @@ export function CityCoinRegister({ ownerStxAddress }) {
       contractAddress: CONTRACT_ADDRESS,
       contractName: CITYCOIN_CONTRACT_NAME,
       functionName: 'register-miner',
-      functionArgs: [minerMemoRefCV],
+      functionArgs: [someCV(minerMemoRefCV)],
       network: NETWORK,
       onFinish: result => {
         setLoading(false);

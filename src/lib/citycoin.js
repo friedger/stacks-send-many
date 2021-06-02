@@ -1,4 +1,4 @@
-import { ClarityType } from '@stacks/transactions';
+import { ClarityType, uintCV } from '@stacks/transactions';
 import { standardPrincipalCV, callReadOnlyFunction } from '@stacks/transactions';
 import {
   accountsApi,
@@ -6,13 +6,14 @@ import {
   CONTRACT_ADDRESS,
   GENESIS_CONTRACT_ADDRESS,
   NETWORK,
+  smartContractsApi,
 } from './constants';
 
 export async function getCityCoinBalance(address) {
   const result = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
-    functionName: 'balance-of',
+    functionName: 'get-balance',
     functionArgs: [standardPrincipalCV(address)],
     network: NETWORK,
     senderAddress: address,
@@ -29,14 +30,14 @@ export async function getMiningActivationStatus() {
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
-  return result.value;
+  return result.type === ClarityType.BoolTrue;
 }
 
 export async function getRegisteredMinerId(address) {
   const result = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
-    functionName: 'get-registered-miner-id',
+    functionName: 'get-miner-id',
     functionArgs: [standardPrincipalCV(address)],
     network: NETWORK,
     senderAddress: address,
@@ -83,6 +84,13 @@ export async function getMiningTx(stxAddress) {
   );
   const count = txs.length;
   console.log(txs);
-  // TODO check winning status
+  for (let tx of txs) {
+    await callReadOnlyFunction({
+      contractAddress: CONTRACT_ADDRESS,
+      contractName: CITYCOIN_CONTRACT_NAME,
+      functionName:"claim-token-reward",
+      functionArgs:[uintCV(tx.block_height)]
+    })
+  }
   return { count, txs };
 }
