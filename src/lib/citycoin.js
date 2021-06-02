@@ -72,8 +72,19 @@ export async function getRegisteredMinersThreshold() {
   });
   return result.value.toNumber();
 }
+export async function getCoinbase(blockHeight) {
+  const result = await callReadOnlyFunction({
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CITYCOIN_CONTRACT_NAME,
+    functionName: 'get-coinbase-amount',
+    functionArgs: [uintCV(blockHeight)],
+    senderAddress: CONTRACT_ADDRESS,
+    network: NETWORK,
+  });
+  return result.value.toNumber()
+}
 
-export async function getMiningTx(stxAddress) {
+export async function getMiningDetails(stxAddress) {
   const response = await accountsApi.getAccountTransactions({ principal: stxAddress });
   const txs = response.results.filter(
     tx =>
@@ -84,7 +95,7 @@ export async function getMiningTx(stxAddress) {
   );
   const minerId = await getRegisteredMinerId(stxAddress);
   console.log({ minerId });
-  const winningTxs = [];
+  const winningDetails = [];
   console.log(txs);
   for (let tx of txs) {
     const randomSample = await callReadOnlyFunction({
@@ -109,10 +120,11 @@ export async function getMiningTx(stxAddress) {
       blockWinner.type === ClarityType.OptionalSome &&
       blockWinner.value.data['miner-id'].value === minerId.value
     ) {
-      winningTxs.push({ tx, winner: blockWinner.value });
+      const coinbase = await getCoinbase(tx.block_height);
+      winningDetails.push({ tx, winner: blockWinner.value, coinbase });
     } else {
       console.log('unlucky on block ', tx.block_height);
     }
   }
-  return { count: winningTxs.length, txs: winningTxs };
+  return { count: winningDetails.length, winningDetails };
 }

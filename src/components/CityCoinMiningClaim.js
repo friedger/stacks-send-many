@@ -3,7 +3,7 @@ import { useConnect } from '@stacks/connect-react';
 import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
 import { uintCV } from '@stacks/transactions';
-import { getMiningTx as getMiningState } from '../lib/citycoin';
+import { getCoinbase, getMiningDetails } from '../lib/citycoin';
 
 // TODO: how to know block height to claim?
 // get from a getter?
@@ -17,10 +17,27 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
 
   useEffect(() => {
     if (ownerStxAddress) {
-      getMiningState(ownerStxAddress).then(state => setMiningState(state));
+      getMiningDetails(ownerStxAddress).then(state => setMiningState(state));
+      getCoinbase(100);
     }
   }, [ownerStxAddress]);
 
+  const claimAction = async amountUstxCV => {
+    await doContractCall({
+      contractAddress: CONTRACT_ADDRESS,
+      contractName: CITYCOIN_CONTRACT_NAME,
+      functionName: 'claim-token-reward',
+      functionArgs: [amountUstxCV],
+      network: NETWORK,
+      onCancel: () => {
+        setLoading(false);
+      },
+      onFinish: result => {
+        setLoading(false);
+        setTxId(result.txId);
+      },
+    });
+  };
   const mineClaimAction = async () => {
     setLoading(true);
     if (amountRef.current.value === '') {
@@ -28,20 +45,7 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
       setLoading(false);
     } else {
       const amountUstxCV = uintCV(amountRef.current.value.trim());
-      await doContractCall({
-        contractAddress: CONTRACT_ADDRESS,
-        contractName: CITYCOIN_CONTRACT_NAME,
-        functionName: 'claim-token-reward',
-        functionArgs: [amountUstxCV],
-        network: NETWORK,
-        onCancel: () => {
-          setLoading(false);
-        },
-        onFinish: result => {
-          setLoading(false);
-          setTxId(result.txId);
-        },
-      });
+      claimAction(amountUstxCV);
     }
   };
 
@@ -49,10 +53,13 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
     <>
       <h3>Claim Mining Rewards</h3>
       <p>Available CityCoins to claim:</p>
-      {miningState && miningState.txs.length > 0 ? (
+      {miningState && miningState.winningDetails.length > 0 ? (
         <ul>
-          {miningState.txs.map(tx => (
-            <li>250,000 MIA in Block #5</li>
+          {miningState.winningDetails.map(details => (
+            <li>
+              {details.coinbase} MIA in Block {details.tx.block_height}
+              <button onClick={() => claimAction(uintCV(details.tx.block_height))}>Claim</button>
+            </li>
           ))}
         </ul>
       ) : loading ? null : (
