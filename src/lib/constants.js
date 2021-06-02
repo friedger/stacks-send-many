@@ -20,14 +20,14 @@ export const mocknet = localMocknet;
 console.log({ localNode, localAuth, mocknet, testnet, mainnet });
 
 export const CONTRACT_ADDRESS = mocknet
-  ? 'STB44HYPYAT2BB2QE513NSP81HTMYWBJP02HPGK6' //ADDR1 from Stacks.toml
+  ? 'ST3EQ88S02BXXD0T5ZVT3KW947CRMQ1C6DMQY8H19' //ADDR1 from Stacks.toml
   : testnet
   ? 'ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A'
   : 'SPAP1KAFW2BBAD840FSPJJJ7EVYXPCEMXNH3GNT9'; // TODO: UPDATE
 export const GENESIS_CONTRACT_ADDRESS = 'ST000000000000000000002AMW42H';
 export const BNS_CONTRACT_NAME = 'bns';
 
-export const CITYCOIN_CONTRACT_NAME = 'ambitious-coral-chicken';
+export const CITYCOIN_CONTRACT_NAME = mocknet ? 'citycoin' : 'ambitious-coral-chicken';
 
 // TODO: add Freehold API endpoint?
 export const STACK_API_URL = localNode
