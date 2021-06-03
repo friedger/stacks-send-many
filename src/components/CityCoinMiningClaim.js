@@ -58,12 +58,20 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
           {miningState.winningDetails.map((details, key) => (
             <li key={key}>
               {details.winner ? (
-                <>
-                  {details.coinbase} CC in Block {details.blockHeight}
-                  <button onClick={() => claimAction(uintCV(details.blockHeight))}>Claim</button>
-                </>
+                details.claimed ? (
+                  <>
+                    {details.coinbase} CC in Block {details.blockHeight} claimed.
+                  </>
+                ) : (
+                  <>
+                    {details.coinbase} CC in Block {details.blockHeight}
+                    <button onClick={() => claimAction(uintCV(details.blockHeight))}>Claim</button>
+                  </>
+                )
               ) : details.lost ? null : details.e ? (
-                <>Error for Block {details.blockHeight} {details.e.toString()}</>
+                <>
+                  Error for Block {details.blockHeight} {details.e.toString()}
+                </>
               ) : (
                 <>Pending tx for Block {details.blockHeight}</>
               )}

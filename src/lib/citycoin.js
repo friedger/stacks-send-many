@@ -135,6 +135,8 @@ async function getWinningDetailsFor(blockHeight, minerId) {
     const minedBlockCV = hexToCV(minedBlock.data);
     console.log({ minedBlockCV });
     const minersCount = minedBlockCV.value.data['miners-count'].value.toNumber();
+    const claimed = minedBlockCV.value.data['claimed'].type === ClarityType.BoolTrue
+
     console.log({ minersCount });
     let idx = 1;
     let sum = 0;
@@ -160,9 +162,9 @@ async function getWinningDetailsFor(blockHeight, minerId) {
     if (winner.value.data['miner-id'].value.toNumber() === minerId) {
       const coinbase = await getCoinbase(blockHeight);
       console.log({ coinbase });
-      return { blockHeight, winner, coinbase };
+      return { blockHeight, winner, coinbase, claimed };
     } else {
-      return { blockHeight, lost: true };
+      return { blockHeight, lost: true, claimed };
     }
   } else {
     return { blockHeight };
