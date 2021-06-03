@@ -1,5 +1,6 @@
-import { ClarityType, uintCV } from '@stacks/transactions';
+import { ClarityType, cvToHex, cvToString, hexToCV, tupleCV, uintCV } from '@stacks/transactions';
 import { standardPrincipalCV, callReadOnlyFunction } from '@stacks/transactions';
+import BN from 'bn.js';
 import {
   accountsApi,
   CITYCOIN_CONTRACT_NAME,
@@ -100,7 +101,7 @@ export async function getMiningDetails(stxAddress) {
   console.log(txs);
   for (let tx of txs) {
     if (tx.contract_call.function_name === 'mine-tokens-over-30-blocks') {
-      for (let i = 30; i > 0; i--) {
+      for (let i = 29; i >= 0; i--) {
         winningDetails.push(await getWinningDetailsFor(tx.block_height + i, minerId));
       }
     } else {
@@ -111,6 +112,7 @@ export async function getMiningDetails(stxAddress) {
 }
 
 async function getWinningDetailsFor(blockHeight, minerId) {
+  console.log({ blockHeight });
   const randomSample = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
@@ -119,36 +121,69 @@ async function getWinningDetailsFor(blockHeight, minerId) {
     senderAddress: CONTRACT_ADDRESS,
     network: NETWORK,
   });
-  console.log({ randomSample: randomSample });
+  console.log({ randomSample: cvToString(randomSample) });
+
   if (randomSample.type === ClarityType.OptionalSome) {
-    try {
-      const blockWinner = await callReadOnlyFunction({
+    const winningAmount = await getWinningAmount(blockHeight, randomSample.value.value);
+
+    const minedBlock = await smartContractsApi.getContractDataMapEntry({
+      contractAddress: CONTRACT_ADDRESS,
+      contractName: CITYCOIN_CONTRACT_NAME,
+      mapName: 'mined-blocks',
+      key: cvToHex(tupleCV({ 'stacks-block-height': uintCV(blockHeight) })),
+    });
+    const minedBlockCV = hexToCV(minedBlock.data);
+    console.log({ minedBlockCV });
+    const minersCount = minedBlockCV.value.data['miners-count'].value.toNumber();
+    console.log({ minersCount });
+    let idx = 1;
+    let sum = 0;
+    let winner;
+    while (!winner && idx < 10) {
+      console.log({ idx });
+      const minerOfBlock = await smartContractsApi.getContractDataMapEntry({
         contractAddress: CONTRACT_ADDRESS,
         contractName: CITYCOIN_CONTRACT_NAME,
-        functionName: 'get-block-winner',
-        functionArgs: [uintCV(blockHeight), uintCV(randomSample.value.value.toString())],
-        senderAddress: CONTRACT_ADDRESS,
-        network: NETWORK,
+        mapName: 'blocks-miners',
+        key: cvToHex(tupleCV({ 'stacks-block-height': uintCV(blockHeight), idx: uintCV(idx) })),
       });
-      console.log({ blockWinner });
-      if (
-        blockWinner.type === ClarityType.OptionalSome &&
-        blockWinner.value.data['miner-id'].value === minerId.value
-      ) {
-        const coinbase = await getCoinbase(blockHeight);
-        return { blockHeight, winner: blockWinner.value, coinbase };
-      } else {
-        return { blockHeight, lost: true };
+      const minerOfBlockCV = hexToCV(minerOfBlock.data);
+      console.log({ minerOfBlockCV: cvToString(minerOfBlockCV) });
+      // add commit to total
+      const nextSum = sum + minerOfBlockCV.value.data.ustx.value.toNumber();
+      // check total for winning amount
+      if (sum <= winningAmount && nextSum > winningAmount) {
+        winner = minerOfBlockCV;
       }
-    } catch (e) {
-      console.log(e);
-      return { blockHeight, e };
+      idx++;
+    }    
+    if (winner.value.data['miner-id'].value.toNumber() === minerId) {
+      const coinbase = await getCoinbase(blockHeight);
+      console.log({ coinbase });
+      return { blockHeight, winner, coinbase };
+    } else {
+      return { blockHeight, lost: true };
     }
   } else {
     return { blockHeight };
   }
 }
 
+async function getWinningAmount(blockHeight, randomSample) {
+  const blockCommit = await callReadOnlyFunction({
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CITYCOIN_CONTRACT_NAME,
+    functionName: 'get-block-commit-total',
+    functionArgs: [uintCV(blockHeight)],
+    senderAddress: CONTRACT_ADDRESS,
+    network: NETWORK,
+  });
+
+  console.log({ blockCommit: cvToString(blockCommit) });
+  const winningAmount = randomSample.mod(blockCommit.value).toNumber();
+  console.log({ winningAmount });
+  return winningAmount;
+}
 export async function getPoxInfo() {
   const poxInfo = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,

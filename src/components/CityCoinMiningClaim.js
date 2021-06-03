@@ -57,9 +57,9 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
         <ul>
           {miningState.winningDetails.map((details, key) => (
             <li key={key}>
-              {details.winningDetails ? (
+              {details.winner ? (
                 <>
-                  {details.coinbase} MIA in Block {details.blockHeight}
+                  {details.coinbase} CC in Block {details.blockHeight}
                   <button onClick={() => claimAction(uintCV(details.blockHeight))}>Claim</button>
                 </>
               ) : details.lost ? null : details.e ? (
