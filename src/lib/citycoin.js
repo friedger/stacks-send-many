@@ -43,7 +43,7 @@ export async function getRegisteredMinerId(address) {
     senderAddress: address,
   });
   if (result.type === ClarityType.OptionalSome) {
-    return result.value.data.id.value.toNumber();
+    return result.value.value.toNumber();
   } else {
     return undefined;
   }
@@ -81,7 +81,7 @@ export async function getCoinbase(blockHeight) {
     senderAddress: CONTRACT_ADDRESS,
     network: NETWORK,
   });
-  return result.value.toNumber()
+  return result.value.toNumber();
 }
 
 export async function getMiningDetails(stxAddress) {
@@ -90,7 +90,8 @@ export async function getMiningDetails(stxAddress) {
     tx =>
       tx.tx_status === 'success' &&
       tx.tx_type === 'contract_call' &&
-      tx.contract_call.function_name === 'mine-tokens' &&
+      (tx.contract_call.function_name === 'mine-tokens' ||
+        tx.contract_call.function_name === 'mine-tokens-over-30-blocks') &&
       tx.contract_call.contract_id === `${CONTRACT_ADDRESS}.${CITYCOIN_CONTRACT_NAME}`
   );
   const minerId = await getRegisteredMinerId(stxAddress);
@@ -98,33 +99,64 @@ export async function getMiningDetails(stxAddress) {
   const winningDetails = [];
   console.log(txs);
   for (let tx of txs) {
-    const randomSample = await callReadOnlyFunction({
-      contractAddress: CONTRACT_ADDRESS,
-      contractName: CITYCOIN_CONTRACT_NAME,
-      functionName: 'get-random-uint-at-block',
-      functionArgs: [uintCV(tx.block_height + 100)],
-      senderAddress: CONTRACT_ADDRESS,
-      network: NETWORK,
-    });
-    console.log({ randomSample: randomSample.value.value.toString('hex') });
-
-    const blockWinner = await callReadOnlyFunction({
-      contractAddress: CONTRACT_ADDRESS,
-      contractName: CITYCOIN_CONTRACT_NAME,
-      functionName: 'get-block-winner',
-      functionArgs: [uintCV(tx.block_height), uintCV(randomSample.value.value.toString())],
-      senderAddress: CONTRACT_ADDRESS,
-      network: NETWORK,
-    });
-    if (
-      blockWinner.type === ClarityType.OptionalSome &&
-      blockWinner.value.data['miner-id'].value === minerId.value
-    ) {
-      const coinbase = await getCoinbase(tx.block_height);
-      winningDetails.push({ tx, winner: blockWinner.value, coinbase });
+    if (tx.contract_call.function_name === 'mine-tokens-over-30-blocks') {
+      for (let i = 30; i > 0; i--) {
+        winningDetails.push(await getWinningDetailsFor(tx.block_height + i, minerId));
+      }
     } else {
-      console.log('unlucky on block ', tx.block_height);
+      winningDetails.push(await getWinningDetailsFor(tx.block_height, minerId));
     }
   }
   return { count: winningDetails.length, winningDetails };
+}
+
+async function getWinningDetailsFor(blockHeight, minerId) {
+  const randomSample = await callReadOnlyFunction({
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CITYCOIN_CONTRACT_NAME,
+    functionName: 'get-random-uint-at-block',
+    functionArgs: [uintCV(blockHeight + 100)],
+    senderAddress: CONTRACT_ADDRESS,
+    network: NETWORK,
+  });
+  console.log({ randomSample: randomSample });
+  if (randomSample.type === ClarityType.OptionalSome) {
+    try {
+      const blockWinner = await callReadOnlyFunction({
+        contractAddress: CONTRACT_ADDRESS,
+        contractName: CITYCOIN_CONTRACT_NAME,
+        functionName: 'get-block-winner',
+        functionArgs: [uintCV(blockHeight), uintCV(randomSample.value.value.toString())],
+        senderAddress: CONTRACT_ADDRESS,
+        network: NETWORK,
+      });
+      console.log({ blockWinner });
+      if (
+        blockWinner.type === ClarityType.OptionalSome &&
+        blockWinner.value.data['miner-id'].value === minerId.value
+      ) {
+        const coinbase = await getCoinbase(blockHeight);
+        return { blockHeight, winner: blockWinner.value, coinbase };
+      } else {
+        return { blockHeight, lost: true };
+      }
+    } catch (e) {
+      console.log(e);
+      return { blockHeight, e };
+    }
+  } else {
+    return { blockHeight };
+  }
+}
+
+export async function getPoxInfo() {
+  const poxInfo = await callReadOnlyFunction({
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CITYCOIN_CONTRACT_NAME,
+    functionName: 'get-pox-lite-info',
+    functionArgs: [],
+    senderAddress: CONTRACT_ADDRESS,
+    network: NETWORK,
+  });
+  return poxInfo;
 }

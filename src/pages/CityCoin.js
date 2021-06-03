@@ -3,6 +3,7 @@ import { Profile } from '../components/Profile';
 import { CityCoinContainer } from '../components/CityCoinContainer';
 import { useStxAddresses } from '../lib/hooks';
 import { CityCoinTxList } from '../components/CityCoinTxList';
+import { PoxInfo } from '../components/PoxInfo';
 
 export default function CityCoin({ userSession }) {
   const { ownerStxAddress } = useStxAddresses(userSession);
@@ -24,6 +25,8 @@ export default function CityCoin({ userSession }) {
                     }}
                     showAddress
                   />
+                   <hr />
+                  <PoxInfo />
                 </div>
               </div>
 
