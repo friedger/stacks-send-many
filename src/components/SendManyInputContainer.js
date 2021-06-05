@@ -153,6 +153,8 @@ export function SendManyInputContainer() {
           setTxId(data.txId);
           saveTxData(data, userSession)
             .then(r => {
+              setRows([{ to: '', stx: '0', memo: '' }])
+              setPreview(null)
               setLoading(false);
             })
             .catch(e => {
