@@ -11,7 +11,7 @@ import {
   bufferCVFromString,
 } from '@stacks/transactions';
 
-import { CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
+import { bnsApi, CONTRACT_ADDRESS, NETWORK, smartContractsApi } from '../lib/constants';
 import { fetchAccount } from '../lib/account';
 import { userSessionState } from '../lib/auth';
 import { useStxAddresses } from '../lib/hooks';
@@ -23,6 +23,7 @@ import BigNum from 'bn.js';
 import { SendManyInput } from './SendManyInput';
 import { Address } from './Address';
 import { Amount } from './Amount';
+import { resolveConfig } from 'prettier';
 
 export function SendManyInputContainer() {
   const userSession = useAtomValue(userSessionState);
@@ -106,22 +107,44 @@ export function SendManyInputContainer() {
     return { parts, total, hasMemos };
   };
 
+  const addrToCV = addr => {
+    const toParts = addr.split('.');
+    if (toParts.length === 1) {
+      return standardPrincipalCV(toParts[0]);
+    } else {
+      return contractPrincipalCV(toParts[0], toParts[1]);
+    }
+  };
+  const resolveRecipients = async parts => {
+    return Promise.all(
+      parts.map(async p => {
+        try {
+          return addrToCV(p.to);
+        } catch (e) {
+          const nameInfo = await bnsApi.getNameInfo({ name: p.to });
+          console.log({ nameInfo });
+          if (nameInfo.address) {
+            return addrToCV(nameInfo.address);
+          } else {
+            return '';
+          }
+        }
+      })
+    );
+  };
+
   const sendAction = async () => {
     setLoading(true);
     const { parts, total, hasMemos } = getPartsFromRows(rows);
+    const recipients = await resolveRecipients(parts);
+    console.log({ recipients });
     const contractAddress = CONTRACT_ADDRESS;
     const contractName = hasMemos ? 'send-many-memo' : 'send-many';
     const functionName = 'send-many';
     const functionArgs = [
       listCV(
-        parts.map(p => {
-          const toParts = p.to.split('.');
-          let to;
-          if (toParts.length === 1) {
-            to = standardPrincipalCV(toParts[0]);
-          } else {
-            to = contractPrincipalCV(toParts[0], toParts[1]);
-          }
+        parts.map((p, key) => {
+          const to = recipients[key];
           return hasMemos
             ? tupleCV({
                 to,

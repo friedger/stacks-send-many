@@ -4,6 +4,7 @@ import {
   AccountsApi,
   Configuration,
   InfoApi,
+  BnsApi,
 } from '@stacks/blockchain-api-client';
 import { StacksTestnet, StacksMainnet } from '@stacks/network';
 
@@ -54,3 +55,4 @@ export const accountsApi = new AccountsApi(config);
 export const smartContractsApi = new SmartContractsApi(config);
 export const transactionsApi = new TransactionsApi(config);
 export const infoApi = new InfoApi(config);
+export const bnsApi = new BnsApi(config);
