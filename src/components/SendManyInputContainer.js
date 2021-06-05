@@ -147,19 +147,26 @@ export function SendManyInputContainer() {
             new BigNum(total)
           ),
         ],
-        finished: data => {
+        onFinish: data => {
           console.log(data);
-          setStatus(undefined);
+          setStatus('Saving transaction to your storage');
           setTxId(data.txId);
           saveTxData(data, userSession)
             .then(r => {
-              setRows([{ to: '', stx: '0', memo: '' }])
-              setPreview(null)
+              setRows([{ to: '', stx: '0', memo: '' }]);
+              setPreview(null);
               setLoading(false);
+              setStatus(undefined);
             })
             .catch(e => {
               console.log(e);
+              setLoading(false);
+              setStatus("Couldn't save the transaction");
             });
+        },
+        onCancel: () => {
+          setStatus(undefined);
+          setLoading(false);
         },
       });
       setStatus(`Sending transaction`);
@@ -240,7 +247,7 @@ export function SendManyInputContainer() {
         </div>
       </div>
       <div>
-        <TxStatus txId={txId} resultPrefix="Transfers executed " />
+        <TxStatus txId={txId} resultPrefix="Transfers executed? " />
       </div>
       {status && (
         <>

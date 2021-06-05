@@ -194,14 +194,12 @@ async function createTxWithApiData(txId, tx, storage) {
 
 export function TxStatus({ txId, resultPrefix }) {
   const [processingResult, setProcessingResult] = useState({ loading: false });
-  const spinner = useRef();
 
   useEffect(() => {
     if (!txId) {
       return;
     }
     console.log(txId);
-    spinner.current.classList.remove('d-none');
     setProcessingResult({ loading: true });
 
     let sub;
@@ -212,6 +210,7 @@ export function TxStatus({ txId, resultPrefix }) {
         console.log({ client, sub });
       } catch (e) {
         console.log(e);
+        setProcessingResult({ loading: false, result: { repr: 'Connection lost' } });
       }
     };
 
@@ -227,7 +226,6 @@ export function TxStatus({ txId, resultPrefix }) {
       } else if (event.tx_status.startsWith('abort')) {
         result = undefined;
       }
-      spinner.current.classList.add('d-none');
       setProcessingResult({ loading: false, result });
       await sub.unsubscribe();
     });
@@ -244,7 +242,7 @@ export function TxStatus({ txId, resultPrefix }) {
         <>
           Checking transaction status:{' '}
           <a href={`https://explorer.stacks.co/txid/${normalizedTxId}${chainSuffix}`}>
-            {normalizedTxId}
+            {normalizedTxId.substr(0, 10)}...
           </a>
         </>
       )}
@@ -255,9 +253,10 @@ export function TxStatus({ txId, resultPrefix }) {
         </>
       )}{' '}
       <div
-        ref={spinner}
         role="status"
-        className="d-none spinner-border spinner-border-sm text-info align-text-top mr-2"
+        className={`${
+          processingResult?.loading ? '' : 'd-none'
+        } spinner-border spinner-border-sm text-info align-text-top mr-2`}
       />
     </>
   );
