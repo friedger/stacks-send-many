@@ -2,10 +2,19 @@ import React, { useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
-import { uintCV } from '@stacks/transactions';
+import {
+  AnchorMode,
+  FungibleConditionCode,
+  makeStandardSTXPostCondition,
+  noneCV,
+  PostConditionMode,
+  uintCV,
+} from '@stacks/transactions';
+import BN from 'bn.js';
 
-export function CityCoinMining({ownerStxAddress}) {
-  const amountRefMining = useRef();
+export function CityCoinMining({ ownerStxAddress }) {
+  const amountRef = useRef();
+  const mine30BlocksRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const { doContractCall } = useConnect();
@@ -16,25 +25,40 @@ export function CityCoinMining({ownerStxAddress}) {
 
   const mineAction = async () => {
     setLoading(true);
-    if (amountRefMining.current.value === '') {
+    if (amountRef.current.value === '') {
       console.log('positive number required to mine');
       setLoading(false);
     } else {
-      const amountUstxCV = uintCV(amountRefMining.current.value.trim());
-      await doContractCall({
-        contractAddress: CONTRACT_ADDRESS,
-        contractName: CITYCOIN_CONTRACT_NAME,
-        functionName: 'mine-tokens',
-        functionArgs: [amountUstxCV],
-        network: NETWORK,
-        onCancel: () => {
-          setLoading(false);
-        },
-        onFinish: result => {
-          setLoading(false);
-          setTxId(result.txId);
-        },
-      });
+      const amountUstxCV = uintCV(amountRef.current.value.trim());
+      const mine30Blocks = mine30BlocksRef.current.checked;
+      console.log(mine30Blocks);
+      try {
+        await doContractCall({
+          contractAddress: CONTRACT_ADDRESS,
+          contractName: CITYCOIN_CONTRACT_NAME,
+          functionName: mine30Blocks ? 'mine-tokens-over-30-blocks' : 'mine-tokens',
+          functionArgs: mine30Blocks ? [amountUstxCV] : [amountUstxCV, noneCV()],
+          postConditionMode: PostConditionMode.Deny,
+          postConditions: [
+            makeStandardSTXPostCondition(
+              ownerStxAddress,
+              FungibleConditionCode.LessEqual,
+              mine30Blocks ? amountUstxCV.value.mul(new BN(30)) : amountUstxCV.value
+            ),
+          ],
+          anchorMode: AnchorMode.OnChainOnly,
+          network: NETWORK,
+          onCancel: () => {
+            setLoading(false);
+          },
+          onFinish: result => {
+            setLoading(false);
+            setTxId(result.txId);
+          },
+        });
+      } catch (e) {
+        setLoading(false);
+      }
     }
   };
 
@@ -51,7 +75,7 @@ export function CityCoinMining({ownerStxAddress}) {
           <input
             type="number"
             className="form-control"
-            ref={amountRefMining}
+            ref={amountRef}
             aria-label="Amount in STX"
             placeholder="Amount in STX"
             required
@@ -61,15 +85,19 @@ export function CityCoinMining({ownerStxAddress}) {
             <span className="input-group-text">STX</span>
           </div>
         </div>
-        <div className="input-group mb-3">
+        <div className="form-check">
           <input
-            disabled
-            type="text"
-            className="form-control"
-            aria-label="Number of Blocks"
-            placeholder="Number of Blocks"
+            ref={mine30BlocksRef}
+            className="form-check-input"
+            type="checkbox"
+            value=""
+            id="mine30Blocks"
           />
+          <label className="form-check-label" htmlFor="mine30Blocks">
+            Mine for 30 blocks
+          </label>
         </div>
+        <br />
         <button
           className="btn btn-block btn-primary"
           type="button"

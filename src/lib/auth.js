@@ -27,7 +27,7 @@ export const useConnect = () => {
     manifestPath: '/manifest.json',
     appDetails: {
       name: 'CityCoins',
-      icon: 'https://cdn.citycoins.co/logos/citycoin-blue-192x192.png',
+      icon: 'https://cdn.citycoins.co/logos/citycoin.png',
     },
   };
 
@@ -36,7 +36,7 @@ export const useConnect = () => {
   };
 
   const handleSignOut = useCallback(() => {
-    userSession?.signUserOut("/");
+    userSession?.signUserOut('/');
   }, [userSession]);
 
   return { handleOpenAuth, handleSignOut, authOptions };

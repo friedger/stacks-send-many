@@ -28,7 +28,7 @@ export function CityCoinContainer() {
 
   // TODO: change back to !miningActivated when done
 
-  if (miningActivated) {
+  if (!miningActivated) {
     return (
       <div>
         <CityCoinRegister ownerStxAddress={ownerStxAddress} />
@@ -38,7 +38,7 @@ export function CityCoinContainer() {
     return (
       <div>
         <div>
-          <CityCoinMining />
+          <CityCoinMining ownerStxAddress={ownerStxAddress} />
         </div>
         <br />
         <hr />

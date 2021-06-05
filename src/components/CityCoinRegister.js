@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
@@ -7,11 +7,13 @@ import {
   getRegisteredMinerCount,
   getRegisteredMinersThreshold,
 } from '../lib/citycoin';
+import { bufferCVFromString, someCV, stringUtf8CV } from '@stacks/transactions';
 
 export function CityCoinRegister({ ownerStxAddress }) {
+  const minerMemoRef = useRef();
   const [minerCount, setMinerCount] = useState();
-  const [minerId, setMinerId] = useState();
-  const [minerRegistered, setMinerRegistered] = useState();
+  const [minerId, setMinerId] = useState(null);
+  const [minerRegistered, setMinerRegistered] = useState(false);
   const [minerThreshold, setMinerThreshold] = useState();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
@@ -48,24 +50,24 @@ export function CityCoinRegister({ ownerStxAddress }) {
     ownerStxAddress &&
       getRegisteredMinerId(ownerStxAddress)
         .then(result => {
-          setMinerId(result);
-          setMinerRegistered(true);
+          if (result) {
+            setMinerId(result);
+            setMinerRegistered(true);
+          }
         })
         .catch(e => {
-          setMinerId(null);
-          setMinerRegistered(false);
           console.log(e);
         });
   }, [ownerStxAddress]);
 
   const registerAction = async () => {
     setLoading(true);
-
+    const minerMemoCV = bufferCVFromString(minerMemoRef.current.value.trim());
     await doContractCall({
       contractAddress: CONTRACT_ADDRESS,
       contractName: CITYCOIN_CONTRACT_NAME,
       functionName: 'register-miner',
-      functionArgs: [],
+      functionArgs: [someCV(minerMemoCV)],
       network: NETWORK,
       onFinish: result => {
         setLoading(false);
@@ -101,20 +103,35 @@ export function CityCoinRegister({ ownerStxAddress }) {
       </div>
       {minerRegistered && <p>Registration Complete! ID: {minerId}</p>}
       {!minerRegistered && (
-        <button
-          className="btn btn-block btn-primary"
-          type="button"
-          disabled={txId}
-          onClick={registerAction}
-        >
-          <div
-            role="status"
-            className={`${
-              loading ? '' : 'd-none'
-            } spinner-border spinner-border-sm text-info align-text-top mr-2`}
-          />
-          Register
-        </button>
+        <>
+          <hr />
+          <form>
+            <input
+              type="text"
+              className="form-control"
+              ref={minerMemoRef}
+              aria-label="Registration Message"
+              placeholder="Registration Message (optional)"
+              minLength="1"
+              maxLength="32"
+            />
+            <br />
+            <button
+              className="btn btn-block btn-primary"
+              type="button"
+              disabled={txId}
+              onClick={registerAction}
+            >
+              <div
+                role="status"
+                className={`${
+                  loading ? '' : 'd-none'
+                } spinner-border spinner-border-sm text-info align-text-top mr-2`}
+              />
+              Register
+            </button>
+          </form>
+        </>
       )}
       {txId && <TxStatus txId={txId} />}
     </>
