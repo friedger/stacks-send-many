@@ -94,11 +94,11 @@ export function CityCoinRegister({ ownerStxAddress }) {
           className="progress-bar"
           role="progressbar"
           style={styles}
-          aria-valuenow={(minerCount / minerThreshold) * 100}
+          aria-valuenow={((minerCount / minerThreshold) * 100).toFixed(2)}
           aria-valuemin="0"
           aria-valuemax="100"
         >
-          {(minerCount / minerThreshold) * 100}%
+          {((minerCount / minerThreshold) * 100).toFixed(2)}%
         </div>
       </div>
       {minerRegistered && <p>Registration Complete! ID: {minerId}</p>}
