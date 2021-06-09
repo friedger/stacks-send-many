@@ -1,0 +1,13 @@
+name = "stacks-send-many"
+account_id = '98288619169b23339dc74ce53fa0b5f1'
+type = 'webpack'
+workers_dev = true
+# target_type = "webpack"
+
+[site]
+bucket = './'
+entry-point = "workers-site"
+
+[env.production]
+route = 'sendstx.com/*'
+zone_id = '0b3c4155d45e41bda9edb6bcf1476b66'
