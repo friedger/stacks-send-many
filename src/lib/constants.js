@@ -27,7 +27,7 @@ export const CONTRACT_ADDRESS = mocknet
 export const GENESIS_CONTRACT_ADDRESS = 'ST000000000000000000002AMW42H';
 export const BNS_CONTRACT_NAME = 'bns';
 
-export const CITYCOIN_CONTRACT_NAME = mocknet ? 'citycoin' : 'ambitious-coral-chicken';
+export const CITYCOIN_CONTRACT_NAME = mocknet ? 'citycoin' : 'comfortable-purple-kiwi';
 
 // TODO: add Freehold API endpoint?
 export const STACK_API_URL = localNode
