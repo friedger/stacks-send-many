@@ -1,6 +1,5 @@
 import { ClarityType, cvToHex, cvToString, hexToCV, tupleCV, uintCV } from '@stacks/transactions';
 import { standardPrincipalCV, callReadOnlyFunction } from '@stacks/transactions';
-import BN from 'bn.js';
 import {
   accountsApi,
   CITYCOIN_CONTRACT_NAME,
