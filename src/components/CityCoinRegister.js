@@ -7,7 +7,7 @@ import {
   getRegisteredMinerCount,
   getRegisteredMinersThreshold,
 } from '../lib/citycoin';
-import { bufferCVFromString, someCV, stringUtf8CV } from '@stacks/transactions';
+import { bufferCVFromString, someCV } from '@stacks/transactions';
 
 export function CityCoinRegister({ ownerStxAddress }) {
   const minerMemoRef = useRef();

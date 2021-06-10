@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { connectWebSocketClient } from '@stacks/blockchain-api-client';
-import { cvToString, hexToCV } from '@stacks/transactions';
+import { hexToCV } from '@stacks/transactions';
 import _groupBy from 'lodash.groupby';
 import {
   accountsApi,
@@ -73,12 +73,12 @@ export function CityCoinTxList() {
 
               {txs[blockHeight].map((tx, txKey) => {
                 return (
-                  <Fragment key={txKey}>
+                  <div className="card p-2 m-2" key={txKey}>
                     <div className="row pl-4">{transactionByType(tx)}</div>
                     <div className="row pl-4 mb-2">
                       <Details tx={tx} />
                     </div>
-                  </Fragment>
+                  </div>
                 );
               })}
             </Fragment>
@@ -97,6 +97,8 @@ function transactionByType(tx) {
       return <RegisterTransaction tx={tx} />;
     case 'mine-tokens':
       return <MineTransaction tx={tx} />;
+    case 'mine-tokens-over-30-blocks':
+      return <MineTransactionOver30Blocks tx={tx} />;
     case 'stack-tokens':
       return <StackTransaction tx={tx} />;
     case 'claim-token-rewards':
@@ -110,6 +112,18 @@ function transactionByType(tx) {
   }
 }
 
+function uintJsonToSTX(value) {
+  return (
+    <>
+      {(hexToCV(value.hex).value.toNumber() / 1000000).toLocaleString(undefined, {
+        maximumFractionDigits: 6,
+        style: 'decimal',
+      })}{' '}
+      STX
+    </>
+  );
+}
+
 function RegisterTransaction({ tx }) {
   return <div className="col-12">{tx.contract_call.function_name}</div>;
 }
@@ -117,7 +131,19 @@ function RegisterTransaction({ tx }) {
 function MineTransaction({ tx }) {
   return (
     <div className="col-12">
-      {tx.contract_call.function_name} {cvToString(tx.contract_call.function_args[0].hex)}
+      {tx.contract_call.function_name}
+      <br />
+      <small>{uintJsonToSTX(tx.contract_call.function_args[0])}</small>
+    </div>
+  );
+}
+
+function MineTransactionOver30Blocks({ tx }) {
+  return (
+    <div className="col-12">
+      <b>{tx.contract_call.function_name}</b>
+      <br />
+      <small>30 x {uintJsonToSTX(tx.contract_call.function_args[0])}</small>
     </div>
   );
 }
@@ -151,13 +177,13 @@ function Details({ tx }) {
         </small>
       </div>
       <div className="col-lg-6 col-md-12 text-right">
-        <small>{tx.tx_id.substr(0, 30)}...</small>
+        <small>{tx.tx_id.substr(0, 20)}...</small>
       </div>
     </>
   );
 }
 
 function Timestamp({ tx }) {
-  const timestamp = new Date(tx.burn_block_time_iso)
+  const timestamp = new Date(tx.burn_block_time_iso);
   return <>{timestamp.toLocaleString()}</>;
 }
