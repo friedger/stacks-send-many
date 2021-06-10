@@ -55,7 +55,11 @@ export function TxStatus({ txId, resultPrefix }) {
       {processingResult.loading && (
         <>
           Checking transaction status: <br />
-          <a href={`https://explorer.stacks.co/txid/${normalizedTxId}${chainSuffix}`}>
+          <a
+            href={`https://explorer.stacks.co/txid/${normalizedTxId}${chainSuffix}`}
+            target="_blank"
+            rel="noreferrer"
+          >
             {normalizedTxId.substr(0, 30)}...
           </a>
         </>
