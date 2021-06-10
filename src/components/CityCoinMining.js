@@ -29,10 +29,12 @@ export function CityCoinMining({ ownerStxAddress }) {
       console.log('positive number required to mine');
       setLoading(false);
     } else {
-      const amountUstxCV = uintCV(amountRef.current.value.trim());
       const mine30Blocks = mine30BlocksRef.current.checked;
       console.log(mine30Blocks);
       try {
+        const amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000)
+        const amountUstxCV = uintCV(amountUstx);
+
         await doContractCall({
           contractAddress: CONTRACT_ADDRESS,
           contractName: CITYCOIN_CONTRACT_NAME,
