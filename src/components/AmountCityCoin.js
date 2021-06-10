@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getCityCoinBalance } from '../lib/citycoin';
+import { CC_SYMBOL } from '../lib/constants';
 
 export function AmountCityCoin({ stxAddress }) {
   const [cityCoinBalance, setCityCoinBalance] = useState();
@@ -15,5 +16,9 @@ export function AmountCityCoin({ stxAddress }) {
       });
   }, [stxAddress]);
 
-  return <span>{cityCoinBalance} &nbsp;$CITY</span>;
+  return (
+    <span>
+      {cityCoinBalance} &nbsp;{CC_SYMBOL}
+    </span>
+  );
 }

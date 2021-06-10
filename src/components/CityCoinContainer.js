@@ -50,13 +50,13 @@ export function CityCoinContainer() {
         <hr />
         <br />
         <div>
-          <CityCoinStacking />
+          <CityCoinStacking ownerStxAddress={ownerStxAddress} />
         </div>
         <br />
         <hr />
         <br />
         <div>
-          <CityCoinStackingClaim />
+          <CityCoinStackingClaim ownerStxAddress={ownerStxAddress} />
         </div>
       </div>
     );

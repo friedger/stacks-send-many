@@ -185,8 +185,8 @@ async function getWinningAmount(blockHeight, randomSample) {
   console.log({ winningAmount });
   return winningAmount;
 }
-export async function getPoxInfo() {
-  const poxInfo = await callReadOnlyFunction({
+export async function getPoxLiteInfo() {
+  const poxLiteInfo = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
     functionName: 'get-pox-lite-info',
@@ -194,5 +194,5 @@ export async function getPoxInfo() {
     senderAddress: CONTRACT_ADDRESS,
     network: NETWORK,
   });
-  return poxInfo;
+  return poxLiteInfo;
 }
