@@ -1,17 +1,23 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import { CC_SYMBOL, CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
+import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
 import { uintCV } from '@stacks/transactions';
+import { getStackingState } from '../lib/citycoin';
 
 // TODO: how to know reward cycle to claim?
 // get from a getter?
 
-export function CityCoinStackingClaim() {
+export function CityCoinStackingClaim({ ownerStxAddress }) {
   const rewardCycleRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
+  const [stackingState, setStackingState] = useState();
   const { doContractCall } = useConnect();
+
+  useEffect(() => {
+    getStackingState(ownerStxAddress).then(state => setStackingState(state));
+  }, [ownerStxAddress]);
 
   const claimAction = async () => {
     if (rewardCycleRef.current.value === '') {
@@ -39,11 +45,35 @@ export function CityCoinStackingClaim() {
   return (
     <>
       <h3>Claim Stacking Rewards</h3>
-      <p>Reward Cycle #1</p>
-      <ul>
-        <li>250 STX</li>
-        <li>250,000 {CC_SYMBOL}</li>
-      </ul>
+      <p>Available STX to claim:</p>
+      {stackingState && stackingState.length > 0 ? (
+        <ul>
+          {stackingState.map((details, key) => (
+            <li key={key}>
+              {details.winner ? (
+                details.claimed ? (
+                  <>
+                    {details.coinbase} CC in Block {details.blockHeight} claimed.
+                  </>
+                ) : (
+                  <>
+                    {details.coinbase} CC in Block {details.blockHeight}
+                    <button onClick={() => claimAction(uintCV(details.blockHeight))}>Claim</button>
+                  </>
+                )
+              ) : details.lost ? null : details.e ? (
+                <>
+                  Error for Cylce {details.blockHeight} {details.e.toString()}
+                </>
+              ) : (
+                <>Pending tx for Cycle {details.blockHeight}</>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : loading ? null : (
+        <div className="my-2">Nothing to claim</div>
+      )}
       <form>
         <div className="input-group mb-3">
           <input

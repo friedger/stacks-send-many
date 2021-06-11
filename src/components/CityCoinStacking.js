@@ -8,7 +8,13 @@ import {
   NETWORK,
 } from '../lib/constants';
 import { TxStatus } from './TxStatus';
-import { uintCV } from '@stacks/transactions';
+import {
+  createAssetInfo,
+  FungibleConditionCode,
+  makeStandardFungiblePostCondition,
+  PostConditionMode,
+  uintCV,
+} from '@stacks/transactions';
 import { getCityCoinBalance } from '../lib/citycoin';
 
 // TODO: consider state for when stacking is active
@@ -29,7 +35,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
       const coreInfo = await infoApi.getCoreApiInfo();
       const balance = await getCityCoinBalance(ownerStxAddress);
       const amountCityCoinCV = uintCV(amountRefStacking.current.value.trim());
-      const startStacksHtCV = uintCV(coreInfo.stacks_tip_height);
+      const startStacksHtCV = uintCV(coreInfo.stacks_tip_height + 5);
       const lockPeriodCV = uintCV(lockPeriodRef.current.value.trim());
       if (lockPeriodCV.value.toNumber() > 32) {
         console.log('Too many cycles');
@@ -44,6 +50,15 @@ export function CityCoinStacking({ ownerStxAddress }) {
           functionName: 'stack-tokens',
           functionArgs: [amountCityCoinCV, startStacksHtCV, lockPeriodCV],
           network: NETWORK,
+          postConditionMode: PostConditionMode.Deny,
+          postConditions: [
+            makeStandardFungiblePostCondition(
+              ownerStxAddress,
+              FungibleConditionCode.LessEqual,
+              amountCityCoinCV.value,
+              createAssetInfo(CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME, 'citycoins')
+            ),
+          ],
           onCancel: () => {
             setLoading(false);
           },

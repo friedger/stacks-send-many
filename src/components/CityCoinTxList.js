@@ -101,13 +101,14 @@ function transactionByType(tx) {
       return <MineTransactionOver30Blocks tx={tx} />;
     case 'stack-tokens':
       return <StackTransaction tx={tx} />;
-    case 'claim-token-rewards':
+    case 'claim-token-reward':
       return <ClaimTransaction tx={tx} />;
-    case 'claim-stacking-rewards':
+    case 'claim-stacking-reward':
       return <ClaimStackingTransaction tx={tx} />;
     case 'transfer':
       return <TransferTransaction tx={tx} />;
     default:
+      console.log('unhandled', tx.contract_call.function_name);
       return null;
   }
 }
