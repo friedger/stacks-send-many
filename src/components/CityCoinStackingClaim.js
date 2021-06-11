@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
+import { CC_SYMBOL, CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
 import { uintCV } from '@stacks/transactions';
 import { getStackingState } from '../lib/citycoin';
@@ -50,24 +50,9 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
         <ul>
           {stackingState.map((details, key) => (
             <li key={key}>
-              {details.winner ? (
-                details.claimed ? (
-                  <>
-                    {details.coinbase} CC in Block {details.blockHeight} claimed.
-                  </>
-                ) : (
-                  <>
-                    {details.coinbase} CC in Block {details.blockHeight}
-                    <button onClick={() => claimAction(uintCV(details.blockHeight))}>Claim</button>
-                  </>
-                )
-              ) : details.lost ? null : details.e ? (
-                <>
-                  Error for Cylce {details.blockHeight} {details.e.toString()}
-                </>
-              ) : (
-                <>Pending tx for Cycle {details.blockHeight}</>
-              )}
+              <>
+                {details.amount} STX in cycle {details.cycleId}.
+              </>
             </li>
           ))}
         </ul>
