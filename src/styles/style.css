@@ -62,6 +62,15 @@ inspect {
   color: var(--brand-primary);
 }
 
+.btn-nav {
+  background-color: var(--brand-gray);
+  color: var(--brand-dark);
+}
+
+.btn-nav:hover {
+  background-color: var(--brand-light);
+}
+
 .btn-primary:hover {
   background-color: var(--brand-dark);
 }
