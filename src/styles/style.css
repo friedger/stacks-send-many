@@ -33,6 +33,8 @@ inspect {
   background-color: var(--brand-light);
 }
 
+/* Bootstrap Overrides */
+
 .bg-primary {
   background-color: var(--brand-primary) !important;
 }
@@ -40,6 +42,10 @@ inspect {
 .bg-secondary {
   background-color: var(--brand-gray) !important;
   color: var(--brand-dark);
+}
+
+.border-info {
+  border-color: var(--brand-primary) !important;
 }
 
 .btn-primary {
