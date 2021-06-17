@@ -11,13 +11,9 @@ export default function Landing(props) {
       <div className="jumbotron jumbotron-fluid pt-3 mb-0">
         <div className="container">
           <div className="panel-landing text-center mt-3">
-            <p className="alert alert-info  border-info">
-              Support your favorite cities while earning yield in Bitcoin.
-            </p>
-
             <div className="card mt-4 border-info">
               <div className="card-header">
-                <h5 className="card-title">CityCoins on the Stacks Blockchain</h5>
+                <h5 className="card-title">CityCoins on Stacks</h5>
               </div>
               <div className="card-body">
                 <p className="card-text mb-3 text-left">
@@ -50,14 +46,10 @@ export default function Landing(props) {
                 </button>
               </p>
 
-              <div className="card-footer text-info">
-                <strong>
-                  View{' '}
-                  <a href="https://docs.citycoins.co" rel="noopener" target="_blank">
-                    our documentation
-                  </a>{' '}
-                  for more info!
-                </strong>
+              <div className="card-footer">
+                <a href="https://docs.citycoins.co" rel="noopener" target="_blank">
+                  View our documentation for more info!
+                </a>
               </div>
             </div>
           </div>

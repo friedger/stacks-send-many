@@ -20,6 +20,10 @@ body {
   font-family: Poppins, Arial, Helvetica, sans-serif;
 }
 
+a {
+  color: var(--brand-primary);
+}
+
 inspect {
   border: thin solid var(--brand-danger);
 }
@@ -53,6 +57,11 @@ inspect {
   border-color: var(--brand-primary);
 }
 
+.btn-outline-primary {
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+}
+
 .btn-primary:hover {
   background-color: var(--brand-dark);
 }
@@ -60,6 +69,11 @@ inspect {
 .navbar-dark,
 .bg-footer {
   background-color: var(--brand-primary);
+}
+
+.bg-footer a {
+  color: var(--brand-light);
+  text-decoration: underline;
 }
 
 /* Avatar */
@@ -71,6 +85,10 @@ inspect {
 }
 
 /* Scaffolding */
+
+#App {
+  min-height: 90vh;
+}
 
 .panel-landing {
   max-width: 50em;
