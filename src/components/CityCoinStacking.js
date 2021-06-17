@@ -1,40 +1,73 @@
 import React, { useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
+import {
+  CC_SYMBOL,
+  CITYCOIN_CONTRACT_NAME,
+  CONTRACT_ADDRESS,
+  infoApi,
+  NETWORK,
+} from '../lib/constants';
 import { TxStatus } from './TxStatus';
-import { uintCV } from '@stacks/transactions';
+import {
+  createAssetInfo,
+  FungibleConditionCode,
+  makeStandardFungiblePostCondition,
+  PostConditionMode,
+  uintCV,
+} from '@stacks/transactions';
+import { getCityCoinBalance } from '../lib/citycoin';
 
 // TODO: consider state for when stacking is active
 
-export function CityCoinStacking() {
+export function CityCoinStacking({ ownerStxAddress }) {
   const amountRefStacking = useRef();
-  const amountRefRewardCycles = useRef();
+  const lockPeriodRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const { doContractCall } = useConnect();
 
   const stackingAction = async () => {
     setLoading(true);
-    if (amountRefStacking.current.value === '' || amountRefRewardCycles.current.value === '') {
+    if (amountRefStacking.current.value === '' || lockPeriodRef.current.value === '') {
       console.log('positive numbers required to stack');
       setLoading(false);
     } else {
+      const coreInfo = await infoApi.getCoreApiInfo();
+      const balance = await getCityCoinBalance(ownerStxAddress);
       const amountCityCoinCV = uintCV(amountRefStacking.current.value.trim());
-      const amountRewardCyclesCV = uintCV(amountRefRewardCycles.current.value.trim());
-      await doContractCall({
-        contractAddress: CONTRACT_ADDRESS,
-        contractName: CITYCOIN_CONTRACT_NAME,
-        functionName: 'stack-tokens',
-        functionArgs: [amountCityCoinCV, amountRewardCyclesCV],
-        network: NETWORK,
-        onCancel: () => {
-          setLoading(false);
-        },
-        onFinish: result => {
-          setLoading(false);
-          setTxId(result.txId);
-        },
-      });
+      const startStacksHtCV = uintCV(coreInfo.stacks_tip_height + 5);
+      const lockPeriodCV = uintCV(lockPeriodRef.current.value.trim());
+      if (lockPeriodCV.value.toNumber() > 32) {
+        console.log('Too many cycles');
+        setLoading(false);
+      } else if (balance < amountCityCoinCV.value.toNumber()) {
+        console.log('Not enough tokens');
+        setLoading(false);
+      } else {
+        await doContractCall({
+          contractAddress: CONTRACT_ADDRESS,
+          contractName: CITYCOIN_CONTRACT_NAME,
+          functionName: 'stack-tokens',
+          functionArgs: [amountCityCoinCV, startStacksHtCV, lockPeriodCV],
+          network: NETWORK,
+          postConditionMode: PostConditionMode.Deny,
+          postConditions: [
+            makeStandardFungiblePostCondition(
+              ownerStxAddress,
+              FungibleConditionCode.LessEqual,
+              amountCityCoinCV.value,
+              createAssetInfo(CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME, 'citycoins')
+            ),
+          ],
+          onCancel: () => {
+            setLoading(false);
+          },
+          onFinish: result => {
+            setLoading(false);
+            setTxId(result.txId);
+          },
+        });
+      }
     }
   };
 
@@ -59,17 +92,18 @@ export function CityCoinStacking() {
             minLength="1"
           />
           <div className="input-group-append">
-            <span className="input-group-text">MIA</span>
+            <span className="input-group-text">{CC_SYMBOL}</span>
           </div>
         </div>
         <div className="input-group mb-3">
           <input
             type="number"
             className="form-control"
-            ref={amountRefRewardCycles}
+            ref={lockPeriodRef}
             aria-label="Number of Reward Cycles"
             placeholder="Number of Reward Cycles"
             required
+            max="32"
             minLength="1"
           />
         </div>

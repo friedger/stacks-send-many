@@ -7,14 +7,14 @@ import {
   getRegisteredMinerCount,
   getRegisteredMinersThreshold,
 } from '../lib/citycoin';
-import { bufferCVFromString, someCV, stringUtf8CV } from '@stacks/transactions';
+import { bufferCVFromString, someCV } from '@stacks/transactions';
 
 export function CityCoinRegister({ ownerStxAddress }) {
   const minerMemoRef = useRef();
   const [minerCount, setMinerCount] = useState();
   const [minerId, setMinerId] = useState(null);
   const [minerRegistered, setMinerRegistered] = useState(false);
-  const [minerThreshold, setMinerThreshold] = useState();
+  const [minerThreshold, setMinerThreshold] = useState(1);
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const { doContractCall } = useConnect();
@@ -32,9 +32,6 @@ export function CityCoinRegister({ ownerStxAddress }) {
         setMinerCount(0);
         console.log(e);
       });
-  }, []);
-
-  useEffect(() => {
     getRegisteredMinersThreshold()
       .then(result => {
         setMinerThreshold(result);
@@ -73,6 +70,9 @@ export function CityCoinRegister({ ownerStxAddress }) {
         setLoading(false);
         setTxId(result.txId);
       },
+      onCancel: () => {
+        setLoading(false)
+      }
     });
   };
 

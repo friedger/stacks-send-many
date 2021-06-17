@@ -1,11 +1,11 @@
 import { ClarityType, cvToHex, cvToString, hexToCV, tupleCV, uintCV } from '@stacks/transactions';
 import { standardPrincipalCV, callReadOnlyFunction } from '@stacks/transactions';
-import BN from 'bn.js';
 import {
   accountsApi,
   CITYCOIN_CONTRACT_NAME,
   CONTRACT_ADDRESS,
   GENESIS_CONTRACT_ADDRESS,
+  infoApi,
   NETWORK,
   smartContractsApi,
 } from './constants';
@@ -135,7 +135,7 @@ async function getWinningDetailsFor(blockHeight, minerId) {
     const minedBlockCV = hexToCV(minedBlock.data);
     console.log({ minedBlockCV });
     const minersCount = minedBlockCV.value.data['miners-count'].value.toNumber();
-    const claimed = minedBlockCV.value.data['claimed'].type === ClarityType.BoolTrue
+    const claimed = minedBlockCV.value.data['claimed'].type === ClarityType.BoolTrue;
 
     console.log({ minersCount });
     let idx = 1;
@@ -158,7 +158,7 @@ async function getWinningDetailsFor(blockHeight, minerId) {
         winner = minerOfBlockCV;
       }
       idx++;
-    }    
+    }
     if (winner.value.data['miner-id'].value.toNumber() === minerId) {
       const coinbase = await getCoinbase(blockHeight);
       console.log({ coinbase });
@@ -186,8 +186,9 @@ async function getWinningAmount(blockHeight, randomSample) {
   console.log({ winningAmount });
   return winningAmount;
 }
-export async function getPoxInfo() {
-  const poxInfo = await callReadOnlyFunction({
+
+export async function getPoxLiteInfo() {
+  const poxLiteInfo = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
     functionName: 'get-pox-lite-info',
@@ -195,5 +196,52 @@ export async function getPoxInfo() {
     senderAddress: CONTRACT_ADDRESS,
     network: NETWORK,
   });
-  return poxInfo;
+  return poxLiteInfo;
+}
+
+export async function getAvailableRewards(stxAddress, cycleId) {
+  const info = await infoApi.getCoreApiInfo();
+  const stackingReward = await callReadOnlyFunction({
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CITYCOIN_CONTRACT_NAME,
+    functionName: 'get-entitled-stacking-reward',
+    functionArgs: [
+      standardPrincipalCV(stxAddress),
+      uintCV(cycleId),
+      uintCV(info.stacks_tip_height),
+    ],
+    senderAddress: stxAddress,
+    network: NETWORK,
+  });
+  const result = { amount: stackingReward.value.toNumber(), cycleId, stxAddress };
+  console.log({ result });
+  return result;
+}
+
+export async function getStackingState(stxAddress) {
+  const response = await accountsApi.getAccountTransactions({ principal: stxAddress });
+  const txs = response.results.filter(
+    tx =>
+      tx.tx_status === 'success' &&
+      tx.tx_type === 'contract_call' &&
+      tx.contract_call.function_name === 'stack-tokens' &&
+      tx.contract_call.contract_id === `${CONTRACT_ADDRESS}.${CITYCOIN_CONTRACT_NAME}`
+  );
+  const state = [];
+  for (let tx of txs) {
+    // TODO use better tx result like this:
+     /*
+    const firstCycle = hexToCV(tx.tx_result).data.first.value.toNumber();
+    const lastCycle = hexToCV(tx.tx_result).data.last.value.toNumber();
+    */
+    const firstCycle =
+      Math.floor((hexToCV(tx.contract_call.function_args[1].hex).value.toNumber() - 14726) / 50);
+    const lockPeriod = hexToCV(tx.contract_call.function_args[2].hex).value.toNumber();
+    const lastCycle = firstCycle + lockPeriod;
+   
+    for (let i = lastCycle; i >= firstCycle; i--) {
+      state.push(await getAvailableRewards(stxAddress, i));
+    }
+  }
+  return state;
 }

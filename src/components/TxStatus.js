@@ -1,15 +1,6 @@
-
 import { connectWebSocketClient } from '@stacks/blockchain-api-client';
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  chainSuffix,
-  mainnet,
-  mocknet,
-  STACKS_API_WS_URL,
-  STACK_API_URL,
-  testnet,
-  transactionsApi,
-} from '../lib/constants';
+import { chainSuffix, STACKS_API_WS_URL, transactionsApi } from '../lib/constants';
 
 export function TxStatus({ txId, resultPrefix }) {
   const [processingResult, setProcessingResult] = useState({ loading: false });
@@ -63,9 +54,12 @@ export function TxStatus({ txId, resultPrefix }) {
     <>
       {processingResult.loading && (
         <>
-          Checking transaction status:{' '}
-          <br />
-          <a href={`https://explorer.stacks.co/txid/${normalizedTxId}${chainSuffix}`}>
+          Checking transaction status: <br />
+          <a
+            href={`https://explorer.stacks.co/txid/${normalizedTxId}${chainSuffix}`}
+            target="_blank"
+            rel="noreferrer"
+          >
             {normalizedTxId.substr(0, 30)}...
           </a>
         </>
