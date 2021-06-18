@@ -57,8 +57,9 @@
     ]
   },
   "devDependencies": {
+    "@popperjs/core": "^2.9.2",
     "@stacks/prettier-config": "0.0.7",
-    "bootstrap": "^4.6.0",
+    "bootstrap": "^5.0.1",
     "prettier": "^2.2.1",
     "react-scripts": "^4.0.3",
     "react-test-renderer": "^17.0.2"
