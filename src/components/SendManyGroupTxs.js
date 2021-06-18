@@ -104,7 +104,7 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
           from{' '}
           <span
             className={`${
-              allTxs.firstTx.apiData.sender_address === ownerStxAddress ? 'font-weight-bold' : ''
+              allTxs.firstTx.apiData.sender_address === ownerStxAddress ? 'fw-bold' : ''
             }`}
           >
             <Address addr={allTxs.firstTx.apiData.sender_address} />

@@ -22,18 +22,18 @@ export default function Landing(props) {
                   city has their own coin, starting with Miami and MiamiCoin ($MIA).
                 </p>
                 <p className="card-text mb-3 text-left">
-                  <span className="font-weight-bold">Registration: </span>
+                  <span className="fw-bold">Registration: </span>
                   CityCoins only exist through mining, which requires 20 independent wallets to
                   signal activation once the contract is deployed. No ICO, no pre-mine.
                   <br />
                   <br />
-                  <span className="font-weight-bold">Mining: </span>
+                  <span className="fw-bold">Mining: </span>
                   Anyone can mine CityCoins by forwarding STX into a CityCoins smart contract on the
                   Stacks blockchain. 30% of the STX that miners forward is sent directly to a
                   reserved wallet for the city.
                   <br />
                   <br />
-                  <span className="font-weight-bold">Stacking: </span>
+                  <span className="fw-bold">Stacking: </span>
                   The remaining 70% of the STX that miners forward is distributed to CityCoin
                   holders who stack their tokens. Stacking CityCoins yields STX rewards, which can
                   further be stacked to yield BTC rewards.

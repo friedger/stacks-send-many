@@ -29,9 +29,7 @@ export function Profile({ stxAddress, updateStatus, showAddress }) {
           <img src="/stacks.png" width="50" height="50" alt="Logo" />
         )}
       </a>
-      <span className="font-weight-bold">
-        {stxAddress ? <Address addr={stxAddress} /> : 'Account'}
-      </span>{' '}
+      <span className="fw-bold">{stxAddress ? <Address addr={stxAddress} /> : 'Account'}</span>{' '}
       <br />
       <a href={'https://explorer.stacks.co/address/' + stxAddress} className="small">
         View on Explorer ↗
@@ -40,7 +38,7 @@ export function Profile({ stxAddress, updateStatus, showAddress }) {
       {profileState.account && (
         <>
           <Amount
-            className="font-weight-bold balance"
+            className="fw-bold balance"
             ustx={profileState.account.balance}
             stxAddress={stxAddress}
           />
