@@ -1,50 +1,93 @@
 /* Globals */
 
 :root {
-  --brand-background: #270f34;
-  --brand-lines: #4b3457;
-  /* Blockstack colors */
-  --brand-dark: #211f6d;
-  --brand-mild: #c4d8e5;
-  --brand-greyish: #f1f6f9;
-  --brand-bright: #3059D9;
-  --brand-accent: #F7C600;
+  /* Primary CityCoins Branding */
+  --brand-primary: #3059d9;
+  --brand-accent: #f7c600;
+  --brand-dark: #000;
+  --brand-gray: #d1d3d4;
+  --brand-light: #fff;
+  /* Triadic and Complementary Variations */
+  --brand-info: #30aed9;
+  --brand-success: #59d930;
+  --brand-warning: #d9b030;
+  --brand-danger: #d93059;
 }
 
 html,
 body {
-  background-color: #fff;
+  background-color: var(--brand-light);
   font-family: Poppins, Arial, Helvetica, sans-serif;
 }
 
+a {
+  color: var(--brand-primary);
+}
+
 inspect {
-  border: thin solid red;
+  border: thin solid var(--brand-danger);
 }
 
 .Landing {
-  background-color: azure;
+  background-color: var(--brand-light);
 }
 
 .Landing .jumbotron {
   opacity: 0.92;
+  background-color: var(--brand-light);
 }
 
+/* Bootstrap Overrides */
+
 .bg-primary {
-  background-color: #3059D9 !important;
+  background-color: var(--brand-primary) !important;
+}
+
+.bg-secondary {
+  background-color: var(--brand-gray) !important;
+  color: var(--brand-dark);
+}
+
+.border-info {
+  border-color: var(--brand-primary) !important;
 }
 
 .btn-primary {
-  background-color: #3059D9;
-  border-color: #3059D9;
+  background-color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.btn-outline-primary {
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--brand-primary);
+  color: var(--brand-light);
+}
+
+.btn-nav {
+  background-color: var(--brand-gray);
+  color: var(--brand-dark);
+}
+
+.btn-nav:hover {
+  background-color: var(--brand-light);
 }
 
 .btn-primary:hover {
-  background-color: #000000;
+  background-color: var(--brand-dark);
 }
 
 .navbar-dark,
 .bg-footer {
-  background-color: #000000;
+  background-color: var(--brand-primary);
+}
+
+.bg-footer a {
+  color: var(--brand-light);
+  text-decoration: underline;
 }
 
 /* Avatar */
@@ -58,16 +101,12 @@ inspect {
 /* Scaffolding */
 
 #App {
-  min-height: 100vh;
+  min-height: 90vh;
 }
 
 .panel-landing {
   max-width: 50em;
   margin: auto;
-}
-
-.monster {
-  filter: grayscale(100);
 }
 
 .text-right {
