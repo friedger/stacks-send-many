@@ -13,6 +13,8 @@ export default function CityCoin({ userSession }) {
   return (
     <main className="container">
       <CityCoinContainer />
+      <hr />
+      <CityCoinTxList />
     </main>
   );
 
