@@ -18,13 +18,13 @@ export default function Landing(props) {
           <p className="h5">
             Each city has their own coin, starting with Miami and MiamiCoin ($MIA).
           </p>
-          <h2>Activation</h2>
+          <h2 className="mt-4">Activation</h2>
           <p className="h5">
             CityCoins only exist through mining, which requires 20 independent wallets to signal
             activation once the contract is deployed.
           </p>
           <p className="h5">No ICO, no pre-sale, no pre-mine.</p>
-          <h2>Mining</h2>
+          <h2 className="mt-4">Mining</h2>
           <p className="h5">
             Anyone can mine CityCoins by forwarding STX into a CityCoins smart contract on the
             Stacks blockchain.
@@ -32,7 +32,7 @@ export default function Landing(props) {
           <p className="h5">
             30% of the STX that miners forward is sent directly to a reserved wallet for the city.
           </p>
-          <h2>Stacking</h2>
+          <h2 className="mt-4">Stacking</h2>
           <p className="h5">
             The remaining 70% of the STX that miners forward is distributed to CityCoin holders who
             stack their tokens.
@@ -41,17 +41,13 @@ export default function Landing(props) {
             Stacking CityCoins yields STX rewards, which can further be stacked to yield BTC
             rewards.
           </p>
-          <button className="btn btn-lg btn-outline-primary" type="button" onClick={handleOpenAuth}>
+          <button
+            className="btn btn-lg btn-outline-primary mt-4"
+            type="button"
+            onClick={handleOpenAuth}
+          >
             Get Started!
           </button>
-          <a
-            className="btn btn-lg btn-outline-primary m-3"
-            href="https://docs.citycoins.co"
-            rel="noopener"
-            target="_blank"
-          >
-            Documentation
-          </a>
         </div>
       </div>
     </div>
