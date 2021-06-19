@@ -6,7 +6,7 @@ import Auth from './components/Auth';
 import { userDataState, userSessionState, useConnect } from './lib/auth';
 import { useAtom } from 'jotai';
 import CityCoin from './pages/CityCoin';
-import { Profile } from './components/Profile';
+import { ProfileSmall } from './components/ProfileSmall';
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -36,7 +36,7 @@ export default function App(props) {
           <span className="h1">CityCoins</span>
         </div>
         <div className="btn-group btn-group-lg" role="group" aria-label="Basic outlined example">
-          <Profile userSession={userSession} />
+          <ProfileSmall userSession={userSession} />
           <a
             href="https://docs.citycoin.co"
             target="_blank"

@@ -3,19 +3,19 @@ import { AmountFiat } from './AmountFiat';
 import { AmountStx } from './AmountStx';
 import { AmountCityCoin } from './AmountCityCoin';
 
-export function Amount({ ustx, className, stxAddress }) {
+export function Amount({ ustx, stxAddress }) {
   if (isNaN(ustx)) {
     return ustx;
   }
   return (
     <>
-      <span className={className}>
+      <div>
         <AmountStx ustx={ustx} /> (<AmountFiat ustx={ustx} />)
-      </span>
+      </div>
       <hr />
-      <span className={className}>
+      <div>
         <AmountCityCoin stxAddress={stxAddress} />
-      </span>
+      </div>
     </>
   );
 }
