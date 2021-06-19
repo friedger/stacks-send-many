@@ -139,6 +139,12 @@ export function ProfileFull({ stxAddress, updateStatus, showAddress }) {
                       <a className="link-dark ps-1" href="#" title="Copy to Clipboard">
                         <i class="bi bi-clipboard"></i>
                       </a>
+                      <br />
+                      Block: TBD
+                      <br />
+                      Date: TBD
+                      <br />
+                      Time: TBD
                     </div>
                   </div>
                 </div>
@@ -181,6 +187,12 @@ export function ProfileFull({ stxAddress, updateStatus, showAddress }) {
                       <a className="link-dark ps-1" href="#" title="Copy to Clipboard">
                         <i class="bi bi-clipboard"></i>
                       </a>
+                      <br />
+                      Block: 14725
+                      <br />
+                      Date: 2021/06/09
+                      <br />
+                      Time: 04:39:56 PM
                     </div>
                   </div>
                 </div>
@@ -223,6 +235,12 @@ export function ProfileFull({ stxAddress, updateStatus, showAddress }) {
                       <a className="link-dark ps-1" href="#" title="Copy to Clipboard">
                         <i class="bi bi-clipboard"></i>
                       </a>
+                      <br />
+                      Block: 15425
+                      <br />
+                      Date: 2021/06/15
+                      <br />
+                      Time: 01:16:41 PM
                     </div>
                   </div>
                 </div>
@@ -265,6 +283,12 @@ export function ProfileFull({ stxAddress, updateStatus, showAddress }) {
                       <a className="link-dark ps-1" href="#" title="Copy to Clipboard">
                         <i class="bi bi-clipboard"></i>
                       </a>
+                      <br />
+                      Block: 15425
+                      <br />
+                      Date: 2021/06/15
+                      <br />
+                      Time: 01:16:41 PM
                     </div>
                   </div>
                 </div>
@@ -307,6 +331,12 @@ export function ProfileFull({ stxAddress, updateStatus, showAddress }) {
                       <a className="link-dark ps-1" href="#" title="Copy to Clipboard">
                         <i class="bi bi-clipboard"></i>
                       </a>
+                      <br />
+                      Block: 15425
+                      <br />
+                      Date: 2021/06/15
+                      <br />
+                      Time: 01:16:41 PM
                     </div>
                   </div>
                 </div>
