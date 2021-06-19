@@ -22,7 +22,7 @@ export default function Auth() {
     );
   } else {
     return (
-      <button type="button" class="btn btn-outline-primary" onClick={handleOpenAuth}>
+      <button type="button" className="btn btn-outline-primary" onClick={handleOpenAuth}>
         Get Started
       </button>
     );
