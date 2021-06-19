@@ -1,6 +1,7 @@
 import React from 'react';
 import { useConnect, userSessionState } from '../lib/auth';
 import { useAtom } from 'jotai';
+
 // Authentication button adapting to status
 
 export default function Auth() {
