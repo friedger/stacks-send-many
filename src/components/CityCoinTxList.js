@@ -67,20 +67,41 @@ export function CityCoinTxList() {
         <div className="container">
           {blockHeights.map((blockHeight, key) => (
             <Fragment key={key}>
-              <div>
-                Block #{blockHeight} (<Timestamp tx={txs[blockHeight][0]} />)
-              </div>
-
-              {txs[blockHeight].map((tx, txKey) => {
-                return (
-                  <div className="card p-2 m-2" key={txKey}>
-                    <div className="row pl-4">{transactionByType(tx)}</div>
-                    <div className="row pl-4 mb-2">
-                      <Details tx={tx} />
-                    </div>
+              <div class="accordion accordion-flush" id="accordionRecentTx">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="flush-headingOne">
+                    <button
+                      class="accordion-button collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#flush-collapseOne"
+                      aria-expanded="false"
+                      aria-controls="flush-collapseOne"
+                    >
+                      Stacks Block #{blockHeight} (<Timestamp tx={txs[blockHeight][0]} />)
+                    </button>
+                  </h2>
+                </div>
+                <div
+                  id="flush-collapseOne"
+                  class="accordion-collapse collapse"
+                  aria-labelledby="flush-headingOne"
+                  data-bs-parent="#accordionRecentTx"
+                >
+                  <div class="accordion-body">
+                    {txs[blockHeight].map((tx, txKey) => {
+                      return (
+                        <div className="card p-2 m-2" key={txKey}>
+                          <div className="row pl-4">{transactionByType(tx)}</div>
+                          <div className="row pl-4 mb-2">
+                            <Details tx={tx} />
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              </div>
             </Fragment>
           ))}
         </div>
