@@ -95,8 +95,7 @@ export function ProfileFull({ stxAddress, updateStatus, showAddress }) {
           <hr />
           {profileState.account && (
             <>
-              <h5>Account Balances</h5>
-              <hr />
+              <h5 className="mb-3">Account Balances</h5>
               <Amount ustx={profileState.account.balance} stxAddress={stxAddress} />
               <hr />
               <h5>Last 5 Transactions</h5>
