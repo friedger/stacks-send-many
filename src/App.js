@@ -13,6 +13,7 @@ export default function App(props) {
   const { authOptions } = useConnect();
   const [userSession] = useAtom(userSessionState);
   const [, setUserData] = useAtom(userDataState);
+
   useEffect(() => {
     if (userSession?.isUserSignedIn()) {
       setUserData(userSession.loadUserData());
@@ -23,17 +24,29 @@ export default function App(props) {
 
   return (
     <Connect authOptions={authOptions}>
-      <nav className="navbar sticky-top navbar-dark text-light p-2">
-        <a className="navbar-brand" href="/">
-          <img src="/citycoins_icon_white.png" width="100" alt="Logo" />
+      <header class="d-flex flex-wrap justify-content-evenly align-items-center py-3 mb-4 border-bottom">
+        <a
+          href="/"
+          class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none"
+        >
+          <img src="/citycoin-icon-blue-reversed-75x75.png" width="75" alt="CityCoins CC Logo" />
         </a>
-        <h1>CityCoins</h1>
-        <div>
-          <Rate />
-          <Network />
-          <Auth className="ml-auto" userSession={userSession} />
+
+        <div class="btn-group btn-group-lg" role="group" aria-label="Basic outlined example">
+          <button type="button" class="btn btn-outline-primary">
+            Home
+          </button>
+          <a
+            href="https://docs.citycoin.co"
+            target="_blank"
+            rel="noopener"
+            class="btn btn-outline-primary"
+          >
+            Docs
+          </a>
+          <Auth />
         </div>
-      </nav>
+      </header>
 
       <Content userSession={userSession} />
     </Connect>
