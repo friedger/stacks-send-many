@@ -100,10 +100,6 @@ inspect {
 
 /* Scaffolding */
 
-#App {
-  min-height: 90vh;
-}
-
 .panel-landing {
   max-width: 50em;
   margin: auto;

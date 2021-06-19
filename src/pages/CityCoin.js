@@ -11,6 +11,12 @@ export default function CityCoin({ userSession }) {
     return <div>Loading</div>;
   }
   return (
+    <main className="container">
+      <CityCoinContainer />
+    </main>
+  );
+
+  return (
     <main className="panel-welcome mt-2 container">
       <div className="lead row mt-2">
         <div className="col-xs-10 col-md-12 mx-auto px-1 mb-4">
@@ -25,7 +31,7 @@ export default function CityCoin({ userSession }) {
                     }}
                     showAddress
                   />
-                   <hr />
+                  <hr />
                   <PoxLiteInfo />
                 </div>
               </div>
