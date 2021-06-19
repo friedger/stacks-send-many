@@ -16,7 +16,7 @@ export function ProfileSmall({ userSession }) {
             role="button"
             aria-controls="offcanvasProfile"
           >
-            <i class="bi bi-circle me-2" />
+            <i class="bi bi-person-circle me-2" />
             ST123...45678
           </a>
         </div>
