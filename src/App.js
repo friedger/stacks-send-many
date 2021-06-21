@@ -38,7 +38,7 @@ export default function App(props) {
         <div className="btn-group btn-group-lg" role="group" aria-label="Basic outlined example">
           <ProfileSmall userSession={userSession} />
           <a
-            href="https://docs.citycoin.co"
+            href="https://docs.citycoins.co"
             target="_blank"
             rel="noopener"
             className="btn btn-outline-primary"
