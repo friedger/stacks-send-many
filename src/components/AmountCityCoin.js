@@ -17,8 +17,8 @@ export function AmountCityCoin({ stxAddress }) {
   }, [stxAddress]);
 
   return (
-    <span>
+    <li>
       {cityCoinBalance} &nbsp;{CC_SYMBOL}
-    </span>
+    </li>
   );
 }

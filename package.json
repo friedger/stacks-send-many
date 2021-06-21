@@ -27,6 +27,7 @@
     "c32check": "^1.1.2",
     "jotai": "^0.16.10",
     "lodash.groupby": "^4.6.0",
+    "number-to-words": "github:OmgImAlexis/number-to-words",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-download-link": "^2.3.0",
@@ -57,8 +58,9 @@
     ]
   },
   "devDependencies": {
+    "@popperjs/core": "^2.9.2",
     "@stacks/prettier-config": "0.0.7",
-    "bootstrap": "^4.6.0",
+    "bootstrap": "^5.0.1",
     "prettier": "^2.2.1",
     "react-scripts": "^4.0.3",
     "react-test-renderer": "^17.0.2"

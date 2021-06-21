@@ -1,21 +1,17 @@
 import React from 'react';
-import { AmountFiat } from './AmountFiat';
 import { AmountStx } from './AmountStx';
 import { AmountCityCoin } from './AmountCityCoin';
 
-export function Amount({ ustx, className, stxAddress }) {
+export function Amount({ ustx, stxAddress }) {
   if (isNaN(ustx)) {
     return ustx;
   }
   return (
     <>
-      <span className={className}>
-        <AmountStx ustx={ustx} /> (<AmountFiat ustx={ustx} />)
-      </span>
-      <hr />
-      <span className={className}>
+      <ul>
+        <AmountStx ustx={ustx} />
         <AmountCityCoin stxAddress={stxAddress} />
-      </span>
+      </ul>
     </>
   );
 }

@@ -69,9 +69,7 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
           {tx.apiData.burn_block_time_iso?.substring(0, 10) || 'pending'} ({tx.apiData.tx_status})
           <br />
           from{' '}
-          <span
-            className={`${tx.apiData.sender_address === ownerStxAddress ? 'font-weight-bold' : ''}`}
-          >
+          <span className={`${tx.apiData.sender_address === ownerStxAddress ? 'fw-bold' : ''}`}>
             <Address addr={tx.apiData.sender_address} />
           </span>
           <br />
