@@ -63,7 +63,7 @@ export function CityCoinTxList() {
     const blockHeights = txs ? Object.keys(txs).sort((a, b) => a < b) : undefined;
     return (
       <>
-        <h3>Recent Activities</h3>
+        <h3>Activity Log</h3>
         <div className="container">
           {blockHeights.map((blockHeight, key) => (
             <Fragment key={key}>
