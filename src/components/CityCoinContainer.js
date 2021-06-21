@@ -122,12 +122,7 @@ export function CityCoinContainer() {
           >
             <CityCoinDashboard />
           </div>
-          <div
-            className="tab-pane fade show active"
-            id="mining"
-            role="tabpanel"
-            aria-labelledby="mining-tab"
-          >
+          <div className="tab-pane fade" id="mining" role="tabpanel" aria-labelledby="mining-tab">
             <CityCoinMining ownerStxAddress={ownerStxAddress} />
           </div>
           <div
