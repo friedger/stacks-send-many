@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { userSessionState } from '../lib/auth';
 import { useStxAddresses } from '../lib/hooks';
 import { useAtomValue } from 'jotai/utils';
+import { CityCoinDashboard } from './CityCoinDashboard';
 import { CityCoinRegister } from './CityCoinRegister';
 import { CityCoinMining } from './CityCoinMining';
 import { CityCoinMiningClaim } from './CityCoinMiningClaim';
 import { CityCoinStacking } from './CityCoinStacking';
 import { CityCoinStackingClaim } from './CityCoinStackingClaim';
+import { ProfileFull } from './ProfileFull';
 import { getMiningActivationStatus } from '../lib/citycoin';
 import { tab } from 'bootstrap';
 
@@ -42,12 +44,26 @@ export function CityCoinContainer() {
           <li className="nav-item" role="presentation">
             <button
               className="nav-link active"
+              id="dashboard-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#dashboard"
+              type="button"
+              role="tab"
+              aria-controls="dashboard"
+              aria-selected="true"
+            >
+              Dashboard
+            </button>
+          </li>
+          <li className="nav-item" role="presentation">
+            <button
+              className="nav-link"
               id="mining-tab"
               data-bs-toggle="tab"
               data-bs-target="#mining"
               type="button"
               role="tab"
-              aria-controls="home"
+              aria-controls="mining"
               aria-selected="true"
             >
               Mine CityCoins
@@ -98,6 +114,14 @@ export function CityCoinContainer() {
         </ul>
 
         <div className="tab-content mt-3" id="myTabContent">
+          <div
+            className="tab-pane fade show active"
+            id="dashboard"
+            role="tabpanel"
+            aria-labelledby="dashboard-tab"
+          >
+            <CityCoinDashboard />
+          </div>
           <div
             className="tab-pane fade show active"
             id="mining"
