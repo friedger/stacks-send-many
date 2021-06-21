@@ -104,6 +104,14 @@ export function CityCoinMining({ ownerStxAddress }) {
             <span className="input-group-text">STX</span>
           </div>
         </div>
+        <input
+          class="form-control"
+          type="text"
+          placeholder="Memo (disabled)"
+          aria-label="Disabled memo field"
+          disabled
+        />
+        <br />
         <div className="form-check">
           <input
             ref={mine30BlocksRef}
