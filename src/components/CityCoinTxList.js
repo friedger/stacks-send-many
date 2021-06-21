@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
+import converter from 'number-to-words';
 import { connectWebSocketClient } from '@stacks/blockchain-api-client';
 import { hexToCV } from '@stacks/transactions';
 import _groupBy from 'lodash.groupby';
@@ -61,32 +62,37 @@ export function CityCoinTxList() {
 
   if (txs) {
     const blockHeights = txs ? Object.keys(txs).sort((a, b) => a < b) : undefined;
+    console.log(converter.toWords(1));
+    console.log(converter.toWords(2));
+    console.log(converter.toWords(3));
+    console.log(converter.toWords(4));
+    console.log(converter.toWords(5));
     return (
       <>
         <h3>Activity Log</h3>
         <div className="container">
           {blockHeights.map((blockHeight, key) => (
             <Fragment key={key}>
-              <div class="accordion accordion-flush" id="accordionRecentTx">
+              <div class="accordion accordion-flush" id="accordionActivityLog">
                 <div class="accordion-item">
-                  <h2 class="accordion-header" id="flush-headingOne">
+                  <h2 class="accordion-header" id="accordionActivityLog-heading">
                     <button
                       class="accordion-button collapsed"
                       type="button"
                       data-bs-toggle="collapse"
-                      data-bs-target="#flush-collapseOne"
+                      data-bs-target="#accordionActivityLog-activityOne"
                       aria-expanded="false"
-                      aria-controls="flush-collapseOne"
+                      aria-controls="accordionActivityLog-activityOne"
                     >
                       Stacks Block #{blockHeight} (<Timestamp tx={txs[blockHeight][0]} />)
                     </button>
                   </h2>
                 </div>
                 <div
-                  id="flush-collapseOne"
+                  id="accordionActivityLog-activityOne"
                   class="accordion-collapse collapse"
-                  aria-labelledby="flush-headingOne"
-                  data-bs-parent="#accordionRecentTx"
+                  aria-labelledby="accordionActivityLog-headingOne"
+                  data-bs-parent="#accordionActivityLog"
                 >
                   <div class="accordion-body">
                     {txs[blockHeight].map((tx, txKey) => {

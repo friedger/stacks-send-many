@@ -27,6 +27,7 @@
     "c32check": "^1.1.2",
     "jotai": "^0.16.10",
     "lodash.groupby": "^4.6.0",
+    "number-to-words": "github:OmgImAlexis/number-to-words",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-download-link": "^2.3.0",
