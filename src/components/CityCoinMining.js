@@ -4,6 +4,7 @@ import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/consta
 import { TxStatus } from './TxStatus';
 import {
   AnchorMode,
+  bufferCVFromString,
   FungibleConditionCode,
   makeStandardSTXPostCondition,
   noneCV,
@@ -38,7 +39,7 @@ export function CityCoinMining({ ownerStxAddress }) {
         const amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
         const amountUstxCV = uintCV(amountUstx);
         const memo = memoRef.current.value.trim();
-        const memoCV = memo ? someCV(memo) : noneCV();
+        const memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
         await doContractCall({
           contractAddress: CONTRACT_ADDRESS,
           contractName: CITYCOIN_CONTRACT_NAME,
@@ -113,6 +114,7 @@ export function CityCoinMining({ ownerStxAddress }) {
           type="text"
           placeholder="Memo (optional)"
           aria-label="Optional memo field"
+          hidden={mine30BlocksRef.current?.checked}
         />
         <br />
         <div className="form-check">
