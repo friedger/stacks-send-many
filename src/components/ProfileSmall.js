@@ -17,7 +17,7 @@ export function ProfileSmall({ userSession }) {
             role="button"
             aria-controls="offcanvasProfile"
           >
-            <i class="bi bi-person-circle me-2" />
+            <i className="bi bi-person-circle me-2" />
             {ownerStxAddress ? <Address addr={ownerStxAddress} /> : 'Profile'}
           </a>
         </div>

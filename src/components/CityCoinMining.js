@@ -110,7 +110,7 @@ export function CityCoinMining({ ownerStxAddress }) {
         </div>
         <input
           ref={memoRef}
-          class="form-control"
+          className="form-control"
           type="text"
           placeholder="Memo (optional)"
           aria-label="Optional memo field"
