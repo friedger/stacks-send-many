@@ -8,7 +8,6 @@ import { CityCoinMining } from './CityCoinMining';
 import { CityCoinMiningClaim } from './CityCoinMiningClaim';
 import { CityCoinStacking } from './CityCoinStacking';
 import { CityCoinStackingClaim } from './CityCoinStackingClaim';
-import { ProfileFull } from './ProfileFull';
 import { getMiningActivationStatus } from '../lib/citycoin';
 import { tab } from 'bootstrap';
 

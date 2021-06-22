@@ -73,11 +73,11 @@ export function CityCoinTxList() {
         <div className="container">
           {blockHeights.map((blockHeight, key) => (
             <Fragment key={key}>
-              <div class="accordion accordion-flush" id="accordionActivityLog">
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="accordionActivityLog-heading">
+              <div className="accordion accordion-flush" id="accordionActivityLog">
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="accordionActivityLog-heading">
                     <button
-                      class="accordion-button collapsed"
+                      className="accordion-button collapsed"
                       type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#accordionActivityLog-activityOne"
@@ -90,11 +90,11 @@ export function CityCoinTxList() {
                 </div>
                 <div
                   id="accordionActivityLog-activityOne"
-                  class="accordion-collapse collapse"
+                  className="accordion-collapse collapse"
                   aria-labelledby="accordionActivityLog-headingOne"
                   data-bs-parent="#accordionActivityLog"
                 >
-                  <div class="accordion-body">
+                  <div className="accordion-body">
                     {txs[blockHeight].map((tx, txKey) => {
                       return (
                         <div className="card p-2 m-2" key={txKey}>

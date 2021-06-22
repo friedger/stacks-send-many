@@ -17,13 +17,13 @@ export function ProfileFull({ stxAddress, userSession }) {
 
   return (
     <div
-      class="offcanvas offcanvas-end"
-      tabindex="-1"
+      className="offcanvas offcanvas-end"
+      tabIndex="-1"
       id="offcanvasProfile"
       aria-labelledby="offcanvasProfileLabel"
     >
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasProfileLabel">
+      <div className="offcanvas-header">
+        <h5 className="offcanvas-title" id="offcanvasProfileLabel">
           <a className="navbar-brand" href="/">
             {stxAddress || typeof stxAddress != 'undefined' ? (
               <svg
@@ -40,61 +40,61 @@ export function ProfileFull({ stxAddress, userSession }) {
         </h5>
         <button
           type="button"
-          class="btn-close text-reset"
+          className="btn-close text-reset"
           data-bs-dismiss="offcanvas"
           aria-label="Close"
         ></button>
       </div>
-      <div class="offcanvas-body">
-        <div class="dropdown mt-3">
+      <div className="offcanvas-body">
+        <div className="dropdown mt-3">
           <button
-            class="btn btn-primary dropdown-toggle"
+            className="btn btn-primary dropdown-toggle"
             type="button"
             id="dropdownMenuButton"
             data-bs-toggle="dropdown"
           >
             Actions
           </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <li>
               <a
-                class="dropdown-item"
+                className="dropdown-item"
                 href={'https://explorer.stacks.co/address/' + stxAddress}
                 target="_blank"
-                rel="noopener"
+                rel="noreferrer"
               >
-                <i class="bi bi-box-arrow-up-right"></i> View on Explorer
+                <i className="bi bi-box-arrow-up-right"></i> View on Explorer
               </a>
             </li>
             <li>
               <a
-                class="dropdown-item"
+                className="dropdown-item"
                 href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Bug&template=bug_report.md&title=%F0%9F%90%9E%5BBUG%5D+"
                 target="_blank"
-                rel="noopener"
+                rel="noreferrer"
               >
-                <i class="bi bi-bug"></i> Report a Bug
+                <i className="bi bi-bug"></i> Report a Bug
               </a>
             </li>
             <li>
               <a
-                class="dropdown-item"
+                className="dropdown-item"
                 href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%E2%9A%A1%5BFEAT%5D+"
                 target="_blank"
-                rel="noopener"
+                rel="noreferrer"
               >
-                <i class="bi bi-lightning"></i> Request a Feature
+                <i className="bi bi-lightning"></i> Request a Feature
               </a>
             </li>
             <li>
               <button
-                class="dropdown-item"
+                className="dropdown-item"
                 href="#"
                 onClick={() => {
                   userSession.signUserOut('/');
                 }}
               >
-                <i class="bi bi-x-circle"></i> Sign Out
+                <i className="bi bi-x-circle"></i> Sign Out
               </button>
             </li>
           </ul>
@@ -105,27 +105,27 @@ export function ProfileFull({ stxAddress, userSession }) {
               <Amount ustx={profileState.account.balance} stxAddress={stxAddress} />
               <hr />
               <h5>Last 5 Transactions</h5>
-              <div class="accordion accordion-flush" id="accordionLastFiveTx">
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="flush-headingOne">
+              <div className="accordion accordion-flush" id="accordionLastFiveTx">
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="flush-headingOne">
                     <button
-                      class="accordion-button collapsed"
+                      className="accordion-button collapsed"
                       type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#flush-collapseOne"
                       aria-expanded="false"
                       aria-controls="flush-collapseOne"
                     >
-                      <i class="bi bi-circle me-2 text-warning"></i>claim-token-reward
+                      <i className="bi bi-circle me-2 text-warning"></i>claim-token-reward
                     </button>
                   </h2>
                   <div
                     id="flush-collapseOne"
-                    class="accordion-collapse collapse"
+                    className="accordion-collapse collapse"
                     aria-labelledby="flush-headingOne"
                     data-bs-parent="#accordionLastFiveTx"
                   >
-                    <div class="accordion-body">
+                    <div className="accordion-body">
                       <span title="ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A">
                         By: ST3CK...HK60A
                       </span>
@@ -137,13 +137,13 @@ export function ProfileFull({ stxAddress, userSession }) {
                         className="ps-1"
                         href="https://explorer.stacks.co/txid/0x3415d7c2bba593b1c209757cfceec0756f68ec99be21706fed318be9eb5309bc?chain=testnet"
                         target="_blank"
-                        rel="noopener"
+                        rel="noreferrer"
                         title="View on Explorer"
                       >
                         0x3415d7c2...
                       </a>
                       <a className="link-dark ps-1" href="#" title="Copy to Clipboard">
-                        <i class="bi bi-clipboard"></i>
+                        <i className="bi bi-clipboard"></i>
                       </a>
                       <br />
                       Block: TBD
@@ -154,26 +154,26 @@ export function ProfileFull({ stxAddress, userSession }) {
                     </div>
                   </div>
                 </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="flush-headingTwo">
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="flush-headingTwo">
                     <button
-                      class="accordion-button collapsed"
+                      className="accordion-button collapsed"
                       type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#flush-collapseTwo"
                       aria-expanded="false"
                       aria-controls="flush-collapseTwo"
                     >
-                      <i class="bi bi-circle me-2 text-danger"></i>mine-tokens
+                      <i className="bi bi-circle me-2 text-danger"></i>mine-tokens
                     </button>
                   </h2>
                   <div
                     id="flush-collapseTwo"
-                    class="accordion-collapse collapse"
+                    className="accordion-collapse collapse"
                     aria-labelledby="flush-headingTwo"
                     data-bs-parent="#accordionLastFiveTx"
                   >
-                    <div class="accordion-body">
+                    <div className="accordion-body">
                       <span title="ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A">
                         By: ST3CK...HK60A
                       </span>
@@ -185,13 +185,13 @@ export function ProfileFull({ stxAddress, userSession }) {
                         className="ps-1"
                         href="https://explorer.stacks.co/txid/0x8afc854d9c20976b65ae519a66d58bfe210fa22f7690a381b3dfc0e2c0f262b2?chain=testnet"
                         target="_blank"
-                        rel="noopener"
+                        rel="noreferrer"
                         title="View on Explorer"
                       >
                         0x8afc854d...
                       </a>
                       <a className="link-dark ps-1" href="#" title="Copy to Clipboard">
-                        <i class="bi bi-clipboard"></i>
+                        <i className="bi bi-clipboard"></i>
                       </a>
                       <br />
                       Block: 14725
@@ -202,26 +202,26 @@ export function ProfileFull({ stxAddress, userSession }) {
                     </div>
                   </div>
                 </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="flush-headingThree">
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="flush-headingThree">
                     <button
-                      class="accordion-button collapsed"
+                      className="accordion-button collapsed"
                       type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#flush-collapseThree"
                       aria-expanded="false"
                       aria-controls="flush-collapseThree"
                     >
-                      <i class="bi bi-circle me-2 text-success"></i>stack-tokens
+                      <i className="bi bi-circle me-2 text-success"></i>stack-tokens
                     </button>
                   </h2>
                   <div
                     id="flush-collapseThree"
-                    class="accordion-collapse collapse"
+                    className="accordion-collapse collapse"
                     aria-labelledby="flush-headingThree"
                     data-bs-parent="#accordionLastFiveTx"
                   >
-                    <div class="accordion-body">
+                    <div className="accordion-body">
                       <span title="ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A">
                         By: ST3CK...HK60A
                       </span>
@@ -233,13 +233,13 @@ export function ProfileFull({ stxAddress, userSession }) {
                         className="ps-1"
                         href="https://explorer.stacks.co/txid/0xca95e7402780c6cb0671be1f4fcd9daf2737775cd5399cc6d39abf2912a070a5?chain=testnet"
                         target="_blank"
-                        rel="noopener"
+                        rel="noreferrer"
                         title="View on Explorer"
                       >
                         0xca95e740...
                       </a>
                       <a className="link-dark ps-1" href="#" title="Copy to Clipboard">
-                        <i class="bi bi-clipboard"></i>
+                        <i className="bi bi-clipboard"></i>
                       </a>
                       <br />
                       Block: 15425
@@ -250,26 +250,26 @@ export function ProfileFull({ stxAddress, userSession }) {
                     </div>
                   </div>
                 </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="flush-headingFour">
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="flush-headingFour">
                     <button
-                      class="accordion-button collapsed"
+                      className="accordion-button collapsed"
                       type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#flush-collapseFour"
                       aria-expanded="false"
                       aria-controls="flush-collapseFour"
                     >
-                      <i class="bi bi-circle me-2 text-success"></i>stack-tokens
+                      <i className="bi bi-circle me-2 text-success"></i>stack-tokens
                     </button>
                   </h2>
                   <div
                     id="flush-collapseFour"
-                    class="accordion-collapse collapse"
+                    className="accordion-collapse collapse"
                     aria-labelledby="flush-headingFour"
                     data-bs-parent="#accordionLastFiveTx"
                   >
-                    <div class="accordion-body">
+                    <div className="accordion-body">
                       <span title="ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A">
                         By: ST3CK...HK60A
                       </span>
@@ -281,13 +281,13 @@ export function ProfileFull({ stxAddress, userSession }) {
                         className="ps-1"
                         href="https://explorer.stacks.co/txid/0xca95e7402780c6cb0671be1f4fcd9daf2737775cd5399cc6d39abf2912a070a5?chain=testnet"
                         target="_blank"
-                        rel="noopener"
+                        rel="noreferrer"
                         title="View on Explorer"
                       >
                         0xca95e740...
                       </a>
                       <a className="link-dark ps-1" href="#" title="Copy to Clipboard">
-                        <i class="bi bi-clipboard"></i>
+                        <i className="bi bi-clipboard"></i>
                       </a>
                       <br />
                       Block: 15425
@@ -298,26 +298,26 @@ export function ProfileFull({ stxAddress, userSession }) {
                     </div>
                   </div>
                 </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="flush-headingFive">
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="flush-headingFive">
                     <button
-                      class="accordion-button collapsed"
+                      className="accordion-button collapsed"
                       type="button"
                       data-bs-toggle="collapse"
                       data-bs-target="#flush-collapseFive"
                       aria-expanded="false"
                       aria-controls="flush-collapseFive"
                     >
-                      <i class="bi bi-circle me-2 text-success"></i>stack-tokens
+                      <i className="bi bi-circle me-2 text-success"></i>stack-tokens
                     </button>
                   </h2>
                   <div
                     id="flush-collapseFive"
-                    class="accordion-collapse collapse"
+                    className="accordion-collapse collapse"
                     aria-labelledby="flush-headingFive"
                     data-bs-parent="#accordionLastFiveTx"
                   >
-                    <div class="accordion-body">
+                    <div className="accordion-body">
                       <span title="ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A">
                         By: ST3CK...HK60A
                       </span>
@@ -329,13 +329,13 @@ export function ProfileFull({ stxAddress, userSession }) {
                         className="ps-1"
                         href="https://explorer.stacks.co/txid/0xca95e7402780c6cb0671be1f4fcd9daf2737775cd5399cc6d39abf2912a070a5?chain=testnet"
                         target="_blank"
-                        rel="noopener"
+                        rel="noreferrer"
                         title="View on Explorer"
                       >
                         0xca95e740...
                       </a>
                       <a className="link-dark ps-1" href="#" title="Copy to Clipboard">
-                        <i class="bi bi-clipboard"></i>
+                        <i className="bi bi-clipboard"></i>
                       </a>
                       <br />
                       Block: 15425
