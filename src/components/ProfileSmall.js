@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { ProfileFull } from '../components/ProfileFull';
+import React from 'react';
+import { ProfileFull } from './ProfileFull';
 import { useStxAddresses } from '../lib/hooks';
+import { Address } from './Address';
 
 export function ProfileSmall({ userSession }) {
   const { ownerStxAddress } = useStxAddresses(userSession);
@@ -17,13 +18,10 @@ export function ProfileSmall({ userSession }) {
             aria-controls="offcanvasProfile"
           >
             <i class="bi bi-person-circle me-2" />
-            ST123...45678
+            {ownerStxAddress ? <Address addr={ownerStxAddress} /> : 'Profile'}
           </a>
         </div>
-        <ProfileFull
-          stxAddress={ownerStxAddress}
-          userSession={userSession}
-        />
+        <ProfileFull stxAddress={ownerStxAddress} userSession={userSession} />
       </>
     );
   } else {
