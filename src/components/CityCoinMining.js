@@ -4,10 +4,12 @@ import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/consta
 import { TxStatus } from './TxStatus';
 import {
   AnchorMode,
+  bufferCVFromString,
   FungibleConditionCode,
   makeStandardSTXPostCondition,
   noneCV,
   PostConditionMode,
+  someCV,
   uintCV,
 } from '@stacks/transactions';
 import BN from 'bn.js';
@@ -15,6 +17,7 @@ import BN from 'bn.js';
 export function CityCoinMining({ ownerStxAddress }) {
   const amountRef = useRef();
   const mine30BlocksRef = useRef();
+  const memoRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const [buttonLabel, setButtonLabel] = useState('Mine');
@@ -35,12 +38,13 @@ export function CityCoinMining({ ownerStxAddress }) {
       try {
         const amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
         const amountUstxCV = uintCV(amountUstx);
-
+        const memo = memoRef.current.value.trim();
+        const memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
         await doContractCall({
           contractAddress: CONTRACT_ADDRESS,
           contractName: CITYCOIN_CONTRACT_NAME,
           functionName: mine30Blocks ? 'mine-tokens-over-30-blocks' : 'mine-tokens',
-          functionArgs: mine30Blocks ? [amountUstxCV] : [amountUstxCV, noneCV()],
+          functionArgs: mine30Blocks ? [amountUstxCV] : [amountUstxCV, memoCV],
           postConditionMode: PostConditionMode.Deny,
           postConditions: [
             makeStandardSTXPostCondition(
@@ -105,11 +109,13 @@ export function CityCoinMining({ ownerStxAddress }) {
           </div>
         </div>
         <input
+          ref={memoRef}
           class="form-control"
           type="text"
-          placeholder="Memo (disabled)"
-          aria-label="Disabled memo field"
-          disabled
+          placeholder="Memo (optional)"
+          aria-label="Optional memo field"
+          maxLength="34"
+          hidden={mine30BlocksRef.current?.checked}
         />
         <br />
         <div className="form-check">
