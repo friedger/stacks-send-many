@@ -9,7 +9,7 @@ export function useStxAddresses(userSession) {
   const [ownerStxAddress, setOwnerStxAddress] = useState();
   const [appStxAddress, setAppStxAddress] = useState();
   useEffect(() => {
-    if (userSession) {
+    if (userSession && userSession.isUserSignedIn()) {
       getUserData(userSession).then(userData => {
         const { address } = getStacksAccount(userData.appPrivateKey);
         setAppStxAddress(addressToString(address));
