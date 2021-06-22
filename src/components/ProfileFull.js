@@ -4,7 +4,7 @@ import { Address } from './Address';
 import { Amount } from './Amount';
 import {} from 'react-jdenticon';
 
-export function ProfileFull({ stxAddress, updateStatus, showAddress }) {
+export function ProfileFull({ stxAddress, userSession }) {
   const [profileState, setProfileState] = useState({
     account: undefined,
   });
@@ -87,9 +87,15 @@ export function ProfileFull({ stxAddress, updateStatus, showAddress }) {
               </a>
             </li>
             <li>
-              <a class="dropdown-item" href="#">
+              <button
+                class="dropdown-item"
+                href="#"
+                onClick={() => {
+                  userSession.signUserOut('/');
+                }}
+              >
                 <i class="bi bi-x-circle"></i> Sign Out
-              </a>
+              </button>
             </li>
           </ul>
           <hr />

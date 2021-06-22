@@ -22,10 +22,7 @@ export function ProfileSmall({ userSession }) {
         </div>
         <ProfileFull
           stxAddress={ownerStxAddress}
-          updateStatus={s => {
-            console.log(s);
-          }}
-          showAddress
+          userSession={userSession}
         />
       </>
     );
