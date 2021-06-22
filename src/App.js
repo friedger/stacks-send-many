@@ -40,7 +40,7 @@ export default function App(props) {
           <a
             href="https://docs.citycoins.co"
             target="_blank"
-            rel="noopener"
+            rel="noreferrer"
             className="btn btn-outline-primary"
           >
             Docs

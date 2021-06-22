@@ -61,7 +61,7 @@ export function ProfileFull({ stxAddress, userSession }) {
                 class="dropdown-item"
                 href={'https://explorer.stacks.co/address/' + stxAddress}
                 target="_blank"
-                rel="noopener"
+                rel="noreferrer"
               >
                 <i class="bi bi-box-arrow-up-right"></i> View on Explorer
               </a>
@@ -71,7 +71,7 @@ export function ProfileFull({ stxAddress, userSession }) {
                 class="dropdown-item"
                 href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Bug&template=bug_report.md&title=%F0%9F%90%9E%5BBUG%5D+"
                 target="_blank"
-                rel="noopener"
+                rel="noreferrer"
               >
                 <i class="bi bi-bug"></i> Report a Bug
               </a>
@@ -81,7 +81,7 @@ export function ProfileFull({ stxAddress, userSession }) {
                 class="dropdown-item"
                 href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%E2%9A%A1%5BFEAT%5D+"
                 target="_blank"
-                rel="noopener"
+                rel="noreferrer"
               >
                 <i class="bi bi-lightning"></i> Request a Feature
               </a>
@@ -137,7 +137,7 @@ export function ProfileFull({ stxAddress, userSession }) {
                         className="ps-1"
                         href="https://explorer.stacks.co/txid/0x3415d7c2bba593b1c209757cfceec0756f68ec99be21706fed318be9eb5309bc?chain=testnet"
                         target="_blank"
-                        rel="noopener"
+                        rel="noreferrer"
                         title="View on Explorer"
                       >
                         0x3415d7c2...
@@ -185,7 +185,7 @@ export function ProfileFull({ stxAddress, userSession }) {
                         className="ps-1"
                         href="https://explorer.stacks.co/txid/0x8afc854d9c20976b65ae519a66d58bfe210fa22f7690a381b3dfc0e2c0f262b2?chain=testnet"
                         target="_blank"
-                        rel="noopener"
+                        rel="noreferrer"
                         title="View on Explorer"
                       >
                         0x8afc854d...
@@ -233,7 +233,7 @@ export function ProfileFull({ stxAddress, userSession }) {
                         className="ps-1"
                         href="https://explorer.stacks.co/txid/0xca95e7402780c6cb0671be1f4fcd9daf2737775cd5399cc6d39abf2912a070a5?chain=testnet"
                         target="_blank"
-                        rel="noopener"
+                        rel="noreferrer"
                         title="View on Explorer"
                       >
                         0xca95e740...
@@ -281,7 +281,7 @@ export function ProfileFull({ stxAddress, userSession }) {
                         className="ps-1"
                         href="https://explorer.stacks.co/txid/0xca95e7402780c6cb0671be1f4fcd9daf2737775cd5399cc6d39abf2912a070a5?chain=testnet"
                         target="_blank"
-                        rel="noopener"
+                        rel="noreferrer"
                         title="View on Explorer"
                       >
                         0xca95e740...
@@ -329,7 +329,7 @@ export function ProfileFull({ stxAddress, userSession }) {
                         className="ps-1"
                         href="https://explorer.stacks.co/txid/0xca95e7402780c6cb0671be1f4fcd9daf2737775cd5399cc6d39abf2912a070a5?chain=testnet"
                         target="_blank"
-                        rel="noopener"
+                        rel="noreferrer"
                         title="View on Explorer"
                       >
                         0xca95e740...
