@@ -114,6 +114,7 @@ export function CityCoinMining({ ownerStxAddress }) {
           type="text"
           placeholder="Memo (optional)"
           aria-label="Optional memo field"
+          maxLength="34"
           hidden={mine30BlocksRef.current?.checked}
         />
         <br />
