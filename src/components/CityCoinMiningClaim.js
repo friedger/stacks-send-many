@@ -55,28 +55,32 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
       <p>Available CityCoins to claim:</p>
       {miningState && miningState.winningDetails.length > 0 ? (
         <ul>
-          {miningState.winningDetails.map((details, key) => (
-            <li key={key}>
-              {details.winner ? (
-                details.claimed ? (
+          {miningState.winningDetails.map((details, key) =>
+            details.lost ? null : (
+              <li key={key}>
+                {details.winner ? (
+                  details.claimed ? (
+                    <>
+                      {details.coinbase} {CC_SYMBOL} in Block {details.blockHeight} claimed.
+                    </>
+                  ) : (
+                    <>
+                      {details.coinbase} {CC_SYMBOL} in Block {details.blockHeight}
+                      <button onClick={() => claimAction(uintCV(details.blockHeight))}>
+                        Claim
+                      </button>
+                    </>
+                  )
+                ) : details.e ? (
                   <>
-                    {details.coinbase} {CC_SYMBOL} in Block {details.blockHeight} claimed.
+                    Error for Block {details.blockHeight} {details.e.toString()}
                   </>
                 ) : (
-                  <>
-                    {details.coinbase} {CC_SYMBOL} in Block {details.blockHeight}
-                    <button onClick={() => claimAction(uintCV(details.blockHeight))}>Claim</button>
-                  </>
-                )
-              ) : details.lost ? null : details.e ? (
-                <>
-                  Error for Block {details.blockHeight} {details.e.toString()}
-                </>
-              ) : (
-                <>Pending tx for Block {details.blockHeight}</>
-              )}
-            </li>
-          ))}
+                  <>Pending tx for Block {details.blockHeight}</>
+                )}
+              </li>
+            )
+          )}
         </ul>
       ) : loading ? null : (
         <div className="my-2">No rewards yet</div>
