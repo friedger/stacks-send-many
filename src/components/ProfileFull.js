@@ -18,7 +18,7 @@ export function ProfileFull({ stxAddress, userSession }) {
   return (
     <div
       className="offcanvas offcanvas-end"
-      tabindex="-1"
+      tabIndex="-1"
       id="offcanvasProfile"
       aria-labelledby="offcanvasProfileLabel"
     >
