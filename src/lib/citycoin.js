@@ -218,6 +218,21 @@ export async function getAvailableRewards(stxAddress, cycleId) {
   return result;
 }
 
+export async function getAvailableStackedCitycoins(stxAddress, cycleId) {
+  const info = await infoApi.getCoreApiInfo();
+  const citycoinClaim = await callReadOnlyFunction({
+    contractAddress: CONTRACT_ADDRESS,
+    contractName: CITYCOIN_CONTRACT_NAME,
+    functionName: 'get-stacked-in-cycle',
+    functionArgs: [standardPrincipalCV(stxAddress), uintCV(cycleId)],
+    senderAddress: stxAddress,
+    network: NETWORK,
+  });
+  const result = { amount: citycoinClaim.value.toNumber(), cycleId, stxAddress };
+  console.log({ result });
+  return result;
+}
+
 export async function getStackingState(stxAddress) {
   const response = await accountsApi.getAccountTransactions({ principal: stxAddress });
   const txs = response.results.filter(
@@ -230,15 +245,16 @@ export async function getStackingState(stxAddress) {
   const state = [];
   for (let tx of txs) {
     // TODO use better tx result like this:
-     /*
+    /*
     const firstCycle = hexToCV(tx.tx_result).data.first.value.toNumber();
     const lastCycle = hexToCV(tx.tx_result).data.last.value.toNumber();
     */
-    const firstCycle =
-      Math.floor((hexToCV(tx.contract_call.function_args[1].hex).value.toNumber() - 14726) / 50);
+    const firstCycle = Math.floor(
+      (hexToCV(tx.contract_call.function_args[1].hex).value.toNumber() - 14726) / 50
+    );
     const lockPeriod = hexToCV(tx.contract_call.function_args[2].hex).value.toNumber();
     const lastCycle = firstCycle + lockPeriod;
-   
+
     for (let i = lastCycle; i >= firstCycle; i--) {
       state.push(await getAvailableRewards(stxAddress, i));
     }
