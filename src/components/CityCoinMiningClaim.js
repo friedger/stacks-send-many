@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import { CC_SYMBOL, CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
@@ -9,7 +9,6 @@ import { getCoinbase, getMiningDetails } from '../lib/citycoin';
 // get from a getter?
 
 export function CityCoinMiningClaim({ ownerStxAddress }) {
-  const amountRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const [miningState, setMiningState] = useState();
@@ -37,16 +36,6 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
         setTxId(result.txId);
       },
     });
-  };
-  const mineClaimAction = async () => {
-    setLoading(true);
-    if (amountRef.current.value === '') {
-      console.log('positive number required to claim mining rewards');
-      setLoading(false);
-    } else {
-      const amountUstxCV = uintCV(amountRef.current.value.trim());
-      claimAction(amountUstxCV);
-    }
   };
 
   return (
@@ -99,29 +88,6 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
       ) : loading ? null : (
         <div className="my-2">No rewards yet</div>
       )}
-      <form>
-        <div className="input-group mb-3">
-          <input
-            type="number"
-            className="form-control"
-            ref={amountRef}
-            aria-label="Block Number"
-            placeholder="Block Number"
-            required
-            minLength="1"
-          />
-        </div>
-        <button className="btn btn-block btn-primary" type="button" onClick={mineClaimAction}>
-          <div
-            role="status"
-            className={`${
-              loading ? '' : 'd-none'
-            } spinner-border spinner-border-sm text-info align-text-top mr-2`}
-          />
-          Claim Mining Rewards
-        </button>
-      </form>
-      {txId && <TxStatus txId={txId} />}
     </>
   );
 }
