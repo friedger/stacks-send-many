@@ -20,26 +20,22 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
   }, [ownerStxAddress]);
 
   const claimAction = async () => {
-    if (rewardCycleRef.current.value === '') {
-      console.log('positive number required to claim stacking rewards');
-    } else {
-      setLoading(true);
-      const targetRewardCycleCV = uintCV(rewardCycleRef.current.value.trim());
-      await doContractCall({
-        contractAddress: CONTRACT_ADDRESS,
-        contractName: CITYCOIN_CONTRACT_NAME,
-        functionName: 'claim-stacking-reward',
-        functionArgs: [targetRewardCycleCV],
-        network: NETWORK,
-        onCancel: () => {
-          setLoading(false);
-        },
-        onFinish: result => {
-          setLoading(false);
-          setTxId(result.txId);
-        },
-      });
-    }
+    setLoading(true);
+    const targetRewardCycleCV = uintCV(rewardCycleRef.current.value.trim());
+    await doContractCall({
+      contractAddress: CONTRACT_ADDRESS,
+      contractName: CITYCOIN_CONTRACT_NAME,
+      functionName: 'claim-stacking-reward',
+      functionArgs: [targetRewardCycleCV],
+      network: NETWORK,
+      onCancel: () => {
+        setLoading(false);
+      },
+      onFinish: result => {
+        setLoading(false);
+        setTxId(result.txId);
+      },
+    });
   };
 
   return (
@@ -47,15 +43,22 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
       <h3>Claim Stacking Rewards</h3>
       <p>Available STX to claim:</p>
       {stackingState && stackingState.length > 0 ? (
-        <ul>
+        <>
           {stackingState.map((details, key) => (
-            <li key={key}>
-              <>
-                {details.amount} STX in cycle {details.cycleId}.
-              </>
-            </li>
+            <div className="card" key={key}>
+              <div className="card-header">Cycle {details.cycleId}</div>
+              <div className="card-body">
+                <p>{details.amount} STX</p>
+                <button
+                  className="btn btn-outline-primary"
+                  onClick={() => claimAction(uintCV(details.cycleId))}
+                >
+                  Claim
+                </button>
+              </div>
+            </div>
           ))}
-        </ul>
+        </>
       ) : loading ? null : (
         <div className="my-2">Nothing to claim</div>
       )}
