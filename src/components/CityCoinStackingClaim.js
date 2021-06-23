@@ -1,8 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
-import { TxStatus } from './TxStatus';
-import { uintCV } from '@stacks/transactions';
+import { CC_NAME, CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
+import {
+  uintCV,
+  PostConditionMode,
+  makeContractSTXPostCondition,
+  makeContractFungiblePostCondition,
+  createAssetInfo,
+  FungibleConditionCode,
+  AnchorMode,
+} from '@stacks/transactions';
 import { getStackingState } from '../lib/citycoin';
 
 // TODO: how to know reward cycle to claim?
@@ -19,69 +26,74 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
     getStackingState(ownerStxAddress).then(state => setStackingState(state));
   }, [ownerStxAddress]);
 
-  const claimAction = async () => {
-    if (rewardCycleRef.current.value === '') {
-      console.log('positive number required to claim stacking rewards');
-    } else {
-      setLoading(true);
-      const targetRewardCycleCV = uintCV(rewardCycleRef.current.value.trim());
-      await doContractCall({
-        contractAddress: CONTRACT_ADDRESS,
-        contractName: CITYCOIN_CONTRACT_NAME,
-        functionName: 'claim-stacking-reward',
-        functionArgs: [targetRewardCycleCV],
-        network: NETWORK,
-        onCancel: () => {
-          setLoading(false);
-        },
-        onFinish: result => {
-          setLoading(false);
-          setTxId(result.txId);
-        },
-      });
-    }
+  const claimAction = async (targetRewardCycleCV, amountUstxCV, amountCityCoinCV) => {
+    setLoading(true);
+    await doContractCall({
+      contractAddress: CONTRACT_ADDRESS,
+      contractName: CITYCOIN_CONTRACT_NAME,
+      functionName: 'claim-stacking-reward',
+      functionArgs: [targetRewardCycleCV],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        makeContractSTXPostCondition(
+          CONTRACT_ADDRESS,
+          CITYCOIN_CONTRACT_NAME,
+          FungibleConditionCode.LessEqual,
+          amountUstxCV.value
+        ),
+        makeContractFungiblePostCondition(
+          CONTRACT_ADDRESS,
+          CITYCOIN_CONTRACT_NAME,
+          FungibleConditionCode.LessEqual,
+          amountCityCoinCV.value,
+          createAssetInfo(CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME, CC_NAME)
+        ),
+      ],
+      anchorMode: AnchorMode.OnChainOnly,
+      network: NETWORK,
+      onCancel: () => {
+        setLoading(false);
+      },
+      onFinish: result => {
+        setLoading(false);
+        setTxId(result.txId);
+      },
+    });
   };
+
+  // TODO: add txstatus back to correlate with each claim button state
 
   return (
     <>
       <h3>Claim Stacking Rewards</h3>
       <p>Available STX to claim:</p>
       {stackingState && stackingState.length > 0 ? (
-        <ul>
+        <>
           {stackingState.map((details, key) => (
-            <li key={key}>
-              <>
-                {details.amount} STX in cycle {details.cycleId}.
-              </>
-            </li>
+            <div className="card" key={key}>
+              <div className="card-header">Cycle {details.cycleId}</div>
+              <div className="card-body">
+                <p>{details.amountSTX.toLocaleString()} STX</p>
+                <p>{details.amountCC.toLocaleString()} CityCoins</p>
+                <button
+                  className="btn btn-outline-primary"
+                  onClick={() =>
+                    claimAction(
+                      uintCV(details.cycleId),
+                      uintCV(details.amountSTX),
+                      uintCV(details.amountCC)
+                    )
+                  }
+                >
+                  Claim
+                </button>
+              </div>
+            </div>
           ))}
-        </ul>
+        </>
       ) : loading ? null : (
         <div className="my-2">Nothing to claim</div>
       )}
-      <form>
-        <div className="input-group mb-3">
-          <input
-            type="number"
-            className="form-control"
-            ref={rewardCycleRef}
-            aria-label="Reward Cycle"
-            placeholder="Reward Cycle"
-            required
-            minLength="1"
-          />
-        </div>
-        <button className="btn btn-block btn-primary" type="button" onClick={claimAction}>
-          <div
-            role="status"
-            className={`${
-              loading ? '' : 'd-none'
-            } spinner-border spinner-border-sm text-info align-text-top mr-2`}
-          />
-          Claim Stacking Rewards
-        </button>
-      </form>
-      {txId && <TxStatus txId={txId} />}
     </>
   );
 }

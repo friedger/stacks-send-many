@@ -152,6 +152,18 @@ function uintJsonToSTX(value) {
   );
 }
 
+function uintJsonToRewardCycle(value) {
+  return (
+    <>
+      Reward Cycle:{' '}
+      {hexToCV(value.hex).value.toNumber().toLocaleString(undefined, {
+        maximumFractionDigits: 0,
+        style: 'decimal',
+      })}
+    </>
+  );
+}
+
 function RegisterTransaction({ tx }) {
   return <div className="col-12">{tx.contract_call.function_name}</div>;
 }
@@ -187,7 +199,9 @@ function ClaimTransaction({ tx }) {
 function ClaimStackingTransaction({ tx }) {
   return (
     <div className="col-12">
-      {tx.contract_call.function_name} ({tx.events[0].asset.amount})
+      <b>{tx.contract_call.function_name}</b>
+      <br />
+      <small>{uintJsonToRewardCycle(tx.contract_call.function_args[0])}</small>
     </div>
   );
 }
@@ -205,7 +219,10 @@ function Details({ tx }) {
         </small>
       </div>
       <div className="col-lg-6 col-md-12 text-right">
-        <small>{tx.tx_id.substr(0, 20)}...</small>
+        {tx.tx_id.substr(0, 10)}...
+        <a href={`https://explorer.stacks.co/txid/${tx.tx_id}`} target="_blank" rel="noreferrer">
+          <i class="bi bi-box-arrow-up-right" />
+        </a>
       </div>
     </>
   );
