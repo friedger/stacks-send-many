@@ -72,7 +72,7 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
             <div className="col-3 card" key={key}>
               <div className="card-header">Cycle {details.cycleId}</div>
               <div className="card-body">
-                <p>{details.amountSTX.toLocaleString()} STX</p>
+                <p>{(details.amountSTX / 1000000).toLocaleString()} STX</p>
                 <p>{details.amountCC.toLocaleString()} CityCoins</p>
                 <button
                   className="btn btn-outline-primary"
