@@ -1,8 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
+import { CC_NAME, CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
-import { uintCV } from '@stacks/transactions';
+import {
+  uintCV,
+  PostConditionMode,
+  makeStandardSTXPostCondition,
+  makeStandardFungiblePostCondition,
+  createAssetInfo,
+  FungibleConditionCode,
+  AnchorMode,
+} from '@stacks/transactions';
 import { getStackingState } from '../lib/citycoin';
 
 // TODO: how to know reward cycle to claim?
@@ -19,14 +27,28 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
     getStackingState(ownerStxAddress).then(state => setStackingState(state));
   }, [ownerStxAddress]);
 
-  const claimAction = async () => {
+  const claimAction = async (targetRewardCycleCV, amountUstxCV, amountCityCoinCV) => {
     setLoading(true);
-    const targetRewardCycleCV = uintCV(rewardCycleRef.current.value.trim());
     await doContractCall({
       contractAddress: CONTRACT_ADDRESS,
       contractName: CITYCOIN_CONTRACT_NAME,
       functionName: 'claim-stacking-reward',
-      functionArgs: [targetRewardCycleCV],
+      functionArgs: [targetRewardCycleCV, amountUstxCV, amountCityCoinCV],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        makeStandardSTXPostCondition(
+          ownerStxAddress,
+          FungibleConditionCode.Equal,
+          amountUstxCV.value
+        ),
+        makeStandardFungiblePostCondition(
+          ownerStxAddress,
+          FungibleConditionCode.Equal,
+          amountCityCoinCV.value,
+          createAssetInfo(CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME, CC_NAME)
+        ),
+      ],
+      anchorMode: AnchorMode.OnChainOnly,
       network: NETWORK,
       onCancel: () => {
         setLoading(false);
@@ -52,7 +74,13 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
                 <p>{details.amountCC.toLocaleString()} CityCoins</p>
                 <button
                   className="btn btn-outline-primary"
-                  onClick={() => claimAction(uintCV(details.cycleId))}
+                  onClick={() =>
+                    claimAction(
+                      uintCV(details.cycleId),
+                      uintCV(details.amountSTX),
+                      uintCV(details.amountCC)
+                    )
+                  }
                 >
                   Claim
                 </button>
