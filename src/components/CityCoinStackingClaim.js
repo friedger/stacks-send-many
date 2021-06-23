@@ -33,7 +33,7 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
       contractAddress: CONTRACT_ADDRESS,
       contractName: CITYCOIN_CONTRACT_NAME,
       functionName: 'claim-stacking-reward',
-      functionArgs: [targetRewardCycleCV, amountUstxCV, amountCityCoinCV],
+      functionArgs: [targetRewardCycleCV],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
         makeStandardSTXPostCondition(
