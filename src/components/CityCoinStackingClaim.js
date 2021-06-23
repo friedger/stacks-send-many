@@ -4,8 +4,8 @@ import { CC_NAME, CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../l
 import {
   uintCV,
   PostConditionMode,
-  makeStandardSTXPostCondition,
-  makeStandardFungiblePostCondition,
+  makeContractSTXPostCondition,
+  makeContractFungiblePostCondition,
   createAssetInfo,
   FungibleConditionCode,
   AnchorMode,
@@ -35,14 +35,16 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
       functionArgs: [targetRewardCycleCV],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        makeStandardSTXPostCondition(
-          ownerStxAddress,
-          FungibleConditionCode.Equal,
+        makeContractSTXPostCondition(
+          CONTRACT_ADDRESS,
+          CITYCOIN_CONTRACT_NAME,
+          FungibleConditionCode.LessEqual,
           amountUstxCV.value
         ),
-        makeStandardFungiblePostCondition(
-          ownerStxAddress,
-          FungibleConditionCode.Equal,
+        makeContractFungiblePostCondition(
+          CONTRACT_ADDRESS,
+          CITYCOIN_CONTRACT_NAME,
+          FungibleConditionCode.LessEqual,
           amountCityCoinCV.value,
           createAssetInfo(CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME, CC_NAME)
         ),
