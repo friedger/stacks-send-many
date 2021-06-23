@@ -152,6 +152,18 @@ function uintJsonToSTX(value) {
   );
 }
 
+function uintJsonToRewardCycle(value) {
+  return (
+    <>
+      Reward Cycle:{' '}
+      {hexToCV(value.hex).value.toNumber().toLocaleString(undefined, {
+        maximumFractionDigits: 0,
+        style: 'decimal',
+      })}
+    </>
+  );
+}
+
 function RegisterTransaction({ tx }) {
   return <div className="col-12">{tx.contract_call.function_name}</div>;
 }
@@ -187,7 +199,9 @@ function ClaimTransaction({ tx }) {
 function ClaimStackingTransaction({ tx }) {
   return (
     <div className="col-12">
-      {tx.contract_call.function_name} ({tx.events[0].asset.amount})
+      <b>{tx.contract_call.function_name}</b>
+      <br />
+      <small>{uintJsonToRewardCycle(tx.contract_call.function_args[0])}</small>
     </div>
   );
 }
