@@ -213,14 +213,7 @@ export async function getAvailableRewards(stxAddress, cycleId) {
     senderAddress: stxAddress,
     network: NETWORK,
   });
-  const result = { amount: stackingReward.value.toNumber(), cycleId, stxAddress };
-  console.log({ result });
-  return result;
-}
-
-export async function getAvailableStackedCitycoins(stxAddress, cycleId) {
-  const info = await infoApi.getCoreApiInfo();
-  const citycoinClaim = await callReadOnlyFunction({
+  const cityCoinClaim = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
     functionName: 'get-stacked-in-cycle',
@@ -228,7 +221,12 @@ export async function getAvailableStackedCitycoins(stxAddress, cycleId) {
     senderAddress: stxAddress,
     network: NETWORK,
   });
-  const result = { amount: citycoinClaim.value.toNumber(), cycleId, stxAddress };
+  const result = {
+    amountSTX: stackingReward.value.toNumber(),
+    amountCC: cityCoinClaim.value.toNumber(),
+    cycleId,
+    stxAddress,
+  };
   console.log({ result });
   return result;
 }

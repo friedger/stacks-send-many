@@ -48,7 +48,8 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
             <div className="card" key={key}>
               <div className="card-header">Cycle {details.cycleId}</div>
               <div className="card-body">
-                <p>{details.amount} STX</p>
+                <p>{details.amountSTX.toLocaleString()} STX</p>
+                <p>{details.amountCC.toLocaleString()} CityCoins</p>
                 <button
                   className="btn btn-outline-primary"
                   onClick={() => claimAction(uintCV(details.cycleId))}
