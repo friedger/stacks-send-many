@@ -221,7 +221,7 @@ function Details({ tx }) {
       <div className="col-lg-6 col-md-12 text-right">
         {tx.tx_id.substr(0, 10)}...
         <a href={`https://explorer.stacks.co/txid/${tx.tx_id}`} target="_blank" rel="noreferrer">
-          <i class="bi bi-box-arrow-up-right" />
+          <i className="bi bi-box-arrow-up-right" />
         </a>
       </div>
     </>
