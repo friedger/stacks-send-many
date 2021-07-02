@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import { CC_SYMBOL, CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
@@ -9,7 +9,6 @@ import { getCoinbase, getMiningDetails } from '../lib/citycoin';
 // get from a getter?
 
 export function CityCoinMiningClaim({ ownerStxAddress }) {
-  const amountRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const [miningState, setMiningState] = useState();
@@ -38,76 +37,57 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
       },
     });
   };
-  const mineClaimAction = async () => {
-    setLoading(true);
-    if (amountRef.current.value === '') {
-      console.log('positive number required to claim mining rewards');
-      setLoading(false);
-    } else {
-      const amountUstxCV = uintCV(amountRef.current.value.trim());
-      claimAction(amountUstxCV);
-    }
-  };
 
   return (
     <>
       <h3>Claim Mining Rewards</h3>
       <p>Available CityCoins to claim:</p>
       {miningState && miningState.winningDetails.length > 0 ? (
-        <ul>
+        <div class="row">
           {miningState.winningDetails.map((details, key) =>
             details.lost ? null : (
-              <li key={key}>
-                {details.winner ? (
-                  details.claimed ? (
+              <div className="col-3 card" key={key}>
+                <div className="card-header">Block {details.blockHeight}</div>
+                <div className="card-body">
+                  {details.winner ? (
+                    details.claimed ? (
+                      <>
+                        <p>
+                          {details.coinbase} {CC_SYMBOL} claimed.
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p>
+                          {details.coinbase} {CC_SYMBOL}
+                        </p>
+                        <button
+                          className="btn btn-outline-primary"
+                          onClick={() => claimAction(uintCV(details.blockHeight))}
+                        >
+                          Claim
+                        </button>
+                      </>
+                    )
+                  ) : details.e ? (
                     <>
-                      {details.coinbase} {CC_SYMBOL} in Block {details.blockHeight} claimed.
+                      <p>
+                        Error for Block {details.blockHeight} {details.e.toString()}
+                      </p>
                     </>
                   ) : (
                     <>
-                      {details.coinbase} {CC_SYMBOL} in Block {details.blockHeight}
-                      <button onClick={() => claimAction(uintCV(details.blockHeight))}>
-                        Claim
-                      </button>
+                      <p>Pending tx for Block {details.blockHeight}</p>
                     </>
-                  )
-                ) : details.e ? (
-                  <>
-                    Error for Block {details.blockHeight} {details.e.toString()}
-                  </>
-                ) : (
-                  <>Pending tx for Block {details.blockHeight}</>
-                )}
-              </li>
+                  )}
+                </div>
+              </div>
             )
           )}
-        </ul>
+        </div>
       ) : loading ? null : (
         <div className="my-2">No rewards yet</div>
       )}
-      <form>
-        <div className="input-group mb-3">
-          <input
-            type="number"
-            className="form-control"
-            ref={amountRef}
-            aria-label="Block Number"
-            placeholder="Block Number"
-            required
-            minLength="1"
-          />
-        </div>
-        <button className="btn btn-block btn-primary" type="button" onClick={mineClaimAction}>
-          <div
-            role="status"
-            className={`${
-              loading ? '' : 'd-none'
-            } spinner-border spinner-border-sm text-info align-text-top mr-2`}
-          />
-          Claim Mining Rewards
-        </button>
-      </form>
-      {txId && <TxStatus txId={txId} />}
     </>
   );
 }

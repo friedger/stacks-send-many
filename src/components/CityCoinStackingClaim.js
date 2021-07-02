@@ -66,14 +66,13 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
   return (
     <>
       <h3>Claim Stacking Rewards</h3>
-      <p>Available STX to claim:</p>
       {stackingState && stackingState.length > 0 ? (
-        <>
+        <div class="row">
           {stackingState.map((details, key) => (
-            <div className="card" key={key}>
+            <div className="col-3 card" key={key}>
               <div className="card-header">Cycle {details.cycleId}</div>
               <div className="card-body">
-                <p>{details.amountSTX.toLocaleString()} STX</p>
+                <p>{(details.amountSTX / 1000000).toLocaleString()} STX</p>
                 <p>{details.amountCC.toLocaleString()} CityCoins</p>
                 <button
                   className="btn btn-outline-primary"
@@ -90,7 +89,7 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
               </div>
             </div>
           ))}
-        </>
+        </div>
       ) : loading ? null : (
         <div className="my-2">Nothing to claim</div>
       )}
