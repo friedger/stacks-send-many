@@ -1612,10 +1612,10 @@
     jsontokens "^3.0.0"
     query-string "^6.13.1"
 
-"@stacks/blockchain-api-client@^0.61.0":
-  version "0.61.0"
-  resolved "https://registry.yarnpkg.com/@stacks/blockchain-api-client/-/blockchain-api-client-0.61.0.tgz#969bf18b1d177bf315a529f66d5d93a3945bf823"
-  integrity sha512-BtGivjpe7bE7TBBxv7uLXO2PxWcvxT5mTEwOKPWf7mg0zsUcpBMtVGk+ateupjnAaxF+u41Of8vP9npPHksDfw==
+"@stacks/blockchain-api-client@^0.62.1":
+  version "0.62.1"
+  resolved "https://registry.yarnpkg.com/@stacks/blockchain-api-client/-/blockchain-api-client-0.62.1.tgz#a4ce9b9480d467ac29afb11c063af7106f64c672"
+  integrity sha512-kqPdWsORBbjsTmALBDoZcKbRhip/zZYU1nNGiXtfwRGdca+dOAZFpORT/pqW72LGwjopeHG7DXi+0DQZl+Hh/g==
   dependencies:
     "@stacks/stacks-blockchain-api-types" "*"
     "@types/ws" "^7.4.0"
@@ -1714,10 +1714,12 @@
   dependencies:
     "@stacks/common" "^1.2.2"
 
-"@stacks/prettier-config@0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@stacks/prettier-config/-/prettier-config-0.0.7.tgz#22525c623fce6a5f1965fd29867df3d791ea7ef5"
-  integrity sha512-fXd5X4SV5GqskCYZxqExZJ7wF5sOggmzFP4Q7ttmR/eXZKar3c9fqEpbrpRZyHUBZv2Nss46MvwTLQk2YlpIeg==
+"@stacks/prettier-config@0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@stacks/prettier-config/-/prettier-config-0.0.8.tgz#4db04dbca3982f74f4554ca522f37570125516e3"
+  integrity sha512-WpxCIB2wPk2TT0Zs9oABNQ7Y2wBx2sSqEeFtgJ1lBNY6bKT5B82l/CkbaHPmnUj0KOwauXaSv0rXnxomTNj9xA==
+  dependencies:
+    prettier "^2.3.0"
 
 "@stacks/profile@^1.2.3":
   version "1.2.3"
@@ -3276,10 +3278,10 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
-bootstrap@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-5.0.1.tgz#e7939d599119dc818a90478a2a299bdaff037e09"
-  integrity sha512-Fl79+wsLOZKoiU345KeEaWD0ik8WKRI5zm0YSPj2oF1Qr+BO7z0fco6GbUtqjoG1h4VI89PeKJnMsMMVQdKKTw==
+bootstrap@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-5.0.2.tgz#aff23d5e0e03c31255ad437530ee6556e78e728e"
+  integrity sha512-1Ge963tyEQWJJ+8qtXFU6wgmAVj9gweEjibUdbmcCEYsn38tVwRk8107rk2vzt6cfQcRr3SlZ8aQBqaD8aqf+Q==
 
 brace-expansion@^1.1.7:
   version "1.1.11"
@@ -7259,10 +7261,10 @@ jest@26.6.0:
     import-local "^3.0.2"
     jest-cli "^26.6.0"
 
-jotai@^0.16.10:
-  version "0.16.10"
-  resolved "https://registry.yarnpkg.com/jotai/-/jotai-0.16.10.tgz#4993439e837a1d59e960a6136dd9af5915b168e4"
-  integrity sha512-qhdniEKKU2MyZjV85NAazpddphdoJsIx6gzsWavcDFkLlIGve3Cma0S6uMa7Q4x2PMQkmFALOE1Qq1hlqX8fWQ==
+jotai@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/jotai/-/jotai-1.1.2.tgz#3f211e0c03c74e95ea6fd7a69c1d2b65731009bf"
+  integrity sha512-dni4wtgYGG+s9YbOJN7lcfrrhxiD6bH1SN00Pnl0F2htgOXmjxqkGlFzw02OK0Rw35wGNzBfDTJVtbGD9wHOhg==
 
 joycon@^3.0.1:
   version "3.0.1"
@@ -9456,10 +9458,10 @@ prepend-http@^1.0.0:
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-1.0.4.tgz#d4f4562b0ce3696e41ac52d0e002e57a635dc6dc"
   integrity sha1-1PRWKwzjaW5BrFLQ4ALlemNdxtw=
 
-prettier@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.2.1.tgz#795a1a78dd52f073da0cd42b21f9c91381923ff5"
-  integrity sha512-PqyhM2yCjg/oKkFPtTGUojv7gnZAoG80ttl45O6x2Ug/rMJw4wcc9k6aaf2hibP7BGVCCM33gZoGjyvt9mm16Q==
+prettier@^2.3.0, prettier@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.3.2.tgz#ef280a05ec253712e486233db5c6f23441e7342d"
+  integrity sha512-lnJzDfJ66zkMy58OL5/NY5zp70S7Nz6KqcKkXYzn2tMVrNxvbqaBpg7H3qHaLxCJ5lNMsGuM8+ohS7cZrthdLQ==
 
 pretty-bytes@^5.3.0:
   version "5.6.0"
