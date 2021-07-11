@@ -9,9 +9,10 @@ import {
   makeStandardSTXPostCondition,
   FungibleConditionCode,
   bufferCVFromString,
+  cvToString,
 } from '@stacks/transactions';
 
-import { bnsApi, CONTRACT_ADDRESS, NETWORK, smartContractsApi } from '../lib/constants';
+import { bnsApi, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { fetchAccount } from '../lib/account';
 import { userSessionState } from '../lib/auth';
 import { useStxAddresses } from '../lib/hooks';
@@ -25,6 +26,45 @@ import { Address } from './Address';
 import { Amount } from './Amount';
 import { resolveConfig } from 'prettier';
 
+const addrToCV = addr => {
+  const toParts = addr.split('.');
+  if (toParts.length === 1) {
+    return standardPrincipalCV(toParts[0]);
+  } else {
+    return contractPrincipalCV(toParts[0], toParts[1]);
+  }
+};
+
+const addToCVValues = async parts => {
+  return Promise.all(
+    parts.map(async p => {
+      if (p.to === '') {
+        return p;
+      }
+      try {
+        return { ...p, toCV: addrToCV(p.to) };
+      } catch (e) {
+        try {
+          const nameInfo = await bnsApi.getNameInfo({ name: p.to });
+          console.log({ nameInfo });
+          if (nameInfo.address) {
+            return { ...p, toCV: addrToCV(nameInfo.address) };
+          } else {
+            return { ...p, error: `No address for ${p.to}` };
+          }
+        } catch (e2) {
+          return { ...p, error: `${p.to} not found` };
+        }
+      }
+    })
+  );
+};
+
+function nonEmptyPart(p) {
+  console.log(p.toCV, p.stx, !!p.toCV && p.stx !== '0' && p.stx !== '');
+  return !!p.toCV && p.stx !== '0' && p.stx !== '';
+}
+
 export function SendManyInputContainer() {
   const userSession = useAtomValue(userSessionState);
   const spinner = useRef();
@@ -33,6 +73,8 @@ export function SendManyInputContainer() {
   const [txId, setTxId] = useState();
   const [preview, setPreview] = useState();
   const [loading, setLoading] = useState(false);
+  const [namesResolved, setNamesResolved] = useState(true);
+
   const [rows, setRows] = useState([{ to: '', stx: '0', memo: '' }]);
   const { ownerStxAddress } = useStxAddresses(userSession);
   const { doContractCall } = useConnect();
@@ -63,9 +105,11 @@ export function SendManyInputContainer() {
               </>
             );
           } catch (e) {
+            setNamesResolved(p.toCV);
             return (
               <>
-                ...: <Amount ustx={p.ustx} />
+                {p.error || (p.toCV ? <Address addr={cvToString(p.toCV)} /> : '...')}:{' '}
+                <Amount ustx={p.ustx} />
                 <br />
               </>
             );
@@ -89,6 +133,7 @@ export function SendManyInputContainer() {
   };
 
   const getPartsFromRows = currentRows => {
+    console.log({ currentRows });
     const parts = currentRows.map(r => {
       return { ...r, ustx: Math.floor(parseFloat(r.stx) * 1000000) };
     });
@@ -107,51 +152,38 @@ export function SendManyInputContainer() {
     return { parts, total, hasMemos };
   };
 
-  const addrToCV = addr => {
-    const toParts = addr.split('.');
-    if (toParts.length === 1) {
-      return standardPrincipalCV(toParts[0]);
-    } else {
-      return contractPrincipalCV(toParts[0], toParts[1]);
-    }
-  };
-  const resolveRecipients = async parts => {
-    return Promise.all(
-      parts.map(async p => {
-        try {
-          return addrToCV(p.to);
-        } catch (e) {
-          const nameInfo = await bnsApi.getNameInfo({ name: p.to });
-          console.log({ nameInfo });
-          if (nameInfo.address) {
-            return addrToCV(nameInfo.address);
-          } else {
-            return '';
-          }
-        }
-      })
-    );
-  };
-
   const sendAction = async () => {
     setLoading(true);
     const { parts, total, hasMemos } = getPartsFromRows(rows);
-    const recipients = await resolveRecipients(parts);
-    console.log({ recipients });
+    const updatedParts = await addToCVValues(parts);
+    let invalidNames = updatedParts.filter(r => !!r.error);
+    console.log({ invalidNames });
+    if (invalidNames.length > 0) {
+      updatePreview({ parts: updatedParts, total, hasMemos });
+      setLoading(false);
+      setStatus('Please verify receivers');
+      return;
+    }
+    if (!namesResolved) {
+      updatePreview({ parts: updatedParts, total, hasMemos });
+      setLoading(false);
+      setNamesResolved(true);
+      return;
+    }
+    console.log({ updatedParts });
     const contractAddress = CONTRACT_ADDRESS;
     const contractName = hasMemos ? 'send-many-memo' : 'send-many';
     const functionName = 'send-many';
     const functionArgs = [
       listCV(
-        parts.map((p, key) => {
-          const to = recipients[key];
+        updatedParts.filter(nonEmptyPart).map(p => {
           return hasMemos
             ? tupleCV({
-                to,
-                ustx: uintCV(parseInt(p.ustx)),
+                to: p.toCV,
+                ustx: uintCV(p.ustx),
                 memo: bufferCVFromString(p.memo.trim()),
               })
-            : tupleCV({ to, ustx: uintCV(parseInt(p.ustx)) });
+            : tupleCV({ to: p.toCV, ustx: uintCV(p.ustx) });
         })
       ),
     ];
@@ -228,6 +260,23 @@ export function SendManyInputContainer() {
     };
   };
 
+  const handleOnPaste = e => {
+    e.preventDefault();
+    const entries = e.clipboardData
+      .getData('Text')
+      .split('\n')
+      .map(entry => entry.split(','))
+      .map(entryParts => {
+        return {
+          to: entryParts[0].trim(),
+          stx: entryParts[1].trim(),
+          memo: entryParts.length > 2 ? entryParts[2].trim() : undefined,
+        };
+      });
+    const newRows = [...entries];
+    setRows(newRows);
+  };
+
   return (
     <div>
       <div className="NoteField">
@@ -255,6 +304,17 @@ export function SendManyInputContainer() {
             />
           </div>
         </div>
+        <div className="row">
+          <div className="col-md-12 col-xs-12 col-lg-12 text-right pb-2">
+            <input
+              onPaste={handleOnPaste}
+              type="text"
+              placeholder="Paste entry list"
+              className="form-control mx-2"
+            />
+          </div>
+        </div>
+
         <div>{preview}</div>
         <div className="input-group mt-2">
           <button className="btn btn-block btn-primary" type="button" onClick={sendAction}>
@@ -265,7 +325,7 @@ export function SendManyInputContainer() {
                 loading ? '' : 'd-none'
               } spinner-border spinner-border-sm text-info align-text-top mr-2`}
             />
-            Send
+            {namesResolved ? 'Send' : 'Preview'}
           </button>
         </div>
       </div>
