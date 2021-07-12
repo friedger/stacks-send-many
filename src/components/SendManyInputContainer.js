@@ -46,7 +46,6 @@ const addToCVValues = async parts => {
       } catch (e) {
         try {
           const nameInfo = await bnsApi.getNameInfo({ name: p.to });
-          console.log({ nameInfo });
           if (nameInfo.address) {
             return { ...p, toCV: addrToCV(nameInfo.address) };
           } else {
@@ -61,7 +60,6 @@ const addToCVValues = async parts => {
 };
 
 function nonEmptyPart(p) {
-  console.log(p.toCV, p.stx, !!p.toCV && p.stx !== '0' && p.stx !== '');
   return !!p.toCV && p.stx !== '0' && p.stx !== '';
 }
 
@@ -133,7 +131,6 @@ export function SendManyInputContainer() {
   };
 
   const getPartsFromRows = currentRows => {
-    console.log({ currentRows });
     const parts = currentRows.map(r => {
       return { ...r, ustx: Math.floor(parseFloat(r.stx) * 1000000) };
     });
@@ -157,7 +154,6 @@ export function SendManyInputContainer() {
     const { parts, total, hasMemos } = getPartsFromRows(rows);
     const updatedParts = await addToCVValues(parts);
     let invalidNames = updatedParts.filter(r => !!r.error);
-    console.log({ invalidNames });
     if (invalidNames.length > 0) {
       updatePreview({ parts: updatedParts, total, hasMemos });
       setLoading(false);
@@ -170,7 +166,6 @@ export function SendManyInputContainer() {
       setNamesResolved(true);
       return;
     }
-    console.log({ updatedParts });
     const contractAddress = CONTRACT_ADDRESS;
     const contractName = hasMemos ? 'send-many-memo' : 'send-many';
     const functionName = 'send-many';
@@ -203,7 +198,6 @@ export function SendManyInputContainer() {
           ),
         ],
         onFinish: data => {
-          console.log(data);
           setStatus('Saving transaction to your storage');
           setTxId(data.txId);
           saveTxData(data, userSession)
@@ -310,7 +304,7 @@ export function SendManyInputContainer() {
               onPaste={handleOnPaste}
               type="text"
               placeholder="Paste entry list"
-              className="form-control mx-2"
+              className="form-control"
             />
           </div>
         </div>
