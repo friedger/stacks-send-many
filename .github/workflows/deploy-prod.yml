@@ -22,8 +22,8 @@ jobs:
         run: yarn run build
       - name: Publish Site
         uses: cloudflare/wrangler-action@1.3.0
+        env:
+          USER: root
         with:
-          env:
-            USER: root
           apiToken: ${{ secrets.CF_API_TOKEN }}
           environment: 'production'
