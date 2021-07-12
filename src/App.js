@@ -38,7 +38,7 @@ export default function App(props) {
           <img src="/stacks.png" width="100" alt="Logo" />
         </a>
         <h1>Send Many</h1>
-        <div>
+        <div className="d-content d-sm-block">
           <Rate />
           <Network />
           <Auth className="ml-auto" userSession={userSession} />
