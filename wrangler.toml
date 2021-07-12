@@ -5,7 +5,7 @@ workers_dev = true
 # target_type = "webpack"
 
 [site]
-bucket = './'
+bucket = './public'
 entry-point = "workers-site"
 
 [env.production]
