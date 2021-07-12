@@ -1,4 +1,5 @@
 import React from 'react';
+import { AlertAllPages } from '../components/AlertAllPages';
 import { CityCoinContainer } from '../components/CityCoinContainer';
 import { useStxAddresses } from '../lib/hooks';
 
@@ -9,6 +10,7 @@ export default function CityCoin({ userSession }) {
   }
   return (
     <main className="container">
+      <AlertAllPages />
       <CityCoinContainer />
     </main>
   );
