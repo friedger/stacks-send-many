@@ -9,16 +9,18 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy CF
+    name: Build and Deploy
     steps:
       - uses: actions/checkout@v2
-      - name: Build Site
+      - name: Setup Node
         uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - run: yarn install
-      - run: yarn run build
-      - name: Publish to CF
+      - name: Install Dependencies
+        run: yarn install
+      - name: Build Site
+        run: yarn run build
+      - name: Publish Site
         uses: cloudflare/wrangler-action@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
