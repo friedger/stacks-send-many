@@ -23,5 +23,7 @@ jobs:
       - name: Publish Site
         uses: cloudflare/wrangler-action@1.3.0
         with:
+          env:
+            USER: root
           apiToken: ${{ secrets.CF_API_TOKEN }}
           environment: 'production'
