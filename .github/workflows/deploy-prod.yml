@@ -12,7 +12,13 @@ jobs:
     name: Deploy CF
     steps:
       - uses: actions/checkout@v2
-      - name: Publish CF
+      - name: Build Site
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: yarn install
+      - run: yarn run build
+      - name: Publish to CF
         uses: cloudflare/wrangler-action@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
