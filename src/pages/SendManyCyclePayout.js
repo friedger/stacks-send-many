@@ -41,10 +41,9 @@ const cycles = {
     '0xe99e912ce96ecb8836ffcd64638c71476ad52062980294ebc675411ce78d6fe6',
     '0xc3a251dcadd0d7ae0520a15484249794f215da4ba7bd77f7449d74083e725afb',
     '0x2b4c19dac2e4f5e97a127b1f06d45fb9fb21e7331c1fca33b110689e1ca91fe9',
-    '0x2b4c19dac2e4f5e97a127b1f06d45fb9fb21e7331c1fca33b110689e1ca91fe9',
   ],
   10: [
-    '0x2b4c19dac2e4f5e97a127b1f06d45fb9fb21e7331c1fca33b110689e1ca91fe9',
+    '0xdba0b81cabd6e128d873d69035684ea8ee70309c9a1be531e22e5e5d8cc38ec0',
     '0xef211166b62b78b426514da661531be77dcaed83c68b0c1d554c27fa89c64c4c',
     '0x2953fb87c706215b287e59637e96895ef3267d623e61c9f6c4dc601b53232e7c',
     '0xe8bbf18f0af1a449e55856e613ffd9604e55fe0ce23e01921f7eecde594b8f32',
@@ -57,9 +56,16 @@ const cycles = {
     '0x2ad058eb5b6ae13bca6fa6b49824e3869b6b844e494e53a4f4b40a36e225b4ef',
     '0xcd1b882dfe45827f912e499cd53d5a093842a036e5cdc4c50fd80f7354605016',
   ],
+  11: [
+    '8594addc0d2777d7e980946d65cd311cedd4034e350abc08e14281d3830ea178',
+    'b599b06588b2ac74f1a1f6a55d26aed0d12b5b9a56b5eb9113633d6ef1c19b01',
+    '28c20a9f2875d38407df1db67c3a108d8a64e9e2c484f203343455f3ba45b739',
+    'f1e4045487d10598bd1c92237a25f360421ae3eb883e3d82f4cd7032b65f9175',
+    'e037bc0fde7dc07eed152f630a2fcef2a054eaf0b0faaba71e16ac742bdf6e5f'
+  ]
 };
 export default function SendManyDetails({ userSession, cycleId }) {
-  const { ownerStxAddress } = useStxAddresses();
+  const { ownerStxAddress } = useStxAddresses(userSession);
   return (
     <main className="panel-welcome mt-5 container">
       <div className="lead row mt-5">
