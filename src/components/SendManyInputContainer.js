@@ -24,7 +24,6 @@ import BigNum from 'bn.js';
 import { SendManyInput } from './SendManyInput';
 import { Address } from './Address';
 import { Amount } from './Amount';
-import { resolveConfig } from 'prettier';
 
 const addrToCV = addr => {
   const toParts = addr.split('.');

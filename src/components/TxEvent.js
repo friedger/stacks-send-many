@@ -1,8 +1,8 @@
-import { Address } from "./Address";
-import { AmountFiat } from "./AmountFiat";
-import { AmountStx } from "./AmountStx";
+import { Address } from './Address';
+import { AmountFiat } from './AmountFiat';
+import { AmountStx } from './AmountStx';
 
-export function TxEvent({key, event, tx, chainSuffix}) {
+export function TxEvent({ key, event, tx, chainSuffix }) {
   return (
     <div
       onClick={() =>

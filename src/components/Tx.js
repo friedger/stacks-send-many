@@ -1,9 +1,6 @@
 import React from 'react';
 import { chainSuffix } from '../lib/constants';
-import { Address } from './Address';
 import { Amount } from './Amount';
-import { AmountFiat } from './AmountFiat';
-import { AmountStx } from './AmountStx';
 import { TxEvent } from './TxEvent';
 export function Tx({ tx, onDetailsPage, hideEvents, hideHeader }) {
   const apiData = tx.apiData;
