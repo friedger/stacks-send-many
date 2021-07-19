@@ -8,6 +8,7 @@ import { useAtom } from 'jotai';
 import SendMany from './pages/SendMany';
 import SendManyDetails from './pages/SendManyDetails';
 import SendManyCyclePayout from './pages/SendManyCyclePayout';
+import SendManyAdvocates from './pages/SendManyAdvocates';
 import { Rate } from './components/Rate';
 import { Network } from './components/Network';
 import metaverse from './styles/metaverse.png';
@@ -39,7 +40,7 @@ export default function App(props) {
         </a>
         <h1>Send Many</h1>
         <div className="d-flex d-sm-block justify-content-xs-around">
-          <Rate/>
+          <Rate />
           <Network />
           <Auth userSession={userSession} />
         </div>
@@ -63,6 +64,11 @@ function Content({ userSession }) {
         <AppBody path="/">
           <SendManyCyclePayout
             path="/cycle/:cycleId"
+            decentralizedID={decentralizedID}
+            userSession={userSession}
+          />
+          <SendManyAdvocates
+            path="/advocates/:payoutId"
             decentralizedID={decentralizedID}
             userSession={userSession}
           />

@@ -6,7 +6,6 @@ import { getTx } from '../lib/transactions';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { Tx } from './Tx';
-import { ContractCall } from './ContractCall';
 export function SendManyTransfer({ userSession, txId, eventIndex }) {
   const spinner = useRef();
   const [status, setStatus] = useState();
@@ -99,10 +98,6 @@ export function SendManyTransfer({ userSession, txId, eventIndex }) {
           <div className="p-2">
             This STX transfer is part of following transaction:
             <Tx tx={tx} hideEvents />
-          </div>
-          <div className="p-2">
-            Stacks Wallet shows the STX transfer as contract call only:
-            <ContractCall tx={tx} />
           </div>
         </div>
       )}

@@ -1,11 +1,12 @@
 import { hexToCV } from '@stacks/transactions';
 import React, { useState, useEffect } from 'react';
-import { CONTRACT_ADDRESS } from '../lib/constants';
+import { chainSuffix, CONTRACT_ADDRESS } from '../lib/constants';
 
 import { getTx } from '../lib/transactions';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { Tx } from './Tx';
+import { TxEvent } from './TxEvent';
 
 export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
   const [status, setStatus] = useState();
@@ -21,11 +22,17 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
           setProgress(100 / (txList.length + 1));
           const firstTx = await getTx(txList[0], userSession);
           const txs = [firstTx];
-          let allEvents = firstTx.apiData.events
+          let allEvents = firstTx.apiData.events.map(e => {
+            return { ...e, tx: firstTx };
+          });
           for (let i = 1; i < txList.length; i++) {
             setProgress(((i + 1) * 100) / (txList.length + 1));
             const transaction = await getTx(txList[i], userSession);
-            allEvents = allEvents.concat(transaction.apiData.events);
+            allEvents = allEvents.concat(
+              transaction.apiData.events.map(e => {
+                return { ...e, tx: transaction };
+              })
+            );
             txs.push(transaction);
           }
           setAllTxs({ firstTx, txs, allEvents });
@@ -40,18 +47,9 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
     }
   }, [txList, userSession]);
 
-  const txEvents = allTxs
-    ? allTxs.txs.reduce((result, tx) => {
-        if (tx.apiData) {
-          result = result.concat(
-            tx.apiData.events.filter(event => {
-              return event.event_type === 'stx_asset';
-            })
-          );
-        }
-        return result;
-      }, [])
-    : [];
+  console.log({ a: allTxs && allTxs.allEvents });
+  const txEvents = allTxs && allTxs.allEvents.filter(event => event.event_type === 'stx_asset');
+
   txEvents &&
     txEvents.sort((e1, e2) =>
       (e1.asset.recipient !== ownerStxAddress && e2.asset.recipient !== ownerStxAddress) ||
@@ -61,30 +59,34 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
         ? -1
         : 1
     );
-  const showMemo =
-    allTxs &&
-    allTxs.firstTx &&
-    allTxs.firstTx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
   const duplicateMemos = allTxs
-    ? allTxs.txs.reduce(
-        (result, tx) =>
-          result.concat(
+    ? allTxs.txs.reduce((result, tx) => {
+        if (tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`) {
+          return result.concat(
             tx.apiData.events
               .filter((_, index) => index % 2 === 1)
               .map(e => e.contract_log.value.hex)
-          ),
-        []
-      )
+          );
+        } else {
+          return result;
+        }
+      }, [])
     : [];
+  const showMemo = duplicateMemos.length > 0;
   const memos = showMemo ? new Array(...new Set(duplicateMemos)) : [];
+
   const showMemoPerRecipient = showMemo && memos.length > 1;
-  const total = allTxs
-    ? allTxs.allEvents
-        .filter(event => {
-          return event.event_type === 'stx_asset';
-        })
-        .reduce((sum, e) => sum + parseInt(e.asset.amount), 0)
-    : 0;
+  const total = txEvents ? txEvents.reduce((sum, e) => sum + parseInt(e.asset.amount), 0) : 0;
+  const allRecipients =
+    txEvents &&
+    new Array(
+      ...new Set(
+        txEvents.reduce((recipients, e) => {
+          recipients.push(e.asset.recipient);
+          return recipients;
+        }, [])
+      )
+    );
   return (
     <div>
       <div className={`progress ${progress < 100 ? '' : 'd-none'}`}>
@@ -114,13 +116,13 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
           {showMemo && !showMemoPerRecipient && <b>"{hexToCV(memos[0]).buffer.toString()}"</b>}
           {total && (
             <div className="p-4">
-              Total transfer <Amount ustx={total} />
+              Total transfer <Amount ustx={total} /> to {allRecipients.length} addresses.
             </div>
           )}
           <div className="list-group m-2">
             <div className="list-group-item">
-              {allTxs.txs.map((tx, key) => (
-                <Tx tx={tx} key={key} onDetailsPage hideHeader />
+              {txEvents.map((event, key) => (
+                <TxEvent key={key} event={event} chainSuffix={chainSuffix} tx={event.tx} />
               ))}
             </div>
           </div>
