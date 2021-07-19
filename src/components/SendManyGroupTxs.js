@@ -21,13 +21,14 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
           setProgress(100 / (txList.length + 1));
           const firstTx = await getTx(txList[0], userSession);
           const txs = [firstTx];
+          let allEvents = firstTx.apiData.events
           for (let i = 1; i < txList.length; i++) {
             setProgress(((i + 1) * 100) / (txList.length + 1));
             const transaction = await getTx(txList[i], userSession);
-            firstTx.apiData.events = firstTx.apiData.events.concat(transaction.apiData.events);
+            allEvents = allEvents.concat(transaction.apiData.events);
             txs.push(transaction);
           }
-          setAllTxs({ firstTx, txs });
+          setAllTxs({ firstTx, txs, allEvents });
           setProgress(100);
         } catch (e) {
           setStatus(`Failed to get transactions`);
@@ -78,7 +79,7 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
   const memos = showMemo ? new Array(...new Set(duplicateMemos)) : [];
   const showMemoPerRecipient = showMemo && memos.length > 1;
   const total = allTxs
-    ? allTxs.firstTx.apiData.events
+    ? allTxs.allEvents
         .filter(event => {
           return event.event_type === 'stx_asset';
         })
