@@ -71,6 +71,7 @@ export function SendManyInputContainer() {
   const [preview, setPreview] = useState();
   const [loading, setLoading] = useState(false);
   const [namesResolved, setNamesResolved] = useState(true);
+  const [firstMemoForAll, setFirstMemoForAll] = useState(false);
 
   const [rows, setRows] = useState([{ to: '', stx: '0', memo: '' }]);
   const { ownerStxAddress } = useStxAddresses(userSession);
@@ -165,17 +166,21 @@ export function SendManyInputContainer() {
       setNamesResolved(true);
       return;
     }
+    const nonEmptyParts = updatedParts.filter(nonEmptyPart);
+    console.log(nonEmptyParts[0]);
+    const firstMemo =
+      nonEmptyParts.length > 0 && nonEmptyParts[0].memo ? nonEmptyParts[0].memo.trim() : '';
     const contractAddress = CONTRACT_ADDRESS;
     const contractName = hasMemos ? 'send-many-memo' : 'send-many';
     const functionName = 'send-many';
     const functionArgs = [
       listCV(
-        updatedParts.filter(nonEmptyPart).map(p => {
+        nonEmptyParts.map(p => {
           return hasMemos
             ? tupleCV({
                 to: p.toCV,
                 ustx: uintCV(p.ustx),
-                memo: bufferCVFromString(p.memo.trim()),
+                memo: bufferCVFromString(firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : ''),
               })
             : tupleCV({ to: p.toCV, ustx: uintCV(p.ustx) });
         })
@@ -261,7 +266,7 @@ export function SendManyInputContainer() {
       .map(entry => entry.split(','))
       .map(entryParts => {
         return {
-          to: entryParts[0].trim(),
+          to: entryParts[0].trim().replace('-', '.'),
           stx: entryParts[1].trim(),
           memo: entryParts.length > 2 ? entryParts[2].trim() : undefined,
         };
@@ -305,6 +310,20 @@ export function SendManyInputContainer() {
               placeholder="Paste entry list"
               className="form-control"
             />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-12 col-xs-12 col-lg-12 text-right pb-2">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              onChange={e => setFirstMemoForAll(e.target.checked)}
+              id="firstMemoForAll"
+              value={firstMemoForAll}
+            />
+            <label class="form-check-label" for="firstMemoForAll">
+              First Memo for all?
+            </label>
           </div>
         </div>
 
