@@ -12,9 +12,9 @@ import {
 
 export async function getCityCoinBalance(address) {
   const result = await callReadOnlyFunction({
-    contractAddress: CONTRACT_ADDRESS,
-    contractName: CITYCOIN_CONTRACT_NAME,
-    functionName: 'stx-get-balance',
+    contractAddress: 'ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A',
+    contractName: 'citycoin-token',
+    functionName: 'get-balance',
     functionArgs: [standardPrincipalCV(address)],
     network: NETWORK,
     senderAddress: address,
