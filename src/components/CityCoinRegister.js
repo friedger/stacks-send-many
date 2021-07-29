@@ -37,7 +37,7 @@ export function CityCoinRegister({ ownerStxAddress }) {
         setMinerThreshold(result);
       })
       .catch(e => {
-        setMinerThreshold(20);
+        setMinerThreshold(5);
         console.log(e);
       });
   }, []);
