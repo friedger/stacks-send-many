@@ -14,7 +14,7 @@ export async function getCityCoinBalance(address) {
   const result = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
-    functionName: 'get-balance',
+    functionName: 'stx-get-balance',
     functionArgs: [standardPrincipalCV(address)],
     network: NETWORK,
     senderAddress: address,
@@ -26,7 +26,7 @@ export async function getMiningActivationStatus() {
   const result = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
-    functionName: 'get-mining-activation-status',
+    functionName: 'get-activation-status',
     functionArgs: [],
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
@@ -38,7 +38,7 @@ export async function getRegisteredMinerId(address) {
   const result = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
-    functionName: 'get-miner-id',
+    functionName: 'get-user-id',
     functionArgs: [standardPrincipalCV(address)],
     network: NETWORK,
     senderAddress: address,
@@ -54,7 +54,7 @@ export async function getRegisteredMinerCount() {
   const result = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
-    functionName: 'get-registered-miners-nonce',
+    functionName: 'get-registered-users-nonce',
     functionArgs: [],
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
@@ -66,7 +66,7 @@ export async function getRegisteredMinersThreshold() {
   const result = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
-    functionName: 'get-registered-miners-threshold',
+    functionName: 'get-registered-user-threshold',
     functionArgs: [],
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
