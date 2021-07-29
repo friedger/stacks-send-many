@@ -7,7 +7,7 @@ import {
   getRegisteredMinerCount,
   getRegisteredMinersThreshold,
 } from '../lib/citycoin';
-import { bufferCVFromString, someCV } from '@stacks/transactions';
+import { bufferCVFromString, someCV, stringUtf8CV } from '@stacks/transactions';
 
 export function CityCoinRegister({ ownerStxAddress }) {
   const minerMemoRef = useRef();
@@ -59,11 +59,13 @@ export function CityCoinRegister({ ownerStxAddress }) {
 
   const registerAction = async () => {
     setLoading(true);
-    const minerMemoCV = bufferCVFromString(minerMemoRef.current.value.trim());
+    const minerMemoCV = stringUtf8CV(minerMemoRef.current.value.trim());
+    console.log(minerMemoRef.current.value.trim());
+    console.log(minerMemoCV);
     await doContractCall({
       contractAddress: CONTRACT_ADDRESS,
       contractName: CITYCOIN_CONTRACT_NAME,
-      functionName: 'register-miner',
+      functionName: 'register-user',
       functionArgs: [someCV(minerMemoCV)],
       network: NETWORK,
       onFinish: result => {
@@ -71,8 +73,8 @@ export function CityCoinRegister({ ownerStxAddress }) {
         setTxId(result.txId);
       },
       onCancel: () => {
-        setLoading(false)
-      }
+        setLoading(false);
+      },
     });
   };
 

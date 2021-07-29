@@ -35,7 +35,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
       const coreInfo = await infoApi.getCoreApiInfo();
       const balance = await getCityCoinBalance(ownerStxAddress);
       const amountCityCoinCV = uintCV(amountRefStacking.current.value.trim());
-      const startStacksHtCV = uintCV(coreInfo.stacks_tip_height + 5);
+      // const startStacksHtCV = uintCV(coreInfo.stacks_tip_height + 5);
       const lockPeriodCV = uintCV(lockPeriodRef.current.value.trim());
       if (lockPeriodCV.value.toNumber() > 32) {
         console.log('Too many cycles');
@@ -48,7 +48,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
           contractAddress: CONTRACT_ADDRESS,
           contractName: CITYCOIN_CONTRACT_NAME,
           functionName: 'stack-tokens',
-          functionArgs: [amountCityCoinCV, startStacksHtCV, lockPeriodCV],
+          functionArgs: [amountCityCoinCV, lockPeriodCV],
           network: NETWORK,
           postConditionMode: PostConditionMode.Deny,
           postConditions: [

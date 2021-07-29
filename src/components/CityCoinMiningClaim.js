@@ -21,12 +21,12 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
     }
   }, [ownerStxAddress]);
 
-  const claimAction = async amountUstxCV => {
+  const claimAction = async blockHeight => {
     await doContractCall({
       contractAddress: CONTRACT_ADDRESS,
       contractName: CITYCOIN_CONTRACT_NAME,
-      functionName: 'claim-token-reward',
-      functionArgs: [amountUstxCV],
+      functionName: 'claim-mining-reward',
+      functionArgs: [blockHeight],
       network: NETWORK,
       onCancel: () => {
         setLoading(false);

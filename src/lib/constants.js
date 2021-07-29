@@ -27,7 +27,7 @@ export const CONTRACT_ADDRESS = mocknet
 export const GENESIS_CONTRACT_ADDRESS = 'ST000000000000000000002AMW42H';
 export const BNS_CONTRACT_NAME = 'bns';
 
-export const CITYCOIN_CONTRACT_NAME = mocknet ? 'citycoin' : 'comfortable-purple-kiwi';
+export const CITYCOIN_CONTRACT_NAME = mocknet ? 'citycoin' : 'citycoin-core-v1';
 export const CC_NAME = 'citycoin';
 export const CC_SYMBOL = '$CITY';
 

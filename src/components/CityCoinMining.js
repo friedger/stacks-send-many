@@ -16,7 +16,7 @@ import BN from 'bn.js';
 
 export function CityCoinMining({ ownerStxAddress }) {
   const amountRef = useRef();
-  const mine30BlocksRef = useRef();
+  const mineManyRef = useRef();
   const memoRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
@@ -33,8 +33,8 @@ export function CityCoinMining({ ownerStxAddress }) {
       console.log('positive number required to mine');
       setLoading(false);
     } else {
-      const mine30Blocks = mine30BlocksRef.current.checked;
-      console.log(mine30Blocks);
+      const mineMany = mineManyRef.current.checked;
+      console.log(mineMany);
       try {
         const amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
         const amountUstxCV = uintCV(amountUstx);
@@ -43,14 +43,14 @@ export function CityCoinMining({ ownerStxAddress }) {
         await doContractCall({
           contractAddress: CONTRACT_ADDRESS,
           contractName: CITYCOIN_CONTRACT_NAME,
-          functionName: mine30Blocks ? 'mine-tokens-over-30-blocks' : 'mine-tokens',
-          functionArgs: mine30Blocks ? [amountUstxCV] : [amountUstxCV, memoCV],
+          functionName: mineMany ? 'mine-many' : 'mine-tokens',
+          functionArgs: mineMany ? [amountUstxCV] : [amountUstxCV, memoCV],
           postConditionMode: PostConditionMode.Deny,
           postConditions: [
             makeStandardSTXPostCondition(
               ownerStxAddress,
               FungibleConditionCode.LessEqual,
-              mine30Blocks ? amountUstxCV.value.mul(new BN(30)) : amountUstxCV.value
+              mineMany ? amountUstxCV.value.mul(new BN(30)) : amountUstxCV.value
             ),
           ],
           anchorMode: AnchorMode.OnChainOnly,
@@ -70,7 +70,7 @@ export function CityCoinMining({ ownerStxAddress }) {
   };
 
   const updateValue = () => {
-    if (mine30BlocksRef.current.checked) {
+    if (mineManyRef.current.checked) {
       let amount = parseFloat(amountRef.current.value.trim());
       amount = isNaN(amount) ? 0 : 30 * amount;
       setButtonLabel(
@@ -115,20 +115,20 @@ export function CityCoinMining({ ownerStxAddress }) {
           placeholder="Memo (optional)"
           aria-label="Optional memo field"
           maxLength="34"
-          hidden={mine30BlocksRef.current?.checked}
+          hidden={mineManyRef.current?.checked}
         />
         <br />
         <div className="form-check">
           <input
-            ref={mine30BlocksRef}
+            ref={mineManyRef}
             className="form-check-input"
             onChange={updateValue}
             type="checkbox"
             value=""
-            id="mine30Blocks"
+            id="mineMany"
           />
-          <label className="form-check-label" htmlFor="mine30Blocks">
-            Mine for 30 blocks
+          <label className="form-check-label" htmlFor="mineMany">
+            Mine many blocks
           </label>
         </div>
         <br />
