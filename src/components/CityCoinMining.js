@@ -47,7 +47,8 @@ export function CityCoinMining({ ownerStxAddress }) {
         let mineManyArray = [];
         if (mineMany) {
           for (let i = 0; i < numberOfBlocks; i++)
-            mineManyArray.push(parseInt(blockAmounts[i].amount));
+            mineManyArray.push(uintCV(blockAmounts[i].amount));
+          console.log(mineManyArray);
           mineManyArray = listCV(mineManyArray);
           console.log(mineManyArray);
         }
