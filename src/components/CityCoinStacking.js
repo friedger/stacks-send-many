@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import {
   CC_SYMBOL,
-  CITYCOIN_CONTRACT_NAME,
+  CITYCOIN_CONTRACT_NAME_TOKEN,
   CONTRACT_ADDRESS,
   infoApi,
   NETWORK,
@@ -46,7 +46,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
       } else {
         await doContractCall({
           contractAddress: CONTRACT_ADDRESS,
-          contractName: CITYCOIN_CONTRACT_NAME,
+          contractName: CITYCOIN_CONTRACT_NAME_TOKEN,
           functionName: 'stack-tokens',
           functionArgs: [amountCityCoinCV, lockPeriodCV],
           network: NETWORK,
@@ -56,7 +56,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
               ownerStxAddress,
               FungibleConditionCode.LessEqual,
               amountCityCoinCV.value,
-              createAssetInfo(CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME, 'citycoins')
+              createAssetInfo(CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME_TOKEN, 'citycoins')
             ),
           ],
           onCancel: () => {
