@@ -124,7 +124,7 @@ function transactionByType(tx) {
       return <RegisterTransaction tx={tx} />;
     case 'mine-tokens':
       return <MineTransaction tx={tx} />;
-    case 'mine-tokens-over-30-blocks':
+    case 'mine-many':
       return <MineTransactionOver30Blocks tx={tx} />;
     case 'stack-tokens':
       return <StackTransaction tx={tx} />;

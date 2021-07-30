@@ -7,7 +7,7 @@ import {
   getRegisteredMinerCount,
   getRegisteredMinersThreshold,
 } from '../lib/citycoin';
-import { bufferCVFromString, someCV, stringUtf8CV } from '@stacks/transactions';
+import { bufferCVFromString, someCV, noneCV, stringUtf8CV } from '@stacks/transactions';
 
 export function CityCoinRegister({ ownerStxAddress }) {
   const minerMemoRef = useRef();
@@ -59,9 +59,8 @@ export function CityCoinRegister({ ownerStxAddress }) {
 
   const registerAction = async () => {
     setLoading(true);
-    const minerMemoCV = stringUtf8CV(minerMemoRef.current.value.trim());
-    console.log(minerMemoRef.current.value.trim());
-    console.log(minerMemoCV);
+    const memo = stringUtf8CV(minerMemoRef.current.value.trim());
+    const minerMemoCV = memo ? memo : noneCV();
     await doContractCall({
       contractAddress: CONTRACT_ADDRESS,
       contractName: CITYCOIN_CONTRACT_NAME,

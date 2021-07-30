@@ -92,7 +92,7 @@ export async function getMiningDetails(stxAddress) {
       tx.tx_status === 'success' &&
       tx.tx_type === 'contract_call' &&
       (tx.contract_call.function_name === 'mine-tokens' ||
-        tx.contract_call.function_name === 'mine-tokens-over-30-blocks') &&
+        tx.contract_call.function_name === 'mine-many') &&
       tx.contract_call.contract_id === `${CONTRACT_ADDRESS}.${CITYCOIN_CONTRACT_NAME}`
   );
   const minerId = await getRegisteredMinerId(stxAddress);
@@ -100,7 +100,7 @@ export async function getMiningDetails(stxAddress) {
   const winningDetails = [];
   console.log(txs);
   for (let tx of txs) {
-    if (tx.contract_call.function_name === 'mine-tokens-over-30-blocks') {
+    if (tx.contract_call.function_name === 'mine-many') {
       for (let i = 29; i >= 0; i--) {
         winningDetails.push(await getWinningDetailsFor(tx.block_height + i, minerId));
       }
@@ -114,8 +114,8 @@ export async function getMiningDetails(stxAddress) {
 async function getWinningDetailsFor(blockHeight, minerId) {
   console.log({ blockHeight });
   const randomSample = await callReadOnlyFunction({
-    contractAddress: CONTRACT_ADDRESS,
-    contractName: CITYCOIN_CONTRACT_NAME,
+    contractAddress: 'ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A',
+    contractName: 'citycoin-vrf',
     functionName: 'get-random-uint-at-block',
     functionArgs: [uintCV(blockHeight + 100)],
     senderAddress: CONTRACT_ADDRESS,
