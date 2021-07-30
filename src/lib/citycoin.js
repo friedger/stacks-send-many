@@ -134,8 +134,8 @@ async function getWinningDetailsFor(blockHeight, minerId) {
     });
     const minedBlockCV = hexToCV(minedBlock.data);
     console.log({ minedBlockCV });
-    const minersCount = minedBlockCV.value.data['miners-count'].value.toNumber();
-    const claimed = minedBlockCV.value.data['claimed'].type === ClarityType.BoolTrue;
+    const minersCount = minedBlockCV.value.data['minersCount'].value.toNumber();
+    const claimed = minedBlockCV.value.data['rewardClaimed'].type === ClarityType.BoolTrue;
 
     console.log({ minersCount });
     let idx = 1;
@@ -146,7 +146,7 @@ async function getWinningDetailsFor(blockHeight, minerId) {
       const minerOfBlock = await smartContractsApi.getContractDataMapEntry({
         contractAddress: CONTRACT_ADDRESS,
         contractName: CITYCOIN_CONTRACT_NAME,
-        mapName: 'blocks-miners',
+        mapName: 'MinersAtBlock',
         key: cvToHex(tupleCV({ 'stacks-block-height': uintCV(blockHeight), idx: uintCV(idx) })),
       });
       const minerOfBlockCV = hexToCV(minerOfBlock.data);
@@ -175,7 +175,7 @@ async function getWinningAmount(blockHeight, randomSample) {
   const blockCommit = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
-    functionName: 'get-block-commit-total',
+    functionName: 'get-mining-stats-at-block',
     functionArgs: [uintCV(blockHeight)],
     senderAddress: CONTRACT_ADDRESS,
     network: NETWORK,
