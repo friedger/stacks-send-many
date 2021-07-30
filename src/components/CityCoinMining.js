@@ -46,7 +46,8 @@ export function CityCoinMining({ ownerStxAddress }) {
         const memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
         let mineManyArray = [];
         if (mineMany) {
-          for (let i = 0; i < numberOfBlocks; i++) mineManyArray.push(blockAmounts[i].amount);
+          for (let i = 0; i < numberOfBlocks; i++)
+            mineManyArray.push(parseInt(blockAmounts[i].amount));
           mineManyArray = listCV(mineManyArray);
           console.log(mineManyArray);
         }
@@ -175,7 +176,6 @@ export function CityCoinMining({ ownerStxAddress }) {
             </div>
           );
         })}
-        <div>{JSON.stringify(blockAmounts, null, 2)}</div>
         <br />
         <button
           className="btn btn-block btn-primary"
