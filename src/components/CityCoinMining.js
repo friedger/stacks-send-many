@@ -86,15 +86,8 @@ export function CityCoinMining({ ownerStxAddress }) {
   const updateValue = numberOfBlocks => {
     console.log(numberOfBlocks);
     if (numberOfBlocks > 1) {
-      let sumArray = [];
-      for (let i = 0; i < numberOfBlocks; i++) sumArray.push(parseInt(blockAmounts[i].amount));
-      var sum = sumArray.reduce((a, b) => a + b, 0);
-      setButtonLabel(
-        `Mine for ${numberOfBlocks} blocks (${sum.toLocaleString(undefined, {
-          style: 'decimal',
-          maximumFractionDigits: 6,
-        })} STX)`
-      );
+      let totalAmount = 0;
+      console.log(blockAmounts.length);
 
       for (let i = 1; i < (numberOfBlocks + 1) / 10; i++) {
         setBlockAmounts(currentBlock => [
@@ -173,6 +166,21 @@ export function CityCoinMining({ ownerStxAddress }) {
                         : x
                     )
                   );
+                  if (blockAmounts.length != 0) {
+                    var sumArray = [];
+                    for (let i = 0; i < numberOfBlocks; i++)
+                      sumArray.push(parseInt(blockAmounts[i].amount));
+                    sumArray = sumArray.filter(function (value) {
+                      return !Number.isNaN(value);
+                    });
+                    let totalAmount = sumArray.reduce((a, b) => a + b, 0);
+                    setButtonLabel(
+                      `Mine for ${numberOfBlocks} blocks (${totalAmount.toLocaleString(undefined, {
+                        style: 'decimal',
+                        maximumFractionDigits: 6,
+                      })} STX)`
+                    );
+                  }
                 }}
                 value={b.amount}
                 placeholder="STX Amount"

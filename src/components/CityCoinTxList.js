@@ -143,7 +143,7 @@ function transactionByType(tx) {
 function uintJsonToSTX(value) {
   return (
     <>
-      {(hexToCV(value.hex).value.toNumber() / 1000000).toLocaleString(undefined, {
+      {(hexToCV(value.hex).value / 1000000).toLocaleString(undefined, {
         maximumFractionDigits: 6,
         style: 'decimal',
       })}{' '}
