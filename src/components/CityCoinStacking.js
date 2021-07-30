@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import {
   CC_SYMBOL,
+  CITYCOIN_CONTRACT_NAME,
   CITYCOIN_CONTRACT_NAME_TOKEN,
   CONTRACT_ADDRESS,
   infoApi,
@@ -46,7 +47,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
       } else {
         await doContractCall({
           contractAddress: CONTRACT_ADDRESS,
-          contractName: CITYCOIN_CONTRACT_NAME_TOKEN,
+          contractName: CITYCOIN_CONTRACT_NAME,
           functionName: 'stack-tokens',
           functionArgs: [amountCityCoinCV, lockPeriodCV],
           network: NETWORK,

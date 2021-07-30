@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import { CC_NAME, CITYCOIN_CONTRACT_NAME_TOKEN, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
+import {
+  CC_NAME,
+  CITYCOIN_CONTRACT_NAME,
+  CITYCOIN_CONTRACT_NAME_TOKEN,
+  NETWORK,
+} from '../lib/constants';
 import {
   uintCV,
   PostConditionMode,
@@ -30,20 +35,20 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
     setLoading(true);
     await doContractCall({
       contractAddress: CONTRACT_ADDRESS,
-      contractName: CITYCOIN_CONTRACT_NAME_TOKEN,
+      contractName: CITYCOIN_CONTRACT_NAME,
       functionName: 'claim-stacking-reward',
       functionArgs: [targetRewardCycleCV],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
         makeContractSTXPostCondition(
           CONTRACT_ADDRESS,
-          CITYCOIN_CONTRACT_NAME_TOKEN,
+          CITYCOIN_CONTRACT_NAME,
           FungibleConditionCode.LessEqual,
           amountUstxCV.value
         ),
         makeContractFungiblePostCondition(
           CONTRACT_ADDRESS,
-          CITYCOIN_CONTRACT_NAME_TOKEN,
+          CITYCOIN_CONTRACT_NAME,
           FungibleConditionCode.LessEqual,
           amountCityCoinCV.value,
           createAssetInfo(CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME_TOKEN, CC_NAME)
