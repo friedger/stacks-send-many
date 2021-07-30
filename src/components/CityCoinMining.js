@@ -44,13 +44,14 @@ export function CityCoinMining({ ownerStxAddress }) {
         const amountUstxCV = uintCV(amountUstx);
         const memo = memoRef.current.value.trim();
         const memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
+        let sumArray = [];
         let mineManyArray = [];
         if (mineMany) {
+          for (let i = 0; i < numberOfBlocks; i++) sumArray.push(parseInt(blockAmounts[i].amount));
+          var sum = uintCV(sumArray.reduce((a, b) => a + b, 0));
           for (let i = 0; i < numberOfBlocks; i++)
             mineManyArray.push(uintCV(blockAmounts[i].amount));
-          console.log(mineManyArray);
           mineManyArray = listCV(mineManyArray);
-          console.log(mineManyArray);
         }
 
         await doContractCall({
@@ -62,8 +63,8 @@ export function CityCoinMining({ ownerStxAddress }) {
           postConditions: [
             makeStandardSTXPostCondition(
               ownerStxAddress,
-              FungibleConditionCode.LessEqual,
-              mineMany ? amountUstxCV.value.mul(new BN(numberOfBlocks)) : amountUstxCV.value
+              FungibleConditionCode.Equal,
+              mineMany ? sum.value : amountUstxCV.value
             ),
           ],
           anchorMode: AnchorMode.OnChainOnly,
@@ -85,9 +86,11 @@ export function CityCoinMining({ ownerStxAddress }) {
   const updateValue = numberOfBlocks => {
     console.log(numberOfBlocks);
     if (numberOfBlocks > 1) {
-      let totalAmount = 500;
+      let sumArray = [];
+      for (let i = 0; i < numberOfBlocks; i++) sumArray.push(parseInt(blockAmounts[i].amount));
+      var sum = sumArray.reduce((a, b) => a + b, 0);
       setButtonLabel(
-        `Mine for ${numberOfBlocks} blocks (${totalAmount.toLocaleString(undefined, {
+        `Mine for ${numberOfBlocks} blocks (${sum.toLocaleString(undefined, {
           style: 'decimal',
           maximumFractionDigits: 6,
         })} STX)`
