@@ -25,6 +25,7 @@ export function CityCoinMining({ ownerStxAddress }) {
   const [buttonLabel, setButtonLabel] = useState('Mine');
   const [numberOfBlocks, setNumberOfBlocks] = useState();
   const [blockAmounts, setBlockAmounts] = useState([]);
+  const [sum, setSum] = useState('');
   const { doContractCall } = useConnect();
 
   // TODO: add onCancel state for loading that works ?
@@ -166,21 +167,19 @@ export function CityCoinMining({ ownerStxAddress }) {
                         : x
                     )
                   );
-                  if (blockAmounts.length != 0) {
-                    var sumArray = [];
-                    for (let i = 0; i < numberOfBlocks; i++)
-                      sumArray.push(parseInt(blockAmounts[i].amount));
-                    sumArray = sumArray.filter(function (value) {
-                      return !Number.isNaN(value);
-                    });
-                    let totalAmount = sumArray.reduce((a, b) => a + b, 0);
-                    setButtonLabel(
-                      `Mine for ${numberOfBlocks} blocks (${totalAmount.toLocaleString(undefined, {
-                        style: 'decimal',
-                        maximumFractionDigits: 6,
-                      })} STX)`
-                    );
-                  }
+                  var sumArray = [];
+                  for (let i = 0; i < numberOfBlocks; i++)
+                    sumArray.push(parseInt(blockAmounts[i].amount));
+                  sumArray = sumArray.filter(function (value) {
+                    return !Number.isNaN(value);
+                  });
+                  let totalAmount = sumArray.reduce((a, b) => a + b, 0);
+                  // setButtonLabel(
+                  //   `Mine for ${numberOfBlocks} blocks (${totalAmount.toLocaleString(undefined, {
+                  //     style: 'decimal',
+                  //     maximumFractionDigits: 6,
+                  //   })} STX)`
+                  setButtonLabel(`Mine for ${numberOfBlocks} blocks`);
                 }}
                 value={b.amount}
                 placeholder="STX Amount"
