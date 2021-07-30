@@ -4,6 +4,8 @@ import {
   CC_NAME,
   CITYCOIN_CONTRACT_NAME,
   CITYCOIN_CONTRACT_NAME_TOKEN,
+  CONTRACT_ADDRESS,
+  TOKEN_CONTRACT_ADDRESS,
   NETWORK,
 } from '../lib/constants';
 import {
@@ -51,7 +53,7 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
           CITYCOIN_CONTRACT_NAME,
           FungibleConditionCode.LessEqual,
           amountCityCoinCV.value,
-          createAssetInfo(CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME_TOKEN, CC_NAME)
+          createAssetInfo(TOKEN_CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME_TOKEN, CC_NAME)
         ),
       ],
       anchorMode: AnchorMode.OnChainOnly,

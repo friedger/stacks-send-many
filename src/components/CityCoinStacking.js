@@ -5,6 +5,7 @@ import {
   CITYCOIN_CONTRACT_NAME,
   CITYCOIN_CONTRACT_NAME_TOKEN,
   CONTRACT_ADDRESS,
+  TOKEN_CONTRACT_ADDRESS,
   infoApi,
   NETWORK,
 } from '../lib/constants';
@@ -57,7 +58,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
               ownerStxAddress,
               FungibleConditionCode.LessEqual,
               amountCityCoinCV.value,
-              createAssetInfo(CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME_TOKEN, 'citycoins')
+              createAssetInfo(TOKEN_CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME_TOKEN, 'citycoins')
             ),
           ],
           onCancel: () => {
