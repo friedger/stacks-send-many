@@ -66,7 +66,7 @@ export async function getRegisteredMinersThreshold() {
   const result = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
-    functionName: 'get-registered-user-threshold',
+    functionName: 'get-activation-threshold',
     functionArgs: [],
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
