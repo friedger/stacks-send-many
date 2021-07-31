@@ -5,7 +5,7 @@ import { CityCoinTxList } from './CityCoinTxList';
 export function CityCoinDashboard() {
   return (
     <>
-      <PoxLiteInfo />
+      {/* <PoxLiteInfo /> */}
       <hr />
       <CityCoinTxList />
     </>

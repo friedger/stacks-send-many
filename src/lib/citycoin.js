@@ -5,7 +5,6 @@ import {
   CITYCOIN_CONTRACT_NAME,
   CONTRACT_ADDRESS,
   GENESIS_CONTRACT_ADDRESS,
-  infoApi,
   NETWORK,
   smartContractsApi,
 } from './constants';
@@ -31,7 +30,8 @@ export async function getMiningActivationStatus() {
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
-  return result.type === ClarityType.BoolTrue;
+  console.log(`Registerd Miner Activation ${result.type !== ClarityType.BoolTrue}`)
+  return result.type !== ClarityType.BoolTrue;
 }
 
 export async function getRegisteredMinerId(address) {
@@ -44,8 +44,10 @@ export async function getRegisteredMinerId(address) {
     senderAddress: address,
   });
   if (result.type === ClarityType.OptionalSome) {
+    console.log(`Registerd Miner Id ${result.value.value.toNumber()}`)
     return result.value.value.toNumber();
   } else {
+    console.log(`Registerd Miner Id ${undefined}`)
     return undefined;
   }
 }
@@ -59,6 +61,7 @@ export async function getRegisteredMinerCount() {
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
+  console.log(`Registerd Miner Count ${result.value.toNumber()}`)
   return result.value.toNumber();
 }
 
@@ -71,6 +74,7 @@ export async function getRegisteredMinersThreshold() {
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
+  console.log(`Registerd Miner Threshold ${result.value.toNumber()}`)
   return result.value.toNumber();
 }
 export async function getCoinbase(blockHeight) {
@@ -134,10 +138,8 @@ async function getWinningDetailsFor(blockHeight, minerId) {
     });
     const minedBlockCV = hexToCV(minedBlock.data);
     console.log({ minedBlockCV });
-    const minersCount = minedBlockCV.value.data['minersCount'].value.toNumber();
-    const claimed = minedBlockCV.value.data['rewardClaimed'].type === ClarityType.BoolTrue;
+    const claimed = minedBlockCV.type !== ClarityType.BoolTrue;
 
-    console.log({ minersCount });
     let idx = 1;
     let sum = 0;
     let winner;
@@ -150,7 +152,7 @@ async function getWinningDetailsFor(blockHeight, minerId) {
         key: cvToHex(tupleCV({ 'stacks-block-height': uintCV(blockHeight), idx: uintCV(idx) })),
       });
       const minerOfBlockCV = hexToCV(minerOfBlock.data);
-      console.log({ minerOfBlockCV: cvToString(minerOfBlockCV) });
+      console.log(JSON.stringify({ minerOfBlockCV: cvToString(minerOfBlockCV) }));
       // add commit to total
       const nextSum = sum + minerOfBlockCV.value.data.ustx.value.toNumber();
       // check total for winning amount
@@ -182,7 +184,8 @@ async function getWinningAmount(blockHeight, randomSample) {
   });
 
   console.log({ blockCommit: cvToString(blockCommit) });
-  const winningAmount = randomSample.mod(blockCommit.value).toNumber();
+  console.log(`Blockcommit value: ${JSON.stringify(blockCommit.value)}`)
+  const winningAmount = randomSample.mod(blockCommit.value.data.amount.value).toNumber();
   console.log({ winningAmount });
   return winningAmount;
 }
@@ -199,16 +202,14 @@ export async function getPoxLiteInfo() {
   return poxLiteInfo;
 }
 
-export async function getAvailableRewards(stxAddress, cycleId) {
-  const info = await infoApi.getCoreApiInfo();
+export async function getAvailableRewards(stxAddress, userId, cycleId) {
   const stackingReward = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
-    functionName: 'get-entitled-stacking-reward',
+    functionName: 'get-stacking-reward',
     functionArgs: [
-      standardPrincipalCV(stxAddress),
+      uintCV(userId),
       uintCV(cycleId),
-      uintCV(info.stacks_tip_height),
     ],
     senderAddress: stxAddress,
     network: NETWORK,
@@ -216,14 +217,16 @@ export async function getAvailableRewards(stxAddress, cycleId) {
   const cityCoinClaim = await callReadOnlyFunction({
     contractAddress: CONTRACT_ADDRESS,
     contractName: CITYCOIN_CONTRACT_NAME,
-    functionName: 'get-stacked-in-cycle',
-    functionArgs: [standardPrincipalCV(stxAddress), uintCV(cycleId)],
+    functionName: 'get-stacker-at-cycle',
+    functionArgs: [uintCV(cycleId), uintCV(await getRegisteredMinerId(stxAddress))],
     senderAddress: stxAddress,
     network: NETWORK,
   });
+  console.log(`Claim ${JSON.stringify(cityCoinClaim)}`)
+  console.log(`stackingReward ${JSON.stringify(stackingReward)}`)
   const result = {
     amountSTX: stackingReward.value.toNumber(),
-    amountCC: cityCoinClaim.value.toNumber(),
+    amountCC: cityCoinClaim.type,
     cycleId,
     stxAddress,
   };
@@ -247,14 +250,15 @@ export async function getStackingState(stxAddress) {
     const firstCycle = hexToCV(tx.tx_result).data.first.value.toNumber();
     const lastCycle = hexToCV(tx.tx_result).data.last.value.toNumber();
     */
+    console.log(`TX Contract Call ${JSON.stringify(tx.contract_call)}`)
     const firstCycle = Math.floor(
       (hexToCV(tx.contract_call.function_args[1].hex).value.toNumber() - 14726) / 50
     );
-    const lockPeriod = hexToCV(tx.contract_call.function_args[2].hex).value.toNumber();
+    const lockPeriod = hexToCV(tx.contract_call.function_args[1].hex).value.toNumber();
     const lastCycle = firstCycle + lockPeriod;
 
     for (let i = lastCycle; i >= firstCycle; i--) {
-      state.push(await getAvailableRewards(stxAddress, i));
+      state.push(await getAvailableRewards(stxAddress, await getRegisteredMinerId(stxAddress), i));
     }
   }
   return state;
