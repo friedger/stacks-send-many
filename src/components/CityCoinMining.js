@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
+import { CONTRACT_DEPLOYER, CITYCOIN_CORE, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
 import converter from 'number-to-words';
 
@@ -15,7 +15,6 @@ import {
   someCV,
   uintCV,
 } from '@stacks/transactions';
-import BN from 'bn.js';
 
 export function CityCoinMining({ ownerStxAddress }) {
   const amountRef = useRef();
@@ -26,7 +25,6 @@ export function CityCoinMining({ ownerStxAddress }) {
   const [buttonLabel, setButtonLabel] = useState('Mine');
   const [numberOfBlocks, setNumberOfBlocks] = useState();
   const [blockAmounts, setBlockAmounts] = useState([]);
-  const [sum, setSum] = useState('');
   const { doContractCall } = useConnect();
 
   // TODO: add onCancel state for loading that works ?
@@ -35,7 +33,7 @@ export function CityCoinMining({ ownerStxAddress }) {
 
   const mineAction = async () => {
     setLoading(true);
-    if (numberOfBlocks == 1 && amountRef.current.value === '') {
+    if (numberOfBlocks === 1 && amountRef.current.value === '') {
       console.log('positive number required to mine');
       setLoading(false);
     } else {
@@ -59,8 +57,8 @@ export function CityCoinMining({ ownerStxAddress }) {
         }
 
         await doContractCall({
-          contractAddress: CONTRACT_ADDRESS,
-          contractName: CITYCOIN_CONTRACT_NAME,
+          contractAddress: CONTRACT_DEPLOYER,
+          contractName: CITYCOIN_CORE,
           functionName: mineMany ? 'mine-many' : 'mine-tokens',
           functionArgs: mineMany ? [mineManyArray] : [amountUstxCV, memoCV],
           postConditionMode: PostConditionMode.Deny,
@@ -90,9 +88,6 @@ export function CityCoinMining({ ownerStxAddress }) {
   const updateValue = numberOfBlocks => {
     console.log(numberOfBlocks);
     if (numberOfBlocks > 1) {
-      let totalAmount = 0;
-      console.log(blockAmounts.length);
-
       for (let i = 1; i < (numberOfBlocks + 1) / 10; i++) {
         setBlockAmounts(currentBlock => [
           ...currentBlock,
@@ -183,12 +178,6 @@ export function CityCoinMining({ ownerStxAddress }) {
                     sumArray = sumArray.filter(function (value) {
                       return !Number.isNaN(value);
                     });
-                    let totalAmount = sumArray.reduce((a, b) => a + b, 0);
-                    // setButtonLabel(
-                    //   `Mine for ${numberOfBlocks} blocks (${totalAmount.toLocaleString(undefined, {
-                    //     style: 'decimal',
-                    //     maximumFractionDigits: 6,
-                    //   })} STX)`
                     setButtonLabel(`Mine for ${numberOfBlocks} blocks`);
                   }}
                   value={b.amount}
