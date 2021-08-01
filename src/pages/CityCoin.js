@@ -10,7 +10,6 @@ export default function CityCoin({ userSession }) {
   }
   return (
     <main className="container">
-      <AlertAllPages />
       <CityCoinContainer />
     </main>
   );

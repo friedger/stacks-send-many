@@ -11,7 +11,6 @@ export default function Landing(props) {
     <div className="Landing">
       <div className="jumbotron jumbotron-fluid pt-3 mb-0">
         <div className="container pt-3">
-          <AlertAllPages />
           <h1>Introducing CityCoins</h1>
           <p className="h5">
             CityCoins are cryptocurrencies that allow you to support your favorite cities while
