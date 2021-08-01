@@ -69,47 +69,54 @@ export function CityCoinTxList() {
     console.log(converter.toWords(5));
     return (
       <>
-        <h3>Activity Log</h3>
+        <h3>Contract Activity Log</h3>
         <div className="container">
-          {blockHeights.map((blockHeight, key) => (
-            <Fragment key={key}>
-              <div className="accordion accordion-flush" id="accordionActivityLog">
+          <div className="accordion accordion-flush" id="accordionActivityLog">
+            {blockHeights.map((blockHeight, key) => (
+              <Fragment key={key}>
                 <div className="accordion-item">
-                  <h2 className="accordion-header" id="accordionActivityLog-heading">
+                  <h2
+                    className="accordion-header"
+                    id={`accordionActivityLog-heading-${converter.toWords(key + 1)}`}
+                  >
                     <button
                       className="accordion-button collapsed"
                       type="button"
                       data-bs-toggle="collapse"
-                      data-bs-target="#accordionActivityLog-activityOne"
+                      data-bs-target={`#accordionActivityLog-activity-${converter.toWords(
+                        key + 1
+                      )}`}
                       aria-expanded="false"
-                      aria-controls="accordionActivityLog-activityOne"
+                      aria-controls={`accordionActivityLog-activity-${converter.toWords(key + 1)}`}
                     >
-                      Stacks Block #{blockHeight} (<Timestamp tx={txs[blockHeight][0]} />)
+                      Stacks Block #{blockHeight} (
+                      <Timestamp tx={txs[blockHeight][0]} />)
                     </button>
                   </h2>
-                </div>
-                <div
-                  id="accordionActivityLog-activityOne"
-                  className="accordion-collapse collapse"
-                  aria-labelledby="accordionActivityLog-headingOne"
-                  data-bs-parent="#accordionActivityLog"
-                >
-                  <div className="accordion-body">
-                    {txs[blockHeight].map((tx, txKey) => {
-                      return (
-                        <div className="card p-2 m-2" key={txKey}>
-                          <div className="row pl-4">{transactionByType(tx)}</div>
-                          <div className="row pl-4 mb-2">
-                            <Details tx={tx} />
+
+                  <div
+                    id={`accordionActivityLog-activity-${converter.toWords(key + 1)}`}
+                    className="accordion-collapse collapse"
+                    aria-labelledby={`accordionActivityLog-heading-${converter.toWords(key + 1)}`}
+                    data-bs-parent="#accordionActivityLog"
+                  >
+                    <div className="accordion-body">
+                      {txs[blockHeight].map((tx, txKey) => {
+                        return (
+                          <div className="card p-2 m-2" key={txKey}>
+                            <div className="row pl-4">{transactionByType(tx)}</div>
+                            <div className="row pl-4 mb-2">
+                              <Details tx={tx} />
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Fragment>
-          ))}
+              </Fragment>
+            ))}
+          </div>
         </div>
       </>
     );
@@ -125,7 +132,7 @@ function transactionByType(tx) {
     case 'mine-tokens':
       return <MineTransaction tx={tx} />;
     case 'mine-many':
-      return <MineTransactionOver30Blocks tx={tx} />;
+      return <MineManyTransaction tx={tx} />;
     case 'stack-tokens':
       return <StackTransaction tx={tx} />;
     case 'claim-token-reward':
@@ -164,6 +171,10 @@ function uintJsonToRewardCycle(value) {
   );
 }
 
+function listCvToMiningAmounts(value) {
+  return <>Amounts: {value.repr}</>;
+}
+
 function RegisterTransaction({ tx }) {
   return <div className="col-12">{tx.contract_call.function_name}</div>;
 }
@@ -178,12 +189,12 @@ function MineTransaction({ tx }) {
   );
 }
 
-function MineTransactionOver30Blocks({ tx }) {
+function MineManyTransaction({ tx }) {
   return (
     <div className="col-12">
-      <b>{tx.contract_call.function_name}</b>
+      {tx.contract_call.function_name}
       <br />
-      <small>30 x {uintJsonToSTX(tx.contract_call.function_args[0])}</small>
+      <small>{listCvToMiningAmounts(tx.contract_call.function_args[0])}</small>
     </div>
   );
 }

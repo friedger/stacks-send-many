@@ -82,7 +82,7 @@ function Content({ userSession }) {
       <Router>
         <AppBody path="/">
           {!authenticated && <Landing path="/" />}
-          {miningActivated && (
+          {!miningActivated && (
             <CityCoinRegistration
               path="/"
               decentralizedID={decentralizedID}
