@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
+import converter from 'number-to-words';
 
 import {
   AnchorMode,
@@ -39,7 +40,7 @@ export function CityCoinMining({ ownerStxAddress }) {
       setLoading(false);
     } else {
       const mineMany = numberOfBlocks > 1;
-      console.log(mineMany);
+      console.log(`mineMany: ${mineMany}`);
       try {
         const amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
         const amountUstxCV = uintCV(amountUstx);
@@ -48,10 +49,12 @@ export function CityCoinMining({ ownerStxAddress }) {
         let sumArray = [];
         let mineManyArray = [];
         if (mineMany) {
-          for (let i = 0; i < numberOfBlocks; i++) sumArray.push(parseInt(blockAmounts[i].amount));
-          var sum = uintCV(sumArray.reduce((a, b) => a + b, 0));
+          for (let i = 0; i < numberOfBlocks; i++) {
+            sumArray.push(parseInt(blockAmounts[i].amount));
+          }
+          var sum = uintCV(sumArray.reduce((a, b) => a + b, 0) * 1000000);
           for (let i = 0; i < numberOfBlocks; i++)
-            mineManyArray.push(uintCV(blockAmounts[i].amount));
+            mineManyArray.push(uintCV(blockAmounts[i].amount * 1000000));
           mineManyArray = listCV(mineManyArray);
         }
 
@@ -113,6 +116,22 @@ export function CityCoinMining({ ownerStxAddress }) {
         withdrawn after a 100 block maturity window.
       </p>
       <form>
+        <div className="form-floating">
+          <input
+            className="form-control"
+            placeholder="Number of Blocks to Mine?"
+            ref={mineManyRef}
+            onChange={event => {
+              setNumberOfBlocks(event.target.value);
+              setBlockAmounts([]);
+              updateValue(event.target.value);
+            }}
+            value={numberOfBlocks}
+            id="mineMany"
+          />
+          <label for="mineMany">Number of Blocks to Mine?</label>
+        </div>
+        <br />
         <div className="input-group mb-3" hidden={numberOfBlocks != 1}>
           <input
             type="number"
@@ -136,57 +155,49 @@ export function CityCoinMining({ ownerStxAddress }) {
           maxLength="34"
           hidden={numberOfBlocks != 1}
         />
-        <br />
-        <div>
-          <input
-            placeholder="Number of Blocks"
-            ref={mineManyRef}
-            onChange={event => {
-              setNumberOfBlocks(event.target.value);
-              setBlockAmounts([]);
-              updateValue(event.target.value);
-            }}
-            value={numberOfBlocks}
-            id="mineMany"
-          />
+        <div className="input-group">
+          {blockAmounts.map(b => {
+            return (
+              <div className="m-3" key={b.num}>
+                <label className="form-label" for={`miningAmount-${converter.toWords(b.num)}`}>
+                  Block Commit {b.num}
+                </label>
+                <input
+                  className="form-control"
+                  id={`miningAmount-${converter.toWords(b.num)}`}
+                  onChange={e => {
+                    const amount = e.target.value;
+                    setBlockAmounts(currentBlock =>
+                      currentBlock.map(x =>
+                        x.num === b.num
+                          ? {
+                              ...x,
+                              amount,
+                            }
+                          : x
+                      )
+                    );
+                    var sumArray = [];
+                    for (let i = 0; i < numberOfBlocks; i++)
+                      sumArray.push(parseInt(blockAmounts[i].amount));
+                    sumArray = sumArray.filter(function (value) {
+                      return !Number.isNaN(value);
+                    });
+                    let totalAmount = sumArray.reduce((a, b) => a + b, 0);
+                    // setButtonLabel(
+                    //   `Mine for ${numberOfBlocks} blocks (${totalAmount.toLocaleString(undefined, {
+                    //     style: 'decimal',
+                    //     maximumFractionDigits: 6,
+                    //   })} STX)`
+                    setButtonLabel(`Mine for ${numberOfBlocks} blocks`);
+                  }}
+                  value={b.amount}
+                  placeholder="STX Amount"
+                />
+              </div>
+            );
+          })}
         </div>
-        {blockAmounts.map(b => {
-          return (
-            <div key={b.num}>
-              <label style={{ marginRight: '15px' }}>{b.num}</label>
-              <input
-                onChange={e => {
-                  const amount = e.target.value;
-                  setBlockAmounts(currentBlock =>
-                    currentBlock.map(x =>
-                      x.num === b.num
-                        ? {
-                            ...x,
-                            amount,
-                          }
-                        : x
-                    )
-                  );
-                  var sumArray = [];
-                  for (let i = 0; i < numberOfBlocks; i++)
-                    sumArray.push(parseInt(blockAmounts[i].amount));
-                  sumArray = sumArray.filter(function (value) {
-                    return !Number.isNaN(value);
-                  });
-                  let totalAmount = sumArray.reduce((a, b) => a + b, 0);
-                  // setButtonLabel(
-                  //   `Mine for ${numberOfBlocks} blocks (${totalAmount.toLocaleString(undefined, {
-                  //     style: 'decimal',
-                  //     maximumFractionDigits: 6,
-                  //   })} STX)`
-                  setButtonLabel(`Mine for ${numberOfBlocks} blocks`);
-                }}
-                value={b.amount}
-                placeholder="STX Amount"
-              />
-            </div>
-          );
-        })}
         <br />
         <button
           className="btn btn-block btn-primary"
