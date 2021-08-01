@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Landing from './pages/Landing';
 import { Connect } from '@stacks/connect-react';
 import { Router } from '@reach/router';
 import Auth from './components/Auth';
 import { userDataState, userSessionState, useConnect } from './lib/auth';
 import { useAtom } from 'jotai';
-import CityCoin from './pages/CityCoin';
+import CityCoinRegistration from './pages/CityCoinRegistration';
+import { getMiningActivationStatus } from './lib/citycoin';
+import CityCoinActions from './pages/CityCoinActions';
 import { ProfileSmall } from './components/ProfileSmall';
 
 export default function App(props) {
@@ -61,14 +63,39 @@ function Content({ userSession }) {
   const authenticated = userSession && userSession.isUserSignedIn();
   const decentralizedID =
     userSession && userSession.isUserSignedIn() && userSession.loadUserData().decentralizedID;
+  const [miningActivated, setMiningActivated] = useState();
+
+  useEffect(() => {
+    getMiningActivationStatus()
+      .then(result => {
+        setMiningActivated(result);
+        console.log(`Mining Activation: ${result}`);
+      })
+      .catch(e => {
+        setMiningActivated(false);
+        console.log(e);
+      });
+  }, []);
+
   return (
     <>
       <Router>
         <AppBody path="/">
           {!authenticated && <Landing path="/" />}
+          {miningActivated && (
+            <CityCoinRegistration
+              path="/"
+              decentralizedID={decentralizedID}
+              userSession={userSession}
+            />
+          )}
           {decentralizedID && (
             <>
-              <CityCoin path="/" decentralizedID={decentralizedID} userSession={userSession} />
+              <CityCoinActions
+                path="/"
+                decentralizedID={decentralizedID}
+                userSession={userSession}
+              />
             </>
           )}
         </AppBody>

@@ -33,8 +33,11 @@ export async function getMiningActivationStatus() {
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
-  console.log(`Registered Miner Activation ${result.type !== ClarityType.BoolTrue}`);
-  return result.type !== ClarityType.BoolTrue;
+  if (result.type == ClarityType.BoolTrue) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 export async function getRegisteredMinerId(address) {

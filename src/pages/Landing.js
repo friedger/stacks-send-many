@@ -1,6 +1,5 @@
 import React from 'react';
 import { useConnect } from '../lib/auth';
-import { AlertAllPages } from '../components/AlertAllPages';
 
 // Landing page with Stacks Connect for authentication
 

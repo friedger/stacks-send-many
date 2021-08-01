@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import { CITYCOIN_CONTRACT_NAME, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
+import { CONTRACT_DEPLOYER, CITYCOIN_CORE, NETWORK } from '../lib/constants';
 import { TxStatus } from './TxStatus';
 import {
   getRegisteredMinerId,
   getRegisteredMinerCount,
   getRegisteredMinersThreshold,
 } from '../lib/citycoin';
-import { bufferCVFromString, someCV, noneCV, stringUtf8CV } from '@stacks/transactions';
+import { someCV, noneCV, stringUtf8CV } from '@stacks/transactions';
 
 export function CityCoinRegister({ ownerStxAddress }) {
   const minerMemoRef = useRef();
@@ -59,13 +59,14 @@ export function CityCoinRegister({ ownerStxAddress }) {
 
   const registerAction = async () => {
     setLoading(true);
-    const memo = stringUtf8CV(minerMemoRef.current.value.trim());
-    const minerMemoCV = memo ? memo : noneCV();
+    const memo =
+      minerMemoRef.current.value == '' ? '' : stringUtf8CV(minerMemoRef.current.value.trim());
+    const minerMemoCV = memo ? someCV(memo) : noneCV();
     await doContractCall({
-      contractAddress: CONTRACT_ADDRESS,
-      contractName: CITYCOIN_CONTRACT_NAME,
+      contractAddress: CONTRACT_DEPLOYER,
+      contractName: CITYCOIN_CORE,
       functionName: 'register-user',
-      functionArgs: [someCV(minerMemoCV)],
+      functionArgs: [minerMemoCV],
       network: NETWORK,
       onFinish: result => {
         setLoading(false);
@@ -76,8 +77,6 @@ export function CityCoinRegister({ ownerStxAddress }) {
       },
     });
   };
-
-  // TODO: update disable button styles
 
   return (
     <>
@@ -102,7 +101,7 @@ export function CityCoinRegister({ ownerStxAddress }) {
           {((minerCount / minerThreshold) * 100).toFixed(2)}%
         </div>
       </div>
-      {minerRegistered && <p>Registration Complete! ID: {minerId}</p>}
+      {minerRegistered && <p>Registration Complete! User ID: {minerId}</p>}
       {!minerRegistered && (
         <>
           <hr />
@@ -114,7 +113,7 @@ export function CityCoinRegister({ ownerStxAddress }) {
               aria-label="Registration Message"
               placeholder="Registration Message (optional)"
               minLength="1"
-              maxLength="32"
+              maxLength="50"
             />
             <br />
             <button
