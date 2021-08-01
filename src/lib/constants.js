@@ -26,8 +26,17 @@ export const CONTRACT_ADDRESS = mocknet
   : 'SPAP1KAFW2BBAD840FSPJJJ7EVYXPCEMXNH3GNT9'; // TODO: UPDATE
 export const GENESIS_CONTRACT_ADDRESS = 'ST000000000000000000002AMW42H';
 export const BNS_CONTRACT_NAME = 'bns';
-export const TOKEN_CONTRACT_ADDRESS = 'ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A';
 
+// TODO: update for mainnet values! follow pattern above
+export const CONTRACT_DEPLOYER = 'ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A';
+export const CITYCOIN_VRF = 'citycoin-vrf';
+export const CITYCOIN_CORE = 'citycoin-core-v4';
+export const CITYCOIN_AUTH = 'citycoin-auth';
+export const CITYCOIN_TOKEN = 'citycoin-token';
+export const CITYCOIN_NAME = 'citycoin';
+export const CITYCOIN_SYMBOL = '$CITY';
+
+export const TOKEN_CONTRACT_ADDRESS = 'ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A';
 export const CITYCOIN_CONTRACT_NAME = mocknet ? 'citycoin' : 'citycoin-core-v1';
 export const CITYCOIN_CONTRACT_NAME_TOKEN = 'citycoin-token';
 export const CC_NAME = 'citycoin';

@@ -2,17 +2,20 @@ import { ClarityType, cvToHex, cvToString, hexToCV, tupleCV, uintCV } from '@sta
 import { standardPrincipalCV, callReadOnlyFunction } from '@stacks/transactions';
 import {
   accountsApi,
-  CITYCOIN_CONTRACT_NAME,
-  CONTRACT_ADDRESS,
   GENESIS_CONTRACT_ADDRESS,
   NETWORK,
   smartContractsApi,
+  CONTRACT_DEPLOYER,
+  CITYCOIN_VRF,
+  CITYCOIN_CORE,
+  CITYCOIN_AUTH,
+  CITYCOIN_TOKEN,
 } from './constants';
 
 export async function getCityCoinBalance(address) {
   const result = await callReadOnlyFunction({
-    contractAddress: 'ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A',
-    contractName: 'citycoin-token',
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_TOKEN,
     functionName: 'get-balance',
     functionArgs: [standardPrincipalCV(address)],
     network: NETWORK,
@@ -23,67 +26,67 @@ export async function getCityCoinBalance(address) {
 
 export async function getMiningActivationStatus() {
   const result = await callReadOnlyFunction({
-    contractAddress: CONTRACT_ADDRESS,
-    contractName: CITYCOIN_CONTRACT_NAME,
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
     functionName: 'get-activation-status',
     functionArgs: [],
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
-  console.log(`Registerd Miner Activation ${result.type !== ClarityType.BoolTrue}`)
+  console.log(`Registered Miner Activation ${result.type !== ClarityType.BoolTrue}`);
   return result.type !== ClarityType.BoolTrue;
 }
 
 export async function getRegisteredMinerId(address) {
   const result = await callReadOnlyFunction({
-    contractAddress: CONTRACT_ADDRESS,
-    contractName: CITYCOIN_CONTRACT_NAME,
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
     functionName: 'get-user-id',
     functionArgs: [standardPrincipalCV(address)],
     network: NETWORK,
     senderAddress: address,
   });
   if (result.type === ClarityType.OptionalSome) {
-    console.log(`Registerd Miner Id ${result.value.value.toNumber()}`)
+    console.log(`Registered Miner Id ${result.value.value.toNumber()}`);
     return result.value.value.toNumber();
   } else {
-    console.log(`Registerd Miner Id ${undefined}`)
+    console.log(`Registered Miner Id ${undefined}`);
     return undefined;
   }
 }
 
 export async function getRegisteredMinerCount() {
   const result = await callReadOnlyFunction({
-    contractAddress: CONTRACT_ADDRESS,
-    contractName: CITYCOIN_CONTRACT_NAME,
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
     functionName: 'get-registered-users-nonce',
     functionArgs: [],
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
-  console.log(`Registerd Miner Count ${result.value.toNumber()}`)
+  console.log(`Registered Miner Count ${result.value.toNumber()}`);
   return result.value.toNumber();
 }
 
 export async function getRegisteredMinersThreshold() {
   const result = await callReadOnlyFunction({
-    contractAddress: CONTRACT_ADDRESS,
-    contractName: CITYCOIN_CONTRACT_NAME,
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
     functionName: 'get-activation-threshold',
     functionArgs: [],
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
-  console.log(`Registerd Miner Threshold ${result.value.toNumber()}`)
+  console.log(`Registered Miner Threshold ${result.value.toNumber()}`);
   return result.value.toNumber();
 }
 export async function getCoinbase(blockHeight) {
   const result = await callReadOnlyFunction({
-    contractAddress: CONTRACT_ADDRESS,
-    contractName: CITYCOIN_CONTRACT_NAME,
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
     functionName: 'get-coinbase-amount',
     functionArgs: [uintCV(blockHeight)],
-    senderAddress: CONTRACT_ADDRESS,
+    senderAddress: CONTRACT_DEPLOYER,
     network: NETWORK,
   });
   return result.value.toNumber();
@@ -97,7 +100,7 @@ export async function getMiningDetails(stxAddress) {
       tx.tx_type === 'contract_call' &&
       (tx.contract_call.function_name === 'mine-tokens' ||
         tx.contract_call.function_name === 'mine-many') &&
-      tx.contract_call.contract_id === `${CONTRACT_ADDRESS}.${CITYCOIN_CONTRACT_NAME}`
+      tx.contract_call.contract_id === `${CONTRACT_DEPLOYER}.${CITYCOIN_CORE}`
   );
   const minerId = await getRegisteredMinerId(stxAddress);
   console.log({ minerId });
@@ -118,11 +121,11 @@ export async function getMiningDetails(stxAddress) {
 async function getWinningDetailsFor(blockHeight, minerId) {
   console.log({ blockHeight });
   const randomSample = await callReadOnlyFunction({
-    contractAddress: 'ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A',
-    contractName: 'citycoin-vrf',
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_VRF,
     functionName: 'get-random-uint-at-block',
     functionArgs: [uintCV(blockHeight + 100)],
-    senderAddress: CONTRACT_ADDRESS,
+    senderAddress: CONTRACT_DEPLOYER,
     network: NETWORK,
   });
   console.log({ randomSample: cvToString(randomSample) });
@@ -131,8 +134,8 @@ async function getWinningDetailsFor(blockHeight, minerId) {
     const winningAmount = await getWinningAmount(blockHeight, randomSample.value.value);
 
     const minedBlock = await smartContractsApi.getContractDataMapEntry({
-      contractAddress: CONTRACT_ADDRESS,
-      contractName: CITYCOIN_CONTRACT_NAME,
+      contractAddress: CONTRACT_DEPLOYER,
+      contractName: CITYCOIN_CORE,
       mapName: 'mined-blocks',
       key: cvToHex(tupleCV({ 'stacks-block-height': uintCV(blockHeight) })),
     });
@@ -146,8 +149,8 @@ async function getWinningDetailsFor(blockHeight, minerId) {
     while (!winner && idx < 10) {
       console.log({ idx });
       const minerOfBlock = await smartContractsApi.getContractDataMapEntry({
-        contractAddress: CONTRACT_ADDRESS,
-        contractName: CITYCOIN_CONTRACT_NAME,
+        contractAddress: CONTRACT_DEPLOYER,
+        contractName: CITYCOIN_CORE,
         mapName: 'MinersAtBlock',
         key: cvToHex(tupleCV({ 'stacks-block-height': uintCV(blockHeight), idx: uintCV(idx) })),
       });
@@ -175,16 +178,16 @@ async function getWinningDetailsFor(blockHeight, minerId) {
 
 async function getWinningAmount(blockHeight, randomSample) {
   const blockCommit = await callReadOnlyFunction({
-    contractAddress: CONTRACT_ADDRESS,
-    contractName: CITYCOIN_CONTRACT_NAME,
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
     functionName: 'get-mining-stats-at-block',
     functionArgs: [uintCV(blockHeight)],
-    senderAddress: CONTRACT_ADDRESS,
+    senderAddress: CONTRACT_DEPLOYER,
     network: NETWORK,
   });
 
   console.log({ blockCommit: cvToString(blockCommit) });
-  console.log(`Blockcommit value: ${JSON.stringify(blockCommit.value)}`)
+  console.log(`Blockcommit value: ${JSON.stringify(blockCommit.value)}`);
   const winningAmount = randomSample.mod(blockCommit.value.data.amount.value).toNumber();
   console.log({ winningAmount });
   return winningAmount;
@@ -192,11 +195,11 @@ async function getWinningAmount(blockHeight, randomSample) {
 
 export async function getPoxLiteInfo() {
   const poxLiteInfo = await callReadOnlyFunction({
-    contractAddress: CONTRACT_ADDRESS,
-    contractName: CITYCOIN_CONTRACT_NAME,
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
     functionName: 'get-pox-lite-info',
     functionArgs: [],
-    senderAddress: CONTRACT_ADDRESS,
+    senderAddress: CONTRACT_DEPLOYER,
     network: NETWORK,
   });
   return poxLiteInfo;
@@ -204,26 +207,23 @@ export async function getPoxLiteInfo() {
 
 export async function getAvailableRewards(stxAddress, userId, cycleId) {
   const stackingReward = await callReadOnlyFunction({
-    contractAddress: CONTRACT_ADDRESS,
-    contractName: CITYCOIN_CONTRACT_NAME,
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
     functionName: 'get-stacking-reward',
-    functionArgs: [
-      uintCV(userId),
-      uintCV(cycleId),
-    ],
+    functionArgs: [uintCV(userId), uintCV(cycleId)],
     senderAddress: stxAddress,
     network: NETWORK,
   });
   const cityCoinClaim = await callReadOnlyFunction({
-    contractAddress: CONTRACT_ADDRESS,
-    contractName: CITYCOIN_CONTRACT_NAME,
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
     functionName: 'get-stacker-at-cycle',
     functionArgs: [uintCV(cycleId), uintCV(await getRegisteredMinerId(stxAddress))],
     senderAddress: stxAddress,
     network: NETWORK,
   });
-  console.log(`Claim ${JSON.stringify(cityCoinClaim)}`)
-  console.log(`stackingReward ${JSON.stringify(stackingReward)}`)
+  console.log(`Claim ${JSON.stringify(cityCoinClaim)}`);
+  console.log(`stackingReward ${JSON.stringify(stackingReward)}`);
   const result = {
     amountSTX: stackingReward.value.toNumber(),
     amountCC: cityCoinClaim.type,
@@ -241,7 +241,7 @@ export async function getStackingState(stxAddress) {
       tx.tx_status === 'success' &&
       tx.tx_type === 'contract_call' &&
       tx.contract_call.function_name === 'stack-tokens' &&
-      tx.contract_call.contract_id === `${CONTRACT_ADDRESS}.${CITYCOIN_CONTRACT_NAME}`
+      tx.contract_call.contract_id === `${CONTRACT_DEPLOYER}.${CITYCOIN_CORE}`
   );
   const state = [];
   for (let tx of txs) {
@@ -250,7 +250,7 @@ export async function getStackingState(stxAddress) {
     const firstCycle = hexToCV(tx.tx_result).data.first.value.toNumber();
     const lastCycle = hexToCV(tx.tx_result).data.last.value.toNumber();
     */
-    console.log(`TX Contract Call ${JSON.stringify(tx.contract_call)}`)
+    console.log(`TX Contract Call ${JSON.stringify(tx.contract_call)}`);
     const firstCycle = Math.floor(
       (hexToCV(tx.contract_call.function_args[1].hex).value.toNumber() - 14726) / 50
     );
