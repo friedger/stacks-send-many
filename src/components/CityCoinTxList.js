@@ -5,8 +5,8 @@ import { hexToCV } from '@stacks/transactions';
 import _groupBy from 'lodash.groupby';
 import {
   accountsApi,
-  CITYCOIN_CONTRACT_NAME,
-  CONTRACT_ADDRESS,
+  CITYCOIN_CORE,
+  CONTRACT_DEPLOYER,
   STACKS_API_WS_URL,
   transactionsApi,
 } from '../lib/constants';
@@ -18,7 +18,7 @@ export function CityCoinTxList() {
   const updateTxs = async () => {
     try {
       const result = await accountsApi.getAccountTransactions({
-        principal: `${CONTRACT_ADDRESS}.${CITYCOIN_CONTRACT_NAME}`,
+        principal: `${CONTRACT_DEPLOYER}.${CITYCOIN_CORE}`,
       });
       setTxs(
         _groupBy(
@@ -37,7 +37,7 @@ export function CityCoinTxList() {
       try {
         const client = await connectWebSocketClient(STACKS_API_WS_URL);
         await client.subscribeAddressTransactions(
-          `${CONTRACT_ADDRESS}.${CITYCOIN_CONTRACT_NAME}`,
+          `${CONTRACT_DEPLOYER}.${CITYCOIN_CORE}`,
           async event => {
             console.log(event);
 
@@ -62,11 +62,6 @@ export function CityCoinTxList() {
 
   if (txs) {
     const blockHeights = txs ? Object.keys(txs).sort((a, b) => a < b) : undefined;
-    console.log(converter.toWords(1));
-    console.log(converter.toWords(2));
-    console.log(converter.toWords(3));
-    console.log(converter.toWords(4));
-    console.log(converter.toWords(5));
     return (
       <>
         <h3>Contract Activity Log</h3>
@@ -127,7 +122,7 @@ export function CityCoinTxList() {
 
 function transactionByType(tx) {
   switch (tx.contract_call.function_name) {
-    case 'register-miner':
+    case 'register-user':
       return <RegisterTransaction tx={tx} />;
     case 'mine-tokens':
       return <MineTransaction tx={tx} />;
@@ -135,7 +130,7 @@ function transactionByType(tx) {
       return <MineManyTransaction tx={tx} />;
     case 'stack-tokens':
       return <StackTransaction tx={tx} />;
-    case 'claim-token-reward':
+    case 'claim-mining-reward':
       return <ClaimTransaction tx={tx} />;
     case 'claim-stacking-reward':
       return <ClaimStackingTransaction tx={tx} />;
