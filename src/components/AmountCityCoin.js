@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getCityCoinBalance } from '../lib/citycoin';
-import { CC_SYMBOL } from '../lib/constants';
+import { CITYCOIN_SYMBOL } from '../lib/constants';
 
 export function AmountCityCoin({ stxAddress }) {
   const [cityCoinBalance, setCityCoinBalance] = useState();
@@ -18,7 +18,8 @@ export function AmountCityCoin({ stxAddress }) {
 
   return (
     <li>
-      {cityCoinBalance} &nbsp;{CC_SYMBOL}
+      {cityCoinBalance === undefined ? cityCoinBalance : cityCoinBalance.toLocaleString()} &nbsp;
+      {CITYCOIN_SYMBOL}
     </li>
   );
 }
