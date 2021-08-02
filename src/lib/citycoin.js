@@ -18,6 +18,7 @@ import {
   CITYCOIN_CORE,
   CITYCOIN_AUTH,
   CITYCOIN_TOKEN,
+  REWARD_CYCLE_LENGTH,
 } from './constants';
 
 export async function getCityCoinBalance(address) {
@@ -227,6 +228,22 @@ export async function getAvailableRewards(stxAddress, userId, cycleId) {
   return result;
 }
 
+export async function getFirstStackingBlock() {
+  const activationHeightCV = await callReadOnlyFunction({
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
+    functionName: 'get-activation-block',
+    functionArgs: [],
+    senderAddress: CONTRACT_DEPLOYER,
+    network: NETWORK,
+  });
+  const activationHeight = cvToValue(activationHeightCV);
+  const activationHeightValue = activationHeight.value;
+  console.log(`activationHeightValue: ${activationHeightValue}`);
+
+  return activationHeightValue + REWARD_CYCLE_LENGTH;
+}
+
 export async function getStackingState(stxAddress) {
   const response = await accountsApi.getAccountTransactions({ principal: stxAddress });
   const txs = response.results.filter(
@@ -238,6 +255,15 @@ export async function getStackingState(stxAddress) {
   );
   const state = [];
   for (let tx of txs) {
+    // for each stacking transaction
+    // get single list of cycles user participated in via get-reward-cycle
+    // based on the cycle
+    // get stackerAtCycle for their info
+    // get stackingStatsAtCycle for overall info
+    // get firstStacksBlockInCycle + 2100 for last
+
+    // By Cycle! Reward Cycle 1, stack up components
+
     // TODO use better tx result like this:
     /*
     const firstCycle = hexToCV(tx.tx_result).data.first.value.toNumber();

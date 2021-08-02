@@ -41,6 +41,7 @@ export const CITYCOIN_CONTRACT_NAME = mocknet ? 'citycoin' : 'citycoin-core-v1';
 export const CITYCOIN_CONTRACT_NAME_TOKEN = 'citycoin-token';
 export const CC_NAME = 'citycoin';
 export const CC_SYMBOL = '$CITY';
+export const REWARD_CYCLE_LENGTH = mainnet ? 2100 : 50;
 
 // TODO: add Freehold API endpoint?
 export const STACK_API_URL = localNode
