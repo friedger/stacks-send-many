@@ -16,6 +16,7 @@ export function AmountStx({ ustx }) {
       })}
       &nbsp;Ӿ
       <br />
+      {console.log(`STX/USD Rate: ${rate.value}`)}
       ($
       {((ustx / 1000000) * rate.value).toLocaleString(undefined, {
         style: 'decimal',

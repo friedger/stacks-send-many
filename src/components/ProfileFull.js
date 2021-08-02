@@ -2,12 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { fetchAccount } from '../lib/account';
 import { Address } from './Address';
 import { Amount } from './Amount';
+import { refreshPrice, STX_USD } from '../lib/price';
+import { useAtom } from 'jotai';
+
 import {} from 'react-jdenticon';
 
 export function ProfileFull({ stxAddress, userSession }) {
   const [profileState, setProfileState] = useState({
     account: undefined,
   });
+
+  const [stxUsd, setStxUsd] = useAtom(STX_USD);
+
+  useEffect(() => {
+    refreshPrice(setStxUsd);
+  }, [setStxUsd]);
 
   useEffect(() => {
     fetchAccount(stxAddress).then(acc => {
