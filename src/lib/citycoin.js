@@ -1,4 +1,12 @@
-import { ClarityType, cvToHex, cvToString, hexToCV, tupleCV, uintCV } from '@stacks/transactions';
+import {
+  ClarityType,
+  cvToHex,
+  cvToString,
+  cvToValue,
+  hexToCV,
+  tupleCV,
+  uintCV,
+} from '@stacks/transactions';
 import { standardPrincipalCV, callReadOnlyFunction } from '@stacks/transactions';
 import {
   accountsApi,
@@ -96,7 +104,9 @@ export async function getCoinbase(blockHeight) {
 }
 
 export async function getMiningDetails(stxAddress) {
+  // get all account transactions
   const response = await accountsApi.getAccountTransactions({ principal: stxAddress });
+  // filter transactions to successful mining calls
   const txs = response.results.filter(
     tx =>
       tx.tx_status === 'success' &&
@@ -105,95 +115,75 @@ export async function getMiningDetails(stxAddress) {
         tx.contract_call.function_name === 'mine-many') &&
       tx.contract_call.contract_id === `${CONTRACT_DEPLOYER}.${CITYCOIN_CORE}`
   );
+  console.log(JSON.stringify(txs));
+  // get the miner's ID
   const minerId = await getRegisteredMinerId(stxAddress);
-  console.log({ minerId });
+  // set the winning details as empty
   const winningDetails = [];
-  console.log(txs);
+  // for each mining transaction
   for (let tx of txs) {
+    // if it was mine-many, iterate, otherwise get value
     if (tx.contract_call.function_name === 'mine-many') {
-      for (let i = 29; i >= 0; i--) {
-        winningDetails.push(await getWinningDetailsFor(tx.block_height + i, minerId));
+      let txResponse = tx.contract_call.function_args[0].repr;
+      let txResponseSplit = txResponse.split(' ');
+      for (let i = 0; i <= txResponseSplit.length - 1; i++) {
+        winningDetails.push(await getWinningDetailsFor(tx.block_height + i, stxAddress));
       }
     } else {
-      winningDetails.push(await getWinningDetailsFor(tx.block_height, minerId));
+      winningDetails.push(await getWinningDetailsFor(tx.block_height, stxAddress));
     }
   }
   return { count: winningDetails.length, winningDetails };
 }
 
-async function getWinningDetailsFor(blockHeight, minerId) {
-  console.log({ blockHeight });
-  const randomSample = await callReadOnlyFunction({
-    contractAddress: CONTRACT_DEPLOYER,
-    contractName: CITYCOIN_VRF,
-    functionName: 'get-random-uint-at-block',
-    functionArgs: [uintCV(blockHeight + 100)],
-    senderAddress: CONTRACT_DEPLOYER,
-    network: NETWORK,
-  });
-  console.log({ randomSample: cvToString(randomSample) });
+async function getWinningDetailsFor(blockHeight, stxAddress) {
+  // was it claimed?
+  // did they win?
+  // maturity window?
 
-  if (randomSample.type === ClarityType.OptionalSome) {
-    const winningAmount = await getWinningAmount(blockHeight, randomSample.value.value);
+  // claimed: yes, won: no = lost
+  // claimed: yes, won: yes = done
+  // claimed: no, won: no = lost
+  // claimed: no, won: yes = canClaim
 
-    const minedBlock = await smartContractsApi.getContractDataMapEntry({
-      contractAddress: CONTRACT_DEPLOYER,
-      contractName: CITYCOIN_CORE,
-      mapName: 'mined-blocks',
-      key: cvToHex(tupleCV({ 'stacks-block-height': uintCV(blockHeight) })),
-    });
-    const minedBlockCV = hexToCV(minedBlock.data);
-    console.log({ minedBlockCV });
-    const claimed = minedBlockCV.type !== ClarityType.BoolTrue;
-
-    let idx = 1;
-    let sum = 0;
-    let winner;
-    while (!winner && idx < 10) {
-      console.log({ idx });
-      const minerOfBlock = await smartContractsApi.getContractDataMapEntry({
-        contractAddress: CONTRACT_DEPLOYER,
-        contractName: CITYCOIN_CORE,
-        mapName: 'MinersAtBlock',
-        key: cvToHex(tupleCV({ 'stacks-block-height': uintCV(blockHeight), idx: uintCV(idx) })),
-      });
-      const minerOfBlockCV = hexToCV(minerOfBlock.data);
-      console.log(JSON.stringify({ minerOfBlockCV: cvToString(minerOfBlockCV) }));
-      // add commit to total
-      const nextSum = sum + minerOfBlockCV.value.data.ustx.value.toNumber();
-      // check total for winning amount
-      if (sum <= winningAmount && nextSum > winningAmount) {
-        winner = minerOfBlockCV;
-      }
-      idx++;
-    }
-    if (winner.value.data['miner-id'].value.toNumber() === minerId) {
-      const coinbase = await getCoinbase(blockHeight);
-      console.log({ coinbase });
-      return { blockHeight, winner, coinbase, claimed };
-    } else {
-      return { blockHeight, lost: true, claimed };
-    }
-  } else {
-    return { blockHeight };
-  }
-}
-
-async function getWinningAmount(blockHeight, randomSample) {
-  const blockCommit = await callReadOnlyFunction({
+  console.log(`block height: ${blockHeight}`);
+  const isWinnerAtBlock = await callReadOnlyFunction({
     contractAddress: CONTRACT_DEPLOYER,
     contractName: CITYCOIN_CORE,
-    functionName: 'get-mining-stats-at-block',
-    functionArgs: [uintCV(blockHeight)],
+    functionName: 'is-block-winner',
+    functionArgs: [standardPrincipalCV(stxAddress), uintCV(blockHeight)],
     senderAddress: CONTRACT_DEPLOYER,
     network: NETWORK,
   });
+  console.log(`isWinnerAtBlock: ${cvToString(isWinnerAtBlock)}`);
 
-  console.log({ blockCommit: cvToString(blockCommit) });
-  console.log(`Blockcommit value: ${JSON.stringify(blockCommit.value)}`);
-  const winningAmount = randomSample.mod(blockCommit.value.data.amount.value).toNumber();
-  console.log({ winningAmount });
-  return winningAmount;
+  if (cvToValue(isWinnerAtBlock) === true) {
+    console.log('returning a WINNER');
+    const claim = await callReadOnlyFunction({
+      contractAddress: CONTRACT_DEPLOYER,
+      contractName: CITYCOIN_CORE,
+      functionName: 'can-claim-mining-reward',
+      functionArgs: [standardPrincipalCV(stxAddress), uintCV(blockHeight)],
+      senderAddress: CONTRACT_DEPLOYER,
+      network: NETWORK,
+    });
+    console.log(`claim: ${cvToValue(claim)}`);
+    const canClaim = cvToValue(claim);
+    const coinbase = await getCoinbase(blockHeight);
+    console.log(`coinbase: ${coinbase}`);
+    return { blockHeight, winner: true, coinbase, canClaim };
+  } else {
+    console.log('returning NOT a winner');
+    return { blockHeight, lost: true };
+  }
+
+  /*
+
+  // 3547 single mine-tokens
+  // 3535-3544 10 mine-many
+  // 3545 single mine-tokens
+  
+  */
 }
 
 export async function getPoxLiteInfo() {
