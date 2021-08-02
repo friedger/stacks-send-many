@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import {
   CC_NAME,
@@ -24,8 +24,6 @@ import { getStackingState, getFirstStackingBlock } from '../lib/citycoin';
 // get from a getter?
 
 export function CityCoinStackingClaim({ ownerStxAddress }) {
-  const rewardCycleRef = useRef();
-  const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const [stackingState, setStackingState] = useState();
   const [firstStackingBlock, setFirstStackingBlock] = useState();
@@ -69,7 +67,6 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
       },
       onFinish: result => {
         setLoading(false);
-        setTxId(result.txId);
       },
     });
   };

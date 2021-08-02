@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import {
-  CONTRACT_DEPLOYER,
-  CITYCOIN_CORE,
-  CITYCOIN_SYMBOL,
-  CC_SYMBOL,
-  CITYCOIN_CONTRACT_NAME,
-  CONTRACT_ADDRESS,
-  NETWORK,
-} from '../lib/constants';
-import { TxStatus } from './TxStatus';
+import { CONTRACT_DEPLOYER, CITYCOIN_CORE, CITYCOIN_SYMBOL, NETWORK } from '../lib/constants';
 import { uintCV } from '@stacks/transactions';
 import { getMiningDetails } from '../lib/citycoin';
 
@@ -17,7 +8,6 @@ import { getMiningDetails } from '../lib/citycoin';
 // get from a getter?
 
 export function CityCoinMiningClaim({ ownerStxAddress }) {
-  const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const [miningState, setMiningState] = useState();
   const { doContractCall } = useConnect();
@@ -40,7 +30,6 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
       },
       onFinish: result => {
         setLoading(false);
-        setTxId(result.txId);
       },
     });
   };

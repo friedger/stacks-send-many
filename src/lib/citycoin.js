@@ -1,22 +1,11 @@
-import {
-  ClarityType,
-  cvToHex,
-  cvToString,
-  cvToValue,
-  hexToCV,
-  tupleCV,
-  uintCV,
-} from '@stacks/transactions';
+import { ClarityType, cvToValue, hexToCV, uintCV } from '@stacks/transactions';
 import { standardPrincipalCV, callReadOnlyFunction } from '@stacks/transactions';
 import {
   accountsApi,
   GENESIS_CONTRACT_ADDRESS,
   NETWORK,
-  smartContractsApi,
   CONTRACT_DEPLOYER,
-  CITYCOIN_VRF,
   CITYCOIN_CORE,
-  CITYCOIN_AUTH,
   CITYCOIN_TOKEN,
   REWARD_CYCLE_LENGTH,
 } from './constants';
@@ -59,10 +48,8 @@ export async function getRegisteredMinerId(address) {
     senderAddress: address,
   });
   if (result.type === ClarityType.OptionalSome) {
-    console.log(`Registered Miner Id ${result.value.value.toNumber()}`);
     return result.value.value.toNumber();
   } else {
-    console.log(`Registered Miner Id ${undefined}`);
     return undefined;
   }
 }
@@ -76,7 +63,6 @@ export async function getRegisteredMinerCount() {
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
-  console.log(`Registered Miner Count ${result.value.toNumber()}`);
   return result.value.toNumber();
 }
 
@@ -89,7 +75,6 @@ export async function getRegisteredMinersThreshold() {
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
-  console.log(`Registered Miner Threshold ${result.value.toNumber()}`);
   return result.value.toNumber();
 }
 export async function getCoinbase(blockHeight) {
@@ -116,9 +101,8 @@ export async function getMiningDetails(stxAddress) {
         tx.contract_call.function_name === 'mine-many') &&
       tx.contract_call.contract_id === `${CONTRACT_DEPLOYER}.${CITYCOIN_CORE}`
   );
-  console.log(JSON.stringify(txs));
   // get the miner's ID
-  const minerId = await getRegisteredMinerId(stxAddress);
+  // const minerId = await getRegisteredMinerId(stxAddress);
   // set the winning details as empty
   const winningDetails = [];
   // for each mining transaction
@@ -138,16 +122,6 @@ export async function getMiningDetails(stxAddress) {
 }
 
 async function getWinningDetailsFor(blockHeight, stxAddress) {
-  // was it claimed?
-  // did they win?
-  // maturity window?
-
-  // claimed: yes, won: no = lost
-  // claimed: yes, won: yes = done
-  // claimed: no, won: no = lost
-  // claimed: no, won: yes = canClaim
-
-  console.log(`block height: ${blockHeight}`);
   const isWinnerAtBlock = await callReadOnlyFunction({
     contractAddress: CONTRACT_DEPLOYER,
     contractName: CITYCOIN_CORE,
@@ -156,10 +130,8 @@ async function getWinningDetailsFor(blockHeight, stxAddress) {
     senderAddress: CONTRACT_DEPLOYER,
     network: NETWORK,
   });
-  console.log(`isWinnerAtBlock: ${cvToString(isWinnerAtBlock)}`);
 
   if (cvToValue(isWinnerAtBlock) === true) {
-    console.log('returning a WINNER');
     const claim = await callReadOnlyFunction({
       contractAddress: CONTRACT_DEPLOYER,
       contractName: CITYCOIN_CORE,
@@ -168,23 +140,12 @@ async function getWinningDetailsFor(blockHeight, stxAddress) {
       senderAddress: CONTRACT_DEPLOYER,
       network: NETWORK,
     });
-    console.log(`claim: ${cvToValue(claim)}`);
     const canClaim = cvToValue(claim);
     const coinbase = await getCoinbase(blockHeight);
-    console.log(`coinbase: ${coinbase}`);
     return { blockHeight, winner: true, coinbase, canClaim };
   } else {
-    console.log('returning NOT a winner');
     return { blockHeight, lost: true };
   }
-
-  /*
-
-  // 3547 single mine-tokens
-  // 3535-3544 10 mine-many
-  // 3545 single mine-tokens
-  
-  */
 }
 
 export async function getPoxLiteInfo() {
@@ -216,15 +177,12 @@ export async function getAvailableRewards(stxAddress, userId, cycleId) {
     senderAddress: stxAddress,
     network: NETWORK,
   });
-  console.log(`Claim ${JSON.stringify(cityCoinClaim)}`);
-  console.log(`stackingReward ${JSON.stringify(stackingReward)}`);
   const result = {
     amountSTX: stackingReward.value.toNumber(),
     amountCC: cityCoinClaim.type,
     cycleId,
     stxAddress,
   };
-  console.log({ result });
   return result;
 }
 
@@ -239,7 +197,6 @@ export async function getFirstStackingBlock() {
   });
   const activationHeight = cvToValue(activationHeightCV);
   const activationHeightValue = activationHeight.value;
-  console.log(`activationHeightValue: ${activationHeightValue}`);
 
   return activationHeightValue + REWARD_CYCLE_LENGTH;
 }
@@ -269,7 +226,6 @@ export async function getStackingState(stxAddress) {
     const firstCycle = hexToCV(tx.tx_result).data.first.value.toNumber();
     const lastCycle = hexToCV(tx.tx_result).data.last.value.toNumber();
     */
-    console.log(`TX Contract Call ${JSON.stringify(tx.contract_call)}`);
     const firstCycle = Math.floor(
       (hexToCV(tx.contract_call.function_args[1].hex).value.toNumber() - 14726) / 50
     );
