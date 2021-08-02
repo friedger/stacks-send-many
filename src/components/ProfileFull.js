@@ -63,7 +63,7 @@ export function ProfileFull({ stxAddress, userSession }) {
                 target="_blank"
                 rel="noreferrer"
               >
-                <i className="bi bi-box-arrow-up-right"></i> View on Explorer
+                <i className="bi bi-box-arrow-up-right"></i> View Address on Explorer
               </a>
             </li>
             <li>
@@ -103,7 +103,17 @@ export function ProfileFull({ stxAddress, userSession }) {
             <>
               <h5 className="mb-3">Account Balances</h5>
               <Amount ustx={profileState.account.balance} stxAddress={stxAddress} />
-              <hr />
+            </>
+          )}
+        </div>
+      </div>{' '}
+    </div>
+  );
+}
+
+/*
+LAST 5 TX CODE
+<hr />
               <h5>Last 5 Transactions</h5>
               <div className="accordion accordion-flush" id="accordionLastFiveTx">
                 <div className="accordion-item">
@@ -347,10 +357,4 @@ export function ProfileFull({ stxAddress, userSession }) {
                   </div>
                 </div>
               </div>
-            </>
-          )}
-        </div>
-      </div>{' '}
-    </div>
-  );
-}
+*/
