@@ -37,6 +37,7 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
   return (
     <>
       <h3>Claim Mining Rewards</h3>
+      <p>Note: only claim once!</p>
       <p>Available CityCoins to claim:</p>
       {miningState && miningState.winningDetails.length > 0 ? (
         <div className="row">

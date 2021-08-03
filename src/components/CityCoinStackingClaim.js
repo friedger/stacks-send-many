@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import {
-  CC_NAME,
-  CITYCOIN_CONTRACT_NAME,
-  CITYCOIN_CONTRACT_NAME_TOKEN,
-  CONTRACT_ADDRESS,
-  TOKEN_CONTRACT_ADDRESS,
+  CONTRACT_DEPLOYER,
+  CITYCOIN_CORE,
+  CITYCOIN_TOKEN,
+  CITYCOIN_NAME,
   NETWORK,
   REWARD_CYCLE_LENGTH,
 } from '../lib/constants';
@@ -19,9 +18,6 @@ import {
   AnchorMode,
 } from '@stacks/transactions';
 import { getStackingState, getFirstStackingBlock } from '../lib/citycoin';
-
-// TODO: how to know reward cycle to claim?
-// get from a getter?
 
 export function CityCoinStackingClaim({ ownerStxAddress }) {
   const [loading, setLoading] = useState();
@@ -40,24 +36,24 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
   const claimAction = async (targetRewardCycleCV, amountUstxCV, amountCityCoinCV) => {
     setLoading(true);
     await doContractCall({
-      contractAddress: CONTRACT_ADDRESS,
-      contractName: CITYCOIN_CONTRACT_NAME,
+      contractAddress: CONTRACT_DEPLOYER,
+      contractName: CITYCOIN_CORE,
       functionName: 'claim-stacking-reward',
       functionArgs: [targetRewardCycleCV],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
         makeContractSTXPostCondition(
-          CONTRACT_ADDRESS,
-          CITYCOIN_CONTRACT_NAME,
+          CONTRACT_DEPLOYER,
+          CITYCOIN_CORE,
           FungibleConditionCode.LessEqual,
           amountUstxCV.value
         ),
         makeContractFungiblePostCondition(
-          CONTRACT_ADDRESS,
-          CITYCOIN_CONTRACT_NAME,
+          CONTRACT_DEPLOYER,
+          CITYCOIN_CORE,
           FungibleConditionCode.LessEqual,
           amountCityCoinCV.value,
-          createAssetInfo(TOKEN_CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME_TOKEN, CC_NAME)
+          createAssetInfo(CONTRACT_DEPLOYER, CITYCOIN_TOKEN, CITYCOIN_NAME)
         ),
       ],
       anchorMode: AnchorMode.OnChainOnly,
