@@ -7,10 +7,10 @@ import {
 } from '@stacks/blockchain-api-client';
 import { StacksTestnet, StacksMainnet } from '@stacks/network';
 
-export const mainnet = window.location.search.includes('chain=mainnet');
-export const localMocknet = !mainnet && window.location.search.includes('mocknet=local');
-export const testnet =
-  (!mainnet && !localMocknet) || window.location.search.includes('chain=testnet');
+export const testnet = window.location.search.includes('chain=testnet');
+export const localMocknet = !testnet && window.location.search.includes('mocknet=local');
+export const mainnet =
+  (!testnet && !localMocknet) || window.location.search.includes('chain=mainnet');
 
 export const chainSuffix = `?chain=${mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet'}`;
 export const localNode = localMocknet;
