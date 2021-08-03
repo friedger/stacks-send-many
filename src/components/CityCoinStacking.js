@@ -6,6 +6,7 @@ import {
   CITYCOIN_TOKEN,
   CITYCOIN_SYMBOL,
   NETWORK,
+  CITYCOIN_NAME,
 } from '../lib/constants';
 import { TxStatus } from './TxStatus';
 import {
@@ -54,7 +55,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
               ownerStxAddress,
               FungibleConditionCode.LessEqual,
               amountCityCoinCV.value,
-              createAssetInfo(CONTRACT_DEPLOYER, CITYCOIN_TOKEN, 'citycoins')
+              createAssetInfo(CONTRACT_DEPLOYER, CITYCOIN_TOKEN, CITYCOIN_NAME)
             ),
           ],
           onCancel: () => {
