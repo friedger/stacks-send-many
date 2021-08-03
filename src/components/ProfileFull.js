@@ -2,12 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { fetchAccount } from '../lib/account';
 import { Address } from './Address';
 import { Amount } from './Amount';
+import { refreshPrice, STX_USD } from '../lib/price';
+import { useAtom } from 'jotai';
+
 import {} from 'react-jdenticon';
 
 export function ProfileFull({ stxAddress, userSession }) {
   const [profileState, setProfileState] = useState({
     account: undefined,
   });
+
+  const [stxUsd, setStxUsd] = useAtom(STX_USD);
+
+  useEffect(() => {
+    refreshPrice(setStxUsd);
+  }, [setStxUsd]);
 
   useEffect(() => {
     fetchAccount(stxAddress).then(acc => {
@@ -63,7 +72,7 @@ export function ProfileFull({ stxAddress, userSession }) {
                 target="_blank"
                 rel="noreferrer"
               >
-                <i className="bi bi-box-arrow-up-right"></i> View on Explorer
+                <i className="bi bi-box-arrow-up-right"></i> View Address on Explorer
               </a>
             </li>
             <li>
@@ -103,7 +112,17 @@ export function ProfileFull({ stxAddress, userSession }) {
             <>
               <h5 className="mb-3">Account Balances</h5>
               <Amount ustx={profileState.account.balance} stxAddress={stxAddress} />
-              <hr />
+            </>
+          )}
+        </div>
+      </div>{' '}
+    </div>
+  );
+}
+
+/*
+LAST 5 TX CODE
+<hr />
               <h5>Last 5 Transactions</h5>
               <div className="accordion accordion-flush" id="accordionLastFiveTx">
                 <div className="accordion-item">
@@ -347,10 +366,4 @@ export function ProfileFull({ stxAddress, userSession }) {
                   </div>
                 </div>
               </div>
-            </>
-          )}
-        </div>
-      </div>{' '}
-    </div>
-  );
-}
+*/

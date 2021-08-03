@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import {
-  CC_SYMBOL,
-  CITYCOIN_CONTRACT_NAME,
-  CONTRACT_ADDRESS,
-  infoApi,
+  CONTRACT_DEPLOYER,
+  CITYCOIN_CORE,
+  CITYCOIN_TOKEN,
+  CITYCOIN_SYMBOL,
   NETWORK,
+  CITYCOIN_NAME,
 } from '../lib/constants';
 import { TxStatus } from './TxStatus';
 import {
@@ -32,10 +33,8 @@ export function CityCoinStacking({ ownerStxAddress }) {
       console.log('positive numbers required to stack');
       setLoading(false);
     } else {
-      const coreInfo = await infoApi.getCoreApiInfo();
       const balance = await getCityCoinBalance(ownerStxAddress);
       const amountCityCoinCV = uintCV(amountRefStacking.current.value.trim());
-      const startStacksHtCV = uintCV(coreInfo.stacks_tip_height + 5);
       const lockPeriodCV = uintCV(lockPeriodRef.current.value.trim());
       if (lockPeriodCV.value.toNumber() > 32) {
         console.log('Too many cycles');
@@ -45,10 +44,10 @@ export function CityCoinStacking({ ownerStxAddress }) {
         setLoading(false);
       } else {
         await doContractCall({
-          contractAddress: CONTRACT_ADDRESS,
-          contractName: CITYCOIN_CONTRACT_NAME,
+          contractAddress: CONTRACT_DEPLOYER,
+          contractName: CITYCOIN_CORE,
           functionName: 'stack-tokens',
-          functionArgs: [amountCityCoinCV, startStacksHtCV, lockPeriodCV],
+          functionArgs: [amountCityCoinCV, lockPeriodCV],
           network: NETWORK,
           postConditionMode: PostConditionMode.Deny,
           postConditions: [
@@ -56,7 +55,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
               ownerStxAddress,
               FungibleConditionCode.LessEqual,
               amountCityCoinCV.value,
-              createAssetInfo(CONTRACT_ADDRESS, CITYCOIN_CONTRACT_NAME, 'citycoins')
+              createAssetInfo(CONTRACT_DEPLOYER, CITYCOIN_TOKEN, CITYCOIN_NAME)
             ),
           ],
           onCancel: () => {
@@ -80,6 +79,10 @@ export function CityCoinStacking({ ownerStxAddress }) {
         addition to STX commited by miners during that reward cycle, proportionate to the amount
         Stacked within that cycle.
       </p>
+      <p>
+        You can submit for up to 32 cycles max, and will not be able to participate for one cycle
+        when it ends (also called a "cooldown period").
+      </p>
       <form>
         <div className="input-group mb-3">
           <input
@@ -92,7 +95,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
             minLength="1"
           />
           <div className="input-group-append">
-            <span className="input-group-text">{CC_SYMBOL}</span>
+            <span className="input-group-text">{CITYCOIN_SYMBOL}</span>
           </div>
         </div>
         <div className="input-group mb-3">

@@ -10,7 +10,7 @@ export function AlertAllPages() {
       <p>Mining will be unavailable until a new contract is deployed.</p>
       <p>
         Please watch the <code>#user-interface</code> channel in the{' '}
-        <a href="https://chat.citycoins.co" target="_blank" rel="nofollow" className="alert-link">
+        <a href="https://chat.citycoins.co" target="_blank" rel="noreferrer" className="alert-link">
           CityCoins Discord
         </a>{' '}
         for more information.
