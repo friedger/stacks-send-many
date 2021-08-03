@@ -33,14 +33,6 @@ export const CITYCOIN_NAME = testnet ? 'citycoins' : 'miamicoin';
 export const CITYCOIN_SYMBOL = testnet ? '$CITY' : '$MIA';
 export const REWARD_CYCLE_LENGTH = mainnet ? 2100 : 50;
 
-// TODO: remove below in favor of const above
-// export const TOKEN_CONTRACT_ADDRESS = 'ST3CK642B6119EVC6CT550PW5EZZ1AJW6608HK60A';
-export const CITYCOIN_CONTRACT_NAME = mocknet ? 'citycoin' : 'citycoin-core-v1';
-export const CITYCOIN_CONTRACT_NAME_TOKEN = 'citycoin-token';
-export const CC_NAME = 'citycoin';
-export const CC_SYMBOL = '$CITY';
-
-// TODO: add Freehold API endpoint?
 export const STACK_API_URL = localNode
   ? 'http://localhost:3999'
   : mainnet
