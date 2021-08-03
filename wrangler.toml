@@ -1,0 +1,13 @@
+name = "citycoins-ui"
+account_id = 'fb9f2c6f6493df79d1df5e739a1ef453'
+type = 'webpack'
+workers_dev = true
+# target_type = "webpack"
+
+[site]
+bucket = './build'
+entry-point = "workers-site"
+
+[env.production]
+route = 'minecitycoins.com/*'
+zone_id = '19311d53511cacc35fb7fd1e792f0580'
