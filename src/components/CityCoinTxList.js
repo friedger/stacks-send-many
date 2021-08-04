@@ -11,9 +11,16 @@ import {
   transactionsApi,
 } from '../lib/constants';
 import { Address } from './Address';
+import { useAtom } from 'jotai';
+import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
 
 export function CityCoinTxList() {
   const [txs, setTxs] = useState();
+  const [blockHeight, setBlockHeight] = useAtom(BLOCK_HEIGHT);
+
+  useEffect(() => {
+    refreshBlockHeight(setBlockHeight);
+  }, [setBlockHeight]);
 
   const updateTxs = async () => {
     try {
@@ -61,6 +68,7 @@ export function CityCoinTxList() {
     return (
       <>
         <h3>Contract Activity Log</h3>
+        <p>Current block height: {blockHeight.value}</p>
         <div className="container">
           <div className="accordion accordion-flush" id="accordionActivityLog">
             {blockHeights.map((blockHeight, key) => (
@@ -215,14 +223,30 @@ function TransferTransaction({ tx }) {
 function Details({ tx }) {
   return (
     <>
-      <div className="col-lg-6 col-md-12">
+      <div className="col-lg-4 col-md-12">
         <small>
           <Address addr={tx.sender_address} />
         </small>
+        <a
+          className="text-dark ms-1"
+          href={`https://explorer.stacks.co/address/${tx.sender_address}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <i className="bi bi-box-arrow-up-right" />
+        </a>
       </div>
-      <div className="col-lg-6 col-md-12 text-right">
+      <div className="col-lg-4 col-md-12 text-center">
+        <small>Status: {tx.tx_status}</small>
+      </div>
+      <div className="col-lg-4 col-md-12 text-right">
         {tx.tx_id.substr(0, 10)}...
-        <a href={`https://explorer.stacks.co/txid/${tx.tx_id}`} target="_blank" rel="noreferrer">
+        <a
+          className="text-dark ms-1"
+          href={`https://explorer.stacks.co/txid/${tx.tx_id}`}
+          target="_blank"
+          rel="noreferrer"
+        >
           <i className="bi bi-box-arrow-up-right" />
         </a>
       </div>
