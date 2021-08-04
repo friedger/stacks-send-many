@@ -11,9 +11,16 @@ import {
   transactionsApi,
 } from '../lib/constants';
 import { Address } from './Address';
+import { useAtom } from 'jotai';
+import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
 
 export function CityCoinTxList() {
   const [txs, setTxs] = useState();
+  const [blockHeight, setBlockHeight] = useAtom(BLOCK_HEIGHT);
+
+  useEffect(() => {
+    refreshBlockHeight(setBlockHeight);
+  }, [setBlockHeight]);
 
   const updateTxs = async () => {
     try {
@@ -39,15 +46,11 @@ export function CityCoinTxList() {
         await client.subscribeAddressTransactions(
           `${CONTRACT_DEPLOYER}.${CITYCOIN_CORE}`,
           async event => {
-            console.log(event);
-
             if (event.tx_status === 'pending') {
               const mempooltx = await transactionsApi.getMempoolTransactionList();
-              console.log(mempooltx);
               return;
             } else if (event.tx_status === 'success') {
               const tx = await transactionsApi.getTransactionById({ txId: event.tx_id });
-              console.log({ tx });
               await updateTxs();
             }
           }
@@ -65,6 +68,7 @@ export function CityCoinTxList() {
     return (
       <>
         <h3>Contract Activity Log</h3>
+        <p>Current block height: {blockHeight.value}</p>
         <div className="container">
           <div className="accordion accordion-flush" id="accordionActivityLog">
             {blockHeights.map((blockHeight, key) => (
@@ -167,6 +171,10 @@ function uintJsonToRewardCycle(value) {
 }
 
 function listCvToMiningAmounts(value) {
+  const amounts = value.repr;
+  const amountsFiltered = amounts.split(' ');
+  console.log(amountsFiltered);
+
   return <>Amounts: {value.repr}</>;
 }
 
@@ -176,11 +184,12 @@ function RegisterTransaction({ tx }) {
 
 function MineTransaction({ tx }) {
   return (
-    <div className="col-12">
-      {tx.contract_call.function_name}
-      <br />
-      <small>{uintJsonToSTX(tx.contract_call.function_args[0])}</small>
-    </div>
+    <>
+      <div className="col-6">{tx.contract_call.function_name}</div>
+      <div className="col-6 text-right">
+        <small>{uintJsonToSTX(tx.contract_call.function_args[0])}</small>
+      </div>
+    </>
   );
 }
 
@@ -219,14 +228,30 @@ function TransferTransaction({ tx }) {
 function Details({ tx }) {
   return (
     <>
-      <div className="col-lg-6 col-md-12">
+      <div className="col-lg-4 col-md-12">
         <small>
           <Address addr={tx.sender_address} />
         </small>
+        <a
+          className="text-dark ms-1"
+          href={`https://explorer.stacks.co/address/${tx.sender_address}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <i className="bi bi-box-arrow-up-right" />
+        </a>
       </div>
-      <div className="col-lg-6 col-md-12 text-right">
+      <div className="col-lg-4 col-md-12 text-center">
+        <small>Status: {tx.tx_status}</small>
+      </div>
+      <div className="col-lg-4 col-md-12 text-right">
         {tx.tx_id.substr(0, 10)}...
-        <a href={`https://explorer.stacks.co/txid/${tx.tx_id}`} target="_blank" rel="noreferrer">
+        <a
+          className="text-dark ms-1"
+          href={`https://explorer.stacks.co/txid/${tx.tx_id}`}
+          target="_blank"
+          rel="noreferrer"
+        >
           <i className="bi bi-box-arrow-up-right" />
         </a>
       </div>

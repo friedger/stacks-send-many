@@ -1,9 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import { CONTRACT_DEPLOYER, CITYCOIN_CORE, NETWORK } from '../lib/constants';
+import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
+import { useAtom } from 'jotai';
 import { TxStatus } from './TxStatus';
 import converter from 'number-to-words';
-
+import { CityCoinMiningStats } from './CityCoinMiningStats';
 import {
   AnchorMode,
   bufferCVFromString,
@@ -26,6 +28,24 @@ export function CityCoinMining({ ownerStxAddress }) {
   const [numberOfBlocks, setNumberOfBlocks] = useState();
   const [blockAmounts, setBlockAmounts] = useState([]);
   const { doContractCall } = useConnect();
+
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [checked, setChecked] = useState(false);
+
+  const canBeSubmitted = () => {
+    return checked ? setIsDisabled(true) : setIsDisabled(false);
+  };
+
+  const onCheckboxClick = () => {
+    setChecked(!checked);
+    return canBeSubmitted();
+  };
+
+  const [blockHeight, setBlockHeight] = useAtom(BLOCK_HEIGHT);
+
+  useEffect(() => {
+    refreshBlockHeight(setBlockHeight);
+  }, [setBlockHeight]);
 
   // TODO: add onCancel state for loading that works ?
   // TODO: add logic for wallet not enabled (aka not installed)
@@ -102,6 +122,10 @@ export function CityCoinMining({ ownerStxAddress }) {
     }
   };
 
+  // const blockHeightToPass = 3844;
+
+  // <CityCoinMiningStats value={blockHeightToPass} />
+
   return (
     <>
       <h3>Mine CityCoins</h3>
@@ -124,7 +148,7 @@ export function CityCoinMining({ ownerStxAddress }) {
             value={numberOfBlocks}
             id="mineMany"
           />
-          <label for="mineMany">Number of Blocks to Mine?</label>
+          <label htmlFor="mineMany">Number of Blocks to Mine?</label>
         </div>
         <br />
         <div className="input-group mb-3" hidden={numberOfBlocks != 1}>
@@ -154,7 +178,7 @@ export function CityCoinMining({ ownerStxAddress }) {
           {blockAmounts.map(b => {
             return (
               <div className="m-3" key={b.num}>
-                <label className="form-label" for={`miningAmount-${converter.toWords(b.num)}`}>
+                <label className="form-label" htmlFor={`miningAmount-${converter.toWords(b.num)}`}>
                   Block Commit {b.num}
                 </label>
                 <input
@@ -189,9 +213,9 @@ export function CityCoinMining({ ownerStxAddress }) {
         </div>
         <br />
         <button
-          className="btn btn-block btn-primary"
+          className="btn btn-block btn-primary mb-3"
           type="button"
-          disabled={txId}
+          disabled={isDisabled}
           onClick={mineAction}
         >
           <div
@@ -202,6 +226,19 @@ export function CityCoinMining({ ownerStxAddress }) {
           />
           {buttonLabel}
         </button>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value=""
+            id="flexCheckDefault"
+            onClick={onCheckboxClick}
+          />
+          <label class="form-check-label" htmlFor="flexCheckDefault">
+            I confirm I understand that the City of Miami has not yet officially claimed the
+            MiamiCoin protocol contribution.
+          </label>
+        </div>
       </form>
       {txId && <TxStatus txId={txId} />}
     </>

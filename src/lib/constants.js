@@ -33,7 +33,7 @@ export const CITYCOIN_NAME = testnet ? 'citycoins' : 'miamicoin';
 export const CITYCOIN_SYMBOL = testnet ? '$CITY' : '$MIA';
 export const REWARD_CYCLE_LENGTH = mainnet ? 2100 : 50;
 
-export const STACK_API_URL = localNode
+export const STACKS_API_URL = localNode
   ? 'http://localhost:3999'
   : mainnet
   ? 'https://stacks-node-api.mainnet.stacks.co'
@@ -43,12 +43,13 @@ export const STACKS_API_WS_URL = localNode
   : mainnet
   ? 'wss://stacks-node-api.mainnet.stacks.co/'
   : 'wss://stacks-node-api.testnet.stacks.co/';
-export const STACKS_API_ACCOUNTS_URL = `${STACK_API_URL}/v2/accounts`;
+export const STACKS_API_V2_INFO = `${STACKS_API_URL}/v2/info`;
+export const STACKS_API_ACCOUNTS_URL = `${STACKS_API_URL}/v2/accounts`;
 
 export const NETWORK = mainnet ? new StacksMainnet() : new StacksTestnet();
-NETWORK.coreApiUrl = STACK_API_URL;
+NETWORK.coreApiUrl = STACKS_API_URL;
 
-const basePath = STACK_API_URL;
+const basePath = STACKS_API_URL;
 const config = new Configuration({ basePath });
 export const accountsApi = new AccountsApi(config);
 export const smartContractsApi = new SmartContractsApi(config);

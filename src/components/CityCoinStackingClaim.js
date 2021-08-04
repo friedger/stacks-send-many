@@ -30,7 +30,7 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
   }, [firstStackingBlock]);
 
   useEffect(() => {
-    getStackingState(ownerStxAddress).then(state => setStackingState(state));
+    ownerStxAddress && getStackingState(ownerStxAddress).then(state => setStackingState(state));
   }, [ownerStxAddress]);
 
   const claimAction = async (targetRewardCycleCV, amountUstxCV, amountCityCoinCV) => {

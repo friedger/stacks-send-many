@@ -1,5 +1,12 @@
-import { ClarityType, cvToValue, hexToCV, uintCV } from '@stacks/transactions';
-import { standardPrincipalCV, callReadOnlyFunction } from '@stacks/transactions';
+import {
+  ClarityType,
+  cvToValue,
+  hexToCV,
+  uintCV,
+  standardPrincipalCV,
+  callReadOnlyFunction,
+  cvToJSON,
+} from '@stacks/transactions';
 import {
   accountsApi,
   GENESIS_CONTRACT_ADDRESS,
@@ -9,6 +16,21 @@ import {
   CITYCOIN_TOKEN,
   REWARD_CYCLE_LENGTH,
 } from './constants';
+
+export async function getMiningStatsAtBlock(blockHeight) {
+  console.log(`blockHeight in citycoin.js: ${blockHeight}`);
+  const resultCV = await callReadOnlyFunction({
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
+    functionName: 'get-mining-stats-at-block',
+    functionArgs: [uintCV(blockHeight)],
+    network: NETWORK,
+    senderAddress: CONTRACT_DEPLOYER,
+  });
+  const result = cvToJSON(resultCV);
+
+  return result;
+}
 
 export async function getCityCoinBalance(address) {
   const result = await callReadOnlyFunction({
