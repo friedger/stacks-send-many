@@ -29,7 +29,7 @@ export function CityCoinTxList() {
       });
       setTxs(
         _groupBy(
-          result.results.filter(tx => tx.tx_status === 'success' && tx.tx_type === 'contract_call'),
+          result.results.filter(tx => tx.tx_type === 'contract_call'),
           'block_height'
         )
       );
@@ -171,6 +171,10 @@ function uintJsonToRewardCycle(value) {
 }
 
 function listCvToMiningAmounts(value) {
+  const amounts = value.repr;
+  const amountsFiltered = amounts.split(' ');
+  console.log(amountsFiltered);
+
   return <>Amounts: {value.repr}</>;
 }
 
@@ -180,11 +184,12 @@ function RegisterTransaction({ tx }) {
 
 function MineTransaction({ tx }) {
   return (
-    <div className="col-12">
-      {tx.contract_call.function_name}
-      <br />
-      <small>{uintJsonToSTX(tx.contract_call.function_args[0])}</small>
-    </div>
+    <>
+      <div className="col-6">{tx.contract_call.function_name}</div>
+      <div className="col-6 text-right">
+        <small>{uintJsonToSTX(tx.contract_call.function_args[0])}</small>
+      </div>
+    </>
   );
 }
 

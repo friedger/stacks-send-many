@@ -178,7 +178,7 @@ export function CityCoinMining({ ownerStxAddress }) {
           {blockAmounts.map(b => {
             return (
               <div className="m-3" key={b.num}>
-                <label className="form-label" for={`miningAmount-${converter.toWords(b.num)}`}>
+                <label className="form-label" htmlFor={`miningAmount-${converter.toWords(b.num)}`}>
                   Block Commit {b.num}
                 </label>
                 <input
@@ -234,7 +234,7 @@ export function CityCoinMining({ ownerStxAddress }) {
             id="flexCheckDefault"
             onClick={onCheckboxClick}
           />
-          <label class="form-check-label" for="flexCheckDefault">
+          <label class="form-check-label" htmlFor="flexCheckDefault">
             I confirm I understand that the City of Miami has not yet officially claimed the
             MiamiCoin protocol contribution.
           </label>
