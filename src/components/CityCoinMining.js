@@ -1,9 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import { CONTRACT_DEPLOYER, CITYCOIN_CORE, NETWORK } from '../lib/constants';
+import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
+import { useAtom } from 'jotai';
 import { TxStatus } from './TxStatus';
 import converter from 'number-to-words';
-
+import { CityCoinMiningStats } from './CityCoinMiningStats';
 import {
   AnchorMode,
   bufferCVFromString,
@@ -26,6 +28,12 @@ export function CityCoinMining({ ownerStxAddress }) {
   const [numberOfBlocks, setNumberOfBlocks] = useState();
   const [blockAmounts, setBlockAmounts] = useState([]);
   const { doContractCall } = useConnect();
+
+  const [blockHeight, setBlockHeight] = useAtom(BLOCK_HEIGHT);
+
+  useEffect(() => {
+    refreshBlockHeight(setBlockHeight);
+  }, [setBlockHeight]);
 
   // TODO: add onCancel state for loading that works ?
   // TODO: add logic for wallet not enabled (aka not installed)
@@ -102,8 +110,11 @@ export function CityCoinMining({ ownerStxAddress }) {
     }
   };
 
+  const blockHeightToPass = 3844;
+
   return (
     <>
+      <CityCoinMiningStats value={blockHeightToPass} />
       <h3>Mine CityCoins</h3>
       <p>
         Mining CityCoins is done by spending STX in a given Stacks block. A winner is selected
@@ -124,7 +135,7 @@ export function CityCoinMining({ ownerStxAddress }) {
             value={numberOfBlocks}
             id="mineMany"
           />
-          <label for="mineMany">Number of Blocks to Mine?</label>
+          <label htmlFor="mineMany">Number of Blocks to Mine?</label>
         </div>
         <br />
         <div className="input-group mb-3" hidden={numberOfBlocks != 1}>

@@ -39,15 +39,11 @@ export function CityCoinTxList() {
         await client.subscribeAddressTransactions(
           `${CONTRACT_DEPLOYER}.${CITYCOIN_CORE}`,
           async event => {
-            console.log(event);
-
             if (event.tx_status === 'pending') {
               const mempooltx = await transactionsApi.getMempoolTransactionList();
-              console.log(mempooltx);
               return;
             } else if (event.tx_status === 'success') {
               const tx = await transactionsApi.getTransactionById({ txId: event.tx_id });
-              console.log({ tx });
               await updateTxs();
             }
           }
