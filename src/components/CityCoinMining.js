@@ -110,11 +110,12 @@ export function CityCoinMining({ ownerStxAddress }) {
     }
   };
 
-  const blockHeightToPass = 3844;
+  // const blockHeightToPass = 3844;
+
+  // <CityCoinMiningStats value={blockHeightToPass} />
 
   return (
     <>
-      <CityCoinMiningStats value={blockHeightToPass} />
       <h3>Mine CityCoins</h3>
       <p>
         Mining CityCoins is done by spending STX in a given Stacks block. A winner is selected
