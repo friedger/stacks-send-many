@@ -29,6 +29,18 @@ export function CityCoinMining({ ownerStxAddress }) {
   const [blockAmounts, setBlockAmounts] = useState([]);
   const { doContractCall } = useConnect();
 
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [checked, setChecked] = useState(false);
+
+  const canBeSubmitted = () => {
+    return checked ? setIsDisabled(true) : setIsDisabled(false);
+  };
+
+  const onCheckboxClick = () => {
+    setChecked(!checked);
+    return canBeSubmitted();
+  };
+
   const [blockHeight, setBlockHeight] = useAtom(BLOCK_HEIGHT);
 
   useEffect(() => {
@@ -201,9 +213,9 @@ export function CityCoinMining({ ownerStxAddress }) {
         </div>
         <br />
         <button
-          className="btn btn-block btn-primary"
+          className="btn btn-block btn-primary mb-3"
           type="button"
-          disabled={txId}
+          disabled={isDisabled}
           onClick={mineAction}
         >
           <div
@@ -214,6 +226,19 @@ export function CityCoinMining({ ownerStxAddress }) {
           />
           {buttonLabel}
         </button>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            value=""
+            id="flexCheckDefault"
+            onClick={onCheckboxClick}
+          />
+          <label class="form-check-label" for="flexCheckDefault">
+            I confirm I understand that the City of Miami has not yet officially claimed the
+            MiamiCoin protocol contribution.
+          </label>
+        </div>
       </form>
       {txId && <TxStatus txId={txId} />}
     </>
