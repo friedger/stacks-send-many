@@ -29,7 +29,7 @@ export function CityCoinTxList() {
       });
       setTxs(
         _groupBy(
-          result.results.filter(tx => tx.tx_type === 'contract_call'),
+          result.results.filter(tx => tx.tx_status === 'success' && tx.tx_type === 'contract_call'),
           'block_height'
         )
       );
