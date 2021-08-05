@@ -122,10 +122,6 @@ export function CityCoinMining({ ownerStxAddress }) {
     }
   };
 
-  // const blockHeightToPass = 3844;
-
-  // <CityCoinMiningStats value={blockHeightToPass} />
-
   return (
     <>
       <h3>Mine CityCoins</h3>
@@ -226,17 +222,18 @@ export function CityCoinMining({ ownerStxAddress }) {
           />
           {buttonLabel}
         </button>
-        <div class="form-check">
+        <div className="form-check">
           <input
-            class="form-check-input"
+            className="form-check-input"
             type="checkbox"
             value=""
             id="flexCheckDefault"
             onClick={onCheckboxClick}
           />
-          <label class="form-check-label" htmlFor="flexCheckDefault">
+          <label className="form-check-label" htmlFor="flexCheckDefault">
             I confirm I understand that the City of Miami has not yet officially claimed the
-            MiamiCoin protocol contribution.
+            MiamiCoin protocol contribution. I also acknowledge that my participation in mining
+            MiamiCoin ($MIA) does not guarantee winning the rights to claim newly minted $MIA.
           </label>
         </div>
       </form>
