@@ -66,6 +66,10 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
             <div class="col-12 fs-6 fw-bold">Mining Stats At Block ${blockHeightToCheck.current.value}</div>
           </div>
           <div class="row">
+            <div class="col-2">Total uSTX:</div>
+            <div class="col-2">${totalAmountUstx}</div>
+          </div>
+          <div class="row">
             <div class="col-2">Total STX:</div>
             <div class="col-2">${totalAmountStx}</div>
           </div>
@@ -134,7 +138,7 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
           response =
             response +
             `<div class="row">
-            <div class="col-2">Claimed?</div>
+            <div class="col-2">Can Claim?</div>
             <div class="col-2">${canClaimReward}</div>
           </div>`;
           blockHeightResponse.innerHTML = response;
