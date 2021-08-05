@@ -44,8 +44,9 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
   const checkStats = async => {
     // read-only call for get-mining-stats-at-block
     if (blockHeightToCheck.current.value === '') {
-      console.log('Block height required!');
+      blockHeightResponse.innerHTML = 'Block Height Required!';
     } else {
+      blockHeightResponse.innerHTML = 'Loading...';
       callReadOnlyFunction({
         contractAddress: CONTRACT_DEPLOYER,
         contractName: CITYCOIN_CORE,
@@ -93,8 +94,11 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
   const checkWinner = async => {
     // read-only call for is-block-winner
     if (blockHeightToCheck.current.value === '') {
-      console.log('Block height required!');
+      blockHeightResponse.innerHTML = 'Block Height Required!';
+      // } else if ((blockHeightToCheck.current.value) ) {
+      //   blockHeightResponse.innerHTML = 'Too soon! Please wait for 100 blocks to pass.';
     } else {
+      blockHeightResponse.innerHTML = 'Loading...';
       callReadOnlyFunction({
         contractAddress: CONTRACT_DEPLOYER,
         contractName: CITYCOIN_CORE,
