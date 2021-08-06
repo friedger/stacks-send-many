@@ -17,6 +17,8 @@ import {
   someCV,
   uintCV,
 } from '@stacks/transactions';
+import { CurrentBlockHeight } from './CurrentBlockHeight';
+import { fetchAccount } from '../lib/account';
 
 export function CityCoinMining({ ownerStxAddress }) {
   const amountRef = useRef();
@@ -28,6 +30,16 @@ export function CityCoinMining({ ownerStxAddress }) {
   const [numberOfBlocks, setNumberOfBlocks] = useState();
   const [blockAmounts, setBlockAmounts] = useState([]);
   const { doContractCall } = useConnect();
+
+  const [profileState, setProfileState] = useState({
+    account: undefined,
+  });
+
+  useEffect(() => {
+    fetchAccount(ownerStxAddress).then(acc => {
+      setProfileState({ account: acc });
+    });
+  }, [ownerStxAddress]);
 
   const [isDisabled, setIsDisabled] = useState(true);
   const [checked, setChecked] = useState(false);
@@ -59,6 +71,7 @@ export function CityCoinMining({ ownerStxAddress }) {
     } else {
       const mineMany = numberOfBlocks > 1;
       console.log(`mineMany: ${mineMany}`);
+      // console.log(`STX Balance: ${profileState.account.balance}`);
       try {
         const amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
         const amountUstxCV = uintCV(amountUstx);
@@ -125,6 +138,7 @@ export function CityCoinMining({ ownerStxAddress }) {
   return (
     <>
       <h3>Mine CityCoins</h3>
+      <CurrentBlockHeight />
       <p>
         Mining CityCoins is done by spending STX in a given Stacks block. A winner is selected
         randomly weighted by the miners' proportion of contributions of that block. Rewards can be

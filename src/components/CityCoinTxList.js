@@ -11,16 +11,10 @@ import {
   transactionsApi,
 } from '../lib/constants';
 import { Address } from './Address';
-import { useAtom } from 'jotai';
-import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
+import { CurrentBlockHeight } from './CurrentBlockHeight';
 
 export function CityCoinTxList() {
   const [txs, setTxs] = useState();
-  const [blockHeight, setBlockHeight] = useAtom(BLOCK_HEIGHT);
-
-  useEffect(() => {
-    refreshBlockHeight(setBlockHeight);
-  }, [setBlockHeight]);
 
   const updateTxs = async () => {
     try {
@@ -68,7 +62,7 @@ export function CityCoinTxList() {
     return (
       <>
         <h3>Contract Activity Log</h3>
-        <p>Current block height: {blockHeight.value}</p>
+        <CurrentBlockHeight />
         <div className="container">
           <div className="accordion accordion-flush" id="accordionActivityLog">
             {blockHeights.map((blockHeight, key) => (
@@ -172,8 +166,7 @@ function uintJsonToRewardCycle(value) {
 
 function listCvToMiningAmounts(value) {
   const amounts = value.repr;
-  const amountsFiltered = amounts.split(' ');
-  console.log(amountsFiltered);
+  // const amountsFiltered = amounts.split(' ');
 
   return <>Amounts: {value.repr}</>;
 }

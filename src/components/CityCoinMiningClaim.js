@@ -3,6 +3,7 @@ import { useConnect } from '@stacks/connect-react';
 import { CONTRACT_DEPLOYER, CITYCOIN_CORE, CITYCOIN_SYMBOL, NETWORK } from '../lib/constants';
 import { uintCV, callReadOnlyFunction, cvToJSON, standardPrincipalCV } from '@stacks/transactions';
 import { getMiningDetails } from '../lib/citycoin';
+import { CurrentBlockHeight } from './CurrentBlockHeight';
 
 // TODO: how to know block height to claim?
 // get from a getter?
@@ -151,6 +152,7 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
   return (
     <>
       <h3>Claim Mining Rewards</h3>
+      <CurrentBlockHeight />
       <div className="mb-3">
         <div className="form-floating">
           <input
