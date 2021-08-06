@@ -1,22 +1,47 @@
+import { callReadOnlyFunction, cvToJSON, uintCV } from '@stacks/transactions';
 import { atom } from 'jotai';
-import { STACKS_API_V2_INFO } from './constants';
+import { CITYCOIN_CORE, CONTRACT_DEPLOYER, NETWORK, STACKS_API_V2_INFO } from './constants';
 
 export const BLOCK_HEIGHT = atom({ value: 0, loading: false });
+export const REWARD_CYCLE = atom({ value: 0, loading: false });
 
-export async function refreshBlockHeight(update) {
+export async function refreshBlockHeight(block) {
   try {
-    update(v => {
+    block(v => {
       return { value: v.value, loading: true };
     });
     const result = await fetch(STACKS_API_V2_INFO);
     const resultJson = await result.json();
-    update(v => {
+    block(() => {
       return { value: resultJson?.stacks_tip_height, loading: false };
     });
   } catch (e) {
     console.log(e);
-    update(v => {
+    block(v => {
       return { value: v.value, loading: false };
     });
+  }
+}
+
+export async function refreshRewardCycle(cycle) {
+  try {
+    cycle(v => {
+      return { value: v.value, loading: true };
+    });
+    const resultCV = await callReadOnlyFunction({
+      contractAddress: CONTRACT_DEPLOYER,
+      contractName: CITYCOIN_CORE,
+      functionName: 'get-reward-cycle',
+      functionArgs: [uintCV(cycle.value)],
+      network: NETWORK,
+      senderAddress: CONTRACT_DEPLOYER,
+    });
+    const resultJSON = cvToJSON(resultCV);
+    console.log(`resultJSON: ${resultJSON}`);
+    cycle(() => {
+      return { value: cycle.value, loading: false };
+    });
+  } catch (e) {
+    console.log(e);
   }
 }

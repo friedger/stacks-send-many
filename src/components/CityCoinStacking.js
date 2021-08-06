@@ -17,8 +17,7 @@ import {
   uintCV,
 } from '@stacks/transactions';
 import { getCityCoinBalance } from '../lib/citycoin';
-
-// TODO: consider state for when stacking is active
+import { CurrentBlockHeight } from './CurrentBlockHeight';
 
 export function CityCoinStacking({ ownerStxAddress }) {
   const amountRefStacking = useRef();
@@ -73,6 +72,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
   return (
     <>
       <h3>Stack CityCoins</h3>
+      <CurrentBlockHeight />
       <p>
         Stacking CityCoin locks up the set amount in the contract for a number of reward cycles.
         Once these reward cycles pass, CityCoin owners are eligible to withdraw their CityCoins in

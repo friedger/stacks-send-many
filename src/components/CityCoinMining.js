@@ -17,6 +17,8 @@ import {
   someCV,
   uintCV,
 } from '@stacks/transactions';
+import { CurrentBlockHeight } from './CurrentBlockHeight';
+import { fetchAccount } from '../lib/account';
 
 export function CityCoinMining({ ownerStxAddress }) {
   const amountRef = useRef();
@@ -125,6 +127,7 @@ export function CityCoinMining({ ownerStxAddress }) {
   return (
     <>
       <h3>Mine CityCoins</h3>
+      <CurrentBlockHeight />
       <p>
         Mining CityCoins is done by spending STX in a given Stacks block. A winner is selected
         randomly weighted by the miners' proportion of contributions of that block. Rewards can be

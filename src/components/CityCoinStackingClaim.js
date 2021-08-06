@@ -18,6 +18,8 @@ import {
   AnchorMode,
 } from '@stacks/transactions';
 import { getStackingState, getFirstStackingBlock } from '../lib/citycoin';
+import { CurrentBlockHeight } from './CurrentBlockHeight';
+import { CurrentRewardCycle } from './CurrentRewardCycle';
 
 export function CityCoinStackingClaim({ ownerStxAddress }) {
   const [loading, setLoading] = useState();
@@ -72,6 +74,7 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
   return (
     <>
       <h3>Claim Stacking Rewards</h3>
+      <CurrentBlockHeight />
       {stackingState && stackingState.length > 0 ? (
         <>
           <div className="accordion accordion-flush" id="accordionExample">

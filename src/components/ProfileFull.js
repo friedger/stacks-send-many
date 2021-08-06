@@ -4,8 +4,9 @@ import { Address } from './Address';
 import { Amount } from './Amount';
 import { refreshPrice, STX_USD } from '../lib/price';
 import { useAtom } from 'jotai';
-
 import {} from 'react-jdenticon';
+import { CurrentBlockHeight } from './CurrentBlockHeight';
+import { CurrentRewardCycle } from './CurrentRewardCycle';
 
 export function ProfileFull({ stxAddress, userSession }) {
   const [profileState, setProfileState] = useState({
@@ -114,6 +115,8 @@ export function ProfileFull({ stxAddress, userSession }) {
               <Amount ustx={profileState.account.balance} stxAddress={stxAddress} />
             </>
           )}
+          <hr />
+          <CurrentBlockHeight />
         </div>
       </div>{' '}
     </div>
