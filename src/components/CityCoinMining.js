@@ -31,6 +31,16 @@ export function CityCoinMining({ ownerStxAddress }) {
   const [blockAmounts, setBlockAmounts] = useState([]);
   const { doContractCall } = useConnect();
 
+  const [profileState, setProfileState] = useState({
+    account: undefined,
+  });
+
+  useEffect(() => {
+    fetchAccount(ownerStxAddress).then(acc => {
+      setProfileState({ account: acc });
+    });
+  }, [ownerStxAddress]);
+
   const [isDisabled, setIsDisabled] = useState(true);
   const [checked, setChecked] = useState(false);
 
@@ -61,6 +71,7 @@ export function CityCoinMining({ ownerStxAddress }) {
     } else {
       const mineMany = numberOfBlocks > 1;
       console.log(`mineMany: ${mineMany}`);
+      // console.log(`STX Balance: ${profileState.account.balance}`);
       try {
         const amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
         const amountUstxCV = uintCV(amountUstx);
