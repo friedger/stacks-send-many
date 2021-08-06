@@ -74,10 +74,14 @@ export function CityCoinStacking({ ownerStxAddress }) {
       <h3>Stack CityCoins</h3>
       <CurrentBlockHeight />
       <p>
-        Stacking CityCoin locks up the set amount in the contract for a number of reward cycles.
+        Stacking CityCoins locks up the set amount in the contract for a number of reward cycles.
         Once these reward cycles pass, CityCoin owners are eligible to withdraw their CityCoins in
         addition to STX commited by miners during that reward cycle, proportionate to the amount
         Stacked within that cycle.
+      </p>
+      <p>
+        The first Stacking cycle begins at Block #26759, and to be eligible for rewards during that
+        cycle, Stackers must lock their tokens prior to that block.
       </p>
       <p>
         You can submit for up to 32 cycles max, and will not be able to participate for one cycle
