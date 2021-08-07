@@ -1,6 +1,12 @@
 import { callReadOnlyFunction, cvToJSON, uintCV } from '@stacks/transactions';
 import { atom } from 'jotai';
-import { CITYCOIN_CORE, CONTRACT_DEPLOYER, NETWORK, STACKS_API_V2_INFO } from './constants';
+import {
+  CITYCOIN_CORE,
+  CONTRACT_DEPLOYER,
+  NETWORK,
+  STACKS_API_FEE_URL,
+  STACKS_API_V2_INFO,
+} from './constants';
 
 export const BLOCK_HEIGHT = atom({ value: 0, loading: false });
 export const REWARD_CYCLE = atom({ value: 0, loading: false });
@@ -44,4 +50,11 @@ export async function refreshRewardCycle(cycle) {
   } catch (e) {
     console.log(e);
   }
+}
+
+export async function getStxFees() {
+  // get estimated fee from API, returns integer
+  const result = await fetch(STACKS_API_FEE_URL);
+  const feeValue = await result.json();
+  return feeValue;
 }

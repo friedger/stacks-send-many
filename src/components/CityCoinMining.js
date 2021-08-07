@@ -1,11 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import { CONTRACT_DEPLOYER, CITYCOIN_CORE, NETWORK } from '../lib/constants';
-import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
+import { BLOCK_HEIGHT, getStxFees, refreshBlockHeight } from '../lib/blocks';
 import { useAtom } from 'jotai';
 import { TxStatus } from './TxStatus';
 import converter from 'number-to-words';
-import { CityCoinMiningStats } from './CityCoinMiningStats';
 import {
   AnchorMode,
   bufferCVFromString,
@@ -26,23 +25,24 @@ export function CityCoinMining({ ownerStxAddress }) {
   const memoRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
+  const [isError, setError] = useState();
+  const [errorMsg, setErrorMsg] = useState('');
   const [buttonLabel, setButtonLabel] = useState('Mine');
   const [numberOfBlocks, setNumberOfBlocks] = useState();
   const [blockAmounts, setBlockAmounts] = useState([]);
-  const { doContractCall } = useConnect();
-
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [checked, setChecked] = useState(false);
   const [profileState, setProfileState] = useState({
     account: undefined,
   });
+  const [blockHeight, setBlockHeight] = useAtom(BLOCK_HEIGHT);
+  const { doContractCall } = useConnect();
 
   useEffect(() => {
     fetchAccount(ownerStxAddress).then(acc => {
       setProfileState({ account: acc });
     });
   }, [ownerStxAddress]);
-
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [checked, setChecked] = useState(false);
 
   const canBeSubmitted = () => {
     return checked ? setIsDisabled(true) : setIsDisabled(false);
@@ -53,73 +53,110 @@ export function CityCoinMining({ ownerStxAddress }) {
     return canBeSubmitted();
   };
 
-  const [blockHeight, setBlockHeight] = useAtom(BLOCK_HEIGHT);
-
   useEffect(() => {
     refreshBlockHeight(setBlockHeight);
   }, [setBlockHeight]);
 
-  // TODO: add onCancel state for loading that works ?
-  // TODO: add logic for wallet not enabled (aka not installed)
-  // TODO: consider state for when mining is active
-
   const mineAction = async () => {
     setLoading(true);
-    if (numberOfBlocks === 1 && amountRef.current.value === '') {
-      console.log('positive number required to mine');
+    setError(false);
+    setErrorMsg('');
+    console.log(`amountRef: ${amountRef.current.value}`);
+    if (numberOfBlocks === 1 && !amountRef.current.value) {
+      console.log(`${numberOfBlocks} and ${amountRef.current.value}`);
       setLoading(false);
+      setError(true);
+      setErrorMsg('Please enter an amount to mine for one block.');
+    } else if (numberOfBlocks > 200) {
+      setLoading(false);
+      setError(true);
+      setErrorMsg('Cannot submit for more than 200 blocks.');
     } else {
+      const estimatedFee = await getStxFees();
+      const estimatedFeeUstx = estimatedFee * 1000000;
       const mineMany = numberOfBlocks > 1;
-      console.log(`mineMany: ${mineMany}`);
-      // console.log(`STX Balance: ${profileState.account.balance}`);
-      try {
-        const amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
-        const amountUstxCV = uintCV(amountUstx);
-        const memo = memoRef.current.value.trim();
-        const memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
-        let sumArray = [];
-        let mineManyArray = [];
-        if (mineMany) {
-          for (let i = 0; i < numberOfBlocks; i++) {
-            sumArray.push(parseInt(blockAmounts[i].amount));
-          }
-          var sum = uintCV(sumArray.reduce((a, b) => a + b, 0) * 1000000);
-          for (let i = 0; i < numberOfBlocks; i++)
-            mineManyArray.push(uintCV(blockAmounts[i].amount * 1000000));
-          mineManyArray = listCV(mineManyArray);
-        }
 
-        await doContractCall({
-          contractAddress: CONTRACT_DEPLOYER,
-          contractName: CITYCOIN_CORE,
-          functionName: mineMany ? 'mine-many' : 'mine-tokens',
-          functionArgs: mineMany ? [mineManyArray] : [amountUstxCV, memoCV],
-          postConditionMode: PostConditionMode.Deny,
-          postConditions: [
-            makeStandardSTXPostCondition(
-              ownerStxAddress,
-              FungibleConditionCode.Equal,
-              mineMany ? sum.value : amountUstxCV.value
-            ),
-          ],
-          anchorMode: AnchorMode.OnChainOnly,
-          network: NETWORK,
-          onCancel: () => {
-            setLoading(false);
-          },
-          onFinish: result => {
-            setLoading(false);
-            setTxId(result.txId);
-          },
-        });
-      } catch (e) {
+      console.log(`STX Balance: ${profileState.account.balance}`);
+      console.log(`estimatedFee: ${estimatedFee}`);
+      console.log(`mineMany: ${mineMany}`);
+
+      let amountUstx = 0;
+      let amountUstxCV = uintCV(0);
+      let memo = '';
+      let memoCV = noneCV();
+      let sumArray = [];
+      let mineManyArray = [];
+
+      if (mineMany) {
+        for (let i = 0; i < numberOfBlocks; i++) {
+          sumArray.push(parseInt(blockAmounts[i].amount));
+        }
+        var sum = uintCV(sumArray.reduce((a, b) => a + b, 0) * 1000000);
+        for (let i = 0; i < numberOfBlocks; i++) {
+          mineManyArray.push(uintCV(blockAmounts[i].amount * 1000000));
+        }
+        mineManyArray = listCV(mineManyArray);
+      } else {
+        amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
+        amountUstxCV = uintCV(amountUstx);
+        memo = memoRef.current.value.trim();
+        memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
+      }
+
+      let totalSubmitted = 0;
+
+      mineMany ? (totalSubmitted = sum.value) : (totalSubmitted = amountUstx);
+
+      console.log(`total submitted ${totalSubmitted}`);
+
+      // check there is enough left for fees
+      if (totalSubmitted >= profileState.account.balance - estimatedFeeUstx) {
         setLoading(false);
+        setError(true);
+        setErrorMsg(
+          `Not enough funds to cover estimated transaction fee of ${estimatedFee} STX. Total Submitted: ${
+            totalSubmitted / 1000000
+          } STX, Estimated Fee ${estimatedFee} STX, Total Balance: ${
+            profileState.account.balance / 1000000
+          } STX`
+        );
+      } else {
+        try {
+          await doContractCall({
+            contractAddress: CONTRACT_DEPLOYER,
+            contractName: CITYCOIN_CORE,
+            functionName: mineMany ? 'mine-many' : 'mine-tokens',
+            functionArgs: mineMany ? [mineManyArray] : [amountUstxCV, memoCV],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [
+              makeStandardSTXPostCondition(
+                ownerStxAddress,
+                FungibleConditionCode.Equal,
+                mineMany ? sum.value : amountUstxCV.value
+              ),
+            ],
+            anchorMode: AnchorMode.OnChainOnly,
+            network: NETWORK,
+            onCancel: () => {
+              setLoading(false);
+            },
+            onFinish: result => {
+              setLoading(false);
+              setError(false);
+              setErrorMsg('');
+              setTxId(result.txId);
+            },
+          });
+        } catch (e) {
+          setLoading(false);
+          setError(true);
+          setErrorMsg(JSON.stringify(e));
+        }
       }
     }
   };
 
   const updateValue = numberOfBlocks => {
-    console.log(numberOfBlocks);
     if (numberOfBlocks > 1) {
       for (let i = 1; i < (numberOfBlocks + 1) / 10; i++) {
         setBlockAmounts(currentBlock => [
@@ -232,10 +269,11 @@ export function CityCoinMining({ ownerStxAddress }) {
             role="status"
             className={`${
               loading ? '' : 'd-none'
-            } spinner-border spinner-border-sm text-info align-text-top mr-2`}
+            } spinner-border spinner-border-sm text-info align-text-top ms-1 me-2`}
           />
           {buttonLabel}
         </button>
+        <div className={`alert alert-danger ${isError ? '' : 'd-none'}`}>{errorMsg}</div>
         <div className="form-check">
           <input
             className="form-check-input"
@@ -245,9 +283,16 @@ export function CityCoinMining({ ownerStxAddress }) {
             onClick={onCheckboxClick}
           />
           <label className="form-check-label" htmlFor="flexCheckDefault">
-            I confirm I understand that the City of Miami has not yet officially claimed the
-            MiamiCoin protocol contribution. I also acknowledge that my participation in mining
-            MiamiCoin ($MIA) does not guarantee winning the rights to claim newly minted $MIA.
+            I confirm that by participating in mining, I understand:
+            <ul>
+              <li>
+                the City of Miami has not yet officially claimed the MiamiCoin protocol contribution
+              </li>
+              <li>
+                participation does not guarantee winning the rights to claim newly minted $MIA
+              </li>
+              <li>once STX are sent to the contract, they are not returned</li>
+            </ul>
           </label>
         </div>
       </form>
