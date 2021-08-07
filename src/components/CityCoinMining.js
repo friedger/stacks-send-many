@@ -113,7 +113,13 @@ export function CityCoinMining({ ownerStxAddress }) {
       if (totalSubmitted >= profileState.account.balance - estimatedFeeUstx) {
         setLoading(false);
         setError(true);
-        setErrorMsg(`Not enough funds to cover estimated transaction fee of ${estimatedFee} STX`);
+        setErrorMsg(
+          `Not enough funds to cover estimated transaction fee of ${estimatedFee} STX. Total Submitted: ${
+            totalSubmitted / 1000000
+          } STX, Estimated Fee ${estimatedFee} STX, Total Balance: ${
+            profileState.account.balance / 1000000
+          } STX`
+        );
       } else {
         try {
           await doContractCall({
@@ -267,7 +273,7 @@ export function CityCoinMining({ ownerStxAddress }) {
           />
           {buttonLabel}
         </button>
-        <div className={`alert alert-danger ${isError ? 'd-none' : ''}}`}>{errorMsg}</div>
+        <div className={`alert alert-danger ${isError ? '' : 'd-none'}`}>{errorMsg}</div>
         <div className="form-check">
           <input
             className="form-check-input"
