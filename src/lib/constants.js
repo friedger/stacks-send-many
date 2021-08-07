@@ -45,6 +45,7 @@ export const STACKS_API_WS_URL = localNode
   : 'wss://stacks-node-api.testnet.stacks.co/';
 export const STACKS_API_V2_INFO = `${STACKS_API_URL}/v2/info`;
 export const STACKS_API_ACCOUNTS_URL = `${STACKS_API_URL}/v2/accounts`;
+export const STACKS_API_FEE_URL = `${STACKS_API_URL}/v2/fees/transfer`;
 
 export const NETWORK = mainnet ? new StacksMainnet() : new StacksTestnet();
 NETWORK.coreApiUrl = STACKS_API_URL;

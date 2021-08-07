@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import { CONTRACT_DEPLOYER, CITYCOIN_CORE, NETWORK } from '../lib/constants';
-import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
+import { BLOCK_HEIGHT, getStxFees, refreshBlockHeight } from '../lib/blocks';
 import { useAtom } from 'jotai';
 import { TxStatus } from './TxStatus';
 import converter from 'number-to-words';
@@ -26,9 +26,11 @@ export function CityCoinMining({ ownerStxAddress }) {
   const memoRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
+  const [error, setError] = useState(false);
   const [buttonLabel, setButtonLabel] = useState('Mine');
   const [numberOfBlocks, setNumberOfBlocks] = useState();
   const [blockAmounts, setBlockAmounts] = useState([]);
+  const [blockHeight, setBlockHeight] = useAtom(BLOCK_HEIGHT);
   const { doContractCall } = useConnect();
 
   const [profileState, setProfileState] = useState({
@@ -53,73 +55,103 @@ export function CityCoinMining({ ownerStxAddress }) {
     return canBeSubmitted();
   };
 
-  const [blockHeight, setBlockHeight] = useAtom(BLOCK_HEIGHT);
-
   useEffect(() => {
     refreshBlockHeight(setBlockHeight);
   }, [setBlockHeight]);
 
-  // TODO: add onCancel state for loading that works ?
-  // TODO: add logic for wallet not enabled (aka not installed)
-  // TODO: consider state for when mining is active
+  const miningAlert = document.getElementById('miningAlert');
 
   const mineAction = async () => {
+    miningAlert.innerHTML = '';
     setLoading(true);
+    setError(false);
     if (numberOfBlocks === 1 && amountRef.current.value === '') {
-      console.log('positive number required to mine');
+      miningAlert.innerHTML = 'Positive number required to mine.';
       setLoading(false);
+      setError(true);
+    } else if (numberOfBlocks > 200) {
+      miningAlert.innerHTML = 'Cannot submit for more than 200 blocks.';
+      setLoading(false);
+      setError(true);
     } else {
+      const estimatedFee = await getStxFees();
+      const estimatedFeeUstx = estimatedFee * 1000000;
       const mineMany = numberOfBlocks > 1;
-      console.log(`mineMany: ${mineMany}`);
-      // console.log(`STX Balance: ${profileState.account.balance}`);
-      try {
-        const amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
-        const amountUstxCV = uintCV(amountUstx);
-        const memo = memoRef.current.value.trim();
-        const memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
-        let sumArray = [];
-        let mineManyArray = [];
-        if (mineMany) {
-          for (let i = 0; i < numberOfBlocks; i++) {
-            sumArray.push(parseInt(blockAmounts[i].amount));
-          }
-          var sum = uintCV(sumArray.reduce((a, b) => a + b, 0) * 1000000);
-          for (let i = 0; i < numberOfBlocks; i++)
-            mineManyArray.push(uintCV(blockAmounts[i].amount * 1000000));
-          mineManyArray = listCV(mineManyArray);
-        }
 
-        await doContractCall({
-          contractAddress: CONTRACT_DEPLOYER,
-          contractName: CITYCOIN_CORE,
-          functionName: mineMany ? 'mine-many' : 'mine-tokens',
-          functionArgs: mineMany ? [mineManyArray] : [amountUstxCV, memoCV],
-          postConditionMode: PostConditionMode.Deny,
-          postConditions: [
-            makeStandardSTXPostCondition(
-              ownerStxAddress,
-              FungibleConditionCode.Equal,
-              mineMany ? sum.value : amountUstxCV.value
-            ),
-          ],
-          anchorMode: AnchorMode.OnChainOnly,
-          network: NETWORK,
-          onCancel: () => {
-            setLoading(false);
-          },
-          onFinish: result => {
-            setLoading(false);
-            setTxId(result.txId);
-          },
-        });
-      } catch (e) {
+      console.log(`STX Balance: ${profileState.account.balance}`);
+      console.log(`estimatedFee: ${estimatedFee}`);
+      console.log(`mineMany: ${mineMany}`);
+
+      let amountUstx = 0;
+      let amountUstxCV = uintCV(0);
+      let memo = '';
+      let memoCV = noneCV();
+      let sumArray = [];
+      let mineManyArray = [];
+
+      if (mineMany) {
+        for (let i = 0; i < numberOfBlocks; i++) {
+          sumArray.push(parseInt(blockAmounts[i].amount));
+        }
+        var sum = uintCV(sumArray.reduce((a, b) => a + b, 0) * 1000000);
+        for (let i = 0; i < numberOfBlocks; i++) {
+          mineManyArray.push(uintCV(blockAmounts[i].amount * 1000000));
+        }
+        mineManyArray = listCV(mineManyArray);
+      } else {
+        amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
+        amountUstxCV = uintCV(amountUstx);
+        memo = memoRef.current.value.trim();
+        memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
+      }
+
+      let totalSubmitted = 0;
+
+      mineMany ? (totalSubmitted = sum.value) : (totalSubmitted = amountUstx);
+
+      console.log(`total submitted ${totalSubmitted}`);
+
+      // check there is enough left for fees
+      if (totalSubmitted >= profileState.account.balance - estimatedFeeUstx) {
+        miningAlert.innerHTML = `Not enough funds to cover transaction fee of ${estimatedFee} STX`;
         setLoading(false);
+        setError(true);
+      } else {
+        try {
+          await doContractCall({
+            contractAddress: CONTRACT_DEPLOYER,
+            contractName: CITYCOIN_CORE,
+            functionName: mineMany ? 'mine-many' : 'mine-tokens',
+            functionArgs: mineMany ? [mineManyArray] : [amountUstxCV, memoCV],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [
+              makeStandardSTXPostCondition(
+                ownerStxAddress,
+                FungibleConditionCode.Equal,
+                mineMany ? sum.value : amountUstxCV.value
+              ),
+            ],
+            anchorMode: AnchorMode.OnChainOnly,
+            network: NETWORK,
+            onCancel: () => {
+              setLoading(false);
+              setError(false);
+            },
+            onFinish: result => {
+              setLoading(false);
+              setError(false);
+              setTxId(result.txId);
+            },
+          });
+        } catch (e) {
+          setLoading(false);
+          setError(false);
+        }
       }
     }
   };
 
   const updateValue = numberOfBlocks => {
-    console.log(numberOfBlocks);
     if (numberOfBlocks > 1) {
       for (let i = 1; i < (numberOfBlocks + 1) / 10; i++) {
         setBlockAmounts(currentBlock => [
@@ -236,6 +268,7 @@ export function CityCoinMining({ ownerStxAddress }) {
           />
           {buttonLabel}
         </button>
+        <div className="alert alert-danger d-none" id="miningAlert"></div>
         <div className="form-check">
           <input
             className="form-check-input"
