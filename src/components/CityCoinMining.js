@@ -26,7 +26,8 @@ export function CityCoinMining({ ownerStxAddress }) {
   const memoRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
-  const [error, setError] = useState(false);
+  const [isError, setError] = useState();
+  const [errorMsg, setErrorMsg] = useState('');
   const [buttonLabel, setButtonLabel] = useState('Mine');
   const [numberOfBlocks, setNumberOfBlocks] = useState();
   const [blockAmounts, setBlockAmounts] = useState([]);
@@ -65,8 +66,9 @@ export function CityCoinMining({ ownerStxAddress }) {
     miningAlert.innerHTML = '';
     setLoading(true);
     setError(false);
+    setErrorMsg('');
     if (numberOfBlocks === 1 && amountRef.current.value === '') {
-      miningAlert.innerHTML = 'Positive number required to mine.';
+      setErrorMsg('Positive number required to mine.');
       setLoading(false);
       setError(true);
     } else if (numberOfBlocks > 200) {
@@ -268,7 +270,9 @@ export function CityCoinMining({ ownerStxAddress }) {
           />
           {buttonLabel}
         </button>
-        <div className="alert alert-danger d-none" id="miningAlert"></div>
+        <div className={`${isError ? '' : 'd-none'} alert alert-danger }`} id="miningAlert">
+          {errorMsg}
+        </div>
         <div className="form-check">
           <input
             className="form-check-input"
