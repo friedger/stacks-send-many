@@ -5,7 +5,6 @@ import { BLOCK_HEIGHT, getStxFees, refreshBlockHeight } from '../lib/blocks';
 import { useAtom } from 'jotai';
 import { TxStatus } from './TxStatus';
 import converter from 'number-to-words';
-import { CityCoinMiningStats } from './CityCoinMiningStats';
 import {
   AnchorMode,
   bufferCVFromString,
@@ -31,21 +30,19 @@ export function CityCoinMining({ ownerStxAddress }) {
   const [buttonLabel, setButtonLabel] = useState('Mine');
   const [numberOfBlocks, setNumberOfBlocks] = useState();
   const [blockAmounts, setBlockAmounts] = useState([]);
-  const [blockHeight, setBlockHeight] = useAtom(BLOCK_HEIGHT);
-  const { doContractCall } = useConnect();
-
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [checked, setChecked] = useState(false);
   const [profileState, setProfileState] = useState({
     account: undefined,
   });
+  const [blockHeight, setBlockHeight] = useAtom(BLOCK_HEIGHT);
+  const { doContractCall } = useConnect();
 
   useEffect(() => {
     fetchAccount(ownerStxAddress).then(acc => {
       setProfileState({ account: acc });
     });
   }, [ownerStxAddress]);
-
-  const [isDisabled, setIsDisabled] = useState(true);
-  const [checked, setChecked] = useState(false);
 
   const canBeSubmitted = () => {
     return checked ? setIsDisabled(true) : setIsDisabled(false);
@@ -60,21 +57,20 @@ export function CityCoinMining({ ownerStxAddress }) {
     refreshBlockHeight(setBlockHeight);
   }, [setBlockHeight]);
 
-  const miningAlert = document.getElementById('miningAlert');
-
   const mineAction = async () => {
-    miningAlert.innerHTML = '';
     setLoading(true);
     setError(false);
     setErrorMsg('');
-    if (numberOfBlocks === 1 && amountRef.current.value === '') {
-      setErrorMsg('Positive number required to mine.');
+    console.log(`amountRef: ${amountRef.current.value}`);
+    if (numberOfBlocks === 1 && !amountRef.current.value) {
+      console.log(`${numberOfBlocks} and ${amountRef.current.value}`);
       setLoading(false);
       setError(true);
+      setErrorMsg('Please enter an amount to mine for one block.');
     } else if (numberOfBlocks > 200) {
-      miningAlert.innerHTML = 'Cannot submit for more than 200 blocks.';
       setLoading(false);
       setError(true);
+      setErrorMsg('Cannot submit for more than 200 blocks.');
     } else {
       const estimatedFee = await getStxFees();
       const estimatedFeeUstx = estimatedFee * 1000000;
@@ -115,9 +111,9 @@ export function CityCoinMining({ ownerStxAddress }) {
 
       // check there is enough left for fees
       if (totalSubmitted >= profileState.account.balance - estimatedFeeUstx) {
-        miningAlert.innerHTML = `Not enough funds to cover transaction fee of ${estimatedFee} STX`;
         setLoading(false);
         setError(true);
+        setErrorMsg(`Not enough funds to cover estimated transaction fee of ${estimatedFee} STX`);
       } else {
         try {
           await doContractCall({
@@ -137,17 +133,18 @@ export function CityCoinMining({ ownerStxAddress }) {
             network: NETWORK,
             onCancel: () => {
               setLoading(false);
-              setError(false);
             },
             onFinish: result => {
               setLoading(false);
               setError(false);
+              setErrorMsg('');
               setTxId(result.txId);
             },
           });
         } catch (e) {
           setLoading(false);
-          setError(false);
+          setError(true);
+          setErrorMsg(JSON.stringify(e));
         }
       }
     }
@@ -266,13 +263,11 @@ export function CityCoinMining({ ownerStxAddress }) {
             role="status"
             className={`${
               loading ? '' : 'd-none'
-            } spinner-border spinner-border-sm text-info align-text-top mr-2`}
+            } spinner-border spinner-border-sm text-info align-text-top ms-1 me-2`}
           />
           {buttonLabel}
         </button>
-        <div className={`${isError ? '' : 'd-none'} alert alert-danger }`} id="miningAlert">
-          {errorMsg}
-        </div>
+        <div className={`alert alert-danger ${isError ? 'd-none' : ''}}`}>{errorMsg}</div>
         <div className="form-check">
           <input
             className="form-check-input"
@@ -282,9 +277,16 @@ export function CityCoinMining({ ownerStxAddress }) {
             onClick={onCheckboxClick}
           />
           <label className="form-check-label" htmlFor="flexCheckDefault">
-            I confirm I understand that the City of Miami has not yet officially claimed the
-            MiamiCoin protocol contribution. I also acknowledge that my participation in mining
-            MiamiCoin ($MIA) does not guarantee winning the rights to claim newly minted $MIA.
+            I confirm that by participating in mining, I understand:
+            <ul>
+              <li>
+                the City of Miami has not yet officially claimed the MiamiCoin protocol contribution
+              </li>
+              <li>
+                participation does not guarantee winning the rights to claim newly minted $MIA
+              </li>
+              <li>once STX are sent to the contract, they are not returned</li>
+            </ul>
           </label>
         </div>
       </form>
