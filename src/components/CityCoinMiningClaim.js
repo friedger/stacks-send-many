@@ -136,12 +136,14 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
           senderAddress: CONTRACT_DEPLOYER,
         }).then(claim => {
           let canClaimReward = cvToJSON(claim).value;
-          response =
-            response +
-            `<div class="row">
-            <div class="col-2">Can Claim?</div>
-            <div class="col-2">${canClaimReward}</div>
-          </div>`;
+          if (canClaimReward) {
+            response =
+              response +
+              `<div class="row">
+                <div class="col-2">Claimed?</div>
+                <div class="col-2">${!canClaimReward}</div>
+              </div>`;
+          }
           blockHeightResponse.innerHTML = response;
           return canClaimRewards(canClaimReward);
         });
