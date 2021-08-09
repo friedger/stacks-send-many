@@ -3,10 +3,12 @@ import { useConnect } from '@stacks/connect-react';
 import { CONTRACT_DEPLOYER, CITYCOIN_CORE, NETWORK } from '../lib/constants';
 import { uintCV, callReadOnlyFunction, cvToJSON, standardPrincipalCV } from '@stacks/transactions';
 import { CurrentBlockHeight } from './CurrentBlockHeight';
+import { TxStatus } from './TxStatus';
 
 export function CityCoinMiningClaim({ ownerStxAddress }) {
   const [loading, setLoading] = useState();
   const [canClaim, setCanClaim] = useState(false);
+  const [txId, setTxId] = useState();
   const { doContractCall } = useConnect();
   const blockHeightToCheck = useRef();
   const blockHeightResponse = document.getElementById('blockHeightResponse');
@@ -28,6 +30,7 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
       },
       onFinish: result => {
         setLoading(false);
+        setTxId(result.txId);
       },
     });
   };
@@ -176,6 +179,8 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
           Claim Rewards
         </button>
         <div id="blockHeightResponse"></div>
+        <br />
+        {txId && <TxStatus txId={txId} />}
       </div>
     </>
   );
