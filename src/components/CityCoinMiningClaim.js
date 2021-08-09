@@ -1,32 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import { CONTRACT_DEPLOYER, CITYCOIN_CORE, CITYCOIN_SYMBOL, NETWORK } from '../lib/constants';
+import { CONTRACT_DEPLOYER, CITYCOIN_CORE, NETWORK } from '../lib/constants';
 import { uintCV, callReadOnlyFunction, cvToJSON, standardPrincipalCV } from '@stacks/transactions';
-import { getMiningDetails } from '../lib/citycoin';
 import { CurrentBlockHeight } from './CurrentBlockHeight';
-
-// TODO: how to know block height to claim?
-// get from a getter?
 
 export function CityCoinMiningClaim({ ownerStxAddress }) {
   const [loading, setLoading] = useState();
-  const [miningState, setMiningState] = useState();
   const [canClaim, setCanClaim] = useState(false);
   const { doContractCall } = useConnect();
   const blockHeightToCheck = useRef();
   const blockHeightResponse = document.getElementById('blockHeightResponse');
-
-  // useEffect(() => {
-  //   if (ownerStxAddress) {
-  //     getMiningDetails(ownerStxAddress).then(state => setMiningState(state));
-  //   }
-  // }, [ownerStxAddress]);
 
   const canClaimRewards = claimValue => {
     return claimValue ? setCanClaim(true) : setCanClaim(false);
   };
 
   const claimAction = async () => {
+    setLoading(true);
     await doContractCall({
       contractAddress: CONTRACT_DEPLOYER,
       contractName: CITYCOIN_CORE,
@@ -177,6 +167,12 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
           disabled={!canClaim}
           onClick={claimAction}
         >
+          <div
+            role="status"
+            className={`${
+              loading ? '' : 'd-none'
+            } spinner-border spinner-border-sm text-info align-text-top ms-1 me-2`}
+          />
           Claim Rewards
         </button>
         <div id="blockHeightResponse"></div>
