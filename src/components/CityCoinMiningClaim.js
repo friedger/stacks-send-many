@@ -90,6 +90,7 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
   };
 
   const checkWinner = async => {
+    let winner = false;
     // read-only call for is-block-winner
     if (blockHeightToCheck.current.value === '') {
       blockHeightResponse.innerHTML = 'Block Height Required!';
@@ -108,7 +109,7 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
         network: NETWORK,
         senderAddress: CONTRACT_DEPLOYER,
       }).then(stats => {
-        const winner = cvToJSON(stats).value;
+        winner = cvToJSON(stats).value;
         var response = `
         <div class="row">
           <div class="col-12 fs-6 fw-bold">Winner at Block ${blockHeightToCheck.current.value}</div>
@@ -129,6 +130,7 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
           senderAddress: CONTRACT_DEPLOYER,
         }).then(claim => {
           let canClaimReward = cvToJSON(claim).value;
+          console.log(`canClaimReward: ${canClaimReward}`);
           if (canClaimReward) {
             response =
               response +
@@ -136,6 +138,15 @@ export function CityCoinMiningClaim({ ownerStxAddress }) {
                 <div class="col-2">Claimed?</div>
                 <div class="col-2">${!canClaimReward}</div>
               </div>`;
+          } else {
+            if (winner) {
+              response =
+                response +
+                `<div class="row">
+                  <div class="col-2">Claimed?</div>
+                  <div class="col-2">Already Claimed!</div>
+                </div>`;
+            }
           }
           blockHeightResponse.innerHTML = response;
           return canClaimRewards(canClaimReward);
