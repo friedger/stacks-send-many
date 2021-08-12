@@ -12,8 +12,8 @@ export default function Landing(props) {
         <div className="container pt-3">
           <h1>Introducing CityCoins</h1>
           <p className="h5">
-            CityCoins are cryptocurrencies that allow you to support your favorite cities while
-            earning yield in Bitcoin.
+            CityCoins gives communities the power to improve their cities, while providing crypto
+            rewards to individual contributors and city governments alike.
           </p>
           <p className="h5">
             Each city has their own coin, starting with Miami and MiamiCoin ($MIA).
@@ -35,14 +35,24 @@ export default function Landing(props) {
           <h2 className="mt-4">Stacking</h2>
           <p className="h5">
             The remaining 70% of the STX that miners forward is distributed to CityCoin holders who
-            stack their tokens.
+            Stack their tokens.
           </p>
           <p className="h5">
-            Stacking CityCoins yields STX rewards, which can further be stacked to yield BTC
-            rewards.
+            Stacking requires holders to lock their CityCoins for determined “reward cycles.”
+          </p>
+          <p className="h5">
+            Stacking CityCoins yields STX rewards. STX rewards can further be stacked on Stacks to
+            yield BTC rewards.
           </p>
           <button
             className="btn btn-lg btn-outline-primary mt-4"
+            type="button"
+            onClick={handleOpenAuth}
+          >
+            Read the Docs
+          </button>
+          <button
+            className="btn btn-lg btn-outline-primary mt-4 ms-3"
             type="button"
             onClick={handleOpenAuth}
           >
