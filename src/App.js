@@ -45,7 +45,7 @@ export default function App(props) {
             rel="noreferrer"
             className="btn btn-outline-primary"
           >
-            Docs
+            Read the Docs
           </a>
           <Auth />
         </div>

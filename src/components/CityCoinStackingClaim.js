@@ -75,7 +75,19 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
     <>
       <h3>Claim Stacking Rewards</h3>
       <CurrentBlockHeight />
-      {stackingState && stackingState.length > 0 ? (
+      <div className="my-2">
+        <p>Coming soon!</p>
+        <p>
+          Stacking becomes available at Block #{firstStackingBlock}, and the first claims can be
+          made after Block #{firstStackingBlock + REWARD_CYCLE_LENGTH}.
+        </p>
+      </div>
+    </>
+  );
+}
+
+/*
+{stackingState && stackingState.length > 0 ? (
         <>
           <div className="accordion accordion-flush" id="accordionExample">
             <div className="accordion-item">
@@ -193,15 +205,5 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
             ))}
           </div>
         </>
-      ) : loading ? null : (
-        <div className="my-2">
-          <p>Coming soon!</p>
-          <p>
-            Stacking becomes available at Block #{firstStackingBlock}, and the first claims can be
-            made at Block #{firstStackingBlock + REWARD_CYCLE_LENGTH}.
-          </p>
-        </div>
-      )}
-    </>
-  );
-}
+      ) : loading ? null : 
+*/
