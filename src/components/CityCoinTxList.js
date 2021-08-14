@@ -11,7 +11,6 @@ import {
   transactionsApi,
 } from '../lib/constants';
 import { Address } from './Address';
-import { CurrentBlockHeight } from './CurrentBlockHeight';
 import { CityCoinMiningStats } from './CityCoinMiningStats';
 import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
 import { useAtom } from 'jotai';
@@ -69,8 +68,7 @@ export function CityCoinTxList() {
     const blockHeights = txs ? Object.keys(txs).sort().reverse() : undefined;
     return (
       <>
-        <h3>Contract Activity Log</h3>
-        <CurrentBlockHeight />
+        <h3>Activity Log</h3>
         <div className="container">
           <div className="row">
             <div className="col-4">
