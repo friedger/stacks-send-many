@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import converter from 'number-to-words';
 import { connectWebSocketClient } from '@stacks/blockchain-api-client';
-import { hexToCV } from '@stacks/transactions';
+import { cvToJSON, hexToCV } from '@stacks/transactions';
 import _groupBy from 'lodash.groupby';
 import {
   accountsApi,
@@ -97,7 +97,7 @@ export function CityCoinTxList() {
                       {txs[blockHeight].map((tx, txKey) => {
                         return (
                           <div className="card p-2 m-2" key={txKey}>
-                            <div className="row pl-4">{transactionByType(tx)}</div>
+                            <div className="row pl-4">{transactionByType(tx, blockHeight)}</div>
                             <div className="row pl-4 mb-2">
                               <Details tx={tx} />
                             </div>
@@ -118,14 +118,14 @@ export function CityCoinTxList() {
   }
 }
 
-function transactionByType(tx) {
+function transactionByType(tx, blockHeight) {
   switch (tx.contract_call.function_name) {
     case 'register-user':
       return <RegisterTransaction tx={tx} />;
     case 'mine-tokens':
       return <MineTransaction tx={tx} />;
     case 'mine-many':
-      return <MineManyTransaction tx={tx} />;
+      return <MineManyTransaction tx={tx} blockHeight={blockHeight} />;
     case 'stack-tokens':
       return <StackTransaction tx={tx} />;
     case 'claim-mining-reward':
@@ -164,11 +164,28 @@ function uintJsonToRewardCycle(value) {
   );
 }
 
-function listCvToMiningAmounts(value) {
+function listCvToMiningAmounts(value, blockHeight) {
   const amounts = value.repr;
-  // const amountsFiltered = amounts.split(' ');
+  const amountsJSON = cvToJSON(hexToCV(value.hex));
+  console.log(amountsJSON.value.length); // length of each mine many
+  console.log(amountsJSON.value);
 
-  return <>Amounts: {value.repr}</>;
+  return (
+    <>
+      <div className="col-6">Number of Blocks: {amountsJSON.value.length}</div>
+      <div className="row gy-2">
+        {amountsJSON.value.map((amountBid, key) => (
+          <Fragment key={key}>
+            <div className="col-1">
+              {parseInt(blockHeight) + key}
+              <br />
+              {amountBid.value / 1000000} STX
+            </div>
+          </Fragment>
+        ))}
+      </div>
+    </>
+  );
 }
 
 function RegisterTransaction({ tx }) {
@@ -186,12 +203,12 @@ function MineTransaction({ tx }) {
   );
 }
 
-function MineManyTransaction({ tx }) {
+function MineManyTransaction({ tx, blockHeight }) {
   return (
     <div className="col-12">
       {tx.contract_call.function_name}
       <br />
-      <small>{listCvToMiningAmounts(tx.contract_call.function_args[0])}</small>
+      <small>{listCvToMiningAmounts(tx.contract_call.function_args[0], blockHeight)}</small>
     </div>
   );
 }
