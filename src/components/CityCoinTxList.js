@@ -12,9 +12,17 @@ import {
 } from '../lib/constants';
 import { Address } from './Address';
 import { CurrentBlockHeight } from './CurrentBlockHeight';
+import { CityCoinMiningStats } from './CityCoinMiningStats';
+import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
+import { useAtom } from 'jotai';
 
 export function CityCoinTxList() {
   const [txs, setTxs] = useState();
+  const [currentBlock, setCurrentBlock] = useAtom(BLOCK_HEIGHT);
+
+  useEffect(() => {
+    refreshBlockHeight(setCurrentBlock);
+  }, [setCurrentBlock]);
 
   const updateTxs = async () => {
     try {
@@ -64,6 +72,32 @@ export function CityCoinTxList() {
         <h3>Contract Activity Log</h3>
         <CurrentBlockHeight />
         <div className="container">
+          <div className="row">
+            <div className="col-4">
+              <div className="card p-2 m-2">
+                <div className="card-body">
+                  <h5 className="card-title text-center">Last Block ({currentBlock.value - 1})</h5>
+                  <CityCoinMiningStats value={currentBlock.value - 1} />
+                </div>
+              </div>
+            </div>
+            <div className="col-4">
+              <div className="card p-2 m-2">
+                <div className="card-body">
+                  <h5 className="card-title text-center">Current Block ({currentBlock.value})</h5>
+                  <CityCoinMiningStats value={currentBlock.value} />
+                </div>
+              </div>
+            </div>
+            <div className="col-4">
+              <div className="card p-2 m-2">
+                <div className="card-body">
+                  <h5 className="card-title text-center">Next Block ({currentBlock.value + 1})</h5>
+                  <CityCoinMiningStats value={currentBlock.value + 1} />
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="accordion accordion-flush" id="accordionActivityLog">
             {blockHeights.map((blockHeight, key) => (
               <Fragment key={key}>
@@ -165,11 +199,7 @@ function uintJsonToRewardCycle(value) {
 }
 
 function listCvToMiningAmounts(value, blockHeight) {
-  const amounts = value.repr;
   const amountsJSON = cvToJSON(hexToCV(value.hex));
-  console.log(amountsJSON.value.length); // length of each mine many
-  console.log(amountsJSON.value);
-
   return (
     <>
       <div className="col-6">Number of Blocks: {amountsJSON.value.length}</div>

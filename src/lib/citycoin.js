@@ -18,7 +18,6 @@ import {
 } from './constants';
 
 export async function getMiningStatsAtBlock(blockHeight) {
-  console.log(`blockHeight in citycoin.js: ${blockHeight}`);
   const resultCV = await callReadOnlyFunction({
     contractAddress: CONTRACT_DEPLOYER,
     contractName: CITYCOIN_CORE,
