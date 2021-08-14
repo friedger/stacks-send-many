@@ -1,4 +1,5 @@
 import React from 'react';
+import { AlertMobile } from '../components/AlertMobile';
 import { useConnect } from '../lib/auth';
 
 // Landing page with Stacks Connect for authentication
@@ -8,6 +9,7 @@ export default function Landing(props) {
 
   return (
     <div className="Landing">
+      <AlertMobile />
       <div className="jumbotron jumbotron-fluid pt-3 mb-0">
         <div className="container pt-3">
           <h1>Introducing CityCoins</h1>
@@ -38,11 +40,13 @@ export default function Landing(props) {
             Stack their tokens.
           </p>
           <p className="h5">
-            Stacking requires holders to lock their CityCoins for determined “reward cycles.”
+            Stacking requires holders to lock their CityCoins for determined “reward cycles”, where
+            they are transferred to the smart contract and can be reclaimed after the cycles are
+            complete.
           </p>
           <p className="h5">
-            Stacking CityCoins yields STX rewards. STX rewards can further be stacked on Stacks to
-            yield BTC rewards.
+            Stacking CityCoins earns STX rewards from CityCoin miners. STX rewards can further be
+            stacked on Stacks to earn BTC rewards.
           </p>
           <button
             className="btn btn-lg btn-outline-primary mt-4"
