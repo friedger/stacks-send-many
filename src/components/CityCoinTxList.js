@@ -58,7 +58,7 @@ export function CityCoinTxList() {
   }, []);
 
   if (txs) {
-    const blockHeights = txs ? Object.keys(txs).sort((a, b) => a < b) : undefined;
+    const blockHeights = txs ? Object.keys(txs).sort().reverse() : undefined;
     return (
       <>
         <h3>Contract Activity Log</h3>
