@@ -198,20 +198,28 @@ function uintJsonToRewardCycle(value) {
 
 function listCvToMiningAmounts(value, blockHeight) {
   const amountsJSON = cvToJSON(hexToCV(value.hex));
+  let amountsTotal = 0;
+  console.log(amountsJSON.value[0]);
+  for (let i = 0; i < amountsJSON.value.length; i++) {
+    amountsTotal += amountsJSON.value[i].value / 1000000;
+  }
   return (
     <>
       <div className="col-6">Number of Blocks: {amountsJSON.value.length}</div>
-      <div className="row gy-2">
-        {amountsJSON.value.map((amountBid, key) => (
-          <Fragment key={key}>
-            <div className="col-1">
-              {parseInt(blockHeight) + key}
-              <br />
-              {amountBid.value / 1000000} STX
-            </div>
-          </Fragment>
-        ))}
-      </div>
+      <div className="col-6 text-right">Total: {amountsTotal} STX</div>
+      <small>
+        <div className="row gy-2">
+          {amountsJSON.value.map((amountBid, key) => (
+            <Fragment key={key}>
+              <div className="col-1">
+                {parseInt(blockHeight) + key}
+                <br />
+                {amountBid.value / 1000000} STX
+              </div>
+            </Fragment>
+          ))}
+        </div>
+      </small>
     </>
   );
 }
@@ -235,8 +243,7 @@ function MineManyTransaction({ tx, blockHeight }) {
   return (
     <div className="col-12">
       {tx.contract_call.function_name}
-      <br />
-      <small>{listCvToMiningAmounts(tx.contract_call.function_args[0], blockHeight)}</small>
+      <div class="row">{listCvToMiningAmounts(tx.contract_call.function_args[0], blockHeight)}</div>
     </div>
   );
 }
