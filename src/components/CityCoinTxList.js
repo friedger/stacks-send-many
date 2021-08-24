@@ -199,7 +199,6 @@ function uintJsonToRewardCycle(value) {
 function listCvToMiningAmounts(value, blockHeight) {
   const amountsJSON = cvToJSON(hexToCV(value.hex));
   let amountsTotal = 0;
-  console.log(amountsJSON.value[0]);
   for (let i = 0; i < amountsJSON.value.length; i++) {
     amountsTotal += amountsJSON.value[i].value / 1000000;
   }
