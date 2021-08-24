@@ -24,18 +24,19 @@ export function CityCoinMiningStats(blockHeight) {
         <>
           <div className="row">
             <div className="col-lg-6">Miners</div>
-            <div className="col-lg-6">{totalMiners ? totalMiners : null}</div>
+            <div className="col-lg-6">{totalMiners ? totalMiners : 'Please Refresh'}</div>
           </div>
           <div className="row">
             <div className="col-lg-6">Amount</div>
             <div className="col-lg-6">
-              {totalAmountStx ? totalAmountStx.toFixed(2).toLocaleString() : null} STX
+              {totalAmountStx ? totalAmountStx.toFixed(2).toLocaleString() : 'Please Refresh'} STX
             </div>
           </div>
           <div className="row">
             <div className="col-lg-6">To City</div>
             <div className="col-lg-6">
-              {totalAmountToCity ? totalAmountToCity.toFixed(2).toLocaleString() : null} STX
+              {totalAmountToCity ? totalAmountToCity.toFixed(2).toLocaleString() : 'Please Refresh'}{' '}
+              STX
             </div>
           </div>
           <div className="row">
@@ -43,7 +44,7 @@ export function CityCoinMiningStats(blockHeight) {
             <div className="col-lg-6">
               {totalAmountToStackers
                 ? totalAmountToStackers.toFixed(2).toLocaleString()
-                : totalAmountToStackers}{' '}
+                : 'Please Refresh'}{' '}
               STX
             </div>
           </div>
