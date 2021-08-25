@@ -18,12 +18,21 @@ export default function Landing(props) {
             rewards to individual contributors and city governments alike.
           </p>
           <p className="h5">
-            Each city has their own coin, starting with Miami and MiamiCoin ($MIA).
+            Each city has their own coin, starting with{' '}
+            <a
+              href="https://www.citycoins.co/miamicoin"
+              className="text-decoration-none"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Miami and MiamiCoin ($MIA)
+            </a>
+            .
           </p>
           <h2 className="mt-4">Activation</h2>
           <p className="h5">
-            CityCoins only exist through mining, which requires 20 independent wallets to signal
-            activation once the contract is deployed.
+            CityCoins only exist through mining, which does not begin until 20 independent wallets
+            signal activation once the contract is deployed.
           </p>
           <p className="h5">No ICO, no pre-sale, no pre-mine.</p>
           <h2 className="mt-4">Mining</h2>
@@ -48,13 +57,14 @@ export default function Landing(props) {
             Stacking CityCoins earns STX rewards from CityCoin miners. STX rewards can further be
             stacked on Stacks to earn BTC rewards.
           </p>
-          <button
+          <a
+            href="https://docs.citycoins.co"
+            target="_blank"
+            rel="noreferrer"
             className="btn btn-lg btn-outline-primary mt-4"
-            type="button"
-            onClick={handleOpenAuth}
           >
             Read the Docs
-          </button>
+          </a>
           <button
             className="btn btn-lg btn-outline-primary mt-4 ms-3"
             type="button"
@@ -62,6 +72,7 @@ export default function Landing(props) {
           >
             Get Started!
           </button>
+          <p className="mt-3 fs-6 fst-italic">* Requires the Stacks Web Wallet from Hiro</p>
         </div>
       </div>
     </div>
