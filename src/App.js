@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import Landing from './pages/Landing';
 import { Connect } from '@stacks/connect-react';
 import { Router } from '@reach/router';
-import Auth from './components/Auth';
-import { userDataState, userSessionState, useConnect } from './lib/auth';
-import { useAtom } from 'jotai';
+import Landing from './pages/Landing';
 import CityCoinRegistration from './pages/CityCoinRegistration';
-import { getMiningActivationStatus } from './lib/citycoin';
 import CityCoinActions from './pages/CityCoinActions';
+import Auth from './components/Auth';
 import { ProfileSmall } from './components/ProfileSmall';
+import { userDataState, userSessionState, useConnect } from './lib/auth';
+import { getMiningActivationStatus } from './lib/citycoin';
+import { useAtom } from 'jotai';
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -37,7 +37,7 @@ export default function App(props) {
         <div>
           <span className="h1">CityCoins</span>
         </div>
-        <div className="btn-group btn-group-lg" role="group" aria-label="Basic outlined example">
+        <div className="btn-group btn-group-lg" role="group" aria-label="CityCoins navigation">
           <ProfileSmall userSession={userSession} />
           <a
             href="https://docs.citycoins.co"
@@ -69,7 +69,6 @@ function Content({ userSession }) {
     getMiningActivationStatus()
       .then(result => {
         setMiningActivated(result);
-        console.log(`Mining Activation: ${result}`);
       })
       .catch(e => {
         setMiningActivated(false);

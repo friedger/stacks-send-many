@@ -18,7 +18,6 @@ import {
 } from './constants';
 
 export async function getMiningStatsAtBlock(blockHeight) {
-  console.log(`blockHeight in citycoin.js: ${blockHeight}`);
   const resultCV = await callReadOnlyFunction({
     contractAddress: CONTRACT_DEPLOYER,
     contractName: CITYCOIN_CORE,
@@ -57,6 +56,22 @@ export async function getMiningActivationStatus() {
     return true;
   } else {
     return false;
+  }
+}
+
+export async function getMiningActivationBlockHeight() {
+  const result = await callReadOnlyFunction({
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
+    functionName: 'get-activation-block',
+    functionArgs: [],
+    network: NETWORK,
+    senderAddress: GENESIS_CONTRACT_ADDRESS,
+  });
+  if (result.type === ClarityType.ResponseOk) {
+    return result.value.value.toNumber();
+  } else {
+    return undefined;
   }
 }
 
