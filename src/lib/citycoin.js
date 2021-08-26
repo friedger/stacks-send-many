@@ -65,7 +65,6 @@ export async function getCityCoinTotalSupply() {
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
   const resultJson = cvToJSON(result);
-  console.log(resultJson.value.value);
   return resultJson.value.value;
 }
 

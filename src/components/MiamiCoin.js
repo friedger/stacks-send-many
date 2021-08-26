@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from '@reach/router';
 import { useAtom } from 'jotai';
 import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
-import { MIAMICOIN_MIA_WALLET, MIAMICOIN_START_BLOCK } from '../lib/constants';
+import { MIAMICOIN_MIA_WALLET, MIAMICOIN_START_BLOCK, STACKS_API_URL } from '../lib/constants';
 import { getCityCoinTotalSupply, getStacksBalance } from '../lib/citycoin';
 
 // need current block height
@@ -22,14 +22,20 @@ export function MiamiCoin() {
   }, [setCurrentBlock]);
 
   useEffect(() => {
-    getStacksBalance(MIAMICOIN_MIA_WALLET);
-    console.log(`currentMiaBalance: ${currentMiaBalance}`);
-  }, [setCurrentMiaBalance]);
+    fetch(`${STACKS_API_URL}/extended/v1/address/${MIAMICOIN_MIA_WALLET}/stx`)
+      .then(result => {
+        return result.json();
+      })
+      .then(data => {
+        setCurrentMiaBalance(data.balance / 1000000);
+      });
+  }, []);
 
   useEffect(() => {
-    getCityCoinTotalSupply();
-    console.log(`currentMiaTotalSupply: ${currentMiaTotalSupply}`);
-  }, [setCurrentMiaTotalSupply]);
+    getCityCoinTotalSupply().then(result => {
+      setCurrentMiaTotalSupply(result);
+    });
+  }, []);
 
   const maxSupply = (currentBlock.value - MIAMICOIN_START_BLOCK) * 250000;
 
@@ -40,9 +46,41 @@ export function MiamiCoin() {
         Current Block Height:{' '}
         {currentBlock.value > 0 ? currentBlock.value.toLocaleString() : 'Loading...'}
       </p>
-      <p>Max Supply: {maxSupply ? maxSupply.toLocaleString() : 'Loading...'} MIA</p>
-      <p>Total Supply: {currentMiaTotalSupply}</p>
-      <p>MIA Wallet: {currentMiaBalance}</p>
+      <div className="row">
+        <div className="col-md-4">
+          <div className="card p-2 m-2">
+            <div className="card-body">
+              <h5 className="card-title text-center">Max Supply</h5>
+              <p className="text-center">
+                {maxSupply > 0 ? maxSupply.toLocaleString() : 'Loading...'} MIA
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-4">
+          <div className="card p-2 m-2">
+            <div className="card-body">
+              <h5 className="card-title text-center">Total Supply</h5>
+              <p className="text-center">
+                {currentMiaTotalSupply
+                  ? currentMiaTotalSupply.toLocaleString() + ' MIA'
+                  : 'Loading...'}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-4">
+          <div className="card p-2 m-2">
+            <div className="card-body">
+              <h5 className="card-title text-center">MIA Wallet</h5>
+              <p className="text-center">
+                {currentMiaBalance ? currentMiaBalance.toLocaleString() + ' STX' : 'Loading...'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <Link to="/" className="btn btn-outline-primary">
         Back Home
       </Link>
