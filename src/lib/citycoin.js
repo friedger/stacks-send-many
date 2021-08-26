@@ -15,6 +15,7 @@ import {
   CITYCOIN_CORE,
   CITYCOIN_TOKEN,
   REWARD_CYCLE_LENGTH,
+  STACKS_API_URL,
 } from './constants';
 
 export async function getMiningStatsAtBlock(blockHeight) {
@@ -31,6 +32,17 @@ export async function getMiningStatsAtBlock(blockHeight) {
   return result;
 }
 
+export async function getStacksBalance(address) {
+  try {
+    const result = await fetch(`${STACKS_API_URL}/extended/v1/address/${address}/stx`);
+    const resultJson = await result.json();
+    return resultJson.balance / 1000000;
+  } catch (e) {
+    console.log(e);
+    return 0;
+  }
+}
+
 export async function getCityCoinBalance(address) {
   const result = await callReadOnlyFunction({
     contractAddress: CONTRACT_DEPLOYER,
@@ -41,6 +53,20 @@ export async function getCityCoinBalance(address) {
     senderAddress: address,
   });
   return result.value.value.toNumber();
+}
+
+export async function getCityCoinTotalSupply() {
+  const result = await callReadOnlyFunction({
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_TOKEN,
+    functionName: 'get-total-supply',
+    functionArgs: [],
+    network: NETWORK,
+    senderAddress: GENESIS_CONTRACT_ADDRESS,
+  });
+  const resultJson = cvToJSON(result);
+  console.log(resultJson.value.value);
+  return resultJson.value.value;
 }
 
 export async function getMiningActivationStatus() {

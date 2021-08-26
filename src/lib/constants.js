@@ -31,6 +31,8 @@ export const CITYCOIN_AUTH = testnet ? 'citycoin-auth' : 'miamicoin-auth';
 export const CITYCOIN_TOKEN = testnet ? 'citycoin-token' : 'miamicoin-token';
 export const CITYCOIN_NAME = testnet ? 'citycoins' : 'miamicoin';
 export const CITYCOIN_SYMBOL = testnet ? '$CITY' : '$MIA';
+export const MIAMICOIN_START_BLOCK = 24497;
+export const MIAMICOIN_MIA_WALLET = 'SM2MARAVW6BEJCD13YV2RHGYHQWT7TDDNMNRB1MVT';
 export const REWARD_CYCLE_LENGTH = mainnet ? 2100 : 50;
 
 export const STACKS_API_URL = localNode
