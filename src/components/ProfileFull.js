@@ -71,6 +71,16 @@ export function ProfileFull({ stxAddress, userSession }) {
             <li>
               <a
                 className="dropdown-item"
+                href={'http://miamining.com/history/' + stxAddress}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <i className="bi bi-box-arrow-up-right"></i> View on MIA Block Explorer
+              </a>
+            </li>
+            <li>
+              <a
+                className="dropdown-item"
                 href={'https://explorer.stacks.co/address/' + stxAddress}
                 target="_blank"
                 rel="noreferrer"
