@@ -23,6 +23,7 @@ export function CityCoinMining({ ownerStxAddress }) {
   const amountRef = useRef();
   const mineManyRef = useRef();
   const memoRef = useRef();
+  const sameAmountForAllRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const [isError, setError] = useState();
@@ -188,9 +189,9 @@ export function CityCoinMining({ ownerStxAddress }) {
             placeholder="Number of Blocks to Mine?"
             ref={mineManyRef}
             onChange={event => {
-              setNumberOfBlocks(event.target.value);
+              setNumberOfBlocks(event.target.value.trim());
               setBlockAmounts([]);
-              updateValue(event.target.value);
+              updateValue(event.target.value.trim());
             }}
             value={numberOfBlocks}
             id="mineMany"
@@ -221,6 +222,18 @@ export function CityCoinMining({ ownerStxAddress }) {
           maxLength="34"
           hidden={numberOfBlocks != 1}
         />
+        <div className="form-check" hidden={numberOfBlocks == 1}>
+          <input
+            ref={sameAmountForAllRef}
+            className="form-check-input"
+            type="checkbox"
+            value=""
+            id="sameAmountForAll"
+          />
+          <label className="form-check-label" htmlFor="sameAmountForAll">
+            Use same amount for all blocks?
+          </label>
+        </div>
         <div className="input-group">
           {blockAmounts.map(b => {
             return (
@@ -235,7 +248,7 @@ export function CityCoinMining({ ownerStxAddress }) {
                     const amount = e.target.value;
                     setBlockAmounts(currentBlock =>
                       currentBlock.map(x =>
-                        x.num === b.num
+                        x.num === b.num || sameAmountForAllRef.current.checked
                           ? {
                               ...x,
                               amount,
@@ -246,7 +259,7 @@ export function CityCoinMining({ ownerStxAddress }) {
                     setButtonLabel(`Mine for ${numberOfBlocks} blocks`);
                   }}
                   value={b.amount}
-                  placeholder="STX Amount"
+                  placeholder="Amount in STX"
                 />
               </div>
             );
