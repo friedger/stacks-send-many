@@ -243,12 +243,6 @@ export function CityCoinMining({ ownerStxAddress }) {
                           : x
                       )
                     );
-                    var sumArray = [];
-                    for (let i = 0; i < numberOfBlocks; i++)
-                      sumArray.push(parseInt(blockAmounts[i].amount));
-                    sumArray = sumArray.filter(function (value) {
-                      return !Number.isNaN(value);
-                    });
                     setButtonLabel(`Mine for ${numberOfBlocks} blocks`);
                   }}
                   value={b.amount}
