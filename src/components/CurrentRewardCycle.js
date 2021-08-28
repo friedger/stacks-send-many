@@ -13,12 +13,16 @@ export function CurrentRewardCycle() {
   }, [setBlockHeight]);
 
   useEffect(() => {
-    refreshRewardCycle(26600);
-  }, [setRewardCycle]);
+    refreshRewardCycle(setRewardCycle, blockHeight.value);
+  }, [setRewardCycle, blockHeight.value]);
 
-  if (!isNaN(rewardCycle.value)) {
-    return <p>Current Reward Cycle: {rewardCycle.value}</p>;
+  if (rewardCycle.loading) {
+    return <p>Loading reward cycle..</p>
   } else {
-    return <p>Current Reward Cycle: Unknown</p>;
+    if (!isNaN(rewardCycle.value)) {
+      return <p>Current Reward Cycle: {rewardCycle.value}</p>;
+    } else {
+      return <p>Current Reward Cycle: Unknown</p>;
+    }
   }
 }

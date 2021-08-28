@@ -1,4 +1,4 @@
-import { callReadOnlyFunction, cvToJSON, uintCV } from '@stacks/transactions';
+import { callReadOnlyFunction, ClarityType, cvToJSON, uintCV } from '@stacks/transactions';
 import { atom } from 'jotai';
 import {
   CITYCOIN_CORE,
@@ -29,26 +29,33 @@ export async function refreshBlockHeight(block) {
   }
 }
 
-export async function refreshRewardCycle(cycle) {
-  try {
-    cycle(v => {
-      return { value: v.value, loading: true };
-    });
-    const resultCV = await callReadOnlyFunction({
-      contractAddress: CONTRACT_DEPLOYER,
-      contractName: CITYCOIN_CORE,
-      functionName: 'get-reward-cycle',
-      functionArgs: [uintCV(cycle.value)],
-      network: NETWORK,
-      senderAddress: CONTRACT_DEPLOYER,
-    });
-    const resultJSON = cvToJSON(resultCV);
-    console.log(`resultJSON: ${resultJSON}`);
-    cycle(() => {
-      return { value: cycle.value, loading: false };
-    });
-  } catch (e) {
-    console.log(e);
+export async function refreshRewardCycle(cycle, blockHeight) {
+  if (blockHeight) {
+    try {
+      cycle(v => {
+        return { value: v.value, loading: true };
+      });
+      const resultCV = await callReadOnlyFunction({
+        contractAddress: CONTRACT_DEPLOYER,
+        contractName: CITYCOIN_CORE,
+        functionName: 'get-reward-cycle',
+        functionArgs: [uintCV(blockHeight)],
+        network: NETWORK,
+        senderAddress: CONTRACT_DEPLOYER,
+      });
+
+      cycle(() => {
+        let value;
+        if (resultCV.type === ClarityType.OptionalSome) {
+          value = resultCV.value.value.toNumber();
+        } else {
+          value = 'not found';
+        }
+        return { value, loading: false };
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 
