@@ -64,7 +64,7 @@ export function fetchAccount(addressAsString) {
       .getAccountBalance({ principal: addressAsString })
       .then(response => response.stx);
   } else {
-    return Promise.reject();
+    return Promise.reject("addressAsString not defined");
   }
 }
 

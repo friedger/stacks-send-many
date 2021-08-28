@@ -40,9 +40,11 @@ export function CityCoinMining({ ownerStxAddress }) {
   const { doContractCall } = useConnect();
 
   useEffect(() => {
-    fetchAccount(ownerStxAddress).then(acc => {
-      setProfileState({ account: acc });
-    });
+    if (ownerStxAddress) {
+      fetchAccount(ownerStxAddress).then(acc => {
+        setProfileState({ account: acc });
+      });
+    }
   }, [ownerStxAddress]);
 
   const canBeSubmitted = () => {
