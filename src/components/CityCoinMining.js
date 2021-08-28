@@ -81,24 +81,24 @@ export function CityCoinMining({ ownerStxAddress }) {
       console.log(`mineMany: ${mineMany}`);
 
       let amountUstx = 0;
-      let amountUstxCV = uintCV(0);
+      let totalUstxCV = uintCV(0);
       let memo = '';
       let memoCV = noneCV();
-      let sumArray = [];
       let mineManyArray = [];
+      let sum = 0;
 
       if (mineMany) {
+        let amount;
         for (let i = 0; i < numberOfBlocks; i++) {
-          sumArray.push(parseInt(blockAmounts[i].amount));
-        }
-        var sum = uintCV(sumArray.reduce((a, b) => a + b, 0) * 1000000);
-        for (let i = 0; i < numberOfBlocks; i++) {
-          mineManyArray.push(uintCV(blockAmounts[i].amount * 1000000));
+          amount = Math.floor(parseFloat(blockAmounts[i].amount) * 1000000);
+          mineManyArray.push(uintCV(amount));
+          sum += amount;
         }
         mineManyArray = listCV(mineManyArray);
+        totalUstxCV = uintCV(sum);
       } else {
         amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
-        amountUstxCV = uintCV(amountUstx);
+        totalUstxCV = uintCV(amountUstx);
         memo = memoRef.current.value.trim();
         memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
       }
@@ -126,13 +126,13 @@ export function CityCoinMining({ ownerStxAddress }) {
             contractAddress: CONTRACT_DEPLOYER,
             contractName: CITYCOIN_CORE,
             functionName: mineMany ? 'mine-many' : 'mine-tokens',
-            functionArgs: mineMany ? [mineManyArray] : [amountUstxCV, memoCV],
+            functionArgs: mineMany ? [mineManyArray] : [totalUstxCV, memoCV],
             postConditionMode: PostConditionMode.Deny,
             postConditions: [
               makeStandardSTXPostCondition(
                 ownerStxAddress,
                 FungibleConditionCode.Equal,
-                mineMany ? sum.value : amountUstxCV.value
+                totalUstxCV.value
               ),
             ],
             anchorMode: AnchorMode.OnChainOnly,
