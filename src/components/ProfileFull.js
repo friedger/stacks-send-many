@@ -20,9 +20,11 @@ export function ProfileFull({ stxAddress, userSession }) {
   }, [setStxUsd]);
 
   useEffect(() => {
-    fetchAccount(stxAddress).then(acc => {
-      setProfileState({ account: acc });
-    });
+    if (stxAddress) {
+      fetchAccount(stxAddress).then(acc => {
+        setProfileState({ account: acc });
+      });
+    }
   }, [stxAddress]);
 
   return (
@@ -66,6 +68,16 @@ export function ProfileFull({ stxAddress, userSession }) {
             Actions
           </button>
           <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li>
+              <a
+                className="dropdown-item"
+                href={'http://miamining.com/history/' + stxAddress}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <i className="bi bi-box-arrow-up-right"></i> View on MIA Block Explorer
+              </a>
+            </li>
             <li>
               <a
                 className="dropdown-item"
@@ -117,6 +129,7 @@ export function ProfileFull({ stxAddress, userSession }) {
           )}
           <hr />
           <CurrentBlockHeight />
+          <CurrentRewardCycle />
         </div>
       </div>{' '}
     </div>

@@ -8,15 +8,26 @@ import { mocknet, testnet } from './constants';
 export function useStxAddresses(userSession) {
   const [ownerStxAddress, setOwnerStxAddress] = useState();
   const [appStxAddress, setAppStxAddress] = useState();
+  const authenticated = userSession && userSession.isUserSignedIn();
   useEffect(() => {
-    if (userSession && userSession.isUserSignedIn()) {
-      getUserData(userSession).then(userData => {
-        const { address } = getStacksAccount(userData.appPrivateKey);
-        setAppStxAddress(addressToString(address));
-        setOwnerStxAddress(userData.profile.stxAddress[testnet || mocknet ? 'testnet' : 'mainnet']);
-      });
+    try {
+      if (authenticated && userSession) {
+        getUserData(userSession)
+          .then(userData => {
+            const { address } = getStacksAccount(userData.appPrivateKey);
+            setAppStxAddress(addressToString(address));
+            setOwnerStxAddress(
+              userData.profile.stxAddress[testnet || mocknet ? 'testnet' : 'mainnet']
+            );
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+    } catch (e) {
+      console.log(e);
     }
-  }, [userSession]);
+  }, [userSession, authenticated]);
 
   return { ownerStxAddress, appStxAddress };
 }

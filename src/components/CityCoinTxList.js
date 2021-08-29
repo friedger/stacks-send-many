@@ -242,7 +242,7 @@ function MineManyTransaction({ tx, blockHeight }) {
   return (
     <div className="col-12">
       {tx.contract_call.function_name}
-      <div class="row">{listCvToMiningAmounts(tx.contract_call.function_args[0], blockHeight)}</div>
+      <div className="row">{listCvToMiningAmounts(tx.contract_call.function_args[0], blockHeight)}</div>
     </div>
   );
 }

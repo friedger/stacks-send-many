@@ -23,6 +23,7 @@ export function CityCoinMining({ ownerStxAddress }) {
   const amountRef = useRef();
   const mineManyRef = useRef();
   const memoRef = useRef();
+  const sameAmountForAllRef = useRef();
   const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
   const [isError, setError] = useState();
@@ -39,9 +40,11 @@ export function CityCoinMining({ ownerStxAddress }) {
   const { doContractCall } = useConnect();
 
   useEffect(() => {
-    fetchAccount(ownerStxAddress).then(acc => {
-      setProfileState({ account: acc });
-    });
+    if (ownerStxAddress) {
+      fetchAccount(ownerStxAddress).then(acc => {
+        setProfileState({ account: acc });
+      });
+    }
   }, [ownerStxAddress]);
 
   const canBeSubmitted = () => {
@@ -81,24 +84,24 @@ export function CityCoinMining({ ownerStxAddress }) {
       console.log(`mineMany: ${mineMany}`);
 
       let amountUstx = 0;
-      let amountUstxCV = uintCV(0);
+      let totalUstxCV = uintCV(0);
       let memo = '';
       let memoCV = noneCV();
-      let sumArray = [];
       let mineManyArray = [];
+      let sum = 0;
 
       if (mineMany) {
+        let amount;
         for (let i = 0; i < numberOfBlocks; i++) {
-          sumArray.push(parseInt(blockAmounts[i].amount));
-        }
-        var sum = uintCV(sumArray.reduce((a, b) => a + b, 0) * 1000000);
-        for (let i = 0; i < numberOfBlocks; i++) {
-          mineManyArray.push(uintCV(blockAmounts[i].amount * 1000000));
+          amount = Math.floor(parseFloat(blockAmounts[i].amount) * 1000000);
+          mineManyArray.push(uintCV(amount));
+          sum += amount;
         }
         mineManyArray = listCV(mineManyArray);
+        totalUstxCV = uintCV(sum);
       } else {
         amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
-        amountUstxCV = uintCV(amountUstx);
+        totalUstxCV = uintCV(amountUstx);
         memo = memoRef.current.value.trim();
         memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
       }
@@ -126,13 +129,13 @@ export function CityCoinMining({ ownerStxAddress }) {
             contractAddress: CONTRACT_DEPLOYER,
             contractName: CITYCOIN_CORE,
             functionName: mineMany ? 'mine-many' : 'mine-tokens',
-            functionArgs: mineMany ? [mineManyArray] : [amountUstxCV, memoCV],
+            functionArgs: mineMany ? [mineManyArray] : [totalUstxCV, memoCV],
             postConditionMode: PostConditionMode.Deny,
             postConditions: [
               makeStandardSTXPostCondition(
                 ownerStxAddress,
                 FungibleConditionCode.Equal,
-                mineMany ? sum.value : amountUstxCV.value
+                totalUstxCV.value
               ),
             ],
             anchorMode: AnchorMode.OnChainOnly,
@@ -188,9 +191,9 @@ export function CityCoinMining({ ownerStxAddress }) {
             placeholder="Number of Blocks to Mine?"
             ref={mineManyRef}
             onChange={event => {
-              setNumberOfBlocks(event.target.value);
+              setNumberOfBlocks(event.target.value.trim());
               setBlockAmounts([]);
-              updateValue(event.target.value);
+              updateValue(event.target.value.trim());
             }}
             value={numberOfBlocks}
             id="mineMany"
@@ -221,6 +224,18 @@ export function CityCoinMining({ ownerStxAddress }) {
           maxLength="34"
           hidden={numberOfBlocks != 1}
         />
+        <div className="form-check" hidden={numberOfBlocks == 1}>
+          <input
+            ref={sameAmountForAllRef}
+            className="form-check-input"
+            type="checkbox"
+            value=""
+            id="sameAmountForAll"
+          />
+          <label className="form-check-label" htmlFor="sameAmountForAll">
+            Use same amount for all blocks?
+          </label>
+        </div>
         <div className="input-group">
           {blockAmounts.map(b => {
             return (
@@ -235,7 +250,7 @@ export function CityCoinMining({ ownerStxAddress }) {
                     const amount = e.target.value;
                     setBlockAmounts(currentBlock =>
                       currentBlock.map(x =>
-                        x.num === b.num
+                        x.num === b.num || sameAmountForAllRef.current.checked
                           ? {
                               ...x,
                               amount,
@@ -243,16 +258,10 @@ export function CityCoinMining({ ownerStxAddress }) {
                           : x
                       )
                     );
-                    var sumArray = [];
-                    for (let i = 0; i < numberOfBlocks; i++)
-                      sumArray.push(parseInt(blockAmounts[i].amount));
-                    sumArray = sumArray.filter(function (value) {
-                      return !Number.isNaN(value);
-                    });
                     setButtonLabel(`Mine for ${numberOfBlocks} blocks`);
                   }}
                   value={b.amount}
-                  placeholder="STX Amount"
+                  placeholder="Amount in STX"
                 />
               </div>
             );
