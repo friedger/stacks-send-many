@@ -43,6 +43,19 @@ export async function getCityCoinBalance(address) {
   return result.value.value.toNumber();
 }
 
+export async function getCityCoinTotalSupply() {
+  const result = await callReadOnlyFunction({
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_TOKEN,
+    functionName: 'get-total-supply',
+    functionArgs: [],
+    network: NETWORK,
+    senderAddress: GENESIS_CONTRACT_ADDRESS,
+  });
+  const resultJson = cvToJSON(result);
+  return resultJson.value.value;
+}
+
 export async function getMiningActivationStatus() {
   const result = await callReadOnlyFunction({
     contractAddress: CONTRACT_DEPLOYER,

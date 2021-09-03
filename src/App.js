@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Connect } from '@stacks/connect-react';
-import { Router } from '@reach/router';
+import { Router, Link } from '@reach/router';
 import Landing from './pages/Landing';
 import CityCoinRegistration from './pages/CityCoinRegistration';
 import CityCoinActions from './pages/CityCoinActions';
@@ -9,6 +9,7 @@ import { ProfileSmall } from './components/ProfileSmall';
 import { userDataState, userSessionState, useConnect } from './lib/auth';
 import { getMiningActivationStatus } from './lib/citycoin';
 import { useAtom } from 'jotai';
+import { MiamiCoin } from './components/MiamiCoin';
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -47,6 +48,9 @@ export default function App(props) {
           >
             Read the Docs
           </a>
+          <Link to="/mia" className="btn btn-outline-primary">
+            MIA Info
+          </Link>
           <Auth />
         </div>
       </header>
@@ -59,6 +63,7 @@ export default function App(props) {
 function AppBody(props) {
   return <div>{props.children}</div>;
 }
+
 function Content({ userSession }) {
   const authenticated = userSession && userSession.isUserSignedIn();
   const decentralizedID =
@@ -79,7 +84,7 @@ function Content({ userSession }) {
   return (
     <>
       <Router>
-        <AppBody path="/">
+        <AppBody exact path="/">
           {!authenticated && <Landing path="/" />}
           {!miningActivated && (
             <CityCoinRegistration
@@ -89,15 +94,10 @@ function Content({ userSession }) {
             />
           )}
           {decentralizedID && (
-            <>
-              <CityCoinActions
-                path="/"
-                decentralizedID={decentralizedID}
-                userSession={userSession}
-              />
-            </>
+            <CityCoinActions path="/" decentralizedID={decentralizedID} userSession={userSession} />
           )}
         </AppBody>
+        <MiamiCoin path="/mia" />
       </Router>
     </>
   );
