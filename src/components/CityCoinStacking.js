@@ -80,7 +80,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
         Stacked within that cycle.
       </p>
       <p>
-        The first Stacking cycle begins at Block #26597, and to be eligible for rewards during that
+        The next Stacking cycle begins at Block #28697, and to be eligible for rewards during that
         cycle, Stackers must lock their tokens prior to that block.
       </p>
       <p>
