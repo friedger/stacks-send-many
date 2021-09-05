@@ -210,7 +210,47 @@ export async function getPoxLiteInfo() {
   return poxLiteInfo;
 }
 
-export async function getAvailableRewards(stxAddress, userId, cycleId) {
+export async function getStackingRewards(stxAddress, cycleId) {
+  //console.log(`stxAddress: ${stxAddress}`);
+  //console.log(`cycleId: ${cycleId}`);
+  const userId = await getRegisteredMinerId(stxAddress);
+  //console.log(`userId: ${userId}`);
+  const stackingReward = await callReadOnlyFunction({
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
+    functionName: 'get-stacking-reward',
+    functionArgs: [uintCV(userId), uintCV(cycleId)],
+    senderAddress: stxAddress,
+    network: NETWORK,
+  });
+  //console.log(`stackingReward: ${stackingReward.value.toNumber()}`);
+  const cityCoinClaim = await callReadOnlyFunction({
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
+    functionName: 'get-stacker-at-cycle-or-default',
+    functionArgs: [uintCV(cycleId), uintCV(userId)],
+    senderAddress: stxAddress,
+    network: NETWORK,
+  });
+  const cityCoinClaimJson = cvToJSON(cityCoinClaim);
+  //console.log(`cityCoinClaim: ${JSON.stringify(cityCoinClaim)}`);
+  //console.log(`cityCoinClaimJson: ${JSON.stringify(cvToJSON(cityCoinClaim))}`);
+
+  const result = {
+    amountStacked: cityCoinClaimJson.value.amountStacked.value,
+    amountStx: stackingReward.value.toNumber(),
+    amountCityCoin: cityCoinClaimJson.value.toReturn.value,
+    cycleId,
+    stxAddress,
+  };
+
+  return result;
+}
+
+export async function getAvailableRewards(stxAddress, cycleId) {
+  console.log(`stxAddress: ${stxAddress}`);
+  console.log(`cycleId: ${cycleId}`);
+  const userId = await getRegisteredMinerId(stxAddress);
   const stackingReward = await callReadOnlyFunction({
     contractAddress: CONTRACT_DEPLOYER,
     contractName: CITYCOIN_CORE,
@@ -223,7 +263,7 @@ export async function getAvailableRewards(stxAddress, userId, cycleId) {
     contractAddress: CONTRACT_DEPLOYER,
     contractName: CITYCOIN_CORE,
     functionName: 'get-stacker-at-cycle',
-    functionArgs: [uintCV(cycleId), uintCV(await getRegisteredMinerId(stxAddress))],
+    functionArgs: [uintCV(cycleId), uintCV(userId)],
     senderAddress: stxAddress,
     network: NETWORK,
   });
@@ -233,6 +273,7 @@ export async function getAvailableRewards(stxAddress, userId, cycleId) {
     cycleId,
     stxAddress,
   };
+  console.log(`result: ${JSON.stringify(result)}`);
   return result;
 }
 
@@ -283,7 +324,7 @@ export async function getStackingState(stxAddress) {
     const lastCycle = firstCycle + lockPeriod;
 
     for (let i = lastCycle; i >= firstCycle; i--) {
-      state.push(await getAvailableRewards(stxAddress, await getRegisteredMinerId(stxAddress), i));
+      state.push(await getAvailableRewards(stxAddress, i));
     }
   }
   return state;
