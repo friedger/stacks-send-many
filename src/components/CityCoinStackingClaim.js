@@ -105,34 +105,50 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
         <p>Stacking rewards can be claimed after each cycle ends.</p>
       </div>
       {stackingRewards ? (
-        <div className="mb-3">
-          <h4>Cycle {stackingRewards.cycleId} Results</h4>
-          <p>Amount Stacked: {stackingRewards.amountStacked.toLocaleString()} MIA</p>
-          <p>STX Rewards: {(stackingRewards.amountStx / 1000000).toLocaleString()} STX</p>
-          <p>CityCoins to Claim: {stackingRewards.amountCityCoin.toLocaleString()} MIA</p>
-          {stackingRewards.amountStx > 0 || stackingRewards.amountCityCoin > 0 ? (
-            <>
-              <button
-                className="btn btn-block btn-primary my-3"
-                type="button"
-                onClick={claimAction}
-              >
-                <div
-                  role="status"
-                  className={`${
-                    loading ? '' : 'd-none'
-                  } spinner-border spinner-border-sm text-info align-text-top ms-1 me-2`}
-                />
-                Claim Rewards
-              </button>
-              <br />
-              {txId && <TxStatus txId={txId} />}
-            </>
-          ) : (
-            <>
-              <p>Nothing to claim.</p>
-            </>
-          )}
+        <div className="card m-2 col-lg-6">
+          <div className="card-header">
+            <h4>Cycle {stackingRewards.cycleId} Results</h4>
+          </div>
+          <div className="card-body">
+            <div className="row">
+              <div className="col-lg-6">Amount Stacked</div>
+              <div className="col-lg-6">{stackingRewards.amountStacked.toLocaleString()} MIA</div>
+            </div>
+            <div className="row">
+              <div className="col-lg-6">STX Rewards</div>
+              <div className="col-lg-6">
+                {(stackingRewards.amountStx / 1000000).toLocaleString()} STX
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-lg-6">CityCoins to Claim</div>
+              <div className="col-lg-6">{stackingRewards.amountCityCoin.toLocaleString()} MIA</div>
+            </div>
+
+            {stackingRewards.amountStx > 0 || stackingRewards.amountCityCoin > 0 ? (
+              <>
+                <button
+                  className="btn btn-block btn-primary my-3"
+                  type="button"
+                  onClick={claimAction}
+                >
+                  <div
+                    role="status"
+                    className={`${
+                      loading ? '' : 'd-none'
+                    } spinner-border spinner-border-sm text-info align-text-top ms-1 me-2`}
+                  />
+                  Claim Rewards
+                </button>
+                <br />
+                {txId && <TxStatus txId={txId} />}
+              </>
+            ) : (
+              <>
+                <p className="mt-3">Nothing to claim.</p>
+              </>
+            )}
+          </div>
         </div>
       ) : (
         <div className="mb-3">Loading...</div>
