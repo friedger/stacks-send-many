@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import {
   CONTRACT_DEPLOYER,
@@ -17,48 +17,73 @@ import {
   FungibleConditionCode,
   AnchorMode,
 } from '@stacks/transactions';
-import { getStackingState, getFirstStackingBlock } from '../lib/citycoin';
+import {
+  getStackingState,
+  getFirstStackingBlock,
+  getAvailableRewards,
+  getRegisteredMinerId,
+  getStackingRewards,
+} from '../lib/citycoin';
 import { CurrentBlockHeight } from './CurrentBlockHeight';
 import { CurrentRewardCycle } from './CurrentRewardCycle';
+import { TxStatus } from './TxStatus';
 
 export function CityCoinStackingClaim({ ownerStxAddress }) {
   const [loading, setLoading] = useState();
+  const [txId, setTxId] = useState();
   const [stackingState, setStackingState] = useState();
-  const [firstStackingBlock, setFirstStackingBlock] = useState();
+  const [stackingRewards, setStackingRewards] = useState();
   const { doContractCall } = useConnect();
+  const rewardCycleToClaim = useRef();
+  const rewardCycle = 1; //temporary fix
 
   useEffect(() => {
-    getFirstStackingBlock().then(state => setFirstStackingBlock(state));
-  }, [firstStackingBlock]);
-
-  useEffect(() => {
-    ownerStxAddress && getStackingState(ownerStxAddress).then(state => setStackingState(state));
+    ownerStxAddress &&
+      getStackingRewards(ownerStxAddress, rewardCycle).then(result => {
+        setStackingRewards(result);
+      });
   }, [ownerStxAddress]);
 
-  const claimAction = async (targetRewardCycleCV, amountUstxCV, amountCityCoinCV) => {
+  //const checkCycle = async (stxAddress, cycleId) => {
+  //  getStackingRewards(stxAddress, cycleId).then(result => {
+  //    setStackingRewards(result);
+  //    console.log(`result on page: ${JSON.stringify(result)}`);
+  //  });
+  //};
+
+  const claimAction = async () => {
+    const targetRewardCycleCV = uintCV(rewardCycle);
+    const amountUstxCV = uintCV(stackingRewards.amountStx);
+    const amountCityCoinCV = uintCV(stackingRewards.amountCityCoin);
     setLoading(true);
+    let postConditions = [];
+    amountUstxCV.value > 0 &&
+      postConditions.push(
+        makeContractSTXPostCondition(
+          CONTRACT_DEPLOYER,
+          CITYCOIN_CORE,
+          FungibleConditionCode.Equal,
+          amountUstxCV.value
+        )
+      );
+    amountCityCoinCV.value > 0 &&
+      postConditions.push(
+        makeContractFungiblePostCondition(
+          CONTRACT_DEPLOYER,
+          CITYCOIN_CORE,
+          FungibleConditionCode.Equal,
+          amountCityCoinCV.value,
+          createAssetInfo(CONTRACT_DEPLOYER, CITYCOIN_TOKEN, CITYCOIN_NAME)
+        )
+      );
+    console.log(`postConditions: ${JSON.stringify(postConditions.length)}`);
     await doContractCall({
       contractAddress: CONTRACT_DEPLOYER,
       contractName: CITYCOIN_CORE,
       functionName: 'claim-stacking-reward',
       functionArgs: [targetRewardCycleCV],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [
-        makeContractSTXPostCondition(
-          CONTRACT_DEPLOYER,
-          CITYCOIN_CORE,
-          FungibleConditionCode.LessEqual,
-          amountUstxCV.value
-        ),
-        makeContractFungiblePostCondition(
-          CONTRACT_DEPLOYER,
-          CITYCOIN_CORE,
-          FungibleConditionCode.LessEqual,
-          amountCityCoinCV.value,
-          createAssetInfo(CONTRACT_DEPLOYER, CITYCOIN_TOKEN, CITYCOIN_NAME)
-        ),
-      ],
-      anchorMode: AnchorMode.OnChainOnly,
+      postConditions: postConditions,
       network: NETWORK,
       onCancel: () => {
         setLoading(false);
@@ -75,13 +100,43 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
     <>
       <h3>Claim Stacking Rewards</h3>
       <CurrentBlockHeight />
+      <CurrentRewardCycle />
       <div className="my-2">
-        <p>Coming soon!</p>
-        <p>
-          Stacking becomes available at Block #{firstStackingBlock}, and the first claims can be
-          made after Block #{firstStackingBlock + REWARD_CYCLE_LENGTH}.
-        </p>
+        <p>Stacking rewards can be claimed after each cycle ends.</p>
       </div>
+      {stackingRewards ? (
+        <div className="mb-3">
+          <h4>Cycle {stackingRewards.cycleId} Results</h4>
+          <p>Amount Stacked: {stackingRewards.amountStacked.toLocaleString()} MIA</p>
+          <p>STX Rewards: {(stackingRewards.amountStx / 1000000).toLocaleString()} STX</p>
+          <p>CityCoins to Claim: {stackingRewards.amountCityCoin.toLocaleString()} MIA</p>
+          {stackingRewards.amountStx > 0 || stackingRewards.amountCityCoin > 0 ? (
+            <>
+              <button
+                className="btn btn-block btn-primary my-3"
+                type="button"
+                onClick={claimAction}
+              >
+                <div
+                  role="status"
+                  className={`${
+                    loading ? '' : 'd-none'
+                  } spinner-border spinner-border-sm text-info align-text-top ms-1 me-2`}
+                />
+                Claim Rewards
+              </button>
+              <br />
+              {txId && <TxStatus txId={txId} />}
+            </>
+          ) : (
+            <>
+              <p>Nothing to claim.</p>
+            </>
+          )}
+        </div>
+      ) : (
+        <div className="mb-3">Loading...</div>
+      )}
     </>
   );
 }
