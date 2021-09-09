@@ -28,7 +28,9 @@ export function CityCoinDashboard() {
           <div className="col-4">
             <div className="card p-2 m-2">
               <div className="card-body">
-                <h5 className="card-title text-center">Last Block ({currentBlock.value - 1})</h5>
+                <h5 className="card-title text-center">
+                  Last Block ({(currentBlock.value - 1).toLocaleString()})
+                </h5>
                 <CityCoinMiningStats value={currentBlock.value - 1} />
               </div>
             </div>
@@ -36,7 +38,9 @@ export function CityCoinDashboard() {
           <div className="col-4">
             <div className="card p-2 m-2">
               <div className="card-body">
-                <h5 className="card-title text-center">Current Block ({currentBlock.value})</h5>
+                <h5 className="card-title text-center">
+                  Current Block ({currentBlock.value.toLocaleString()})
+                </h5>
                 <CityCoinMiningStats value={currentBlock.value} />
               </div>
             </div>
@@ -44,7 +48,9 @@ export function CityCoinDashboard() {
           <div className="col-4">
             <div className="card p-2 m-2">
               <div className="card-body">
-                <h5 className="card-title text-center">Next Block ({currentBlock.value + 1})</h5>
+                <h5 className="card-title text-center">
+                  Next Block ({(currentBlock.value + 1).toLocaleString()})
+                </h5>
                 <CityCoinMiningStats value={currentBlock.value + 1} />
               </div>
             </div>
