@@ -30,27 +30,24 @@ export function CityCoinMiningStats(blockHeight) {
             <div className="col-lg-6">Amount</div>
             <div className="col-lg-6">
               {totalAmountStx
-                ? parseFloat(totalAmountStx.toFixed(2)).toLocaleString()
-                : 'Loading...'}{' '}
-              STX
+                ? parseFloat(totalAmountStx.toFixed(2)).toLocaleString() + ' STX'
+                : 'Loading...'}
             </div>
           </div>
           <div className="row">
             <div className="col-lg-6">To City</div>
             <div className="col-lg-6">
               {totalAmountToCity
-                ? parseFloat(totalAmountToCity.toFixed(2)).toLocaleString()
-                : 'Loading...'}{' '}
-              STX
+                ? parseFloat(totalAmountToCity.toFixed(2)).toLocaleString() + ' STX'
+                : 'Loading...'}
             </div>
           </div>
           <div className="row">
             <div className="col-lg-6">To Stackers</div>
             <div className="col-lg-6">
               {totalAmountToStackers
-                ? parseFloat(totalAmountToStackers.toFixed(2)).toLocaleString()
-                : 'Loading...'}{' '}
-              STX
+                ? parseFloat(totalAmountToStackers.toFixed(2)).toLocaleString() + ' STX'
+                : 'Loading...'}
             </div>
           </div>
         </>
