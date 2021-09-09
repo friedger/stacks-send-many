@@ -51,7 +51,9 @@ export function CityCoinMiningStats(blockHeight) {
             </div>
           </div>
         </>
-      ) : null}
+      ) : (
+        'Loading...'
+      )}
     </>
   );
 }
