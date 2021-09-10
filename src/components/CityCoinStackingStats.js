@@ -12,7 +12,7 @@ export function CityCoinStackingStats(offset) {
   const [rewardCycle] = useAtom(REWARD_CYCLE);
 
   useEffect(() => {
-    if(!rewardCycle.loading && rewardCycle.initialized) {
+    if(rewardCycle.initialized) {
     getStackingStatsAtCycle(rewardCycle.value + offset.value).then(result => {
       console.log(result);
       setStackingStats(result);

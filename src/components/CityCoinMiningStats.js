@@ -13,7 +13,7 @@ export function CityCoinMiningStats(offset) {
 
 
   useEffect(() => {
-    if(!blockHeight.loading && blockHeight.initialized) {
+    if(blockHeight.initialized) {
       getMiningStatsAtBlock(blockHeight.value + offset.value).then(result => {
         setMiningStats(result);
         setTotalMiners(result.value.value.minersCount.value);
