@@ -31,7 +31,7 @@ export function CityCoinDashboard() {
                 <h5 className="card-title text-center">
                   Last Block ({(currentBlock.value - 1).toLocaleString()})
                 </h5>
-                <CityCoinMiningStats value={currentBlock.value - 1} />
+                <CityCoinMiningStats value={-1} />
               </div>
             </div>
           </div>
@@ -41,7 +41,7 @@ export function CityCoinDashboard() {
                 <h5 className="card-title text-center">
                   Current Block ({currentBlock.value.toLocaleString()})
                 </h5>
-                <CityCoinMiningStats value={currentBlock.value} />
+                <CityCoinMiningStats value={0} />
               </div>
             </div>
           </div>
@@ -51,7 +51,7 @@ export function CityCoinDashboard() {
                 <h5 className="card-title text-center">
                   Next Block ({(currentBlock.value + 1).toLocaleString()})
                 </h5>
-                <CityCoinMiningStats value={currentBlock.value + 1} />
+                <CityCoinMiningStats value={1} />
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@ export function CityCoinDashboard() {
                 <h5 className="card-title text-center">
                   Last Cycle ({currentRewardCycle.value - 1})
                 </h5>
-                <CityCoinStackingStats value={parseInt(currentRewardCycle.value - 1)} />
+                <CityCoinStackingStats value="-1" />
               </div>
             </div>
           </div>
@@ -78,7 +78,7 @@ export function CityCoinDashboard() {
                 <h5 className="card-title text-center">
                   Current Cycle ({currentRewardCycle.value})
                 </h5>
-                <CityCoinStackingStats value={parseInt(currentRewardCycle.value)} />
+                <CityCoinStackingStats value="0" />
               </div>
             </div>
           </div>
@@ -88,7 +88,7 @@ export function CityCoinDashboard() {
                 <h5 className="card-title text-center">
                   Next Cycle ({currentRewardCycle.value + 1})
                 </h5>
-                <CityCoinStackingStats value={parseInt(currentRewardCycle.value + 1)} />
+                <CityCoinStackingStats value="1" />
               </div>
             </div>
           </div>
