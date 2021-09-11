@@ -68,7 +68,7 @@ export function CityCoinDashboard() {
                 <h5 className="card-title text-center">
                   Last Cycle ({currentRewardCycle.initialized ? currentRewardCycle.value - 1 : "loading..."})
                 </h5>
-                <CityCoinStackingStats value="-1" />
+                <CityCoinStackingStats value={-1}/>
               </div>
             </div>
           </div>
@@ -78,7 +78,7 @@ export function CityCoinDashboard() {
                 <h5 className="card-title text-center">
                   Current Cycle ({currentRewardCycle.initialized ? currentRewardCycle.value : "loading..."})
                 </h5>
-                <CityCoinStackingStats value="0" />
+                <CityCoinStackingStats value={0} />
               </div>
             </div>
           </div>
@@ -88,7 +88,7 @@ export function CityCoinDashboard() {
                 <h5 className="card-title text-center">
                   Next Cycle ({currentRewardCycle.initialized ? currentRewardCycle.value + 1 : "loading..."})
                 </h5>
-                <CityCoinStackingStats value="1" />
+                <CityCoinStackingStats value={1} />
               </div>
             </div>
           </div>
