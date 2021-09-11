@@ -29,9 +29,9 @@ export function CityCoinDashboard() {
             <div className="card p-2 m-2">
               <div className="card-body">
                 <h5 className="card-title text-center">
-                  Last Block ({(currentBlock.value - 1).toLocaleString()})
+                  Last Block ({currentBlock.initialized ? (currentBlock.value - 1).toLocaleString() : "loading..."})
                 </h5>
-                <CityCoinMiningStats value={currentBlock.value - 1} />
+                <CityCoinMiningStats value={-1} />
               </div>
             </div>
           </div>
@@ -39,9 +39,9 @@ export function CityCoinDashboard() {
             <div className="card p-2 m-2">
               <div className="card-body">
                 <h5 className="card-title text-center">
-                  Current Block ({currentBlock.value.toLocaleString()})
+                  Current Block ({currentBlock.initialized ? currentBlock.value.toLocaleString() : "loading..."})
                 </h5>
-                <CityCoinMiningStats value={currentBlock.value} />
+                <CityCoinMiningStats value={0} />
               </div>
             </div>
           </div>
@@ -49,9 +49,9 @@ export function CityCoinDashboard() {
             <div className="card p-2 m-2">
               <div className="card-body">
                 <h5 className="card-title text-center">
-                  Next Block ({(currentBlock.value + 1).toLocaleString()})
+                  Next Block ({currentBlock.initialized ? (currentBlock.value + 1).toLocaleString() : "loading..."})
                 </h5>
-                <CityCoinMiningStats value={currentBlock.value + 1} />
+                <CityCoinMiningStats value={1} />
               </div>
             </div>
           </div>
@@ -66,9 +66,9 @@ export function CityCoinDashboard() {
             <div className="card p-2 m-2">
               <div className="card-body">
                 <h5 className="card-title text-center">
-                  Last Cycle ({currentRewardCycle.value - 1})
+                  Last Cycle ({currentRewardCycle.initialized ? currentRewardCycle.value - 1 : "loading..."})
                 </h5>
-                <CityCoinStackingStats value={parseInt(currentRewardCycle.value - 1)} />
+                <CityCoinStackingStats value={-1}/>
               </div>
             </div>
           </div>
@@ -76,9 +76,9 @@ export function CityCoinDashboard() {
             <div className="card p-2 m-2">
               <div className="card-body">
                 <h5 className="card-title text-center">
-                  Current Cycle ({currentRewardCycle.value})
+                  Current Cycle ({currentRewardCycle.initialized ? currentRewardCycle.value : "loading..."})
                 </h5>
-                <CityCoinStackingStats value={parseInt(currentRewardCycle.value)} />
+                <CityCoinStackingStats value={0} />
               </div>
             </div>
           </div>
@@ -86,9 +86,9 @@ export function CityCoinDashboard() {
             <div className="card p-2 m-2">
               <div className="card-body">
                 <h5 className="card-title text-center">
-                  Next Cycle ({currentRewardCycle.value + 1})
+                  Next Cycle ({currentRewardCycle.initialized ? currentRewardCycle.value + 1 : "loading..."})
                 </h5>
-                <CityCoinStackingStats value={parseInt(currentRewardCycle.value + 1)} />
+                <CityCoinStackingStats value={1} />
               </div>
             </div>
           </div>
