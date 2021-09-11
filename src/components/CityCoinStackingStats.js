@@ -20,14 +20,16 @@ export function CityCoinStackingStats(offset) {
       setAmountToken(result.value.amountToken.value);
     });
   }
-  }, [setStackingStats, rewardCycle.value]);
+  }, [rewardCycle.value]);
 
   useEffect(() => {
-    getFirstStacksBlockInRewardCycle(rewardCycle.value).then(result => {
-      console.log(`rewardCycle: ${rewardCycle.value}\nresult: ${result}`);
-      setStackingBlock(result);
-    });
-  }, [setStackingBlock]);
+    if(rewardCycle.initialized) {
+      getFirstStacksBlockInRewardCycle(rewardCycle.value + offset.value).then(result => {
+        console.log(`rewardCycle: ${rewardCycle.value + offset.value}\nresult: ${result}`);
+        setStackingBlock(result);
+      });
+    }
+  }, [rewardCycle.value]);
 
   return (
     <>
