@@ -18,6 +18,7 @@ import {
 } from '@stacks/transactions';
 import { getCityCoinBalance } from '../lib/citycoin';
 import { CurrentBlockHeight } from './CurrentBlockHeight';
+import { CurrentRewardCycle } from './CurrentRewardCycle';
 
 export function CityCoinStacking({ ownerStxAddress }) {
   const amountRefStacking = useRef();
@@ -73,19 +74,40 @@ export function CityCoinStacking({ ownerStxAddress }) {
     <>
       <h3>Stack CityCoins</h3>
       <CurrentBlockHeight />
+      <CurrentRewardCycle />
       <p>
-        Stacking CityCoins locks up the set amount in the contract for a number of reward cycles.
-        Once these reward cycles pass, CityCoin owners are eligible to withdraw their CityCoins in
-        addition to STX commited by miners during that reward cycle, proportionate to the amount
-        Stacked within that cycle.
+        Stacking CityCoins locks them up in the contract for a number of reward cycles. Once these
+        reward cycles pass, CityCoin owners are eligible to withdraw their CityCoins in addition to
+        STX commited by miners during that reward cycle, proportionate to the amount Stacked within
+        that cycle.
       </p>
       <p>
-        The next Stacking cycle begins at Block #28697, and to be eligible for rewards during that
-        cycle, Stackers must lock their tokens prior to that block.
+        The stacking cycles for MiamiCoin can be{' '}
+        <a
+          href="https://docs.citycoins.co/citycoins-core-protocol/stacking-citycoins#reward-cycles"
+          target="_blank"
+          rel="nofollower"
+        >
+          found in the docs
+        </a>
+        , and to be eligible for rewards during a cycle, Stackers must lock their tokens prior to
+        that cycle. You always stack <span className="fst-italic">starting in the next cycle</span>.
       </p>
       <p>
-        You can submit for up to 32 cycles max, and will not be able to participate for one cycle
-        when it ends (also called a "cooldown period").
+        Cycles are 2,100 Stacks blocks in length, or about two weeks, and you can submit for up to
+        32 cycles max. The CityCoins are transferred to the contract, and after the selected cycles
+        end there is a "cooldown period" of 1 cycle before you can stack again.
+      </p>
+      <p>
+        For more information on stacking, please read the{' '}
+        <a
+          href="https://docs.citycoins.co/citycoins-core-protocol/stacking-citycoins#common-questions"
+          target="_blank"
+          rel="nofollower"
+        >
+          common questions in the documentation
+        </a>
+        .
       </p>
       <form>
         <div className="input-group mb-3">

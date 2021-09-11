@@ -11,17 +11,9 @@ import {
   transactionsApi,
 } from '../lib/constants';
 import { Address } from './Address';
-import { CityCoinMiningStats } from './CityCoinMiningStats';
-import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
-import { useAtom } from 'jotai';
 
 export function CityCoinTxList() {
   const [txs, setTxs] = useState();
-  const [currentBlock, setCurrentBlock] = useAtom(BLOCK_HEIGHT);
-
-  useEffect(() => {
-    refreshBlockHeight(setCurrentBlock);
-  }, [setCurrentBlock]);
 
   const updateTxs = async () => {
     try {
@@ -68,85 +60,54 @@ export function CityCoinTxList() {
     const blockHeights = txs ? Object.keys(txs).sort().reverse() : undefined;
     return (
       <>
-        <h3>Activity Log</h3>
-        <div className="container">
-          <div className="row">
-            <div className="col-4">
-              <div className="card p-2 m-2">
-                <div className="card-body">
-                  <h5 className="card-title text-center">Last Block ({currentBlock.value - 1})</h5>
-                  <CityCoinMiningStats value={currentBlock.value - 1} />
-                </div>
-              </div>
-            </div>
-            <div className="col-4">
-              <div className="card p-2 m-2">
-                <div className="card-body">
-                  <h5 className="card-title text-center">Current Block ({currentBlock.value})</h5>
-                  <CityCoinMiningStats value={currentBlock.value} />
-                </div>
-              </div>
-            </div>
-            <div className="col-4">
-              <div className="card p-2 m-2">
-                <div className="card-body">
-                  <h5 className="card-title text-center">Next Block ({currentBlock.value + 1})</h5>
-                  <CityCoinMiningStats value={currentBlock.value + 1} />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="accordion accordion-flush" id="accordionActivityLog">
-            {blockHeights.map((blockHeight, key) => (
-              <Fragment key={key}>
-                <div className="accordion-item">
-                  <h2
-                    className="accordion-header"
-                    id={`accordionActivityLog-heading-${converter.toWords(key + 1)}`}
+        <div className="accordion accordion-flush" id="accordionActivityLog">
+          {blockHeights.map((blockHeight, key) => (
+            <Fragment key={key}>
+              <div className="accordion-item">
+                <h2
+                  className="accordion-header"
+                  id={`accordionActivityLog-heading-${converter.toWords(key + 1)}`}
+                >
+                  <button
+                    className="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target={`#accordionActivityLog-activity-${converter.toWords(key + 1)}`}
+                    aria-expanded="false"
+                    aria-controls={`accordionActivityLog-activity-${converter.toWords(key + 1)}`}
                   >
-                    <button
-                      className="accordion-button collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target={`#accordionActivityLog-activity-${converter.toWords(
-                        key + 1
-                      )}`}
-                      aria-expanded="false"
-                      aria-controls={`accordionActivityLog-activity-${converter.toWords(key + 1)}`}
-                    >
-                      Stacks Block #{blockHeight} (
-                      <Timestamp tx={txs[blockHeight][0]} />)
-                    </button>
-                  </h2>
+                    Stacks Block #{blockHeight} (
+                    <Timestamp tx={txs[blockHeight][0]} />)
+                  </button>
+                </h2>
 
-                  <div
-                    id={`accordionActivityLog-activity-${converter.toWords(key + 1)}`}
-                    className="accordion-collapse collapse"
-                    aria-labelledby={`accordionActivityLog-heading-${converter.toWords(key + 1)}`}
-                    data-bs-parent="#accordionActivityLog"
-                  >
-                    <div className="accordion-body">
-                      {txs[blockHeight].map((tx, txKey) => {
-                        return (
-                          <div className="card p-2 m-2" key={txKey}>
-                            <div className="row pl-4">{transactionByType(tx, blockHeight)}</div>
-                            <div className="row pl-4 mb-2">
-                              <Details tx={tx} />
-                            </div>
+                <div
+                  id={`accordionActivityLog-activity-${converter.toWords(key + 1)}`}
+                  className="accordion-collapse collapse"
+                  aria-labelledby={`accordionActivityLog-heading-${converter.toWords(key + 1)}`}
+                  data-bs-parent="#accordionActivityLog"
+                >
+                  <div className="accordion-body">
+                    {txs[blockHeight].map((tx, txKey) => {
+                      return (
+                        <div className="card p-2 m-2" key={txKey}>
+                          <div className="row pl-4">{transactionByType(tx, blockHeight)}</div>
+                          <div className="row pl-4 mb-2">
+                            <Details tx={tx} />
                           </div>
-                        );
-                      })}
-                    </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-              </Fragment>
-            ))}
-          </div>
+              </div>
+            </Fragment>
+          ))}
         </div>
       </>
     );
   } else {
-    return null;
+    return 'Loading...';
   }
 }
 
@@ -242,7 +203,9 @@ function MineManyTransaction({ tx, blockHeight }) {
   return (
     <div className="col-12">
       {tx.contract_call.function_name}
-      <div className="row">{listCvToMiningAmounts(tx.contract_call.function_args[0], blockHeight)}</div>
+      <div className="row">
+        {listCvToMiningAmounts(tx.contract_call.function_args[0], blockHeight)}
+      </div>
     </div>
   );
 }

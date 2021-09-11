@@ -210,6 +210,30 @@ export async function getPoxLiteInfo() {
   return poxLiteInfo;
 }
 
+export async function getStackingStatsAtCycle(cycleId) {
+  const stackingStats = await callReadOnlyFunction({
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
+    functionName: 'get-stacking-stats-at-cycle-or-default',
+    functionArgs: [uintCV(cycleId)],
+    senderAddress: GENESIS_CONTRACT_ADDRESS,
+    network: NETWORK,
+  });
+  return cvToJSON(stackingStats);
+}
+
+export async function getFirstStacksBlockInRewardCycle(cycleId) {
+  const firstStackingBlock = await callReadOnlyFunction({
+    contractAddress: CONTRACT_DEPLOYER,
+    contractName: CITYCOIN_CORE,
+    functionName: 'get-first-stacks-block-in-reward-cycle',
+    functionArgs: [uintCV(cycleId)],
+    senderAddress: GENESIS_CONTRACT_ADDRESS,
+    network: NETWORK,
+  });
+  return cvToValue(firstStackingBlock);
+}
+
 export async function getStackingRewards(stxAddress, cycleId) {
   //console.log(`stxAddress: ${stxAddress}`);
   //console.log(`cycleId: ${cycleId}`);

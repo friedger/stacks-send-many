@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
 import {
   CONTRACT_DEPLOYER,
@@ -6,7 +6,6 @@ import {
   CITYCOIN_TOKEN,
   CITYCOIN_NAME,
   NETWORK,
-  REWARD_CYCLE_LENGTH,
 } from '../lib/constants';
 import {
   uintCV,
@@ -15,15 +14,8 @@ import {
   makeContractFungiblePostCondition,
   createAssetInfo,
   FungibleConditionCode,
-  AnchorMode,
 } from '@stacks/transactions';
-import {
-  getStackingState,
-  getFirstStackingBlock,
-  getAvailableRewards,
-  getRegisteredMinerId,
-  getStackingRewards,
-} from '../lib/citycoin';
+import { getStackingRewards } from '../lib/citycoin';
 import { CurrentBlockHeight } from './CurrentBlockHeight';
 import { CurrentRewardCycle } from './CurrentRewardCycle';
 import { TxStatus } from './TxStatus';
@@ -31,10 +23,8 @@ import { TxStatus } from './TxStatus';
 export function CityCoinStackingClaim({ ownerStxAddress }) {
   const [loading, setLoading] = useState();
   const [txId, setTxId] = useState();
-  const [stackingState, setStackingState] = useState();
   const [stackingRewards, setStackingRewards] = useState();
   const { doContractCall } = useConnect();
-  const rewardCycleToClaim = useRef();
   const rewardCycle = 1; //temporary fix
 
   useEffect(() => {
@@ -43,13 +33,6 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
         setStackingRewards(result);
       });
   }, [ownerStxAddress]);
-
-  //const checkCycle = async (stxAddress, cycleId) => {
-  //  getStackingRewards(stxAddress, cycleId).then(result => {
-  //    setStackingRewards(result);
-  //    console.log(`result on page: ${JSON.stringify(result)}`);
-  //  });
-  //};
 
   const claimAction = async () => {
     const targetRewardCycleCV = uintCV(rewardCycle);
@@ -76,7 +59,6 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
           createAssetInfo(CONTRACT_DEPLOYER, CITYCOIN_TOKEN, CITYCOIN_NAME)
         )
       );
-    console.log(`postConditions: ${JSON.stringify(postConditions.length)}`);
     await doContractCall({
       contractAddress: CONTRACT_DEPLOYER,
       contractName: CITYCOIN_CORE,
@@ -90,11 +72,10 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
       },
       onFinish: result => {
         setLoading(false);
+        setTxId(result.txId);
       },
     });
   };
-
-  // TODO: add txstatus back to correlate with each claim button state
 
   return (
     <>
@@ -156,125 +137,3 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
     </>
   );
 }
-
-/*
-{stackingState && stackingState.length > 0 ? (
-        <>
-          <div className="accordion accordion-flush" id="accordionExample">
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="headingOne">
-                <button
-                  className="accordion-button"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseOne"
-                  aria-expanded="true"
-                  aria-controls="collapseOne"
-                >
-                  Reward Cycle #3
-                </button>
-              </h2>
-              <div
-                id="collapseOne"
-                className="accordion-collapse collapse show"
-                aria-labelledby="headingOne"
-                data-bs-parent="#accordionExample"
-              >
-                <div className="accordion-body">
-                  <strong>This is the first item's accordion body.</strong> It is shown by default,
-                  until the collapse plugin adds the appropriate classes that we use to style each
-                  element. These classes control the overall appearance, as well as the showing and
-                  hiding via CSS transitions. You can modify any of this with custom CSS or
-                  overriding our default variables. It's also worth noting that just about any HTML
-                  can go within the <code>.accordion-body</code>, though the transition does limit
-                  overflow.
-                </div>
-              </div>
-            </div>
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="headingTwo">
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseTwo"
-                  aria-expanded="false"
-                  aria-controls="collapseTwo"
-                >
-                  Reward Cycle #2
-                </button>
-              </h2>
-              <div
-                id="collapseTwo"
-                className="accordion-collapse collapse"
-                aria-labelledby="headingTwo"
-                data-bs-parent="#accordionExample"
-              >
-                <div className="accordion-body">
-                  <strong>This is the second item's accordion body.</strong> It is hidden by
-                  default, until the collapse plugin adds the appropriate classes that we use to
-                  style each element. These classes control the overall appearance, as well as the
-                  showing and hiding via CSS transitions. You can modify any of this with custom CSS
-                  or overriding our default variables. It's also worth noting that just about any
-                  HTML can go within the <code>.accordion-body</code>, though the transition does
-                  limit overflow.
-                </div>
-              </div>
-            </div>
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="headingThree">
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseThree"
-                  aria-expanded="false"
-                  aria-controls="collapseThree"
-                >
-                  Reward Cycle #1
-                </button>
-              </h2>
-              <div
-                id="collapseThree"
-                className="accordion-collapse collapse"
-                aria-labelledby="headingThree"
-                data-bs-parent="#accordionExample"
-              >
-                <div className="accordion-body">
-                  <strong>This is the third item's accordion body.</strong> It is hidden by default,
-                  until the collapse plugin adds the appropriate classes that we use to style each
-                  element. These classes control the overall appearance, as well as the showing and
-                  hiding via CSS transitions. You can modify any of this with custom CSS or
-                  overriding our default variables. It's also worth noting that just about any HTML
-                  can go within the <code>.accordion-body</code>, though the transition does limit
-                  overflow.
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            {stackingState.map((details, key) => (
-              <div className="col-3 card" key={key}>
-                <div className="card-header">Cycle {details.cycleId}</div>
-                <div className="card-body">
-                  <p>{(details.amountSTX / 1000000).toLocaleString()} STX</p>
-                  <p>{details.amountCC.toLocaleString()} CityCoins</p>
-                  <button
-                    className="btn btn-outline-primary"
-                    onClick={() =>
-                      claimAction(
-                        uintCV(details.cycleId),
-                        uintCV(details.amountSTX),
-                        uintCV(details.amountCC)
-                      )
-                    }
-                  >
-                    Claim
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
-      ) : loading ? null : 
-*/

@@ -8,23 +8,23 @@ import {
   STACKS_API_V2_INFO,
 } from './constants';
 
-export const BLOCK_HEIGHT = atom({ value: 0, loading: false });
-export const REWARD_CYCLE = atom({ value: 0, loading: false });
+export const BLOCK_HEIGHT = atom({ value: 0, loading: false, initialized: false });
+export const REWARD_CYCLE = atom({ value: 0, loading: false, initialized: false });
 
 export async function refreshBlockHeight(block) {
   try {
     block(v => {
-      return { value: v.value, loading: true };
+      return { value: v.value, loading: true, initialized: v.initialized };
     });
     const result = await fetch(STACKS_API_V2_INFO);
     const resultJson = await result.json();
     block(() => {
-      return { value: resultJson?.stacks_tip_height, loading: false };
+      return { value: resultJson?.stacks_tip_height, loading: false, initialized: true };
     });
   } catch (e) {
     console.log(e);
     block(v => {
-      return { value: v.value, loading: false };
+      return { value: v.value, loading: false, initialized: true };
     });
   }
 }
@@ -33,7 +33,7 @@ export async function refreshRewardCycle(cycle, blockHeight) {
   if (blockHeight) {
     try {
       cycle(v => {
-        return { value: v.value, loading: true };
+        return { value: v.value, loading: true, initialized: v.initialized };
       });
       const resultCV = await callReadOnlyFunction({
         contractAddress: CONTRACT_DEPLOYER,
@@ -51,7 +51,7 @@ export async function refreshRewardCycle(cycle, blockHeight) {
         } else {
           value = 'not found';
         }
-        return { value, loading: false };
+        return { value, loading: false, initialized: true};
       });
     } catch (e) {
       console.log(e);
