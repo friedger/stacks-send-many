@@ -266,7 +266,7 @@ export function SendManyInputContainer() {
       .map(entry => entry.split(','))
       .map(entryParts => {
         return {
-          to: entryParts[0].trim().replace('-', '.'),
+          to: entryParts[0].trim().replace(/-([^-]*)$/, '.$1'),
           stx: entryParts[1].trim(),
           memo: entryParts.length > 2 ? entryParts[2].trim() : undefined,
         };
