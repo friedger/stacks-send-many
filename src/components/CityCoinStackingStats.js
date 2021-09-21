@@ -45,7 +45,7 @@ export function CityCoinStackingStats(offset) {
             <div className="col-lg-6">End Block</div>
             <div className="col-lg-6">
               {stackingBlock
-                ? (stackingBlock + REWARD_CYCLE_LENGTH).toLocaleString()
+                ? (stackingBlock + REWARD_CYCLE_LENGTH - 1).toLocaleString()
                 : 'Loading...'}
             </div>
           </div>
