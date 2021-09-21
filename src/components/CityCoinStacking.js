@@ -86,7 +86,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
         <a
           href="https://docs.citycoins.co/citycoins-core-protocol/stacking-citycoins#reward-cycles"
           target="_blank"
-          rel="nofollower"
+          rel="noreferrer"
         >
           found in the docs
         </a>
@@ -103,7 +103,7 @@ export function CityCoinStacking({ ownerStxAddress }) {
         <a
           href="https://docs.citycoins.co/citycoins-core-protocol/stacking-citycoins#common-questions"
           target="_blank"
-          rel="nofollower"
+          rel="noreferrer"
         >
           common questions in the documentation
         </a>
