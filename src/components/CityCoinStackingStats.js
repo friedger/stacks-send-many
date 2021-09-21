@@ -12,18 +12,18 @@ export function CityCoinStackingStats(offset) {
   const [rewardCycle] = useAtom(REWARD_CYCLE);
 
   useEffect(() => {
-    if(rewardCycle.initialized) {
-    getStackingStatsAtCycle(rewardCycle.value + offset.value).then(result => {
-      console.log(result);
-      setStackingStats(result);
-      setAmountStx(result.value.amountUstx.value / 1000000);
-      setAmountToken(result.value.amountToken.value);
-    });
-  }
+    if (rewardCycle.initialized) {
+      getStackingStatsAtCycle(rewardCycle.value + offset.value).then(result => {
+        console.log(result);
+        setStackingStats(result);
+        setAmountStx(result.value.amountUstx.value / 1000000);
+        setAmountToken(result.value.amountToken.value);
+      });
+    }
   }, [rewardCycle.value]);
 
   useEffect(() => {
-    if(rewardCycle.initialized) {
+    if (rewardCycle.initialized) {
       getFirstStacksBlockInRewardCycle(rewardCycle.value + offset.value).then(result => {
         console.log(`rewardCycle: ${rewardCycle.value + offset.value}\nresult: ${result}`);
         setStackingBlock(result);
