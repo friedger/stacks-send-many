@@ -78,7 +78,7 @@ export function CityCoinStackingReward({ ownerStxAddress, rewardCycle }) {
     <>
       {stackingRewards ? (
         <div className="card m-2 col-lg-4">
-          <div className="card-header">
+          <div className="card-header bg-white">
             <h4>Cycle {stackingRewards.cycleId} Results</h4>
           </div>
           <div className="card-body">
