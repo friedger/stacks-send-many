@@ -4,7 +4,10 @@ import { CurrentRewardCycle } from './CurrentRewardCycle';
 import { CityCoinStackingReward } from './CityCoinStackingReward';
 
 export function CityCoinStackingClaim({ ownerStxAddress }) {
-  const rewardCycle = 1; //temporary fix
+  const rewardCycle = 1; // temporary
+
+  // should count backwards from current reward cycle atom
+  // then loop and create needed number of CityCoinStackingReward components
 
   return (
     <>
@@ -17,6 +20,7 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
       <div className="row">
         <CityCoinStackingReward ownerStxAddress={ownerStxAddress} rewardCycle={rewardCycle} />
         <CityCoinStackingReward ownerStxAddress={ownerStxAddress} rewardCycle={rewardCycle + 1} />
+        <CityCoinStackingReward ownerStxAddress={ownerStxAddress} rewardCycle={rewardCycle + 2} />
       </div>
     </>
   );
