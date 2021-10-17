@@ -37,7 +37,15 @@ export function MiamiCoin() {
     });
   }, []);
 
-  const maxSupply = (currentBlock.value - MIAMICOIN_START_BLOCK) * 250000;
+  // hardcoded for now, could use contract interactions
+  const bonusPeriod = 10000;
+  let maxSupply = 0;
+  let blocksPast = currentBlock.value - MIAMICOIN_START_BLOCK;
+  if (blocksPast > bonusPeriod) {
+    maxSupply = bonusPeriod * 250000 + (blocksPast - bonusPeriod) * 100000;
+  } else {
+    maxSupply = (currentBlock.value - MIAMICOIN_START_BLOCK) * 250000;
+  }
 
   return (
     <div className="container pt-3">
