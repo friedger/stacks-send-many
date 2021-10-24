@@ -295,9 +295,6 @@ export function CityCoinMining({ ownerStxAddress }) {
             I confirm that by participating in mining, I understand:
             <ul>
               <li>
-                the City of Miami has not yet officially claimed the MiamiCoin protocol contribution
-              </li>
-              <li>
                 participation does not guarantee winning the rights to claim newly minted $MIA
               </li>
               <li>once STX are sent to the contract, they are not returned</li>
