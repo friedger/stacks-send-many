@@ -21,6 +21,7 @@ export function CityCoinStackingClaim({ ownerStxAddress }) {
         <CityCoinStackingReward ownerStxAddress={ownerStxAddress} rewardCycle={rewardCycle} />
         <CityCoinStackingReward ownerStxAddress={ownerStxAddress} rewardCycle={rewardCycle + 1} />
         <CityCoinStackingReward ownerStxAddress={ownerStxAddress} rewardCycle={rewardCycle + 2} />
+        <CityCoinStackingReward ownerStxAddress={ownerStxAddress} rewardCycle={rewardCycle + 3} />
       </div>
     </>
   );
