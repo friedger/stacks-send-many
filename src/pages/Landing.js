@@ -1,13 +1,12 @@
 import React from 'react';
 import { AlertMobile } from '../components/AlertMobile';
-import SelectCity from '../components/common/SelectCity';
+import NavBar from '../components/common/NavBar';
 import { useConnect } from '../lib/auth';
 
 // Landing page with Stacks Connect for authentication
 
 export default function Landing({ userSession }) {
-  const { handleOpenAuth } = useConnect();
-
+  // TODO: this isn't working
   if (userSession?.isUserSignedIn()) {
     return (
       <div>
@@ -18,6 +17,7 @@ export default function Landing({ userSession }) {
     return (
       <div className="Landing">
         <AlertMobile />
+        <NavBar />
         <div className="jumbotron jumbotron-fluid pt-3 mb-0">
           <div className="container">
             <h1>Introducing CityCoins</h1>

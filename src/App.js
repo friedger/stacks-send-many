@@ -43,11 +43,6 @@ export default function App(props) {
         </div>
         <hr />
         <div className="row align-items-center">
-          <div className="col-md-6 offset-md-3 text-md-center">
-            <NavBar />
-          </div>
-        </div>
-        <div className="row align-items-center">
           <div className="col">
             <Content />
           </div>

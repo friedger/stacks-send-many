@@ -4,6 +4,7 @@ import { useAtom } from 'jotai';
 import { BLOCK_HEIGHT, refreshBlockHeight } from '../../lib/blocks';
 import { MIAMICOIN_MIA_WALLET, MIAMICOIN_START_BLOCK, STACKS_API_URL } from '../../lib/constants';
 import { getCityCoinTotalSupply } from '../../lib/citycoin';
+import NavBar from '../common/NavBar';
 
 // need current block height
 // need start block height
@@ -48,50 +49,53 @@ export default function MiamiCoin() {
   }
 
   return (
-    <div className="container pt-3">
-      <h3>Miami, FL</h3>
-      <p>
-        Current Block Height:{' '}
-        {currentBlock.value > 0 ? currentBlock.value.toLocaleString() : 'Loading...'}
-      </p>
-      <div className="row">
-        <div className="col-md-4">
-          <div className="card p-2 m-2">
-            <div className="card-body">
-              <h5 className="card-title text-center">Max Supply</h5>
-              <p className="text-center">
-                {maxSupply > 0 ? maxSupply.toLocaleString() : 'Loading...'} MIA
-              </p>
+    <>
+      <NavBar />
+      <div className="container pt-3">
+        <h3>Miami, FL</h3>
+        <p>
+          Current Block Height:{' '}
+          {currentBlock.value > 0 ? currentBlock.value.toLocaleString() : 'Loading...'}
+        </p>
+        <div className="row">
+          <div className="col-md-4">
+            <div className="card p-2 m-2">
+              <div className="card-body">
+                <h5 className="card-title text-center">Max Supply</h5>
+                <p className="text-center">
+                  {maxSupply > 0 ? maxSupply.toLocaleString() : 'Loading...'} MIA
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-4">
+            <div className="card p-2 m-2">
+              <div className="card-body">
+                <h5 className="card-title text-center">Total Supply</h5>
+                <p className="text-center">
+                  {currentMiaTotalSupply
+                    ? currentMiaTotalSupply.toLocaleString() + ' MIA'
+                    : 'Loading...'}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-4">
+            <div className="card p-2 m-2">
+              <div className="card-body">
+                <h5 className="card-title text-center">MIA Wallet</h5>
+                <p className="text-center">
+                  {currentMiaBalance ? currentMiaBalance.toLocaleString() + ' STX' : 'Loading...'}
+                </p>
+              </div>
             </div>
           </div>
         </div>
-        <div className="col-md-4">
-          <div className="card p-2 m-2">
-            <div className="card-body">
-              <h5 className="card-title text-center">Total Supply</h5>
-              <p className="text-center">
-                {currentMiaTotalSupply
-                  ? currentMiaTotalSupply.toLocaleString() + ' MIA'
-                  : 'Loading...'}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-4">
-          <div className="card p-2 m-2">
-            <div className="card-body">
-              <h5 className="card-title text-center">MIA Wallet</h5>
-              <p className="text-center">
-                {currentMiaBalance ? currentMiaBalance.toLocaleString() + ' STX' : 'Loading...'}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <Link to="/" className="btn btn-outline-primary">
-        Back Home
-      </Link>
-    </div>
+        <Link to="/" className="btn btn-outline-primary">
+          Back Home
+        </Link>
+      </div>
+    </>
   );
 }
