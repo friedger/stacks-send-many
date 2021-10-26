@@ -13,6 +13,7 @@ import AustinCoin from './components/cities/AustinCoin';
 import MiamiCoin from './components/cities/MiamiCoin';
 import NewYorkCoin from './components/cities/NewYorkCoin';
 import SanFranciscoCoin from './components/cities/SanFranciscoCoin';
+import RTFM from './components/common/RTFM';
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -49,14 +50,7 @@ export default function App(props) {
             <HeaderNav />
           </div>
           <div className="col-md text-center text-md-end text-nowrap pb-3 pb-md-0">
-            <a
-              href="https://docs.citycoins.co"
-              target="_blank"
-              rel="noreferrer"
-              className="nav-link"
-            >
-              <i className="bi bi-info-circle"></i> Read the Docs
-            </a>
+            <RTFM />
           </div>
         </div>
         <hr />

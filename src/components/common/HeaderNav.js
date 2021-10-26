@@ -1,7 +1,7 @@
 export default function HeaderNav() {
   return (
     <nav>
-      <ul className="nav flex-column flex-md-row flex-nowrap align-items-center justify-content-center">
+      <ul className="nav nav-pills flex-column flex-md-row flex-nowrap align-items-center justify-content-center">
         <li className="nav-item">
           <a href="#" className="nav-link active" aria-current="page">
             Dashboard
