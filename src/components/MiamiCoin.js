@@ -12,7 +12,7 @@ import { getCityCoinTotalSupply } from '../lib/citycoin';
 // need mia wallet balance
 // need STX price
 
-export function MiamiCoin() {
+export default function MiamiCoin() {
   const [currentBlock, setCurrentBlock] = useAtom(BLOCK_HEIGHT);
   const [currentMiaBalance, setCurrentMiaBalance] = useState();
   const [currentMiaTotalSupply, setCurrentMiaTotalSupply] = useState();
