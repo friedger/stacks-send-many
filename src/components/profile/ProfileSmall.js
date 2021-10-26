@@ -9,18 +9,17 @@ export function ProfileSmall({ userSession }) {
   if (userSession?.isUserSignedIn()) {
     return (
       <>
-        <div>
-          <a
-            className="btn btn-primary-outline btn-lg"
-            data-bs-toggle="offcanvas"
-            href="#offcanvasProfile"
-            role="button"
-            aria-controls="offcanvasProfile"
-          >
-            <i className="bi bi-person-circle me-2" />
-            {ownerStxAddress ? <Address addr={ownerStxAddress} /> : 'Profile'}
-          </a>
-        </div>
+        <a
+          className="btn btn-primary-outline btn-lg"
+          data-bs-toggle="offcanvas"
+          href="#offcanvasProfile"
+          role="button"
+          aria-controls="offcanvasProfile"
+        >
+          <i className="bi bi-person-circle me-2" />
+          {ownerStxAddress ? <Address addr={ownerStxAddress} /> : 'Profile'}
+        </a>
+
         <ProfileFull stxAddress={ownerStxAddress} userSession={userSession} />
       </>
     );
