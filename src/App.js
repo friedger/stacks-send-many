@@ -8,12 +8,12 @@ import HeaderAuth from './components/common/HeaderAuth';
 import HeaderLogo from './components/common/HeaderLogo';
 import HeaderNav from './components/common/HeaderNav';
 import HeaderTitle from './components/common/HeaderTitle';
+import RTFM from './components/common/RTFM';
 import SelectCity from './components/common/SelectCity';
 import AustinCoin from './components/cities/AustinCoin';
 import MiamiCoin from './components/cities/MiamiCoin';
 import NewYorkCoin from './components/cities/NewYorkCoin';
 import SanFranciscoCoin from './components/cities/SanFranciscoCoin';
-import RTFM from './components/common/RTFM';
 
 export default function App(props) {
   const { authOptions } = useConnect();
