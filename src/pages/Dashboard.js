@@ -4,15 +4,15 @@ import { useConnect } from '../lib/auth';
 
 // Landing page with Stacks Connect for authentication
 
-export default function Landing(props) {
+export default function Dashboard(props) {
   const { handleOpenAuth } = useConnect();
 
   return (
-    <div className="Landing">
+    <div className="Dashboard">
       <AlertMobile />
       <div className="jumbotron jumbotron-fluid pt-3 mb-0">
         <div className="container pt-3">
-          <h1>Introducing CityCoins</h1>
+          <h1>Welcome to the Dashboard</h1>
           <p className="h5">
             CityCoins gives communities the power to improve their cities, while providing crypto
             rewards to individual contributors and city governments alike.
@@ -63,14 +63,14 @@ export default function Landing(props) {
             rel="noreferrer"
             className="btn btn-lg btn-outline-primary mt-4"
           >
-            Read the Docs
+            Connect Wallet
           </a>
           <button
             className="btn btn-lg btn-outline-primary mt-4 ms-3"
             type="button"
             onClick={handleOpenAuth}
           >
-            Get Started!
+            Connect Wallet
           </button>
           <p className="mt-3 fs-6 fst-italic">* Requires the Stacks Web Wallet from Hiro</p>
         </div>

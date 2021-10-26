@@ -4,12 +4,14 @@ import { Router, Link } from '@reach/router';
 import Landing from './pages/Landing';
 import CityCoinRegistration from './pages/CityCoinRegistration';
 import CityCoinActions from './pages/CityCoinActions';
+import Dashboard from './pages/Dashboard';
 import Auth from './components/Auth';
 import { ProfileSmall } from './components/ProfileSmall';
 import { userDataState, userSessionState, useConnect } from './lib/auth';
 import { getMiningActivationStatus } from './lib/citycoin';
 import { useAtom } from 'jotai';
 import { MiamiCoin } from './components/MiamiCoin';
+import "./styles/style.css"
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -54,6 +56,7 @@ export default function App(props) {
           <Auth />
         </div>
       </header>
+      <NavBar />
 
       <Content userSession={userSession} />
     </Connect>
@@ -62,6 +65,62 @@ export default function App(props) {
 
 function AppBody(props) {
   return <div>{props.children}</div>;
+}
+
+function NavBar({ userSession }) {
+  return (
+    <header className="d-flex flex-wrap justify-content-between align-items-center mx-3 py-3 mb-4 border-bottom">
+        <div>
+          <a
+            href="/"
+            className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none"
+          >
+            <img src="/citycoin-icon-blue-reversed-75x75.png" width="75" alt="CityCoins CC Logo" />
+          </a>
+        </div>
+        <div>
+          <span className="h1">CityCoins</span>
+        </div>
+        <div className="btn-group btn-group-lg" role="group" aria-label="CityCoins navigation">
+          <ProfileSmall userSession={userSession} />
+          <button
+            className="btn btn-lg btn-outline-primary mt-4 ms-3"
+            type="button"
+            onClick={null}
+          >
+            Connect Wallet
+          </button>
+        </div>
+        <div class="container mx-auto py-3 mb-4">
+          <div class="row">
+            <div class="col-sm justify-content-left ">
+              <select class="form-select" aria-label="Default select example">
+                <option selected>Select a City</option>
+                  <option value="3">Fort Lauderdale</option>
+                  <option value="2">Jacksonville</option>
+                  <option value="1">Miami</option>
+                  <option value="2">Orlando</option>
+                  <option value="2">Port St. Lucie</option>
+                  <option value="2">St. Petersburg</option>
+                  <option value="2">Tampa</option>
+              </select>
+            </div>
+            <div class="col-sm justify-content-center flex-grow-1">
+            <ul class="nav nav-pills">
+              <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Dashboard</a></li>
+              <li class="nav-item"><a href="#" class="nav-link">Stats</a></li>
+              <li class="nav-item"><a href="#" class="nav-link">Mining</a></li>
+              <li class="nav-item"><a href="#" class="nav-link">Stacking</a></li>
+            </ul>
+            </div>
+            <div class="col-sm justify-content-right">
+              Read the Docs
+            </div>
+          </div>
+        </div>
+      </header>
+      
+  )
 }
 
 function Content({ userSession }) {
@@ -98,6 +157,7 @@ function Content({ userSession }) {
           )}
         </AppBody>
         <MiamiCoin path="/mia" />
+        <Dashboard path="/dashboard" />
       </Router>
     </>
   );
