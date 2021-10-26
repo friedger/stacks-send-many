@@ -37,7 +37,7 @@ export function ProfileFull({ stxAddress, userSession }) {
       <div className="offcanvas-header">
         <h5 className="offcanvas-title" id="offcanvasProfileLabel">
           <a className="navbar-brand" href="/">
-            {stxAddress || typeof stxAddress != 'undefined' ? (
+            {stxAddress || typeof stxAddress !== 'undefined' ? (
               <svg
                 className="rounded-circle bg-white"
                 width="50"
@@ -57,7 +57,7 @@ export function ProfileFull({ stxAddress, userSession }) {
           aria-label="Close"
         ></button>
       </div>
-      <div className="offcanvas-body">
+      <div className="offcanvas-body text-start">
         <div className="dropdown mt-3">
           <button
             className="btn btn-primary dropdown-toggle"
