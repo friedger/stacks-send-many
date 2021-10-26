@@ -46,7 +46,9 @@ export default function Landing({ userSession }) {
                 </p>
               </div>
               <div className="col-md">
-                <h2 className="mt-4">Mining</h2>
+                <h2 className="mt-4">
+                  <i className="bi bi-minecart-loaded"></i> Mining
+                </h2>
                 <p className="h5">
                   Anyone can mine CityCoins by forwarding STX into a CityCoins smart contract on the
                   Stacks blockchain. 30% of the STX that miners forward is sent directly to a
@@ -54,10 +56,12 @@ export default function Landing({ userSession }) {
                 </p>
               </div>
               <div className="col-md">
-                <h2 className="mt-4">Stacking</h2>
+                <h2 className="mt-4">
+                  <i className="bi bi-stack"></i> Stacking
+                </h2>
                 <p className="h5">
                   Anyone can Stack CityCoins by locking them in a CityCoins smart contract for
-                  determined "reward cycles", and recieve a portion of the remaining 70% of the STX
+                  determined reward cycles, and recieve a portion of the remaining 70% of the STX
                   sent by miners.
                 </p>
               </div>
