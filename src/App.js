@@ -6,10 +6,8 @@ import { useAtom } from 'jotai';
 import Landing from './pages/Landing';
 import HeaderAuth from './components/common/HeaderAuth';
 import HeaderLogo from './components/common/HeaderLogo';
-import HeaderNav from './components/common/HeaderNav';
+import NavBar from './components/common/NavBar';
 import HeaderTitle from './components/common/HeaderTitle';
-import RTFM from './components/common/RTFM';
-import SelectCity from './components/common/SelectCity';
 import AustinCoin from './components/cities/AustinCoin';
 import MiamiCoin from './components/cities/MiamiCoin';
 import NewYorkCoin from './components/cities/NewYorkCoin';
@@ -42,18 +40,32 @@ export default function App(props) {
             <HeaderAuth userSession={userSession} />
           </div>
         </div>
+        <hr />
         <div className="row align-items-center">
           <div className="col-md text-md-start pb-3 pb-md-0">
-            <SelectCity />
+            <a
+              href="https://chat.citycoins.co"
+              target="_blank"
+              rel="noreferrer"
+              className="nav-link"
+            >
+              <i className="bi bi-info-circle"></i> Read the Docs
+            </a>
           </div>
           <div className="col-md-6 text-md-center pb-3 pb-md-0">
-            <HeaderNav />
+            <NavBar />
           </div>
           <div className="col-md text-center text-md-end text-nowrap pb-3 pb-md-0">
-            <RTFM />
+            <a
+              href="https://docs.citycoins.co"
+              target="_blank"
+              rel="noreferrer"
+              className="nav-link"
+            >
+              <i className="bi bi-discord"></i> Join the Discord
+            </a>
           </div>
         </div>
-        <hr />
         <div className="row align-items-center">
           <div className="col">
             <Content />

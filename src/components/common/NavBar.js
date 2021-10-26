@@ -1,4 +1,4 @@
-export default function HeaderNav() {
+export default function NavBar() {
   return (
     <nav>
       <ul className="nav nav-pills flex-column flex-md-row flex-nowrap align-items-center justify-content-center">

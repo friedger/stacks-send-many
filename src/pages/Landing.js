@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertMobile } from '../components/AlertMobile';
+import SelectCity from '../components/common/SelectCity';
 import { useConnect } from '../lib/auth';
 
 // Landing page with Stacks Connect for authentication
@@ -66,22 +67,33 @@ export default function Landing({ userSession }) {
                 </p>
               </div>
             </div>
+            <hr />
+            <div className="row align-items-center text-center">
+              <div className="col-md-4 offset-md-4">
+                <SelectCity />
+              </div>
+              <div class="w-100"></div>
+              <div className="col-md">
+                <a
+                  href="https://docs.citycoins.co"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-lg btn-outline-primary"
+                >
+                  Read the Docs
+                </a>
+              </div>
+              <div className="col-md">
+                <button
+                  className="btn btn-lg btn-outline-primary"
+                  type="button"
+                  onClick={handleOpenAuth}
+                >
+                  Get Started!
+                </button>
+              </div>
+            </div>
             <div className="text-center mt-3">
-              <a
-                href="https://docs.citycoins.co"
-                target="_blank"
-                rel="noreferrer"
-                className="btn btn-lg btn-outline-primary mt-4"
-              >
-                Read the Docs
-              </a>
-              <button
-                className="btn btn-lg btn-outline-primary mt-4 ms-3"
-                type="button"
-                onClick={handleOpenAuth}
-              >
-                Get Started!
-              </button>
               <p className="mt-3 fs-6 fst-italic">
                 * Requires the{' '}
                 <a href="https://www.hiro.so/wallet/install-web" target="_blank" rel="noreferrer">
