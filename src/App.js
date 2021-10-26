@@ -12,6 +12,7 @@ import AustinCoin from './components/cities/AustinCoin';
 import MiamiCoin from './components/cities/MiamiCoin';
 import NewYorkCoin from './components/cities/NewYorkCoin';
 import SanFranciscoCoin from './components/cities/SanFranciscoCoin';
+import Footer from './components/common/Footer';
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -42,28 +43,8 @@ export default function App(props) {
         </div>
         <hr />
         <div className="row align-items-center">
-          <div className="col-md text-md-start pb-3 pb-md-0">
-            <a
-              href="https://chat.citycoins.co"
-              target="_blank"
-              rel="noreferrer"
-              className="nav-link"
-            >
-              <i className="bi bi-info-circle"></i> Read the Docs
-            </a>
-          </div>
-          <div className="col-md-6 text-md-center pb-3 pb-md-0">
+          <div className="col-md-6 offset-md-3 text-md-center">
             <NavBar />
-          </div>
-          <div className="col-md text-center text-md-end text-nowrap pb-3 pb-md-0">
-            <a
-              href="https://docs.citycoins.co"
-              target="_blank"
-              rel="noreferrer"
-              className="nav-link"
-            >
-              <i className="bi bi-discord"></i> Join the Discord
-            </a>
           </div>
         </div>
         <div className="row align-items-center">
@@ -72,6 +53,7 @@ export default function App(props) {
           </div>
         </div>
       </div>
+      <Footer />
     </Connect>
   );
 }
