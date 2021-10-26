@@ -36,18 +36,7 @@ export function ProfileFull({ stxAddress, userSession }) {
     >
       <div className="offcanvas-header">
         <h5 className="offcanvas-title" id="offcanvasProfileLabel">
-          <a className="navbar-brand" href="/">
-            {stxAddress || typeof stxAddress !== 'undefined' ? (
-              <svg
-                className="rounded-circle bg-white"
-                width="50"
-                height="50"
-                data-jdenticon-value={stxAddress}
-              />
-            ) : (
-              <img src="/stacks.png" width="50" height="50" alt="Logo" />
-            )}
-          </a>
+          <i className="bi bi-person-circle me-2" />
           {stxAddress ? <Address addr={stxAddress} /> : 'Profile'}{' '}
         </h5>
         <button
@@ -58,7 +47,7 @@ export function ProfileFull({ stxAddress, userSession }) {
         ></button>
       </div>
       <div className="offcanvas-body text-start">
-        <div className="dropdown mt-3">
+        <div className="dropdown">
           <button
             className="btn btn-primary dropdown-toggle"
             type="button"
