@@ -27,39 +27,39 @@ export default function App(props) {
 
   return (
     <Connect authOptions={authOptions}>
-      <div className="container">
+      <div className="container mt-3">
         <div className="row align-items-center justify-content-between text-center mb-3">
-          <div class="col-md text-md-start">
+          <div className="col-md text-md-start pb-3 pb-md-0">
             <HeaderLogo />
           </div>
-          <div class="col-md-6 text-md-center">
+          <div className="col-md-6 text-md-center pb-3 pb-md-0">
             <HeaderTitle />
           </div>
-          <div class="col-md text-md-end text-nowrap">
+          <div className="col-md text-md-end text-nowrap pb-3 pb-md-0">
             <HeaderAuth />
           </div>
         </div>
         <div className="row align-items-center">
-          <div class="col-md text-md-start">
+          <div className="col-md text-md-start pb-3 pb-md-0">
             <SelectCity />
           </div>
-          <div class="col-md-6 text-md-center">
+          <div className="col-md-6 text-md-center pb-3 pb-md-0">
             <HeaderNav />
           </div>
-          <div class="col-md text-md-end text-nowrap">
+          <div className="col-md text-center text-md-end text-nowrap pb-3 pb-md-0">
             <a
               href="https://docs.citycoins.co"
               target="_blank"
               rel="noreferrer"
               className="nav-link"
             >
-              <i class="bi bi-info-circle"></i> Read the Docs
+              <i className="bi bi-info-circle"></i> Read the Docs
             </a>
           </div>
         </div>
         <hr />
         <div className="row align-items-center">
-          <div class="col">
+          <div className="col">
             <Content userSession={userSession} />
           </div>
         </div>
