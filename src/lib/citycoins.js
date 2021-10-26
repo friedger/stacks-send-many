@@ -446,7 +446,7 @@ export async function getStackingReward(contractAddress, contractName, userId, t
 // TODO: add stack-tokens public function
 
 ///////////////////////////////////////////////////////////////////////////////
-// CORE: STACKING REWARDS
+// CORE: STACKING CLAIMS
 ///////////////////////////////////////////////////////////////////////////////
 
 // TODO: add claim-stacking-reward public function

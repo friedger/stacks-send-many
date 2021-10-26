@@ -12,6 +12,7 @@ import { getMiningActivationStatus } from './lib/citycoin';
 import { useAtom } from 'jotai';
 import { MiamiCoin } from './components/MiamiCoin';
 import './styles/style.css';
+import CityCoinsLib from './pages/CityCoinsLib';
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -168,6 +169,7 @@ function Content({ userSession }) {
         </AppBody>
         <MiamiCoin path="/mia" />
         <Dashboard path="/dashboard" />
+        <CityCoinsLib path="/test" />
       </Router>
     </>
   );
