@@ -18,7 +18,7 @@ export default function Landing({ userSession }) {
       <div className="Landing">
         <AlertMobile />
         <div className="jumbotron jumbotron-fluid pt-3 mb-0">
-          <div className="container pt-3">
+          <div className="container">
             <h1>Introducing CityCoins</h1>
             <p className="h5">
               CityCoins gives communities the power to improve their cities, while providing crypto

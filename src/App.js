@@ -3,11 +3,11 @@ import { Connect } from '@stacks/connect-react';
 import { Router } from '@reach/router';
 import { userDataState, userSessionState, useConnect } from './lib/auth';
 import { useAtom } from 'jotai';
+import Landing from './pages/Landing';
 import HeaderAuth from './components/common/HeaderAuth';
 import HeaderLogo from './components/common/HeaderLogo';
 import HeaderNav from './components/common/HeaderNav';
 import HeaderTitle from './components/common/HeaderTitle';
-import Landing from './pages/Landing';
 import SelectCity from './components/common/SelectCity';
 import AustinCoin from './components/cities/AustinCoin';
 import MiamiCoin from './components/cities/MiamiCoin';
@@ -38,7 +38,7 @@ export default function App(props) {
             <HeaderTitle />
           </div>
           <div className="col-md text-md-end text-nowrap pb-3 pb-md-0">
-            <HeaderAuth />
+            <HeaderAuth userSession={userSession} />
           </div>
         </div>
         <div className="row align-items-center">
@@ -62,7 +62,7 @@ export default function App(props) {
         <hr />
         <div className="row align-items-center">
           <div className="col">
-            <Content userSession={userSession} />
+            <Content />
           </div>
         </div>
       </div>
@@ -70,7 +70,7 @@ export default function App(props) {
   );
 }
 
-function Content({ userSession }) {
+function Content() {
   return (
     <>
       <Router>

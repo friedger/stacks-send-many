@@ -1,7 +1,7 @@
 import React from 'react';
 import { ProfileFull } from './ProfileFull';
-import { useStxAddresses } from '../lib/hooks';
-import { Address } from './Address';
+import { useStxAddresses } from '../../lib/hooks';
+import { Address } from '../Address';
 
 export function ProfileSmall({ userSession }) {
   const { ownerStxAddress } = useStxAddresses(userSession);
