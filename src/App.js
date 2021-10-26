@@ -10,7 +10,10 @@ import HeaderNav from './components/common/HeaderNav';
 import HeaderTitle from './components/common/HeaderTitle';
 import SelectCity from './components/common/SelectCity';
 import Landing from './pages/Landing';
-import MiamiCoin from './components/MiamiCoin';
+import AustinCoin from './components/cities/AustinCoin';
+import MiamiCoin from './components/cities/MiamiCoin';
+import NewYorkCoin from './components/cities/NewYorkCoin';
+import SanFranciscoCoin from './components/cities/SanFranciscoCoin';
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -73,7 +76,10 @@ function Content({ userSession }) {
     <>
       <Router>
         <Landing path="/" exact />
+        <AustinCoin path="/atx" />
         <MiamiCoin path="/mia" />
+        <NewYorkCoin path="/nyc" />
+        <SanFranciscoCoin path="/sfo" />
       </Router>
     </>
   );
