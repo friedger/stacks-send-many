@@ -12,7 +12,7 @@ export default function AustinCoin() {
 
   return (
     <div className="container pt-3">
-      <h3>AustinCoin</h3>
+      <h3>Austin, TX</h3>
       <p>
         Current Block Height:{' '}
         {currentBlock.value > 0 ? currentBlock.value.toLocaleString() : 'Loading...'}

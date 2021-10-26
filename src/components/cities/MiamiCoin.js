@@ -49,7 +49,7 @@ export default function MiamiCoin() {
 
   return (
     <div className="container pt-3">
-      <h3>MiamiCoin</h3>
+      <h3>Miami, FL</h3>
       <p>
         Current Block Height:{' '}
         {currentBlock.value > 0 ? currentBlock.value.toLocaleString() : 'Loading...'}

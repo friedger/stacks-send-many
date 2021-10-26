@@ -12,7 +12,7 @@ export default function SanFranciscoCoin() {
 
   return (
     <div className="container pt-3">
-      <h3>SanFranciscoCoin</h3>
+      <h3>San Francisco, CA</h3>
       <p>
         Current Block Height:{' '}
         {currentBlock.value > 0 ? currentBlock.value.toLocaleString() : 'Loading...'}

@@ -12,7 +12,7 @@ export default function NewYorkCoin() {
 
   return (
     <div className="container pt-3">
-      <h3>NewYorkCoin</h3>
+      <h3>New York City, NY</h3>
       <p>
         Current Block Height:{' '}
         {currentBlock.value > 0 ? currentBlock.value.toLocaleString() : 'Loading...'}
