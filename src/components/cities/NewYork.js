@@ -4,7 +4,7 @@ import { useAtom } from 'jotai';
 import { BLOCK_HEIGHT, refreshBlockHeight } from '../../lib/blocks';
 import NavBar from '../common/NavBar';
 
-export default function NewYorkCoin() {
+export default function NewYork() {
   const [currentBlock, setCurrentBlock] = useAtom(BLOCK_HEIGHT);
 
   useEffect(() => {

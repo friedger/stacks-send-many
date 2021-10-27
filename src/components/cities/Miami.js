@@ -13,7 +13,7 @@ import NavBar from '../common/NavBar';
 // need mia wallet balance
 // need STX price
 
-export default function MiamiCoin() {
+export default function Miami() {
   const [currentBlock, setCurrentBlock] = useAtom(BLOCK_HEIGHT);
   const [currentMiaBalance, setCurrentMiaBalance] = useState();
   const [currentMiaTotalSupply, setCurrentMiaTotalSupply] = useState();

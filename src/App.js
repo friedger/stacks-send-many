@@ -6,12 +6,11 @@ import { useAtom } from 'jotai';
 import Landing from './pages/Landing';
 import HeaderAuth from './components/common/HeaderAuth';
 import HeaderLogo from './components/common/HeaderLogo';
-import NavBar from './components/common/NavBar';
 import HeaderTitle from './components/common/HeaderTitle';
-import AustinCoin from './components/cities/AustinCoin';
-import MiamiCoin from './components/cities/MiamiCoin';
-import NewYorkCoin from './components/cities/NewYorkCoin';
-import SanFranciscoCoin from './components/cities/SanFranciscoCoin';
+import Austin from './components/cities/Austin';
+import Miami from './components/cities/Miami';
+import NewYork from './components/cities/NewYork';
+import SanFrancisco from './components/cities/SanFrancisco';
 import Footer from './components/common/Footer';
 
 export default function App(props) {
@@ -58,10 +57,10 @@ function Content() {
     <>
       <Router>
         <Landing path="/" exact />
-        <AustinCoin path="/atx" />
-        <MiamiCoin path="/mia" />
-        <NewYorkCoin path="/nyc" />
-        <SanFranciscoCoin path="/sfo" />
+        <Austin path="/atx" />
+        <Miami path="/mia" />
+        <NewYork path="/nyc" />
+        <SanFrancisco path="/sfo" />
       </Router>
     </>
   );
