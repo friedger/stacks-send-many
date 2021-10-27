@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { Link } from '@reach/router';
 import { useAtom } from 'jotai';
-import { BLOCK_HEIGHT, refreshBlockHeight } from '../../lib/blocks';
-import NavBar from '../common/NavBar';
+import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
+import NavBar from '../components/common/NavBar';
 
-export default function NewYork() {
+export default function Austin() {
   const [currentBlock, setCurrentBlock] = useAtom(BLOCK_HEIGHT);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function NewYork() {
     <>
       <NavBar />
       <div className="container pt-3">
-        <h3>New York City, NY</h3>
+        <h3>Austin, TX</h3>
         <p>
           Current Block Height:{' '}
           {currentBlock.value > 0 ? currentBlock.value.toLocaleString() : 'Loading...'}
@@ -40,7 +40,7 @@ export default function NewYork() {
           <div className="col-md-4">
             <div className="card p-2 m-2">
               <div className="card-body">
-                <h5 className="card-title text-center">NYC Wallet</h5>
+                <h5 className="card-title text-center">ATX Wallet</h5>
                 <p className="text-center">TBD</p>
               </div>
             </div>

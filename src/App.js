@@ -4,13 +4,13 @@ import { Router } from '@reach/router';
 import { userDataState, userSessionState, useConnect } from './lib/auth';
 import { useAtom } from 'jotai';
 import Landing from './pages/Landing';
+import Austin from './pages/Austin';
+import Miami from './pages/Miami';
+import NewYork from './pages/NewYork';
+import SanFrancisco from './pages/SanFrancisco';
 import HeaderAuth from './components/common/HeaderAuth';
 import HeaderLogo from './components/common/HeaderLogo';
 import HeaderTitle from './components/common/HeaderTitle';
-import Austin from './components/cities/Austin';
-import Miami from './components/cities/Miami';
-import NewYork from './components/cities/NewYork';
-import SanFrancisco from './components/cities/SanFrancisco';
 import Footer from './components/common/Footer';
 
 export default function App(props) {

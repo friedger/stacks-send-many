@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from '@reach/router';
 import { useAtom } from 'jotai';
-import { BLOCK_HEIGHT, refreshBlockHeight } from '../../lib/blocks';
-import { MIAMICOIN_MIA_WALLET, MIAMICOIN_START_BLOCK, STACKS_API_URL } from '../../lib/constants';
-import { getCityCoinTotalSupply } from '../../lib/citycoin';
-import NavBar from '../common/NavBar';
+import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
+import { MIAMICOIN_MIA_WALLET, MIAMICOIN_START_BLOCK, STACKS_API_URL } from '../lib/constants';
+import { getCityCoinTotalSupply } from '../lib/citycoin';
+import NavBar from '../components/common/NavBar';
 
 // need current block height
 // need start block height
