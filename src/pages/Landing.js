@@ -1,7 +1,6 @@
 import React from 'react';
 import { AlertMobile } from '../components/AlertMobile';
 import NavBar from '../components/common/NavBar';
-import { useConnect } from '../lib/auth';
 
 // Landing page with Stacks Connect for authentication
 
