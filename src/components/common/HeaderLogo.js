@@ -1,3 +1,5 @@
+import { Link } from '@reach/router';
+import CityCoinLogo from '../../images/CC_StandAlone.svg';
 import MiamiLogo from '../../images/MIA_StandAlone.svg';
 import SanFranciscoLogo from '../../images/SFO_StandAlone.svg';
 
@@ -25,39 +27,51 @@ export default function HeaderLogo(props) {
         aria-labelledby="dropdownCities"
       >
         <li>
-          <p className="dropdown-item-text fw-bold border-bottom ps-3">Choose a City!</p>
+          <Link className="dropdown-item link-primary" to="/">
+            <img src={CityCoinLogo} alt="CityCoins Logo" className="pe-3 w-25 h-25" />
+            Home
+          </Link>
         </li>
         <li>
-          <a class="dropdown-item link-primary" href="#">
+          <hr class="dropdown-divider" />
+        </li>
+        <li>
+          <p className="dropdown-item-text fw-bold ps-3 mb-0">Choose a City!</p>
+        </li>
+        <li>
+          <hr class="dropdown-divider" />
+        </li>
+        <li>
+          <Link className="dropdown-item link-primary" to="/atx">
             <img
               src="https://placeimg.com/25/25/arch"
               alt="Austin Logo"
               className="pe-3 w-25 h-25"
             />
             Austin
-          </a>
+          </Link>
         </li>
         <li>
-          <a class="dropdown-item link-primary" href="#">
+          <Link className="dropdown-item link-primary" to="/mia">
             <img src={MiamiLogo} alt="Miami Logo" className="pe-3 w-25 h-25" />
             Miami
-          </a>
+          </Link>
         </li>
         <li>
-          <a class="dropdown-item link-primary" href="#">
+          <Link className="dropdown-item link-primary" to="/nyc">
             <img
               src="https://placeimg.com/25/25/arch"
               alt="New York Logo"
               className="pe-3 w-25 h-25"
             />
             New York
-          </a>
+          </Link>
         </li>
         <li>
-          <a class="dropdown-item link-primary" href="#">
+          <Link className="dropdown-item link-primary" to="/sfo">
             <img src={SanFranciscoLogo} alt="San Francisco Logo" className="pe-3 w-25 h-25" />
             San Francisco
-          </a>
+          </Link>
         </li>
       </ul>
     </div>
