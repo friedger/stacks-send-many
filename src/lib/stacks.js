@@ -15,7 +15,7 @@ NETWORK.coreApiUrl = STACKS_API_URL;
 export const currentBlockHeight = async () => {
   const response = await fetch(STACKS_API_V2_INFO).then();
   const json = await response.json();
-  console.log(`currentBlockHeight result: ${sum / fees.length}`);
+  console.log(`currentBlockHeight result: ${json.block_height}`);
   return json.block_height;
 };
 
