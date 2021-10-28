@@ -1,28 +1,29 @@
 import { navigate } from '@reach/router';
+import { currentCityList } from '../../store/common';
 
 const navToCity = city => {
   if (city === 'none' || city === undefined) {
     navigate('/');
   } else {
-    navigate(`/${city}`);
+    navigate(`/${city.toLowerCase()}`);
   }
 };
 
 export default function SelectCity() {
-  // TODO: these should be stored somewhere else and iterated over to create this component
+  const cityListArray = Object.entries(currentCityList);
 
   return (
     <select
-      className="form-select w-75 mt-4 mx-auto"
+      className="form-select form-select-lg w-75 mx-auto"
       aria-label="Select a City"
-      defaultValue={'none'}
       onChange={e => navToCity(e.currentTarget.value)}
     >
       <option value="none">Choose a City...</option>
-      <option value="atx">Austin</option>
-      <option value="mia">Miami</option>
-      <option value="nyc">New York City</option>
-      <option value="sfo">San Fransciso</option>
+      {cityListArray.map(([key, value]) => (
+        <option key={key} value={value.symbol}>
+          {value.name}
+        </option>
+      ))}
     </select>
   );
 }

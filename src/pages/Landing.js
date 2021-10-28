@@ -20,7 +20,7 @@ export default function Landing({ userSession }) {
         <div className="jumbotron jumbotron-fluid pt-3 mb-0">
           <div className="container">
             <h1>Introducing CityCoins</h1>
-            <p className="h5">
+            <p className="h5 mb-4">
               CityCoins gives communities the power to improve their cities, while providing crypto
               rewards to individual contributors and city governments alike. Each city has their own
               coin, starting with{' '}

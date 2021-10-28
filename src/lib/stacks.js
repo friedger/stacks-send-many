@@ -1,4 +1,4 @@
-import { stacksMainnet } from '@stacks/network';
+import { StacksMainnet } from '@stacks/network';
 
 export const CITYCOIN_DEPLOYER = 'SP466FNC0P7JWTNM2R9T199QRZN1MYEDTAR0KP27';
 export const CITYCOIN_VRF = 'citycoin-vrf';
@@ -8,15 +8,15 @@ export const STACKS_API_V2_INFO = `${STACKS_API_URL}/v2/info`;
 export const STACKS_API_ACCOUNTS_URL = `${STACKS_API_URL}/v2/accounts`;
 export const STACKS_API_MEMPOOL = `${STACKS_API_URL}/extended/v1/tx/mempool`;
 
-export const NETWORK = new stacksMainnet();
+export const NETWORK = new StacksMainnet();
 NETWORK.coreApiUrl = STACKS_API_URL;
 
 // return the current Stacks block height
-export const currentBlockHeight = async () => {
-  const response = await fetch(STACKS_API_V2_INFO).then();
+export const getCurrentBlockHeight = async () => {
+  const response = await fetch(STACKS_API_V2_INFO);
   const json = await response.json();
-  console.log(`currentBlockHeight result: ${json.block_height}`);
-  return json.block_height;
+  console.log(`currentBlockHeight result: ${json.stacks_tip_height}`);
+  return json.stacks_tip_height;
 };
 
 // return the average fee of the first 200 transactions in mempool

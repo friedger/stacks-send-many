@@ -8,19 +8,23 @@
 export default function NavBar(props) {
   console.log(`city: ${props.city}`);
   console.log(`symbol: ${props.symbol}`);
-  const cityHome = `/${props.symbol.toLowerCase()}`;
   return (
     <>
       <nav>
         <ul className="nav nav-pills flex-column flex-md-row flex-nowrap align-items-center justify-content-center">
           <li className="nav-item">
-            <a href="#" className="nav-link" aria-current="page">
+            <a href="#" className="nav-link active" aria-current="page">
               Dashboard
             </a>
           </li>
           <li className="nav-item">
             <a href="#" className="nav-link">
               Stats
+            </a>
+          </li>
+          <li className="nav-item">
+            <a href="#" className="nav-link disabled">
+              Activation
             </a>
           </li>
           <li className="nav-item">
@@ -34,7 +38,7 @@ export default function NavBar(props) {
             </a>
           </li>
           <li className="nav-item">
-            <a href="#" className="nav-link">
+            <a href="#" className="nav-link disabled">
               Tools
             </a>
           </li>

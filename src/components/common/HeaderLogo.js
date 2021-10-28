@@ -1,11 +1,9 @@
 import { Link } from '@reach/router';
-import CityCoinLogo from '../../images/CC_StandAlone.svg';
-import AustinLogo from '../../images/ATX_StandAlone.svg';
-import MiamiLogo from '../../images/MIA_StandAlone.svg';
-import NewYorkCityLogo from '../../images/NYC_StandAlone.svg';
-import SanFranciscoLogo from '../../images/SFO_StandAlone.svg';
-
-// TODO: use a list of cities in store?
+import { CityCoinLogo } from '../../store/common';
+import { AustinCoinLogo } from '../../store/common';
+import { MiamiCoinLogo } from '../../store/common';
+import { NewYorkCityCoinLogo } from '../../store/common';
+import { SanFranciscoCoinLogo } from '../../store/common';
 
 export default function HeaderLogo(props) {
   const path = props.path || '/citycoin-icon-blue-reversed-75x75.png';
@@ -45,25 +43,25 @@ export default function HeaderLogo(props) {
         </li>
         <li>
           <Link className="dropdown-item link-primary" to="/atx">
-            <img src={AustinLogo} alt="Austin Logo" className="pe-3 w-25 h-25" />
+            <img src={AustinCoinLogo} alt="Austin Logo" className="pe-3 w-25 h-25" />
             Austin
           </Link>
         </li>
         <li>
           <Link className="dropdown-item link-primary" to="/mia">
-            <img src={MiamiLogo} alt="Miami Logo" className="pe-3 w-25 h-25" />
+            <img src={MiamiCoinLogo} alt="Miami Logo" className="pe-3 w-25 h-25" />
             Miami
           </Link>
         </li>
         <li>
           <Link className="dropdown-item link-primary" to="/nyc">
-            <img src={NewYorkCityLogo} alt="New York City Logo" className="pe-3 w-25 h-25" />
+            <img src={NewYorkCityCoinLogo} alt="New York City Logo" className="pe-3 w-25 h-25" />
             New York City
           </Link>
         </li>
         <li>
           <Link className="dropdown-item link-primary" to="/sfo">
-            <img src={SanFranciscoLogo} alt="San Francisco Logo" className="pe-3 w-25 h-25" />
+            <img src={SanFranciscoCoinLogo} alt="San Francisco Logo" className="pe-3 w-25 h-25" />
             San Francisco
           </Link>
         </li>

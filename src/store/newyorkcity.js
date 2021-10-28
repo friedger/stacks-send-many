@@ -1,0 +1,10 @@
+export const CITY_NAME = 'New York City';
+export const CITY_WALLET = 'SM2MARAVW6BEJCD13YV2RHGYHQWT7TDDNMNRB1MVT';
+export const CITYCOIN_DEPLOYER = 'SP466FNC0P7JWTNM2R9T199QRZN1MYEDTAR0KP27';
+export const CITYCOIN_CORE = 'newyorkcitycoin-core-v1';
+export const CITYCOIN_AUTH = 'newyorkcitycoin-auth';
+export const CITYCOIN_TOKEN = 'newyorkcitycoin-token';
+export const CITYCOIN_NAME = 'newyorkcitycoin';
+export const CITYCOIN_SYMBOL = 'NYC';
+export const REWARD_CYCLE_LENGTH = 2100;
+export const START_BLOCK = 24497;
