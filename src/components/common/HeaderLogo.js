@@ -1,6 +1,8 @@
 import { Link } from '@reach/router';
 import CityCoinLogo from '../../images/CC_StandAlone.svg';
+import AustinLogo from '../../images/ATX_StandAlone.svg';
 import MiamiLogo from '../../images/MIA_StandAlone.svg';
+import NewYorkCityLogo from '../../images/NYC_StandAlone.svg';
 import SanFranciscoLogo from '../../images/SFO_StandAlone.svg';
 
 // TODO: use a list of cities in store?
@@ -22,7 +24,7 @@ export default function HeaderLogo(props) {
         <img src={path} width={size} alt={alt} />
       </a>
       <ul
-        class="dropdown-menu text-nowrap"
+        className="dropdown-menu text-nowrap"
         id="dropdownCitiesMenu"
         aria-labelledby="dropdownCities"
       >
@@ -43,11 +45,7 @@ export default function HeaderLogo(props) {
         </li>
         <li>
           <Link className="dropdown-item link-primary" to="/atx">
-            <img
-              src="https://placeimg.com/25/25/arch"
-              alt="Austin Logo"
-              className="pe-3 w-25 h-25"
-            />
+            <img src={AustinLogo} alt="Austin Logo" className="pe-3 w-25 h-25" />
             Austin
           </Link>
         </li>
@@ -59,12 +57,8 @@ export default function HeaderLogo(props) {
         </li>
         <li>
           <Link className="dropdown-item link-primary" to="/nyc">
-            <img
-              src="https://placeimg.com/25/25/arch"
-              alt="New York Logo"
-              className="pe-3 w-25 h-25"
-            />
-            New York
+            <img src={NewYorkCityLogo} alt="New York City Logo" className="pe-3 w-25 h-25" />
+            New York City
           </Link>
         </li>
         <li>
