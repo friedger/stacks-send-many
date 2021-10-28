@@ -6,7 +6,7 @@ import { useAtom } from 'jotai';
 import Landing from './pages/Landing';
 import Austin from './pages/Austin';
 import Miami from './pages/Miami';
-import NewYork from './pages/NewYork';
+import NewYorkCity from './pages/NewYorkCity';
 import SanFrancisco from './pages/SanFrancisco';
 import HeaderAuth from './components/common/HeaderAuth';
 import HeaderLogo from './components/common/HeaderLogo';
@@ -59,7 +59,7 @@ function Content() {
         <Landing path="/" exact />
         <Austin path="/atx" />
         <Miami path="/mia" />
-        <NewYork path="/nyc" />
+        <NewYorkCity path="/nyc" />
         <SanFrancisco path="/sfo" />
       </Router>
     </>

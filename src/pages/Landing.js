@@ -1,6 +1,6 @@
 import React from 'react';
 import { AlertMobile } from '../components/AlertMobile';
-import NavBar from '../components/common/NavBar';
+import SelectCity from '../components/common/SelectCity';
 
 // Landing page with Stacks Connect for authentication
 
@@ -16,7 +16,7 @@ export default function Landing({ userSession }) {
     return (
       <div className="Landing">
         <AlertMobile />
-        <NavBar />
+
         <div className="jumbotron jumbotron-fluid pt-3 mb-0">
           <div className="container">
             <h1>Introducing CityCoins</h1>
@@ -34,6 +34,7 @@ export default function Landing({ userSession }) {
               </a>
               .
             </p>
+            <SelectCity />
             <div className="row">
               <div className="col-md">
                 <h2 className="mt-4">

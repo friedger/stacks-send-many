@@ -7,6 +7,7 @@ import { useAtom } from 'jotai';
 import {} from 'react-jdenticon';
 import { CurrentBlockHeight } from '../CurrentBlockHeight';
 import { CurrentRewardCycle } from '../CurrentRewardCycle';
+import { currentCity } from '../../store/common';
 
 export function ProfileFull({ stxAddress, userSession }) {
   const [profileState, setProfileState] = useState({
@@ -14,6 +15,8 @@ export function ProfileFull({ stxAddress, userSession }) {
   });
 
   const [stxUsd, setStxUsd] = useAtom(STX_USD);
+
+  const city = useAtom(currentCity);
 
   useEffect(() => {
     refreshPrice(setStxUsd);
@@ -114,6 +117,7 @@ export function ProfileFull({ stxAddress, userSession }) {
             <>
               <h5 className="mb-3">Account Balances</h5>
               <Amount ustx={profileState.account.balance} stxAddress={stxAddress} />
+              <p>Selected City: {city}</p>
             </>
           )}
           <hr />
