@@ -5,6 +5,7 @@ import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
 import { MIAMICOIN_MIA_WALLET, MIAMICOIN_START_BLOCK, STACKS_API_URL } from '../lib/constants';
 import { getCityCoinTotalSupply } from '../lib/citycoin';
 import NavBar from '../components/common/NavBar';
+import { currentCity, currentCitySymbol } from '../store/common';
 
 // need current block height
 // need start block height
@@ -18,9 +19,20 @@ export default function Miami() {
   const [currentMiaBalance, setCurrentMiaBalance] = useState();
   const [currentMiaTotalSupply, setCurrentMiaTotalSupply] = useState();
 
+  const [city, setCity] = useAtom(currentCity);
+  const [symbol, setSymbol] = useAtom(currentCitySymbol);
+
   useEffect(() => {
     refreshBlockHeight(setCurrentBlock);
   }, [setCurrentBlock]);
+
+  useEffect(() => {
+    setCity('Miami');
+  }, [setCity]);
+
+  useEffect(() => {
+    setSymbol('MIA');
+  }, [setSymbol]);
 
   useEffect(() => {
     fetch(`${STACKS_API_URL}/extended/v1/address/${MIAMICOIN_MIA_WALLET}/stx`)
@@ -50,7 +62,7 @@ export default function Miami() {
 
   return (
     <>
-      <NavBar />
+      <NavBar city={city} symbol={symbol} />
       <div className="container pt-3">
         <h3>Miami, FL</h3>
         <p>

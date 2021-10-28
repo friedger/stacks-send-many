@@ -3,17 +3,29 @@ import { Link } from '@reach/router';
 import { useAtom } from 'jotai';
 import { BLOCK_HEIGHT, refreshBlockHeight } from '../lib/blocks';
 import NavBar from '../components/common/NavBar';
+import { currentCity, currentCitySymbol } from '../store/common';
 
 export default function Austin() {
   const [currentBlock, setCurrentBlock] = useAtom(BLOCK_HEIGHT);
+
+  const [city, setCity] = useAtom(currentCity);
+  const [symbol, setSymbol] = useAtom(currentCitySymbol);
 
   useEffect(() => {
     refreshBlockHeight(setCurrentBlock);
   }, [setCurrentBlock]);
 
+  useEffect(() => {
+    setCity('Austin');
+  }, [setCity]);
+
+  useEffect(() => {
+    setSymbol('ATX');
+  }, [setSymbol]);
+
   return (
     <>
-      <NavBar />
+      <NavBar city={city} symbol={symbol} />
       <div className="container pt-3">
         <h3>Austin, TX</h3>
         <p>
