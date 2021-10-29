@@ -2,35 +2,52 @@ import React, { useEffect } from 'react';
 import { Redirect, Router } from '@reach/router';
 import { useAtom } from 'jotai';
 import { currentCity, currentCitySymbol } from '../../store/common';
-import { CITY_NAME, CITYCOIN_SYMBOL } from '../../store/austin';
+import { ATX_CONTRACTS, ATX_TOKEN, ATX_CONFIG } from '../../store/austin';
 import CityDashboard from '../../components/common/CityDashboard';
 import CityStats from '../../components/common/CityStats';
 import CityActivation from '../../components/common/CityActivation';
 import CityMining from '../../components/common/CityMining';
 import CityStacking from '../../components/common/CityStacking';
 import CityTools from '../../components/common/CityTools';
+import NotFound from '../NotFound';
 
 export default function Austin() {
   const [, setCity] = useAtom(currentCity);
   const [, setSymbol] = useAtom(currentCitySymbol);
 
   useEffect(() => {
-    setCity(CITY_NAME);
+    setCity(ATX_CONFIG.cityName);
   }, [setCity]);
 
   useEffect(() => {
-    setSymbol(CITYCOIN_SYMBOL);
+    setSymbol(ATX_TOKEN.symbol);
   }, [setSymbol]);
 
   return (
     <Router>
       <Redirect from="/" to="dashboard" />
-      <CityDashboard path="dashboard" city={CITY_NAME} symbol={CITYCOIN_SYMBOL} />
-      <CityStats path="stats" city={CITY_NAME} symbol={CITYCOIN_SYMBOL} />
-      <CityActivation path="activation" city={CITY_NAME} symbol={CITYCOIN_SYMBOL} />
-      <CityMining path="mining" city={CITY_NAME} symbol={CITYCOIN_SYMBOL} />
-      <CityStacking path="stacking" city={CITY_NAME} symbol={CITYCOIN_SYMBOL} />
-      <CityTools path="tools" city={CITY_NAME} symbol={CITYCOIN_SYMBOL} />
+      <CityDashboard
+        path="dashboard"
+        contracts={ATX_CONTRACTS}
+        token={ATX_TOKEN}
+        config={ATX_CONFIG}
+      />
+      <CityStats path="stats" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
+      <CityActivation
+        path="activation"
+        contracts={ATX_CONTRACTS}
+        token={ATX_TOKEN}
+        config={ATX_CONFIG}
+      />
+      <CityMining path="mining" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
+      <CityStacking
+        path="stacking"
+        contracts={ATX_CONTRACTS}
+        token={ATX_TOKEN}
+        config={ATX_CONFIG}
+      />
+      <CityTools path="tools" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
+      <NotFound default />
     </Router>
   );
 }

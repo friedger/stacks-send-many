@@ -1,10 +1,18 @@
-export const CITY_NAME = 'Austin';
-export const CITY_WALLET = 'SM2MARAVW6BEJCD13YV2RHGYHQWT7TDDNMNRB1MVT';
-export const CITYCOIN_DEPLOYER = 'SP466FNC0P7JWTNM2R9T199QRZN1MYEDTAR0KP27';
-export const CITYCOIN_CORE = 'austincoin-core-v1';
-export const CITYCOIN_AUTH = 'austincoin-auth';
-export const CITYCOIN_TOKEN = 'austincoin-token';
-export const CITYCOIN_NAME = 'austincoin';
-export const CITYCOIN_SYMBOL = 'ATX';
-export const REWARD_CYCLE_LENGTH = 2100;
-export const START_BLOCK = 24497;
+export const ATX_CONTRACTS = {
+  deployer: '',
+  coreContract: 'austincoin-core-v1',
+  authContract: 'austincoin-auth',
+  tokenContract: 'austincoin-token',
+};
+
+export const ATX_TOKEN = {
+  name: 'austincoin',
+  symbol: 'ATX',
+};
+
+export const ATX_CONFIG = {
+  cityName: 'Austin',
+  cityWallet: '',
+  rewardCycleLength: 0,
+  startBlock: 0,
+};

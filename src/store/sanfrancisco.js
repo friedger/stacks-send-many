@@ -1,10 +1,18 @@
-export const CITY_NAME = 'San Francisco';
-export const CITY_WALLET = 'SM2MARAVW6BEJCD13YV2RHGYHQWT7TDDNMNRB1MVT';
-export const CITYCOIN_DEPLOYER = 'SP466FNC0P7JWTNM2R9T199QRZN1MYEDTAR0KP27';
-export const CITYCOIN_CORE = 'sanfranciscocoin-core-v1';
-export const CITYCOIN_AUTH = 'sanfranciscocoin-auth';
-export const CITYCOIN_TOKEN = 'sanfranciscocoin-token';
-export const CITYCOIN_NAME = 'sanfranciscocoin';
-export const CITYCOIN_SYMBOL = 'SFO';
-export const REWARD_CYCLE_LENGTH = 2100;
-export const START_BLOCK = 24497;
+export const SFO_CONTRACTS = {
+  deployer: '',
+  coreContract: 'newyorkcitycoin-core-v1',
+  authContract: 'newyorkcitycoin-auth',
+  tokenContract: 'newyorkcitycoin-token',
+};
+
+export const SFO_TOKEN = {
+  name: 'sanfranciscocoin',
+  symbol: 'SFO',
+};
+
+export const SFO_CONFIG = {
+  cityName: 'San Francisco',
+  cityWallet: '',
+  rewardCycleLength: 0,
+  startBlock: 0,
+};
