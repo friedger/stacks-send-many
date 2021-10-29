@@ -1,10 +1,23 @@
-import React from 'react';
+import { useAtom } from 'jotai';
+import React, { useEffect } from 'react';
 import { AlertMobile } from '../components/AlertMobile';
 import SelectCity from '../components/common/SelectCity';
+import { currentCity, currentCitySymbol } from '../store/common';
 
 // Landing page with Stacks Connect for authentication
 
 export default function Landing({ userSession }) {
+  const [, setCity] = useAtom(currentCity);
+  const [, setSymbol] = useAtom(currentCitySymbol);
+
+  useEffect(() => {
+    setCity('');
+  }, [setCity]);
+
+  useEffect(() => {
+    setSymbol('');
+  }, [setSymbol]);
+
   // TODO: this isn't working
   if (userSession?.isUserSignedIn()) {
     return (

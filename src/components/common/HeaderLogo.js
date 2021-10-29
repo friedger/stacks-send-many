@@ -1,14 +1,25 @@
 import { Link } from '@reach/router';
-import { CityCoinLogo } from '../../store/common';
+import { useAtom } from 'jotai';
+import { CityCoinLogo, currentCity, currentCityList } from '../../store/common';
 import { AustinCoinLogo } from '../../store/common';
 import { MiamiCoinLogo } from '../../store/common';
 import { NewYorkCityCoinLogo } from '../../store/common';
 import { SanFranciscoCoinLogo } from '../../store/common';
 
-export default function HeaderLogo(props) {
-  const path = props.path || '/citycoin-icon-blue-reversed-75x75.png';
-  const size = props.size || '75';
-  const alt = props.alt || 'Citycoin CC Logo';
+export default function HeaderLogo() {
+  const [city] = useAtom(currentCity);
+  const cityListArray = Object.entries(currentCityList);
+
+  const cityLogo = cityListArray.reduce((acc, curr, idx) => {
+    if (idx === 1 && acc[1].name === city) {
+      return acc[1].logo;
+    }
+    if (curr[1].name === city) {
+      return curr[1].logo;
+    }
+    return acc;
+  });
+
   return (
     <div className="dropdown">
       <a
@@ -19,7 +30,13 @@ export default function HeaderLogo(props) {
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        <img src={path} width={size} alt={alt} />
+        <img
+          src={city ? cityLogo : CityCoinLogo}
+          alt="CityCoins Logo"
+          height="75"
+          width="75"
+          className="pe-1"
+        />
       </a>
       <ul
         className="dropdown-menu text-nowrap"

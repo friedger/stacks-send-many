@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
-import { Link, Redirect, Router } from '@reach/router';
+import { Redirect, Router } from '@reach/router';
 import { useAtom } from 'jotai';
-import NavBar from '../../components/common/NavBar';
+import { getCurrentBlockHeight } from '../../lib/stacks';
 import { currentBlockHeight, currentCity, currentCitySymbol } from '../../store/common';
 import { CITY_NAME, CITYCOIN_SYMBOL } from '../../store/newyorkcity';
-import { getCurrentBlockHeight } from '../../lib/stacks';
-import SelectCity from '../../components/common/SelectCity';
 import CityDashboard from '../../components/common/CityDashboard';
 import CityStats from '../../components/common/CityStats';
 import CityActivation from '../../components/common/CityActivation';

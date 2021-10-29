@@ -18,10 +18,10 @@ export const NewYorkCityCoinLogo = NewYorkCityCoin;
 export const SanFranciscoCoinLogo = SanFranciscoCoin;
 
 export const currentCityList = {
-  0: { name: 'Austin', symbol: 'ATX' },
-  1: { name: 'Miami', symbol: 'MIA' },
-  2: { name: 'New York City', symbol: 'NYC' },
-  3: { name: 'San Francisco', symbol: 'SFO' },
+  0: { name: 'Austin', symbol: 'ATX', logo: AustinCoinLogo },
+  1: { name: 'Miami', symbol: 'MIA', logo: MiamiCoinLogo },
+  2: { name: 'New York City', symbol: 'NYC', logo: NewYorkCityCoinLogo },
+  3: { name: 'San Francisco', symbol: 'SFO', logo: SanFranciscoCoinLogo },
 };
 
 export const currentCity = atom('');
