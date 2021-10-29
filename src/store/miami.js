@@ -6,6 +6,7 @@ export const MIA_CONTRACTS = {
 };
 
 export const MIA_TOKEN = {
+  text: 'MiamiCoin',
   name: 'miamicoin',
   symbol: 'MIA',
 };

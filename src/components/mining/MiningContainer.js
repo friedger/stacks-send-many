@@ -6,7 +6,7 @@ export default function MiningContainer(props) {
   return (
     <div className="d-flex align-items-start">
       <div
-        className="nav flex-column nav-pills me-3"
+        className="nav flex-column nav-pills me-3 text-nowrap"
         id="v-pills-tab"
         role="tablist"
         aria-orientation="vertical"
@@ -48,7 +48,7 @@ export default function MiningContainer(props) {
           Mining Tools
         </button>
       </div>
-      <div className="tab-content" id="v-pills-tabContent">
+      <div className="tab-content w-100" id="v-pills-tabContent">
         <div
           className="tab-pane fade show active"
           id="mining"
