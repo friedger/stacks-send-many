@@ -2,46 +2,31 @@
 // has a city selected (dashboard/stats) or
 // is logged in with web wallet (mining/stacking)
 
+import { Link } from '@reach/router';
+
 // take city as input
-// use Link with /${city}/dashboard, etc
 
 export default function NavBar(props) {
   console.log(`city: ${props.city}`);
   console.log(`symbol: ${props.symbol}`);
+  console.log(`path: ${props.path}`);
+  const basePath = `/${props.symbol.toLowerCase()}`;
+  const navArray = ['Dashboard', 'Stats', 'Activation', 'Mining', 'Stacking', 'Tools'];
+
   return (
     <>
       <nav>
         <ul className="nav nav-pills flex-column flex-md-row flex-nowrap align-items-center justify-content-center">
-          <li className="nav-item">
-            <a href="#" className="nav-link active" aria-current="page">
-              Dashboard
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link">
-              Stats
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link disabled">
-              Activation
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link">
-              Mining
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link">
-              Stacking
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="#" className="nav-link disabled">
-              Tools
-            </a>
-          </li>
+          {navArray.map(value => (
+            <li className="nav-item" key={value}>
+              <Link
+                to={basePath + '/' + value.toLowerCase()}
+                className={`nav-link ${value.toLowerCase() === props.path && 'active'}`}
+              >
+                {value}
+              </Link>
+            </li>
+          ))}
         </ul>
       </nav>
       <hr />

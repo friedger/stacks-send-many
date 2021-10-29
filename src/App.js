@@ -4,14 +4,16 @@ import { Router } from '@reach/router';
 import { userDataState, userSessionState, useConnect } from './lib/auth';
 import { useAtom } from 'jotai';
 import Landing from './pages/Landing';
-import Austin from './pages/Austin';
-import Miami from './pages/Miami';
-import NewYorkCity from './pages/NewYorkCity';
-import SanFrancisco from './pages/SanFrancisco';
+import Austin from './pages/cities/Austin';
+import Miami from './pages/cities/Miami';
+import NewYorkCity from './pages/cities/NewYorkCity';
+import SanFrancisco from './pages/cities/SanFrancisco';
 import HeaderAuth from './components/common/HeaderAuth';
 import HeaderLogo from './components/common/HeaderLogo';
 import HeaderTitle from './components/common/HeaderTitle';
 import Footer from './components/common/Footer';
+
+import NotFound from './pages/NotFound';
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -57,11 +59,14 @@ function Content() {
     <>
       <Router>
         <Landing path="/" exact />
-        <Austin path="/atx" />
-        <Miami path="/mia" />
-        <NewYorkCity path="/nyc" />
-        <SanFrancisco path="/sfo" />
+        <Austin path="/atx/*" />
+        <Miami path="/mia/*" />
+        <NewYorkCity path="/nyc/*" />
+        <SanFrancisco path="/sfo/*" />
+        <NotFound default />
       </Router>
     </>
   );
 }
+
+// old idea: <CityLanding path="/:citySymbol" />
