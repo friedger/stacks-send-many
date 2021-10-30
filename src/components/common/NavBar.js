@@ -3,6 +3,8 @@
 // is logged in with web wallet (mining/stacking)
 
 import { Link } from '@reach/router';
+import { useAtom } from 'jotai';
+import { userSessionState } from '../../lib/auth';
 
 // take city as input
 
@@ -12,6 +14,8 @@ export default function NavBar(props) {
   console.log(`path: ${props.path}`);
   const basePath = `/${props.symbol.toLowerCase()}`;
   const navArray = ['Dashboard', 'Stats', 'Activation', 'Mining', 'Stacking', 'Tools'];
+  const [userSession] = useAtom(userSessionState);
+  console.log(`signedIn? ${userSession?.isUserSignedIn()}`);
 
   return (
     <>

@@ -20,6 +20,8 @@ export default function HeaderLogo() {
     return acc;
   });
 
+  // TODO: map city list array to create options below?
+
   return (
     <div className="dropdown">
       <a
