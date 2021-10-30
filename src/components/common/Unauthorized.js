@@ -10,7 +10,7 @@ export default function Unauthorized(props) {
         <p>
           Sorry, this page requires logging in with the{' '}
           <a href="https://hiro.so/wallet/install-web" target="_blank" rel="noreferrer">
-            Hiro Web Wallet
+            Hiro Wallet Browser Extension
           </a>
           .
         </p>
