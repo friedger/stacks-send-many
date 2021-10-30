@@ -1,6 +1,6 @@
-import NavBackHome from './NavBackHome';
-import NavBar from './NavBar';
-import StatsCard from '../stats/StatsCard';
+import NavBackHome from '../../components/common/NavBackHome';
+import NavBar from '../../components/common/NavBar';
+import StatsCard from '../../components/stats/StatsCard';
 
 export default function CityStats(props) {
   return (

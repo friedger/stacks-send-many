@@ -3,12 +3,12 @@ import { Redirect, Router } from '@reach/router';
 import { useAtom } from 'jotai';
 import { currentCity, currentCitySymbol } from '../../store/common';
 import { SFO_CONTRACTS, SFO_TOKEN, SFO_CONFIG } from '../../store/sanfrancisco';
-import CityDashboard from '../../components/common/CityDashboard';
-import CityStats from '../../components/common/CityStats';
-import CityActivation from '../../components/common/CityActivation';
-import CityMining from '../../components/common/CityMining';
-import CityStacking from '../../components/common/CityStacking';
-import CityTools from '../../components/common/CityTools';
+import Dashboard from '../../pages/actions/Dashboard';
+import Stats from '../../pages/actions/Stats';
+import Activation from '../../pages/actions/Activation';
+import Mining from '../../pages/actions/Mining';
+import Stacking from '../../pages/actions/Stacking';
+import Tools from '../../pages/actions/Tools';
 import NotFound from '../NotFound';
 
 export default function SanFrancisco() {
@@ -26,27 +26,17 @@ export default function SanFrancisco() {
   return (
     <Router>
       <Redirect from="/" to="dashboard" />
-      <CityDashboard
-        path="dashboard"
-        contracts={SFO_CONTRACTS}
-        token={SFO_TOKEN}
-        config={SFO_CONFIG}
-      />
-      <CityStats path="stats" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
-      <CityActivation
+      <Dashboard path="dashboard" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
+      <Stats path="stats" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
+      <Activation
         path="activation"
         contracts={SFO_CONTRACTS}
         token={SFO_TOKEN}
         config={SFO_CONFIG}
       />
-      <CityMining path="mining" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
-      <CityStacking
-        path="stacking"
-        contracts={SFO_CONTRACTS}
-        token={SFO_TOKEN}
-        config={SFO_CONFIG}
-      />
-      <CityTools path="tools" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
+      <Mining path="mining" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
+      <Stacking path="stacking" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
+      <Tools path="tools" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
       <NotFound default />
     </Router>
   );

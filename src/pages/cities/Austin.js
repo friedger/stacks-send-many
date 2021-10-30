@@ -3,12 +3,12 @@ import { Redirect, Router } from '@reach/router';
 import { useAtom } from 'jotai';
 import { currentCity, currentCitySymbol } from '../../store/common';
 import { ATX_CONTRACTS, ATX_TOKEN, ATX_CONFIG } from '../../store/austin';
-import CityDashboard from '../../components/common/CityDashboard';
-import CityStats from '../../components/common/CityStats';
-import CityActivation from '../../components/common/CityActivation';
-import CityMining from '../../components/common/CityMining';
-import CityStacking from '../../components/common/CityStacking';
-import CityTools from '../../components/common/CityTools';
+import Dashboard from '../../pages/actions/Dashboard';
+import Stats from '../../pages/actions/Stats';
+import Activation from '../../pages/actions/Activation';
+import Mining from '../../pages/actions/Mining';
+import Stacking from '../../pages/actions/Stacking';
+import Tools from '../../pages/actions/Tools';
 import NotFound from '../NotFound';
 
 export default function Austin() {
@@ -26,27 +26,17 @@ export default function Austin() {
   return (
     <Router>
       <Redirect from="/" to="dashboard" />
-      <CityDashboard
-        path="dashboard"
-        contracts={ATX_CONTRACTS}
-        token={ATX_TOKEN}
-        config={ATX_CONFIG}
-      />
-      <CityStats path="stats" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
-      <CityActivation
+      <Dashboard path="dashboard" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
+      <Stats path="stats" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
+      <Activation
         path="activation"
         contracts={ATX_CONTRACTS}
         token={ATX_TOKEN}
         config={ATX_CONFIG}
       />
-      <CityMining path="mining" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
-      <CityStacking
-        path="stacking"
-        contracts={ATX_CONTRACTS}
-        token={ATX_TOKEN}
-        config={ATX_CONFIG}
-      />
-      <CityTools path="tools" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
+      <Mining path="mining" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
+      <Stacking path="stacking" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
+      <Tools path="tools" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
       <NotFound default />
     </Router>
   );

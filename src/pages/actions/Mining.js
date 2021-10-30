@@ -1,9 +1,9 @@
-import MiningContainer from '../mining/MiningContainer';
-import NavBackHome from './NavBackHome';
-import NavBar from './NavBar';
+import MiningContainer from '../../components/mining/MiningContainer';
+import NavBackHome from '../../components/common/NavBackHome';
+import NavBar from '../../components/common/NavBar';
 import { userSessionState } from '../../lib/auth';
 import { useAtom } from 'jotai';
-import Unauthorized from './Unauthorized';
+import Unauthorized from '../../components/common/Unauthorized';
 
 export default function CityMining(props) {
   const [userSession] = useAtom(userSessionState);

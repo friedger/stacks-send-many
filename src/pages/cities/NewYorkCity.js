@@ -3,12 +3,12 @@ import { Redirect, Router } from '@reach/router';
 import { useAtom } from 'jotai';
 import { currentCity, currentCitySymbol } from '../../store/common';
 import { NYC_CONTRACTS, NYC_TOKEN, NYC_CONFIG } from '../../store/newyorkcity';
-import CityDashboard from '../../components/common/CityDashboard';
-import CityStats from '../../components/common/CityStats';
-import CityActivation from '../../components/common/CityActivation';
-import CityMining from '../../components/common/CityMining';
-import CityStacking from '../../components/common/CityStacking';
-import CityTools from '../../components/common/CityTools';
+import Dashboard from '../../pages/actions/Dashboard';
+import Stats from '../../pages/actions/Stats';
+import Activation from '../../pages/actions/Activation';
+import Mining from '../../pages/actions/Mining';
+import Stacking from '../../pages/actions/Stacking';
+import Tools from '../../pages/actions/Tools';
 import NotFound from '../NotFound';
 
 export default function NewYorkCity() {
@@ -26,27 +26,17 @@ export default function NewYorkCity() {
   return (
     <Router>
       <Redirect from="/" to="dashboard" />
-      <CityDashboard
-        path="dashboard"
-        contracts={NYC_CONTRACTS}
-        token={NYC_TOKEN}
-        config={NYC_CONFIG}
-      />
-      <CityStats path="stats" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
-      <CityActivation
+      <Dashboard path="dashboard" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
+      <Stats path="stats" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
+      <Activation
         path="activation"
         contracts={NYC_CONTRACTS}
         token={NYC_TOKEN}
         config={NYC_CONFIG}
       />
-      <CityMining path="mining" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
-      <CityStacking
-        path="stacking"
-        contracts={NYC_CONTRACTS}
-        token={NYC_TOKEN}
-        config={NYC_CONFIG}
-      />
-      <CityTools path="tools" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
+      <Mining path="mining" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
+      <Stacking path="stacking" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
+      <Tools path="tools" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
       <NotFound default />
     </Router>
   );
