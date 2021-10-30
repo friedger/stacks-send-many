@@ -52,13 +52,13 @@ export default function HeaderLogo() {
           </Link>
         </li>
         <li>
-          <hr class="dropdown-divider" />
+          <hr className="dropdown-divider" />
         </li>
         <li>
           <p className="dropdown-item-text fw-bold ps-3 mb-0">Choose a City!</p>
         </li>
         <li>
-          <hr class="dropdown-divider" />
+          <hr className="dropdown-divider" />
         </li>
         <li>
           <Link className="dropdown-item link-primary" to="/atx">
