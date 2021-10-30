@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchAccount } from '../../lib/account';
 import { Address } from '../Address';
 import { Amount } from '../Amount';
-import { refreshPrice, STX_USD } from '../../lib/price';
 import { useAtom } from 'jotai';
-import {} from 'react-jdenticon';
-import { CurrentBlockHeight } from '../CurrentBlockHeight';
-import { CurrentRewardCycle } from '../CurrentRewardCycle';
 import { currentCity } from '../../store/common';
 import SelectCity from '../common/SelectCity';
 
@@ -15,13 +11,7 @@ export function ProfileFull({ stxAddress, userSession }) {
     account: undefined,
   });
 
-  const [stxUsd, setStxUsd] = useAtom(STX_USD);
-
   const city = useAtom(currentCity);
-
-  useEffect(() => {
-    refreshPrice(setStxUsd);
-  }, [setStxUsd]);
 
   useEffect(() => {
     if (stxAddress) {
@@ -122,9 +112,6 @@ export function ProfileFull({ stxAddress, userSession }) {
               <SelectCity />
             </>
           )}
-          <hr />
-          <CurrentBlockHeight />
-          <CurrentRewardCycle />
         </div>
       </div>{' '}
     </div>

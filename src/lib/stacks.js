@@ -20,8 +20,8 @@ export const getCurrentBlockHeight = async () => {
   return json.stacks_tip_height;
 };
 
+// return the estimated fee from API as integer
 export async function getEstimatedStxFee() {
-  // get estimated fee from API, returns integer
   const result = await fetch(STACKS_API_FEE_URL);
   const feeValue = await result.json();
   console.log(`getEstimatedStxFee result: ${feeValue}`);

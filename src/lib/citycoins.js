@@ -10,6 +10,7 @@ import {
   standardPrincipalCV,
   someCV,
   uintCV,
+  makeStandardSTXPostCondition,
 } from '@stacks/transactions';
 import { NETWORK } from './stacks';
 
