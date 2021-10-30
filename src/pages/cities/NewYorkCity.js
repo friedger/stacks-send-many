@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { Redirect, Router } from '@reach/router';
 import { useAtom } from 'jotai';
-import { getCurrentBlockHeight } from '../../lib/stacks';
-import { currentBlockHeight, currentCity, currentCitySymbol } from '../../store/common';
+import { currentCity, currentCitySymbol } from '../../store/common';
 import { NYC_CONTRACTS, NYC_TOKEN, NYC_CONFIG } from '../../store/newyorkcity';
 import CityDashboard from '../../components/common/CityDashboard';
 import CityStats from '../../components/common/CityStats';
@@ -15,7 +14,6 @@ import NotFound from '../NotFound';
 export default function NewYorkCity() {
   const [, setCity] = useAtom(currentCity);
   const [, setSymbol] = useAtom(currentCitySymbol);
-  const [blockHeight, setBlockHeight] = useAtom(currentBlockHeight);
 
   useEffect(() => {
     setCity(NYC_CONFIG.cityName);
@@ -24,14 +22,6 @@ export default function NewYorkCity() {
   useEffect(() => {
     setSymbol(NYC_TOKEN.symbol);
   }, [setSymbol]);
-
-  useEffect(() => {
-    async function getCurrentBlock() {
-      const currentBlock = await getCurrentBlockHeight();
-      setBlockHeight(currentBlock);
-    }
-    getCurrentBlock();
-  }, [setBlockHeight]);
 
   return (
     <Router>

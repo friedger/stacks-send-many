@@ -12,7 +12,6 @@ import HeaderAuth from './components/common/HeaderAuth';
 import HeaderLogo from './components/common/HeaderLogo';
 import HeaderTitle from './components/common/HeaderTitle';
 import Footer from './components/common/Footer';
-
 import NotFound from './pages/NotFound';
 
 export default function App(props) {

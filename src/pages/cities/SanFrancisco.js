@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { Redirect, Router } from '@reach/router';
 import { useAtom } from 'jotai';
-import { getCurrentBlockHeight } from '../../lib/stacks';
-import { currentBlockHeight, currentCity, currentCitySymbol } from '../../store/common';
+import { currentCity, currentCitySymbol } from '../../store/common';
 import { SFO_CONTRACTS, SFO_TOKEN, SFO_CONFIG } from '../../store/sanfrancisco';
 import CityDashboard from '../../components/common/CityDashboard';
 import CityStats from '../../components/common/CityStats';
@@ -15,7 +14,6 @@ import NotFound from '../NotFound';
 export default function SanFrancisco() {
   const [, setCity] = useAtom(currentCity);
   const [, setSymbol] = useAtom(currentCitySymbol);
-  const [blockHeight, setBlockHeight] = useAtom(currentBlockHeight);
 
   useEffect(() => {
     setCity(SFO_CONFIG.cityName);
@@ -24,14 +22,6 @@ export default function SanFrancisco() {
   useEffect(() => {
     setSymbol(SFO_TOKEN.symbol);
   }, [setSymbol]);
-
-  useEffect(() => {
-    async function getCurrentBlock() {
-      const currentBlock = await getCurrentBlockHeight();
-      setBlockHeight(currentBlock);
-    }
-    getCurrentBlock();
-  }, [setBlockHeight]);
 
   return (
     <Router>

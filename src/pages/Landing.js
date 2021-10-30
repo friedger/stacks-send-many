@@ -6,7 +6,7 @@ import { currentCity, currentCitySymbol } from '../store/common';
 
 // Landing page with Stacks Connect for authentication
 
-export default function Landing({ userSession }) {
+export default function Landing(props) {
   const [, setCity] = useAtom(currentCity);
   const [, setSymbol] = useAtom(currentCitySymbol);
 
@@ -17,6 +17,8 @@ export default function Landing({ userSession }) {
   useEffect(() => {
     setSymbol('');
   }, [setSymbol]);
+
+  console.log(`userSession: ${props.userSession}`);
 
   return (
     <div className="Landing">

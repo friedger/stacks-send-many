@@ -1,8 +1,8 @@
 export const SFO_CONTRACTS = {
   deployer: '',
-  coreContract: 'newyorkcitycoin-core-v1',
-  authContract: 'newyorkcitycoin-auth',
-  tokenContract: 'newyorkcitycoin-token',
+  coreContract: 'sanfranciscocoin-core-v1',
+  authContract: 'sanfranciscocoin-auth',
+  tokenContract: 'sanfranciscocoin-token',
 };
 
 export const SFO_TOKEN = {

@@ -1,24 +1,12 @@
-import { useAtom } from 'jotai';
-import { useEffect } from 'react';
-import { getCurrentBlockHeight } from '../../lib/stacks';
-import { currentBlockHeight } from '../../store/common';
 import NavBackHome from './NavBackHome';
 import NavBar from './NavBar';
+import StatsCard from '../stats/StatsCard';
 
 export default function CityStats(props) {
-  const [blockHeight, setBlockHeight] = useAtom(currentBlockHeight);
-
-  useEffect(() => {
-    async function getCurrentBlock() {
-      const currentBlock = await getCurrentBlockHeight();
-      setBlockHeight(currentBlock);
-    }
-    getCurrentBlock();
-  }, [setBlockHeight]);
-
   return (
     <>
       <NavBar city={props.config.cityName} symbol={props.token.symbol} path={props.path} />
+      <StatsCard contracts={props.contracts} token={props.token} config={props.config} />
       <h3>{props.token.symbol} Contract</h3>
       <p>Current Stacking Cycle</p>
       <p>Cycle Progress</p>

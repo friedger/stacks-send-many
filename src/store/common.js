@@ -9,7 +9,7 @@ import SanFranciscoCoin from '../images/SFO_StandAlone.svg';
 
 export const currentBlockHeight = atom(0);
 
-// GENERAL
+// CITYCOINS
 
 export const CityCoinLogo = CityCoin;
 export const AustinCoinLogo = AustinCoin;
@@ -26,4 +26,5 @@ export const currentCityList = {
 
 export const currentCity = atom('');
 export const currentCitySymbol = atom('');
-export const CITYCOIN_VRF = 'citycoin-vrf';
+
+export const currentRewardCycle = atom(0);
