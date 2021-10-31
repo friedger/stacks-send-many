@@ -1,9 +1,9 @@
+import { useConnect } from '@stacks/connect-react';
 import {
   bufferCVFromString,
   callReadOnlyFunction,
   cvToJSON,
   cvToValue,
-  doContractCall,
   FungibleConditionCode,
   noneCV,
   PostConditionMode,
@@ -255,6 +255,8 @@ export async function getBlockWinnerId(contractAddress, contractName, blockHeigh
 
 // allows user to mine tokens in a single block
 export async function mineTokens(contractAddress, contractName, senderAddress, amountUstx, memo) {
+  /*
+  const { doContractCall } = useConnect();
   const amountUstxCV = uintCV(amountUstx);
   const memoCV = memo ? someCV(bufferCVFromString(memo.trim())) : noneCV();
   const postConditions = makeStandardSTXPostCondition(
@@ -280,6 +282,7 @@ export async function mineTokens(contractAddress, contractName, senderAddress, a
       return result;
     },
   }).catch(err => console.log(`mineTokens err: ${err}`));
+  */
 }
 
 // TODO: add mine-many public function
