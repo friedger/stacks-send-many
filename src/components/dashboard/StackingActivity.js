@@ -23,10 +23,7 @@ export default function StackingActivity(props) {
 
   return (
     <div className="container-fluid p-6">
-      <h3>{props.token.symbol} Stacking Stats</h3>
-      <p>
-        Current Stacks Block Height: {blockHeight ? blockHeight.toLocaleString() : 'Loading...'}
-      </p>
+      <h3>{props.token.symbol} Stacking Activity</h3>
       <p>
         Current {props.token.symbol} Reward Cycle: {rewardCycle ? rewardCycle : 'Loading...'}
       </p>

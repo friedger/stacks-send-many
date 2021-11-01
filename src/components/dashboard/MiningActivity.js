@@ -6,7 +6,7 @@ export default function MiningActivity(props) {
   const [blockHeight] = useAtom(currentBlockHeight);
   return (
     <div className="container-fluid p-6">
-      <h3>{props.token.symbol} Mining Stats</h3>
+      <h3>{props.token.symbol} Mining Activity</h3>
       <p>
         Current Stacks Block Height: {blockHeight ? blockHeight.toLocaleString() : 'Loading...'}
       </p>

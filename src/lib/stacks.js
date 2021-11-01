@@ -6,6 +6,7 @@ export const CITYCOIN_VRF = 'citycoin-vrf';
 export const STACKS_API_URL = 'https://stacks-node-api.mainnet.stacks.co';
 export const STACKS_API_V2_INFO = `${STACKS_API_URL}/v2/info`;
 export const STACKS_API_ACCOUNTS_URL = `${STACKS_API_URL}/v2/accounts`;
+export const STACKS_API_ADDRESSINFO = `${STACKS_API_URL}/extended/v1/address/`;
 export const STACKS_API_MEMPOOL = `${STACKS_API_URL}/extended/v1/tx/mempool`;
 export const STACKS_API_FEE_URL = `${STACKS_API_URL}/v2/fees/transfer`;
 
@@ -48,6 +49,14 @@ export const getMempoolFeeMedian = async () => {
   const median = fees[Math.floor(fees.length / 2)];
   console.log(`getMempoolFeeMedian result: ${median}`);
   return median;
+};
+
+// return the account transactions for a given principal
+export const getTxs = async address => {
+  const response = await fetch(`${STACKS_API_ADDRESSINFO}/${address}/transactions`);
+  const json = await response.json();
+  console.log(`getTxs result: ${json.results}`);
+  return json.results;
 };
 
 export function ustxToStx(ustx) {

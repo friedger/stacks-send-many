@@ -13,15 +13,15 @@ export default function DashboardContainer(props) {
       >
         <button
           className="nav-link active"
-          id="v-pills-stats-tab"
+          id="v-pills-activity-tab"
           data-bs-toggle="pill"
-          data-bs-target="#stats"
+          data-bs-target="#activity"
           type="button"
           role="tab"
-          aria-controls="stats"
+          aria-controls="activity"
           aria-selected="true"
         >
-          Statistics
+          Activity
         </button>
         <button
           className="nav-link"
@@ -40,9 +40,9 @@ export default function DashboardContainer(props) {
         <hr className="d-md-none" />
         <div
           className="tab-pane fade show active"
-          id="stats"
+          id="activity"
           role="tabpanel"
-          aria-labelledby="v-pills-stats-tab"
+          aria-labelledby="v-pills-activity-tab"
         >
           <MiningActivity contracts={props.contracts} token={props.token} config={props.config} />
           <br />
