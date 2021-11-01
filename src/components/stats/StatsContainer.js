@@ -7,7 +7,7 @@ export default function StatsContainer(props) {
   return (
     <div className="container-fluid p-6">
       <h3>{props.token.symbol} Stats</h3>
-      <div className="row">
+      <div className="row g-4 flex-column flex-md-row align-items-center justify-content-center">
         <TotalSupply contracts={props.contracts} token={props.token} config={props.config} />
         <CityWallet contracts={props.contracts} token={props.token} config={props.config} />
         <IssuanceSchedule contracts={props.contracts} token={props.token} config={props.config} />

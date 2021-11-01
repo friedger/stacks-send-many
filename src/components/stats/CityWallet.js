@@ -2,13 +2,24 @@ import LinkAddress from '../common/LinkAddress';
 
 export default function CityWallet(props) {
   return (
-    <div className="col-md-6 border">
-      <p className="fw-bold">City Wallet</p>
-      <p>
-        <LinkAddress address={props.config.cityWallet} />
-      </p>
-      <p>Balance in STX</p>
-      <p>Balance in USD</p>
+    <div className="col-lg-6">
+      <div className="border rounded p-3 text-nowrap">
+        <p className="fs-5 text-center">City Wallet</p>
+        <div className="row text-center text-sm-start">
+          <div className="col-sm-6">Address</div>
+          <div className="col-sm-6">
+            <LinkAddress address={props.config.cityWallet} />
+          </div>
+        </div>
+        <div className="row text-center text-sm-start">
+          <div className="col-sm-6">STX Balance</div>
+          <div className="col-sm-6">Loading...</div>
+        </div>
+        <div className="row text-center text-sm-start">
+          <div className="col-sm-6">USD Balance</div>
+          <div className="col-sm-6">Loading...</div>
+        </div>
+      </div>
     </div>
   );
 }
