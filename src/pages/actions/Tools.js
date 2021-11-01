@@ -3,6 +3,7 @@ import NavBar from '../../components/common/NavBar';
 import { userSessionState } from '../../lib/auth';
 import { useAtom } from 'jotai';
 import Unauthorized from '../../components/common/Unauthorized';
+import ToolsContainer from '../../components/tools/ToolsContainer';
 
 export default function CityTools(props) {
   const [userSession] = useAtom(userSessionState);
@@ -10,9 +11,7 @@ export default function CityTools(props) {
     return (
       <>
         <NavBar city={props.config.cityName} symbol={props.token.symbol} path={props.path} />
-        <h3>{props.token.symbol} Tools</h3>
-        <p>Get User ID for an address</p>
-        <p>Other tools that don't fit</p>
+        <ToolsContainer contracts={props.contracts} token={props.token} config={props.config} />
         <hr />
         <NavBackHome />
       </>
