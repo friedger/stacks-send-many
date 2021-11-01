@@ -54,7 +54,7 @@ export default function MiningContainer(props) {
           className="tab-pane fade show active"
           id="mining"
           role="tabpanel"
-          aria-labelledby="mining-tab"
+          aria-labelledby="v-pills-mining-tab"
         >
           <MineCityCoins contracts={props.contracts} token={props.token} config={props.config} />
         </div>
@@ -62,7 +62,7 @@ export default function MiningContainer(props) {
           className="tab-pane fade"
           id="miningClaims"
           role="tabpanel"
-          aria-labelledby="miningClaims-tab"
+          aria-labelledby="v-pills-miningClaims-tab"
         >
           <ClaimMiningRewards
             contracts={props.contracts}
@@ -74,7 +74,7 @@ export default function MiningContainer(props) {
           className="tab-pane fade"
           id="miningTools"
           role="tabpanel"
-          aria-labelledby="miningTools-tab"
+          aria-labelledby="v-pills-miningTools-tab"
         >
           <MiningTools contracts={props.contracts} token={props.token} config={props.config} />
         </div>

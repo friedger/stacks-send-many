@@ -54,7 +54,7 @@ export default function StackingContainer(props) {
           className="tab-pane fade show active"
           id="stacking"
           role="tabpanel"
-          aria-labelledby="stacking-tab"
+          aria-labelledby="v-pills-stacking-tab"
         >
           <StackCityCoins contracts={props.contracts} token={props.token} config={props.config} />
         </div>
@@ -62,7 +62,7 @@ export default function StackingContainer(props) {
           className="tab-pane fade"
           id="stackingClaims"
           role="tabpanel"
-          aria-labelledby="stackingClaims-tab"
+          aria-labelledby="v-pills-stackingClaims-tab"
         >
           <ClaimStackingRewards
             contracts={props.contracts}
@@ -74,7 +74,7 @@ export default function StackingContainer(props) {
           className="tab-pane fade"
           id="stackingTools"
           role="tabpanel"
-          aria-labelledby="stackingTools-tab"
+          aria-labelledby="v-pills-stackingTools-tab"
         >
           <StackingTools contracts={props.contracts} token={props.token} config={props.config} />
         </div>
