@@ -7,6 +7,7 @@ import {
   getActivationThreshold,
   getRegisteredUsersNonce,
 } from '../../lib/citycoins';
+import NotDeployed from '../common/NotDeloyed';
 
 export default function RegisterUser(props) {
   const minerMemoRef = useRef();
@@ -70,23 +71,27 @@ export default function RegisterUser(props) {
   // if user registered, display success message,
   // else, display register form
 
-  return (
-    <>
-      <h3>{props.token.symbol} Registration</h3>
-      <p>Side menu: register/stats</p>
-      <p>Use atoms?</p>
-      <hr />
-      <p>Stats</p>
-      <p>Registered User Count: {userCount > 0 ? userCount.toLocaleString() : 'Loading...'}</p>
-      <p>
-        Activation Threshold:{' '}
-        {activationThreshold > 0 ? activationThreshold.toLocaleString() : 'Loading...'}
-      </p>
-      <p>Activation Status: {activationStatus.toString()}</p>
-      <p>
-        Activation Block Height:{' '}
-        {activationBlockHeight > 0 ? activationBlockHeight.toLocaleString() : 'Loading...'}
-      </p>
-    </>
-  );
+  if (props.contracts.deployer === '') {
+    return <NotDeployed />;
+  } else {
+    return (
+      <>
+        <h3>{props.token.symbol} Registration</h3>
+        <p>Side menu: register/stats</p>
+        <p>Use atoms?</p>
+        <hr />
+        <p>Stats</p>
+        <p>Registered User Count: {userCount > 0 ? userCount.toLocaleString() : 'Loading...'}</p>
+        <p>
+          Activation Threshold:{' '}
+          {activationThreshold > 0 ? activationThreshold.toLocaleString() : 'Loading...'}
+        </p>
+        <p>Activation Status: {activationStatus.toString()}</p>
+        <p>
+          Activation Block Height:{' '}
+          {activationBlockHeight > 0 ? activationBlockHeight.toLocaleString() : 'Loading...'}
+        </p>
+      </>
+    );
+  }
 }
