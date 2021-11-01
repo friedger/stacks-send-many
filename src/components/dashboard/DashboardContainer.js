@@ -13,27 +13,15 @@ export default function DashboardContainer(props) {
       >
         <button
           className="nav-link active"
-          id="v-pills-mining-tab"
+          id="v-pills-stats-tab"
           data-bs-toggle="pill"
-          data-bs-target="#mining"
+          data-bs-target="#stats"
           type="button"
           role="tab"
-          aria-controls="mining"
+          aria-controls="stats"
           aria-selected="true"
         >
-          Mining Info
-        </button>
-        <button
-          className="nav-link"
-          id="v-pills-stacking-tab"
-          data-bs-toggle="pill"
-          data-bs-target="#stacking"
-          type="button"
-          role="tab"
-          aria-controls="stacking"
-          aria-selected="true"
-        >
-          Stacking Info
+          Statistics
         </button>
         <button
           className="nav-link"
@@ -52,18 +40,12 @@ export default function DashboardContainer(props) {
         <hr className="d-md-none" />
         <div
           className="tab-pane fade show active"
-          id="mining"
+          id="stats"
           role="tabpanel"
-          aria-labelledby="v-pills-mining-tab"
+          aria-labelledby="v-pills-stats-tab"
         >
           <MiningActivity contracts={props.contracts} token={props.token} config={props.config} />
-        </div>
-        <div
-          className="tab-pane fade"
-          id="stacking"
-          role="tabpanel"
-          aria-labelledby="v-pills-stacking-tab"
-        >
+          <br />
           <StackingActivity contracts={props.contracts} token={props.token} config={props.config} />
         </div>
         <div

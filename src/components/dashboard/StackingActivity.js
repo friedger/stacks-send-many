@@ -2,7 +2,7 @@ import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import { getRewardCycle } from '../../lib/citycoins';
 import { currentBlockHeight, currentRewardCycle } from '../../store/common';
-import StackingStats from '../stacking/StackingStats';
+import StackingStats from './StackingStats';
 
 export default function StackingActivity(props) {
   const [blockHeight] = useAtom(currentBlockHeight);
