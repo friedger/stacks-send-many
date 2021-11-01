@@ -4,7 +4,6 @@ import { useAtom } from 'jotai';
 import { currentCity, currentCitySymbol } from '../../store/common';
 import { NYC_CONTRACTS, NYC_TOKEN, NYC_CONFIG } from '../../store/newyorkcity';
 import Dashboard from '../../pages/actions/Dashboard';
-import Stats from '../../pages/actions/Stats';
 import Activation from '../../pages/actions/Activation';
 import Mining from '../../pages/actions/Mining';
 import Stacking from '../../pages/actions/Stacking';
@@ -27,7 +26,6 @@ export default function NewYorkCity() {
     <Router>
       <Redirect from="/" to="dashboard" />
       <Dashboard path="dashboard" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
-      <Stats path="stats" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
       <Activation
         path="activation"
         contracts={NYC_CONTRACTS}

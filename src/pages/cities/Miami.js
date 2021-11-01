@@ -4,7 +4,6 @@ import { useAtom } from 'jotai';
 import { currentCity, currentCitySymbol } from '../../store/common';
 import { MIA_CONTRACTS, MIA_TOKEN, MIA_CONFIG } from '../../store/miami';
 import Dashboard from '../../pages/actions/Dashboard';
-import Stats from '../../pages/actions/Stats';
 import Activation from '../../pages/actions/Activation';
 import Mining from '../../pages/actions/Mining';
 import Stacking from '../../pages/actions/Stacking';
@@ -27,7 +26,6 @@ export default function Miami() {
     <Router>
       <Redirect from="/" to="dashboard" />
       <Dashboard path="dashboard" contracts={MIA_CONTRACTS} token={MIA_TOKEN} config={MIA_CONFIG} />
-      <Stats path="stats" contracts={MIA_CONTRACTS} token={MIA_TOKEN} config={MIA_CONFIG} />
       <Activation
         path="activation"
         contracts={MIA_CONTRACTS}

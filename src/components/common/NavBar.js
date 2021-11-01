@@ -8,7 +8,7 @@ import { userSessionState } from '../../lib/auth';
 
 export default function NavBar(props) {
   const basePath = `/${props.symbol.toLowerCase()}`;
-  const navArray = ['Dashboard', 'Stats', 'Activation', 'Mining', 'Stacking', 'Tools'];
+  const navArray = ['Dashboard', 'Activation', 'Mining', 'Stacking', 'Tools'];
   const [userSession] = useAtom(userSessionState);
   const isLoggedIn = userSession.isUserSignedIn();
 
@@ -21,7 +21,7 @@ export default function NavBar(props) {
               <Link
                 to={basePath + '/' + value.toLowerCase()}
                 className={`nav-link ${value.toLowerCase() === props.path && 'active'} ${
-                  idx > 1 && !isLoggedIn && 'disabled'
+                  idx > 0 && !isLoggedIn && 'disabled'
                 }`}
               >
                 {value}

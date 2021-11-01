@@ -4,7 +4,6 @@ import { useAtom } from 'jotai';
 import { currentCity, currentCitySymbol } from '../../store/common';
 import { SFO_CONTRACTS, SFO_TOKEN, SFO_CONFIG } from '../../store/sanfrancisco';
 import Dashboard from '../../pages/actions/Dashboard';
-import Stats from '../../pages/actions/Stats';
 import Activation from '../../pages/actions/Activation';
 import Mining from '../../pages/actions/Mining';
 import Stacking from '../../pages/actions/Stacking';
@@ -27,7 +26,6 @@ export default function SanFrancisco() {
     <Router>
       <Redirect from="/" to="dashboard" />
       <Dashboard path="dashboard" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
-      <Stats path="stats" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
       <Activation
         path="activation"
         contracts={SFO_CONTRACTS}

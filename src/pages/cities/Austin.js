@@ -4,7 +4,6 @@ import { useAtom } from 'jotai';
 import { currentCity, currentCitySymbol } from '../../store/common';
 import { ATX_CONTRACTS, ATX_TOKEN, ATX_CONFIG } from '../../store/austin';
 import Dashboard from '../../pages/actions/Dashboard';
-import Stats from '../../pages/actions/Stats';
 import Activation from '../../pages/actions/Activation';
 import Mining from '../../pages/actions/Mining';
 import Stacking from '../../pages/actions/Stacking';
@@ -27,7 +26,6 @@ export default function Austin() {
     <Router>
       <Redirect from="/" to="dashboard" />
       <Dashboard path="dashboard" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
-      <Stats path="stats" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
       <Activation
         path="activation"
         contracts={ATX_CONTRACTS}

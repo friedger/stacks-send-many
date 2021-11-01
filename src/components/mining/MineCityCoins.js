@@ -73,7 +73,7 @@ export default function MineCityCoins(props) {
   };
 
   return (
-    <div className="container">
+    <div className="container-fluid p-6">
       <h3>
         Mine {props.token.symbol}{' '}
         <a

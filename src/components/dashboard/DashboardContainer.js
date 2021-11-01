@@ -1,3 +1,4 @@
+import StatsContainer from '../stats/StatsContainer';
 import MiningActivity from './MiningActivity';
 import StackingActivity from './StackingActivity';
 import TransactionLog from './TransactionLog';
@@ -25,6 +26,18 @@ export default function DashboardContainer(props) {
         </button>
         <button
           className="nav-link"
+          id="v-pills-stats-tab"
+          data-bs-toggle="pill"
+          data-bs-target="#stats"
+          type="button"
+          role="tab"
+          aria-controls="stats"
+          aria-selected="true"
+        >
+          Statistics
+        </button>
+        <button
+          className="nav-link"
           id="v-pills-transactions-tab"
           data-bs-toggle="pill"
           data-bs-target="#transactions"
@@ -47,6 +60,14 @@ export default function DashboardContainer(props) {
           <MiningActivity contracts={props.contracts} token={props.token} config={props.config} />
           <br />
           <StackingActivity contracts={props.contracts} token={props.token} config={props.config} />
+        </div>
+        <div
+          className="tab-pane fade"
+          id="stats"
+          role="tabpanel"
+          aria-labelledby="v-pills-stats-tab"
+        >
+          <StatsContainer contracts={props.contracts} token={props.token} config={props.config} />
         </div>
         <div
           className="tab-pane fade"
