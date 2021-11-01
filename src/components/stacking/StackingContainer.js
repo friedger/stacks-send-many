@@ -4,9 +4,9 @@ import StackingTools from './StackingTools';
 
 export default function StackingContainer(props) {
   return (
-    <div className="d-flex align-items-start">
+    <div className="d-flex flex-column flex-md-row align-items-center align-items-md-start">
       <div
-        className="nav flex-column nav-pills me-3"
+        className="nav flex-column nav-pills mx-auto mx-md-0 me-md-3 text-nowrap"
         id="v-pills-tab"
         role="tablist"
         aria-orientation="vertical"
@@ -49,6 +49,7 @@ export default function StackingContainer(props) {
         </button>
       </div>
       <div className="tab-content" id="v-pills-tabContent">
+        <hr className="d-md-none" />
         <div
           className="tab-pane fade show active"
           id="stacking"
