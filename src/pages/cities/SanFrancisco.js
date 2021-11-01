@@ -7,7 +7,6 @@ import Dashboard from '../../pages/actions/Dashboard';
 import Activation from '../../pages/actions/Activation';
 import Mining from '../../pages/actions/Mining';
 import Stacking from '../../pages/actions/Stacking';
-import Tools from '../../pages/actions/Tools';
 import NotFound from '../NotFound';
 
 export default function SanFrancisco() {
@@ -34,7 +33,6 @@ export default function SanFrancisco() {
       />
       <Mining path="mining" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
       <Stacking path="stacking" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
-      <Tools path="tools" contracts={SFO_CONTRACTS} token={SFO_TOKEN} config={SFO_CONFIG} />
       <NotFound default />
     </Router>
   );

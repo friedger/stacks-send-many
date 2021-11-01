@@ -2,7 +2,7 @@ export default function ClaimStackingRewards(props) {
   return (
     <div className="container-fluid p-6">
       <h3>
-        Claim Rewards{' '}
+        Claim Stacking Rewards{' '}
         <a
           className="primary-link"
           target="_blank"

@@ -7,7 +7,6 @@ import Dashboard from '../../pages/actions/Dashboard';
 import Activation from '../../pages/actions/Activation';
 import Mining from '../../pages/actions/Mining';
 import Stacking from '../../pages/actions/Stacking';
-import Tools from '../../pages/actions/Tools';
 import NotFound from '../NotFound';
 
 export default function NewYorkCity() {
@@ -34,7 +33,6 @@ export default function NewYorkCity() {
       />
       <Mining path="mining" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
       <Stacking path="stacking" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
-      <Tools path="tools" contracts={NYC_CONTRACTS} token={NYC_TOKEN} config={NYC_CONFIG} />
       <NotFound default />
     </Router>
   );

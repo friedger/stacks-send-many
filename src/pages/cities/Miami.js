@@ -7,7 +7,6 @@ import Dashboard from '../../pages/actions/Dashboard';
 import Activation from '../../pages/actions/Activation';
 import Mining from '../../pages/actions/Mining';
 import Stacking from '../../pages/actions/Stacking';
-import Tools from '../../pages/actions/Tools';
 import NotFound from '../NotFound';
 
 export default function Miami() {
@@ -34,7 +33,6 @@ export default function Miami() {
       />
       <Mining path="mining" contracts={MIA_CONTRACTS} token={MIA_TOKEN} config={MIA_CONFIG} />
       <Stacking path="stacking" contracts={MIA_CONTRACTS} token={MIA_TOKEN} config={MIA_CONFIG} />
-      <Tools path="tools" contracts={MIA_CONTRACTS} token={MIA_TOKEN} config={MIA_CONFIG} />
       <NotFound default />
     </Router>
   );

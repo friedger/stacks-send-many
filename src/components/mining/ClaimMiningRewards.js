@@ -2,7 +2,7 @@ export default function ClaimMiningRewards(props) {
   return (
     <div className="container-fluid p-6">
       <h3>
-        Claim Blocks{' '}
+        Claim Mining Rewards{' '}
         <a
           className="primary-link"
           target="_blank"
@@ -13,6 +13,7 @@ export default function ClaimMiningRewards(props) {
         </a>
       </h3>
       <p>Claim those sweet {props.token.symbol} block rewards.</p>
+      <p>Link to issuance schedule.</p>
     </div>
   );
 }

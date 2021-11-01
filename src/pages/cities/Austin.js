@@ -7,7 +7,6 @@ import Dashboard from '../../pages/actions/Dashboard';
 import Activation from '../../pages/actions/Activation';
 import Mining from '../../pages/actions/Mining';
 import Stacking from '../../pages/actions/Stacking';
-import Tools from '../../pages/actions/Tools';
 import NotFound from '../NotFound';
 
 export default function Austin() {
@@ -34,7 +33,6 @@ export default function Austin() {
       />
       <Mining path="mining" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
       <Stacking path="stacking" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
-      <Tools path="tools" contracts={ATX_CONTRACTS} token={ATX_TOKEN} config={ATX_CONFIG} />
       <NotFound default />
     </Router>
   );
