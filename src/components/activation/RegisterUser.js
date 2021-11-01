@@ -71,27 +71,30 @@ export default function RegisterUser(props) {
   // if user registered, display success message,
   // else, display register form
 
-  if (props.contracts.deployer === '') {
-    return <NotDeployed />;
-  } else {
-    return (
-      <>
-        <h3>{props.token.symbol} Registration</h3>
-        <p>Side menu: register/stats</p>
-        <p>Use atoms?</p>
-        <hr />
-        <p>Stats</p>
-        <p>Registered User Count: {userCount > 0 ? userCount.toLocaleString() : 'Loading...'}</p>
-        <p>
-          Activation Threshold:{' '}
-          {activationThreshold > 0 ? activationThreshold.toLocaleString() : 'Loading...'}
-        </p>
-        <p>Activation Status: {activationStatus.toString()}</p>
-        <p>
-          Activation Block Height:{' '}
-          {activationBlockHeight > 0 ? activationBlockHeight.toLocaleString() : 'Loading...'}
-        </p>
-      </>
-    );
-  }
+  return (
+    <div className="container-fluid p-6">
+      <h3>
+        Activate {props.token.symbol}{' '}
+        <a
+          className="primary-link"
+          target="_blank"
+          rel="noreferrer"
+          href="https://docs.citycoins.co/citycoins-core-protocol/registration-and-activation"
+        >
+          <i className="bi bi-question-circle"></i>
+        </a>
+      </h3>
+      <p>Card: countdown or activated!</p>
+      <p>Registered User Count: {userCount > 0 ? userCount.toLocaleString() : 'Loading...'}</p>
+      <p>
+        Activation Threshold:{' '}
+        {activationThreshold > 0 ? activationThreshold.toLocaleString() : 'Loading...'}
+      </p>
+      <p>Activation Status: {activationStatus.toString()}</p>
+      <p>
+        Activation Block Height:{' '}
+        {activationBlockHeight > 0 ? activationBlockHeight.toLocaleString() : 'Loading...'}
+      </p>
+    </div>
+  );
 }

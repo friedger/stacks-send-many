@@ -1,3 +1,8 @@
 export default function StackingTools(props) {
-  return <p>Stacking tools for {props.token.symbol}</p>;
+  return (
+    <div className="container-fluid p-6">
+      <h3>Tools</h3>
+      <p>Stacking tools for {props.token.symbol}</p>
+    </div>
+  );
 }

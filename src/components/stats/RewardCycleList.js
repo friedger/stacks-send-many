@@ -1,6 +1,6 @@
 export default function RewardCycleList(props) {
   return (
-    <div className="col-12">
+    <div className="col-lg-6">
       <div className="border rounded p-3 text-nowrap">
         <p className="fs-5 text-center">Reward Cycles</p>
         <div className="row text-center text-sm-start">
