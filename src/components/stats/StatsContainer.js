@@ -3,6 +3,8 @@ import IssuanceSchedule from './IssuanceSchedule';
 import RewardCycleList from './RewardCycleList';
 import TotalSupply from './TotalSupply';
 
+// TODO: price data and market cap?
+
 export default function StatsContainer(props) {
   return (
     <div className="container-fluid p-6">

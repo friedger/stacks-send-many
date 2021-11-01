@@ -14,6 +14,7 @@ export const MIA_TOKEN = {
 export const MIA_CONFIG = {
   cityName: 'Miami',
   cityWallet: 'SM2MARAVW6BEJCD13YV2RHGYHQWT7TDDNMNRB1MVT',
+  halving: 210000,
   rewardCycleLength: 2100,
   startBlock: 24497,
 };

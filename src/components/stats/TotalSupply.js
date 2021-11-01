@@ -12,7 +12,7 @@ export default function TotalSupply(props) {
           <div className="col-sm-6">Loading...</div>
         </div>
         <div className="row text-center text-sm-start">
-          <div className="col-sm-6">Unclaimed</div>
+          <div className="col-sm-6">Market Cap</div>
           <div className="col-sm-6">Loading...</div>
         </div>
       </div>

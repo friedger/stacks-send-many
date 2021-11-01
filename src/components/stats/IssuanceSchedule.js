@@ -26,6 +26,26 @@ export default function IssuanceSchedule(props) {
           <div className="col-sm-4">24,497</div>
           <div className="col-sm-4">34,497</div>
         </div>
+        <div className="row text-center text-sm-start">
+          <div className="col-sm-4">25,000 {props.token.symbol}</div>
+          <div className="col-sm-4">24,497</div>
+          <div className="col-sm-4">34,497</div>
+        </div>
+        <div className="row text-center text-sm-start">
+          <div className="col-sm-4">12,500 {props.token.symbol}</div>
+          <div className="col-sm-4">24,497</div>
+          <div className="col-sm-4">34,497</div>
+        </div>
+        <div className="row text-center text-sm-start">
+          <div className="col-sm-4">6,250 {props.token.symbol}</div>
+          <div className="col-sm-4">24,497</div>
+          <div className="col-sm-4">34,497</div>
+        </div>
+        <div className="row text-center text-sm-start">
+          <div className="col-sm-4">3,125 {props.token.symbol}</div>
+          <div className="col-sm-4">24,497</div>
+          <div className="col-sm-4">34,497</div>
+        </div>
       </div>
     </div>
   );
