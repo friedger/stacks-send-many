@@ -14,6 +14,9 @@ import {
 } from '@stacks/transactions';
 import { NETWORK } from './stacks';
 
+// enable/disable console logging for each function
+const debug = false;
+
 ///////////////////////////////////////////////////////////////////////////////
 // CORE: CITY WALLET
 ///////////////////////////////////////////////////////////////////////////////
@@ -29,7 +32,7 @@ export async function getCityWallet(contractAddress, contractName) {
     senderAddress: contractAddress,
   });
   const result = cvToValue(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -48,7 +51,7 @@ export async function getActivationBlock(contractAddress, contractName) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -63,7 +66,7 @@ export async function getActivationDelay(contractAddress, contractName) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -78,7 +81,7 @@ export async function getActivationStatus(contractAddress, contractName) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -93,7 +96,7 @@ export async function getActivationThreshold(contractAddress, contractName) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -108,7 +111,7 @@ export async function getRegisteredUsersNonce(contractAddress, contractName) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -123,7 +126,7 @@ export async function getUserId(contractAddress, contractName, address) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -138,7 +141,7 @@ export async function getUser(contractAddress, contractName, userId) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -159,7 +162,7 @@ export async function getMiningStatsAtBlock(contractAddress, contractName, block
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -174,7 +177,7 @@ export async function getMiningStatsAtBlockOrDefaults(contractAddress, contractN
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -189,7 +192,7 @@ export async function hasMinedAtBlock(contractAddress, contractName, blockHeight
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -204,7 +207,7 @@ export async function getMinerAtBlock(contractAddress, contractName, blockHeight
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -219,7 +222,7 @@ export async function getMinerAtBlockOrDefault(contractAddress, contractName, bl
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -234,7 +237,7 @@ export async function getLastHighValueAtBlock(contractAddress, contractName, blo
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -249,7 +252,7 @@ export async function getBlockWinnerId(contractAddress, contractName, blockHeigh
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -278,7 +281,7 @@ export async function mineTokens(contractAddress, contractName, senderAddress, a
     },
     onFinish: result => {
       console.log('mineTokens finished');
-      console.log(result);
+      debug && console.log(result);
       return result;
     },
   }).catch(err => console.log(`mineTokens err: ${err}`));
@@ -304,7 +307,7 @@ export async function isBlockWinner(contractAddress, contractName, address, bloc
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -319,7 +322,7 @@ export async function canClaimMiningReward(contractAddress, contractName, addres
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -338,7 +341,7 @@ export async function getStackingStatsAtCycle(contractAddress, contractName, cyc
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -353,7 +356,7 @@ export async function getStackingStatsAtCycleOrDefault(contractAddress, contract
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -368,7 +371,7 @@ export async function getStackerAtCycle(contractAddress, contractName, cycleId, 
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -383,7 +386,7 @@ export async function getStackerAtCycleOrDefault(contractAddress, contractName, 
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -398,7 +401,7 @@ export async function getRewardCycle(contractAddress, contractName, blockHeight)
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -413,22 +416,22 @@ export async function stackingActiveAtCycle(contractAddress, contractName, cycle
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
 // returns the first stacks block in a given reward cycle
-export async function getFirstStacksBlockInRewardCycle(contractAddress, contractName, blockHeight) {
+export async function getFirstStacksBlockInRewardCycle(contractAddress, contractName, cycleId) {
   const resultCv = await callReadOnlyFunction({
     contractAddress: contractAddress,
     contractName: contractName,
     functionName: 'get-first-stacks-block-in-reward-cycle',
-    functionArgs: [uintCV(blockHeight)],
+    functionArgs: [uintCV(cycleId)],
     network: NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -443,7 +446,7 @@ export async function getStackingReward(contractAddress, contractName, userId, t
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -471,7 +474,7 @@ export async function getCoinbaseThresholds(contractAddress, contractName) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -486,7 +489,7 @@ export async function getCoinbaseAmount(contractAddress, contractName, blockHeig
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -507,7 +510,7 @@ export async function getName(contractAddress, contractName) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -522,7 +525,7 @@ export async function getSymbol(contractAddress, contractName) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -537,7 +540,7 @@ export async function getDecimals(contractAddress, contractName) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -552,7 +555,7 @@ export async function getBalance(contractAddress, contractName, address) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -567,7 +570,7 @@ export async function getTotalSupply(contractAddress, contractName) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 
@@ -582,7 +585,7 @@ export async function getTokenUri(contractAddress, contractName) {
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
-  console.log(result);
+  debug && console.log(result);
   return result;
 }
 

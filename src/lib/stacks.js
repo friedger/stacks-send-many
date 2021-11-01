@@ -49,3 +49,7 @@ export const getMempoolFeeMedian = async () => {
   console.log(`getMempoolFeeMedian result: ${median}`);
   return median;
 };
+
+export function ustxToStx(ustx) {
+  return parseInt(ustx) / 1000000;
+}

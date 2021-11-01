@@ -26,5 +26,4 @@ export const currentCityList = {
 
 export const currentCity = atom('');
 export const currentCitySymbol = atom('');
-
 export const currentRewardCycle = atom(0);
