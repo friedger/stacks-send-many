@@ -1,4 +1,22 @@
+import { useEffect, useState } from 'react';
+import { getCoinbaseThresholds } from '../../lib/citycoins';
+
 export default function IssuanceSchedule(props) {
+  const [thresholds, setThresholds] = useState([]);
+  const blockRewards = [250000, 100000, 50000, 25000, 12500, 6250, 3125];
+  const bonusPeriod = 10000;
+
+  useEffect(() => {
+    getCoinbaseThresholds(props.contracts.deployer, props.contracts.tokenContract).then(result => {
+      const thresholdResult = Object.entries(result.value.value);
+      var thresholdList = [];
+      thresholdResult.map(threshold => {
+        thresholdList.push(threshold[1].value);
+      });
+      setThresholds(thresholdList);
+    });
+  }, [props.contracts.deployer, props.contracts.tokenContract]);
+
   return (
     <div className="col-lg-6">
       <div className="border rounded p-3 text-nowrap">
@@ -8,44 +26,35 @@ export default function IssuanceSchedule(props) {
           <div className="col-sm-4">Start Block</div>
           <div className="col-sm-4">End Block</div>
         </div>
-        <hr className="d-sm-none" />
-        <div className="row text-center text-sm-start">
-          <div className="col-sm-4">250,000 {props.token.symbol}</div>
-          <div className="col-sm-4">24,497</div>
-          <div className="col-sm-4">34,497</div>
-        </div>
-        <hr className="d-sm-none" />
-        <div className="row text-center text-sm-start">
-          <div className="col-sm-4">100,000 {props.token.symbol}</div>
-          <div className="col-sm-4">24,497</div>
-          <div className="col-sm-4">34,497</div>
-        </div>
-        <hr className="d-sm-none" />
-        <div className="row text-center text-sm-start">
-          <div className="col-sm-4">50,000 {props.token.symbol}</div>
-          <div className="col-sm-4">24,497</div>
-          <div className="col-sm-4">34,497</div>
-        </div>
-        <div className="row text-center text-sm-start">
-          <div className="col-sm-4">25,000 {props.token.symbol}</div>
-          <div className="col-sm-4">24,497</div>
-          <div className="col-sm-4">34,497</div>
-        </div>
-        <div className="row text-center text-sm-start">
-          <div className="col-sm-4">12,500 {props.token.symbol}</div>
-          <div className="col-sm-4">24,497</div>
-          <div className="col-sm-4">34,497</div>
-        </div>
-        <div className="row text-center text-sm-start">
-          <div className="col-sm-4">6,250 {props.token.symbol}</div>
-          <div className="col-sm-4">24,497</div>
-          <div className="col-sm-4">34,497</div>
-        </div>
-        <div className="row text-center text-sm-start">
-          <div className="col-sm-4">3,125 {props.token.symbol}</div>
-          <div className="col-sm-4">24,497</div>
-          <div className="col-sm-4">34,497</div>
-        </div>
+
+        {thresholds.length === 5
+          ? blockRewards.map((value, idx) => {
+              return (
+                <>
+                  <hr className="d-sm-none" />
+                  <div className="row text-center text-sm-start">
+                    <div className="col-sm-4">{`${value.toLocaleString()} ${
+                      props.token.symbol
+                    }`}</div>
+                    <div className="col-sm-4">
+                      {idx === 0
+                        ? props.config.startBlock.toLocaleString()
+                        : idx === 1
+                        ? (props.config.startBlock + bonusPeriod).toLocaleString()
+                        : thresholds[idx - 2].toLocaleString()}
+                    </div>
+                    <div className="col-sm-4">
+                      {idx === 0
+                        ? (props.config.startBlock + bonusPeriod).toLocaleString()
+                        : idx > thresholds.length
+                        ? 'ongoing'
+                        : thresholds[idx - 1].toLocaleString()}
+                    </div>
+                  </div>
+                </>
+              );
+            })
+          : 'Loading...'}
       </div>
     </div>
   );
