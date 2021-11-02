@@ -11,7 +11,6 @@ export default function CityDashboard(props) {
 
   useEffect(() => {
     getCurrentBlockHeight().then(result => {
-      console.log(`blockheight updated: ${result}`);
       setBlockHeight(result);
     });
   });

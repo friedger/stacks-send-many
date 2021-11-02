@@ -13,11 +13,14 @@ export const STACKS_API_FEE_URL = `${STACKS_API_URL}/v2/fees/transfer`;
 export const NETWORK = new StacksMainnet();
 NETWORK.coreApiUrl = STACKS_API_URL;
 
+// enable/disable console logging for each function
+const debug = false;
+
 // return the current Stacks block height
 export const getCurrentBlockHeight = async () => {
   const response = await fetch(STACKS_API_V2_INFO);
   const json = await response.json();
-  console.log(`currentBlockHeight result: ${json.stacks_tip_height}`);
+  debug && console.log(`currentBlockHeight result: ${json.stacks_tip_height}`);
   return json.stacks_tip_height;
 };
 
@@ -25,7 +28,7 @@ export const getCurrentBlockHeight = async () => {
 export async function getEstimatedStxFee() {
   const result = await fetch(STACKS_API_FEE_URL);
   const feeValue = await result.json();
-  console.log(`getEstimatedStxFee result: ${feeValue}`);
+  debug && console.log(`getEstimatedStxFee result: ${feeValue}`);
   return feeValue;
 }
 
@@ -35,7 +38,7 @@ export const getMempoolFeeAvg = async () => {
   const json = await response.json();
   const txs = json.results;
   const sum = txs.map(fee => parseInt(fee.fee_rate)).reduce((a, b) => a + b, 0);
-  console.log(`getMempoolFeeAvg result: ${sum / txs.length}`);
+  debug && console.log(`getMempoolFeeAvg result: ${sum / txs.length}`);
   return sum / txs.length;
 };
 
@@ -47,7 +50,7 @@ export const getMempoolFeeMedian = async () => {
   const fees = txs.map(fee => parseInt(fee.fee_rate));
   fees.sort((a, b) => a - b);
   const median = fees[Math.floor(fees.length / 2)];
-  console.log(`getMempoolFeeMedian result: ${median}`);
+  debug && console.log(`getMempoolFeeMedian result: ${median}`);
   return median;
 };
 
@@ -55,7 +58,7 @@ export const getMempoolFeeMedian = async () => {
 export const getTxs = async address => {
   const response = await fetch(`${STACKS_API_ADDRESSINFO}/${address}/transactions`);
   const json = await response.json();
-  console.log(`getTxs result: ${json.results}`);
+  debug && console.log(`getTxs result: ${json.results}`);
   return json.results;
 };
 

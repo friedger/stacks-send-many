@@ -11,7 +11,7 @@ export function ProfileFull({ stxAddress, userSession }) {
     account: undefined,
   });
 
-  const city = useAtom(currentCity);
+  const [city] = useAtom(currentCity);
 
   useEffect(() => {
     if (stxAddress) {

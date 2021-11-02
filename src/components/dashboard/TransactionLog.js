@@ -67,20 +67,18 @@ export default function TransactionLog(props) {
                     <div className="accordion-body">
                       {txs[blockHeight].map((tx, txKey) => {
                         return (
-                          <>
-                            <div className="row bg-muted" key={txKey}>
-                              <div className="col-md-6 col-lg-3 fw-bold">
-                                {tx.contract_call.function_name}
-                              </div>
-                              <div className="col-md-6 col-lg-3">Status: {tx.tx_status}</div>
-                              <div className="col-md-6 col-lg-3">
-                                <LinkAddress address={tx.sender_address} />
-                              </div>
-                              <div className="col-md-6 col-lg-3">
-                                <LinkTx txId={tx.tx_id} />
-                              </div>
+                          <div className="row bg-muted" key={txKey}>
+                            <div className="col-md-6 col-lg-3 fw-bold">
+                              {tx.contract_call.function_name}
                             </div>
-                          </>
+                            <div className="col-md-6 col-lg-3">Status: {tx.tx_status}</div>
+                            <div className="col-md-6 col-lg-3">
+                              <LinkAddress address={tx.sender_address} />
+                            </div>
+                            <div className="col-md-6 col-lg-3">
+                              <LinkTx txId={tx.tx_id} />
+                            </div>
+                          </div>
                         );
                       })}
                     </div>

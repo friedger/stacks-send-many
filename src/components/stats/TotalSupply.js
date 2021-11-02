@@ -16,7 +16,7 @@ export default function TotalSupply(props) {
       // TODO: separate this into a lib function
       const bonusPeriod = 10000;
       const startBlock = props.config.startBlock;
-      const blocksPast = currentBlockHeight - startBlock;
+      const blocksPast = blockHeight - startBlock;
       if (blocksPast > bonusPeriod) {
         setMaxSupply(bonusPeriod * 250000 + (blocksPast - bonusPeriod) * 100000);
       } else {
@@ -32,7 +32,12 @@ export default function TotalSupply(props) {
 
       // TODO: calculate market cap
     }
-  }, []);
+  }, [
+    blockHeight,
+    props.config.startBlock,
+    props.contracts.deployer,
+    props.contracts.tokenContract,
+  ]);
 
   return (
     <div className="col-lg-6">

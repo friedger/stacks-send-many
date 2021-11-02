@@ -13,11 +13,11 @@ export default function CityWallet(props) {
         </div>
         <div className="row text-center text-sm-start">
           <div className="col-sm-6">STX Balance</div>
-          <div className="col-sm-6">Loading...</div>
+          <div className="col-sm-6">TBD</div>
         </div>
         <div className="row text-center text-sm-start">
-          <div className="col-sm-6">USD Balance</div>
-          <div className="col-sm-6">Loading...</div>
+          <div className="col-sm-6">USD Value</div>
+          <div className="col-sm-6">TBD</div>
         </div>
       </div>
     </div>
