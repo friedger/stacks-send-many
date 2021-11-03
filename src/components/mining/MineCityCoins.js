@@ -1,14 +1,24 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import converter from 'number-to-words';
 import { getEstimatedStxFee, getMempoolFeeAvg, getMempoolFeeMedian } from '../../lib/stacks';
-
-// needs to know OWNERSTXADDRESS
+import { userSessionState } from '../../lib/auth';
+import { MineTokens } from '../../lib/citycoins';
+import { useAtom } from 'jotai';
+import { useStxAddresses } from '../../lib/hooks';
+import { fetchAccount } from '../../lib/account';
+import { listCV, uintCV } from '@stacks/transactions';
 
 export default function MineCityCoins(props) {
   const amountRef = useRef();
   const mineManyRef = useRef();
   const memoRef = useRef();
   const sameAmountForAllRef = useRef();
+
+  const [userSession] = useAtom(userSessionState);
+  const { ownerStxAddress } = useStxAddresses(userSession);
+  const [profileState, setProfileState] = useState({
+    account: undefined,
+  });
 
   const [numberOfBlocks, setNumberOfBlocks] = useState();
   const [blockAmounts, setBlockAmounts] = useState([]);
@@ -19,6 +29,14 @@ export default function MineCityCoins(props) {
   const [isError, setError] = useState();
   const [errorMsg, setErrorMsg] = useState('');
   const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    if (ownerStxAddress) {
+      fetchAccount(ownerStxAddress).then(acc => {
+        setProfileState({ account: acc });
+      });
+    }
+  }, [ownerStxAddress]);
 
   const updateValue = numberOfBlocks => {
     setError(false);
@@ -55,20 +73,62 @@ export default function MineCityCoins(props) {
   };
 
   const mineAction = async () => {
+    setLoading(true);
+    setError(false);
+    setErrorMsg('');
     console.log(`amountRef: ${amountRef.current.value}`);
     if (numberOfBlocks === 1 && !amountRef.current.value) {
       console.log(`${numberOfBlocks} and ${amountRef.current.value}`);
       setLoading(false);
       setError(true);
-      setErrorMsg('Please enter an amount to mine for one block.');
+      setErrorMsg('Please enter a valid amount to mine for one block.');
+    } else if (numberOfBlocks > 200) {
+      setLoading(false);
+      setError(true);
+      setErrorMsg('Cannot submit for more than 200 blocks.');
     } else {
-      console.log(`let's do this!`);
-      const estimatedFees = await getEstimatedStxFee();
-      const mempoolFeeAvg = await getMempoolFeeAvg();
-      const mempoolFeeMedian = await getMempoolFeeMedian();
+      const estimatedFees = await getEstimatedStxFee(); // 1 STX
+      const mempoolFeeAvg = await getMempoolFeeAvg(); // ustx
+      const mempoolFeeMedian = await getMempoolFeeMedian(); // ustx
+      console.log(`attempting to mine.`);
       console.log(`estimatedFees: ${estimatedFees}`);
       console.log(`mempoolFeeAvg: ${mempoolFeeAvg}`);
       console.log(`mempoolFeeMedian: ${mempoolFeeMedian}`);
+      console.log(`STX Address: ${ownerStxAddress}`);
+      console.log(`STX Balance: ${profileState.account.balance}`);
+      const mineMany = numberOfBlocks > 1;
+      let amountUstx = 0;
+      let memo = '';
+      let mineManyArray = [];
+      let sum = 0;
+
+      if (mineMany) {
+        console.log(`mine-many`);
+        let amount;
+        for (let i = 0; i < numberOfBlocks; i++) {
+          amount = Math.floor(parseFloat(blockAmounts[i].amount) * 1000000);
+          mineManyArray.push(uintCV(amount));
+          sum += amount;
+        }
+        mineManyArray = listCV(mineManyArray);
+        console.log(`sum: ${sum}`);
+      } else {
+        console.log(`mine-single`);
+        amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
+        memo = memoRef.current.value.trim();
+        console.log(`amount: ${amountUstx}`);
+        console.log(`memo: ${memo}`);
+        MineTokens(
+          props.contracts.deployer,
+          props.contracts.coreContract,
+          ownerStxAddress,
+          amountUstx,
+          memo ? memo : undefined
+        );
+      }
+      let totalSubmitted = 0;
+      mineMany ? (totalSubmitted = sum) : (totalSubmitted = amountUstx);
+      console.log(`total submitted ${totalSubmitted}`);
     }
   };
 

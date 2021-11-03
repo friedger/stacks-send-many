@@ -256,9 +256,8 @@ export async function getBlockWinnerId(contractAddress, contractName, blockHeigh
   return result;
 }
 
-// allows user to mine tokens in a single block
-export async function mineTokens(contractAddress, contractName, senderAddress, amountUstx, memo) {
-  /*
+// calls mine-tokens public function for a single block
+export async function MineTokens(contractAddress, contractName, senderAddress, amountUstx, memo) {
   const { doContractCall } = useConnect();
   const amountUstxCV = uintCV(amountUstx);
   const memoCV = memo ? someCV(bufferCVFromString(memo.trim())) : noneCV();
@@ -285,10 +284,12 @@ export async function mineTokens(contractAddress, contractName, senderAddress, a
       return result;
     },
   }).catch(err => console.log(`mineTokens err: ${err}`));
-  */
 }
 
-// TODO: add mine-many public function
+// calls mine-many public function for multiple blocks
+export async function MineMany(contractAddress, contractName, senderAddress, amountUstx, memo) {
+  // mine many blocks
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // CORE: MINING CLAIMS
