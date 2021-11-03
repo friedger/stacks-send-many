@@ -1,15 +1,13 @@
 import { Fragment, useEffect, useState } from 'react';
 import converter from 'number-to-words';
 import _groupBy from 'lodash.groupby';
-import { currentBlockHeight } from '../../store/common';
 import { getTxs } from '../../lib/stacks';
 import LinkAddress from '../common/LinkAddress';
 import LinkTx from '../common/LinkTx';
-import { useAtom } from 'jotai';
+import CurrentStacksBlock from '../common/CurrentStacksBlock';
 
 export default function TransactionLog(props) {
   const [txs, setTxs] = useState();
-  const [blockHeight] = useAtom(currentBlockHeight);
 
   useEffect(() => {
     getTxs(`${props.contracts.deployer}.${props.contracts.coreContract}`)
@@ -32,9 +30,7 @@ export default function TransactionLog(props) {
     return (
       <div className="container-fluid p-6">
         <h3>{props.token.symbol} Transactions</h3>
-        <p>
-          Current Stacks Block Height: {blockHeight ? blockHeight.toLocaleString() : 'Loading...'}
-        </p>
+        <CurrentStacksBlock />
         <div className="accordion accordion-flush" id="accordionActivityLog">
           {blockHeights &&
             blockHeights.map((blockHeight, key) => (

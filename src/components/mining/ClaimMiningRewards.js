@@ -1,4 +1,91 @@
+import { useConnect } from '@stacks/connect-react';
+import { useEffect, useRef, useState } from 'react';
+import { currentBlockHeight } from '../../store/common';
+import { canClaimMiningReward, isBlockWinner } from '../../lib/citycoins';
+import CurrentStacksBlock from '../common/CurrentStacksBlock';
+import { useAtom } from 'jotai';
+import { useStxAddresses } from '../../lib/hooks';
+import { fetchAccount } from '../../lib/account';
+import { userSessionState } from '../../lib/auth';
+
 export default function ClaimMiningRewards(props) {
+  const { doContractCall } = useConnect();
+
+  const singleBlockRef = useRef();
+
+  const [loading, setLoading] = useState();
+  const [canClaim, setCanClaim] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+
+  const [userSession] = useAtom(userSessionState);
+  const { ownerStxAddress } = useStxAddresses(userSession);
+  const [profileState, setProfileState] = useState({
+    account: undefined,
+  });
+
+  const [blockHeight] = useAtom(currentBlockHeight);
+
+  useEffect(() => {
+    if (ownerStxAddress) {
+      fetchAccount(ownerStxAddress).then(acc => {
+        setProfileState({ account: acc });
+      });
+    }
+  }, [ownerStxAddress]);
+
+  const checkWinner = async () => {
+    // check if we can claim
+    setLoading(true);
+
+    if (singleBlockRef.current.value === '') {
+      setErrorMsg('Please enter a block height to check');
+      setLoading(false);
+    } else if (blockHeight - singleBlockRef.current.value < 100) {
+      setErrorMsg('Please wait for 100 blocks to pass before checking.');
+      setLoading(false);
+    } else if (singleBlockRef.current.value > blockHeight) {
+      setErrorMsg('Please select a block height in the past.');
+      setLoading(false);
+    } else {
+      setSuccessMsg('');
+      setErrorMsg('');
+      isBlockWinner(
+        props.contracts.deployer,
+        props.contracts.coreContract,
+        ownerStxAddress,
+        singleBlockRef.current.value
+      ).then(result => {
+        console.log(`isBlockWinner; ${JSON.stringify(result)}`);
+        if (result.value) {
+          setSuccessMsg(`Won block ${singleBlockRef.current.value}, checking if claimed...`);
+          canClaimMiningReward(
+            props.contracts.deployer,
+            props.contracts.coreContract,
+            ownerStxAddress,
+            singleBlockRef.current.value
+          ).then(result => {
+            console.log(`canClaimMiningReward; ${JSON.stringify(result)}`);
+            setCanClaim(result.value);
+            result.value
+              ? setSuccessMsg(
+                  `Won block ${singleBlockRef.current.value}, eligible to claim rewards.`
+                )
+              : setSuccessMsg(`Won block ${singleBlockRef.current.value}, reward already claimed!`);
+            setLoading(false);
+          });
+        } else {
+          setSuccessMsg(`Did not win block ${singleBlockRef.current.value}.`);
+          setLoading(false);
+        }
+      });
+    }
+  };
+
+  const claimRewards = async () => {
+    // claim the rewards
+  };
+
   return (
     <div className="container-fluid p-6">
       <h3>
@@ -12,8 +99,45 @@ export default function ClaimMiningRewards(props) {
           <i className="bi bi-question-circle"></i>
         </a>
       </h3>
-      <p>Claim those sweet {props.token.symbol} block rewards.</p>
-      <p>Link to issuance schedule.</p>
+      <CurrentStacksBlock />
+      <p>
+        The winner for a block can be queried after 100 blocks pass (~16-17hrs), and the winner can
+        claim newly minted MIA.
+      </p>
+      <p>
+        There is only one winner per block, and STX sent to the contract for mining are not
+        returned.
+      </p>
+      <form>
+        <div className="form-floating">
+          <input
+            className="form-control"
+            placeholder="Block Height?"
+            ref={singleBlockRef}
+            id="singleBlockHeight"
+          />
+          <label htmlFor="singleBlockHeight">Block Height?</label>
+        </div>
+        <button className="btn btn-block btn-primary my-3 me-3" type="button" onClick={checkWinner}>
+          <div
+            role="status"
+            className={`${
+              loading ? '' : 'd-none'
+            } spinner-border spinner-border-sm text-info align-text-top ms-1 me-2`}
+          />
+          Check if Winner
+        </button>
+        <button
+          className="btn btn-block btn-primary my-3"
+          type="button"
+          disabled={!canClaim}
+          onClick={claimRewards}
+        >
+          Claim Rewards
+        </button>
+      </form>
+      {successMsg ? <p>{successMsg}</p> : loading && <p>Loading...</p>}
+      {errorMsg ? <p className="text-danger">{errorMsg}</p> : null}
     </div>
   );
 }

@@ -256,6 +256,10 @@ export async function getBlockWinnerId(contractAddress, contractName, blockHeigh
   return result;
 }
 
+/*
+PUBLIC FUNCTIONS NEED SOME EXTRA THOUGHT AND TRICKERY
+mostly because I need to learn more about react hooks
+
 // calls mine-tokens public function for a single block
 export async function MineTokens(contractAddress, contractName, senderAddress, amountUstx, memo) {
   const { doContractCall } = useConnect();
@@ -290,6 +294,8 @@ export async function MineTokens(contractAddress, contractName, senderAddress, a
 export async function MineMany(contractAddress, contractName, senderAddress, amountUstx, memo) {
   // mine many blocks
 }
+
+*/
 
 ///////////////////////////////////////////////////////////////////////////////
 // CORE: MINING CLAIMS

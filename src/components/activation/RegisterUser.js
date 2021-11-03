@@ -1,12 +1,14 @@
 import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { userSessionState } from '../../lib/auth';
+
 import {
   getActivationBlock,
   getActivationStatus,
   getActivationThreshold,
   getRegisteredUsersNonce,
 } from '../../lib/citycoins';
+import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import NotDeployed from '../common/NotDeloyed';
 
 export default function RegisterUser(props) {
@@ -84,6 +86,7 @@ export default function RegisterUser(props) {
           <i className="bi bi-question-circle"></i>
         </a>
       </h3>
+      <CurrentStacksBlock />
       <p>Card: countdown or activated!</p>
       <p>Registered User Count: {userCount > 0 ? userCount.toLocaleString() : 'Loading...'}</p>
       <p>

@@ -1,14 +1,33 @@
 import { useEffect, useRef, useState } from 'react';
 import converter from 'number-to-words';
-import { getEstimatedStxFee, getMempoolFeeAvg, getMempoolFeeMedian } from '../../lib/stacks';
+import {
+  getEstimatedStxFee,
+  getMempoolFeeAvg,
+  getMempoolFeeMedian,
+  NETWORK,
+  stxToUstx,
+  ustxToStx,
+} from '../../lib/stacks';
 import { userSessionState } from '../../lib/auth';
-import { MineTokens } from '../../lib/citycoins';
 import { useAtom } from 'jotai';
 import { useStxAddresses } from '../../lib/hooks';
 import { fetchAccount } from '../../lib/account';
-import { listCV, uintCV } from '@stacks/transactions';
+import {
+  bufferCVFromString,
+  FungibleConditionCode,
+  listCV,
+  makeStandardSTXPostCondition,
+  noneCV,
+  PostConditionMode,
+  someCV,
+  uintCV,
+} from '@stacks/transactions';
+import { useConnect } from '@stacks/connect-react';
+import CurrentStacksBlock from '../common/CurrentStacksBlock';
 
 export default function MineCityCoins(props) {
+  const { doContractCall } = useConnect();
+
   const amountRef = useRef();
   const mineManyRef = useRef();
   const memoRef = useRef();
@@ -29,6 +48,7 @@ export default function MineCityCoins(props) {
   const [isError, setError] = useState();
   const [errorMsg, setErrorMsg] = useState('');
   const [checked, setChecked] = useState(false);
+  const [txId, setTxId] = useState();
 
   useEffect(() => {
     if (ownerStxAddress) {
@@ -98,7 +118,9 @@ export default function MineCityCoins(props) {
       console.log(`STX Balance: ${profileState.account.balance}`);
       const mineMany = numberOfBlocks > 1;
       let amountUstx = 0;
+      let totalUstxCV = uintCV(0);
       let memo = '';
+      let memoCV = noneCV();
       let mineManyArray = [];
       let sum = 0;
 
@@ -106,29 +128,72 @@ export default function MineCityCoins(props) {
         console.log(`mine-many`);
         let amount;
         for (let i = 0; i < numberOfBlocks; i++) {
-          amount = Math.floor(parseFloat(blockAmounts[i].amount) * 1000000);
+          amount = stxToUstx(Math.floor(parseFloat(blockAmounts[i].amount)));
           mineManyArray.push(uintCV(amount));
           sum += amount;
         }
         mineManyArray = listCV(mineManyArray);
-        console.log(`sum: ${sum}`);
+        totalUstxCV = uintCV(sum);
       } else {
         console.log(`mine-single`);
-        amountUstx = Math.floor(parseFloat(amountRef.current.value.trim()) * 1000000);
+        amountUstx = stxToUstx(Math.floor(parseFloat(amountRef.current.value.trim())));
+        totalUstxCV = uintCV(amountUstx);
         memo = memoRef.current.value.trim();
+        memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
         console.log(`amount: ${amountUstx}`);
         console.log(`memo: ${memo}`);
-        MineTokens(
-          props.contracts.deployer,
-          props.contracts.coreContract,
-          ownerStxAddress,
-          amountUstx,
-          memo ? memo : undefined
-        );
       }
+
       let totalSubmitted = 0;
       mineMany ? (totalSubmitted = sum) : (totalSubmitted = amountUstx);
       console.log(`total submitted ${totalSubmitted}`);
+
+      if (totalSubmitted >= profileState.account.balance - estimatedFees) {
+        setLoading(false);
+        setError(true);
+        setErrorMsg(
+          `Not enough funds to cover estimated transaction fee of ${estimatedFees} STX.\nTotal submitted for mining: ${ustxToStx(
+            totalSubmitted
+          )}\nAccount balance: ${ustxToStx(profileState.account.balance)} STX`
+        );
+      } else {
+        try {
+          await doContractCall({
+            contractAddress: props.contracts.deployer,
+            contractName: props.contracts.coreContract,
+            functionName: mineMany ? 'mine-many' : 'mine-tokens',
+            functionArgs: mineMany ? [mineManyArray] : [totalUstxCV, memoCV],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [
+              makeStandardSTXPostCondition(
+                ownerStxAddress,
+                FungibleConditionCode.Equal,
+                totalUstxCV.value
+              ),
+            ],
+            network: NETWORK,
+            onCancel: () => {
+              setLoading(false);
+              setError(true);
+              setErrorMsg('Transaction cancelled.');
+            },
+            onFinish: result => {
+              setLoading(false);
+              setError(false);
+              setErrorMsg('');
+              setTxId(result.txId);
+            },
+          });
+          setLoading(false);
+          setError(false);
+          setErrorMsg('');
+        } catch (err) {
+          console.log(`error: ${err}`);
+          setLoading(false);
+          setError(true);
+          setErrorMsg(err.message);
+        }
+      }
     }
   };
 
@@ -145,6 +210,7 @@ export default function MineCityCoins(props) {
           <i className="bi bi-question-circle"></i>
         </a>
       </h3>
+      <CurrentStacksBlock />
       <p>
         Mining {props.token.text} is done by competing with other miners in a Stacks block. You can
         only mine once per block.
@@ -152,11 +218,6 @@ export default function MineCityCoins(props) {
       <p>
         One winner is selected randomly, weighted by how much the miner commits against the total
         committed that block.
-      </p>
-      <p></p>
-      <p>
-        The winner for a block can be queried after 100 blocks pass (~16-17hrs), and the winner can
-        claim newly minted {props.token.symbol}.
       </p>
       <form>
         <div className="form-floating">

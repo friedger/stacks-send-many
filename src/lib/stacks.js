@@ -65,3 +65,7 @@ export const getTxs = async address => {
 export function ustxToStx(ustx) {
   return parseInt(ustx) / 1000000;
 }
+
+export function stxToUstx(stx) {
+  return parseInt(stx * 1000000);
+}
