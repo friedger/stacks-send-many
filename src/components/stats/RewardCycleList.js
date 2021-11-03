@@ -6,7 +6,6 @@ export default function RewardCycleList(props) {
   for (let i = 0; i < numCycles; i++) {
     cycleLengths.push(cycleLength * i);
   }
-  console.log(cycleLengths);
 
   return (
     <div className="col-lg-6">
