@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import { currentBlockHeight } from '../../store/common';
 import { getTotalSupply } from '../../lib/citycoins';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function TotalSupply(props) {
   const [blockHeight] = useAtom(currentBlockHeight);
@@ -46,13 +47,17 @@ export default function TotalSupply(props) {
         <div className="row text-center text-sm-start">
           <div className="col-sm-6">Max Supply</div>
           <div className="col-sm-6">
-            {maxSupply ? `${maxSupply.toLocaleString()} ${props.token.symbol}` : 'Loading...'}
+            {maxSupply ? `${maxSupply.toLocaleString()} ${props.token.symbol}` : <LoadingSpinner />}
           </div>
         </div>
         <div className="row text-center text-sm-start">
           <div className="col-sm-6">Total Supply</div>
           <div className="col-sm-6">
-            {totalSupply ? `${totalSupply.toLocaleString()} ${props.token.symbol}` : 'Loading...'}
+            {totalSupply ? (
+              `${totalSupply.toLocaleString()} ${props.token.symbol}`
+            ) : (
+              <LoadingSpinner />
+            )}
           </div>
         </div>
         <div className="row text-center text-sm-start">

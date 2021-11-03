@@ -6,6 +6,7 @@ import {
 } from '../../lib/citycoins';
 import { ustxToStx } from '../../lib/stacks';
 import { currentBlockHeight } from '../../store/common';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function StackingStats(props) {
   const [blockHeight] = useAtom(currentBlockHeight);
@@ -76,21 +77,25 @@ export default function StackingStats(props) {
       <p className="fs-5 text-center">Cycle #{props.cycle}</p>
       <div className="row text-center text-sm-start">
         <div className="col-sm-6">Start Block</div>
-        <div className="col-sm-6">{startBlock ? startBlock.toLocaleString() : 'Loading...'}</div>
+        <div className="col-sm-6">
+          {startBlock ? startBlock.toLocaleString() : <LoadingSpinner />}
+        </div>
       </div>
       <div className="row text-center text-sm-start">
         <div className="col-sm-6">End Block</div>
-        <div className="col-sm-6">{endBlock ? endBlock.toLocaleString() : 'Loading...'}</div>
+        <div className="col-sm-6">{endBlock ? endBlock.toLocaleString() : <LoadingSpinner />}</div>
       </div>
       <div className="row text-center text-sm-start">
         <div className="col-sm-6">{props.token.symbol} Stacked</div>
         <div className="col-sm-6">
-          {amountStacked
-            ? amountStacked.toLocaleString(undefined, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              })
-            : 'Loading...'}
+          {amountStacked ? (
+            amountStacked.toLocaleString(undefined, {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })
+          ) : (
+            <LoadingSpinner />
+          )}
         </div>
       </div>
       <div className="row text-center text-sm-start">

@@ -5,6 +5,7 @@ import { getTxs } from '../../lib/stacks';
 import LinkAddress from '../common/LinkAddress';
 import LinkTx from '../common/LinkTx';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function TransactionLog(props) {
   const [txs, setTxs] = useState();
@@ -89,7 +90,7 @@ export default function TransactionLog(props) {
     return (
       <div className="container-fluid p-6">
         <h3>{props.token.symbol} Transactions</h3>
-        <p>Loading...</p>
+        <LoadingSpinner />
       </div>
     );
   }

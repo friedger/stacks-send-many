@@ -7,6 +7,7 @@ import { useAtom } from 'jotai';
 import { useStxAddresses } from '../../lib/hooks';
 import { fetchAccount } from '../../lib/account';
 import { userSessionState } from '../../lib/auth';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function ClaimMiningRewards(props) {
   const { doContractCall } = useConnect();
@@ -136,7 +137,7 @@ export default function ClaimMiningRewards(props) {
           Claim Rewards
         </button>
       </form>
-      {successMsg ? <p>{successMsg}</p> : loading && <p>Loading...</p>}
+      {successMsg ? <p>{successMsg}</p> : loading && <LoadingSpinner />}
       {errorMsg ? <p className="text-danger">{errorMsg}</p> : null}
     </div>
   );

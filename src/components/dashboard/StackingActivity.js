@@ -2,6 +2,7 @@ import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import { getRewardCycle } from '../../lib/citycoins';
 import { currentBlockHeight, currentRewardCycle } from '../../store/common';
+import LoadingSpinner from '../common/LoadingSpinner';
 import StackingStats from './StackingStats';
 
 export default function StackingActivity(props) {
@@ -25,7 +26,7 @@ export default function StackingActivity(props) {
     <div className="container-fluid p-6">
       <h3>{props.token.symbol} Stacking Activity</h3>
       <p>
-        Current {props.token.symbol} Reward Cycle: {rewardCycle ? rewardCycle : 'Loading...'}
+        Current {props.token.symbol} Reward Cycle: {rewardCycle ? rewardCycle : <LoadingSpinner />}
       </p>
       {rewardCycle ? (
         <div className="row g-4 flex-column flex-lg-row row-cols-lg-3 align-items-center justify-content-center">
@@ -55,7 +56,7 @@ export default function StackingActivity(props) {
           </div>
         </div>
       ) : (
-        'Loading...'
+        <LoadingSpinner />
       )}
     </div>
   );

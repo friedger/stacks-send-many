@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getCoinbaseThresholds } from '../../lib/citycoins';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function IssuanceSchedule(props) {
   const [thresholds, setThresholds] = useState([]);
@@ -27,34 +28,36 @@ export default function IssuanceSchedule(props) {
           <div className="col-sm-4">End Block</div>
         </div>
 
-        {thresholds.length === 5
-          ? blockRewards.map((value, idx) => {
-              return (
-                <>
-                  <hr className="d-sm-none" />
-                  <div className="row text-center text-sm-start">
-                    <div className="col-sm-4">{`${value.toLocaleString()} ${
-                      props.token.symbol
-                    }`}</div>
-                    <div className="col-sm-4">
-                      {idx === 0
-                        ? props.config.startBlock.toLocaleString()
-                        : idx === 1
-                        ? (props.config.startBlock + bonusPeriod).toLocaleString()
-                        : thresholds[idx - 2].toLocaleString()}
-                    </div>
-                    <div className="col-sm-4">
-                      {idx === 0
-                        ? (props.config.startBlock + bonusPeriod).toLocaleString()
-                        : idx > thresholds.length
-                        ? 'ongoing'
-                        : thresholds[idx - 1].toLocaleString()}
-                    </div>
+        {thresholds.length === 5 ? (
+          blockRewards.map((value, idx) => {
+            return (
+              <>
+                <hr className="d-sm-none" />
+                <div className="row text-center text-sm-start">
+                  <div className="col-sm-4">{`${value.toLocaleString()} ${
+                    props.token.symbol
+                  }`}</div>
+                  <div className="col-sm-4">
+                    {idx === 0
+                      ? props.config.startBlock.toLocaleString()
+                      : idx === 1
+                      ? (props.config.startBlock + bonusPeriod).toLocaleString()
+                      : thresholds[idx - 2].toLocaleString()}
                   </div>
-                </>
-              );
-            })
-          : 'Loading...'}
+                  <div className="col-sm-4">
+                    {idx === 0
+                      ? (props.config.startBlock + bonusPeriod).toLocaleString()
+                      : idx > thresholds.length
+                      ? 'ongoing'
+                      : thresholds[idx - 1].toLocaleString()}
+                  </div>
+                </div>
+              </>
+            );
+          })
+        ) : (
+          <LoadingSpinner />
+        )}
       </div>
     </div>
   );

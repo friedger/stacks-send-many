@@ -9,6 +9,7 @@ import {
   getRegisteredUsersNonce,
 } from '../../lib/citycoins';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
+import LoadingSpinner from '../common/LoadingSpinner';
 import NotDeployed from '../common/NotDeloyed';
 
 export default function RegisterUser(props) {
@@ -88,15 +89,17 @@ export default function RegisterUser(props) {
       </h3>
       <CurrentStacksBlock />
       <p>Card: countdown or activated!</p>
-      <p>Registered User Count: {userCount > 0 ? userCount.toLocaleString() : 'Loading...'}</p>
+      <p>
+        Registered User Count: {userCount > 0 ? userCount.toLocaleString() : <LoadingSpinner />}
+      </p>
       <p>
         Activation Threshold:{' '}
-        {activationThreshold > 0 ? activationThreshold.toLocaleString() : 'Loading...'}
+        {activationThreshold > 0 ? activationThreshold.toLocaleString() : <LoadingSpinner />}
       </p>
       <p>Activation Status: {activationStatus.toString()}</p>
       <p>
         Activation Block Height:{' '}
-        {activationBlockHeight > 0 ? activationBlockHeight.toLocaleString() : 'Loading...'}
+        {activationBlockHeight > 0 ? activationBlockHeight.toLocaleString() : <LoadingSpinner />}
       </p>
     </div>
   );

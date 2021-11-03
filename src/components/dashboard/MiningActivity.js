@@ -1,6 +1,7 @@
 import { useAtom } from 'jotai';
 import { currentBlockHeight } from '../../store/common';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
+import LoadingSpinner from '../common/LoadingSpinner';
 import MiningStats from './MiningStats';
 
 export default function MiningActivity(props) {
@@ -37,7 +38,7 @@ export default function MiningActivity(props) {
           </div>
         </div>
       ) : (
-        'Loading...'
+        <LoadingSpinner />
       )}
     </div>
   );
