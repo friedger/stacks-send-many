@@ -3,12 +3,12 @@ export default function Footer() {
     <footer className="container text-center border-top mt-3 py-3">
       <div className="row">
         <div className="col-md-4">
-          <a href="https://chat.citycoins.co" target="_blank" rel="noreferrer" className="nav-link">
+          <a href="https://docs.citycoins.co" target="_blank" rel="noreferrer" className="nav-link">
             <i className="bi bi-info-circle"></i> Read the Docs
           </a>
         </div>
         <div className="col-md-4">
-          <a href="https://docs.citycoins.co" target="_blank" rel="noreferrer" className="nav-link">
+          <a href="https://chat.citycoins.co" target="_blank" rel="noreferrer" className="nav-link">
             <i className="bi bi-discord"></i> Join the Discord
           </a>
         </div>
