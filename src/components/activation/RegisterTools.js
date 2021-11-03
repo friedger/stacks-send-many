@@ -1,7 +1,7 @@
-export default function MiningTools(props) {
+export default function RegisterTools(props) {
   return (
     <div className="container-fluid p-6">
-      <h3>Mining Tools</h3>
+      <h3>Registration / Activation Tools</h3>
       <p>
         Get fancy with the {props.token.symbol} contract functions.{' '}
         <span className="fst-italic">This section is coming soon.</span>

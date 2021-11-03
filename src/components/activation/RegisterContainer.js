@@ -1,4 +1,5 @@
 import NotDeployed from '../common/NotDeloyed';
+import RegisterTools from './RegisterTools';
 import RegisterUser from './RegisterUser';
 
 export default function RegisterContainer(props) {
@@ -15,7 +16,7 @@ export default function RegisterContainer(props) {
         >
           <button
             className="nav-link active"
-            id="v-pills-activity-tab"
+            id="v-pills-register-tab"
             data-bs-toggle="pill"
             data-bs-target="#register"
             type="button"
@@ -23,7 +24,19 @@ export default function RegisterContainer(props) {
             aria-controls="register"
             aria-selected="true"
           >
-            Register
+            Activate {props.token.symbol}
+          </button>
+          <button
+            className="nav-link"
+            id="v-pills-registerTools-tab"
+            data-bs-toggle="pill"
+            data-bs-target="#registerTools"
+            type="button"
+            role="tab"
+            aria-controls="registerTools"
+            aria-selected="true"
+          >
+            Registration Tools
           </button>
         </div>
         <div className="tab-content" id="v-pills-tabContent">
@@ -35,6 +48,14 @@ export default function RegisterContainer(props) {
             aria-labelledby="v-pills-register-tab"
           >
             <RegisterUser contracts={props.contracts} token={props.token} config={props.config} />
+          </div>
+          <div
+            className="tab-pane fade"
+            id="registerTools"
+            role="tabpanel"
+            aria-labelledby="v-pills-registerTools-tab"
+          >
+            <RegisterTools contracts={props.contracts} token={props.token} config={props.config} />
           </div>
         </div>
       </div>
