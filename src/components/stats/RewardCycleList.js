@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 export default function RewardCycleList(props) {
   const startBlock = props.config.startBlock;
   const cycleLength = props.config.rewardCycleLength;
@@ -18,7 +20,7 @@ export default function RewardCycleList(props) {
         </div>
         {cycleLengths.map((value, idx) => {
           return (
-            <>
+            <Fragment key={idx}>
               <hr className="d-sm-none" />
               <div className="row text-center text-sm-start">
                 <div className="col-sm-4">{idx}</div>
@@ -27,7 +29,7 @@ export default function RewardCycleList(props) {
                   {(startBlock + value + cycleLength - 1).toLocaleString()}
                 </div>
               </div>
-            </>
+            </Fragment>
           );
         })}
       </div>

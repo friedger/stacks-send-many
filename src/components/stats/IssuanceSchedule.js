@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { getCoinbaseThresholds } from '../../lib/citycoins';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -31,7 +31,7 @@ export default function IssuanceSchedule(props) {
         {thresholds.length === 5 ? (
           blockRewards.map((value, idx) => {
             return (
-              <>
+              <Fragment key={idx}>
                 <hr className="d-sm-none" />
                 <div className="row text-center text-sm-start">
                   <div className="col-sm-4">{`${value.toLocaleString()} ${
@@ -52,7 +52,7 @@ export default function IssuanceSchedule(props) {
                       : thresholds[idx - 1].toLocaleString()}
                   </div>
                 </div>
-              </>
+              </Fragment>
             );
           })
         ) : (
