@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Connect } from '@stacks/connect-react';
-import { Router, Link } from '@reach/router';
-import Landing from './pages/Landing';
-import CityCoinRegistration from './pages/CityCoinRegistration';
-import CityCoinActions from './pages/CityCoinActions';
-import Auth from './components/Auth';
-import { ProfileSmall } from './components/ProfileSmall';
+import { Router } from '@reach/router';
 import { userDataState, userSessionState, useConnect } from './lib/auth';
-import { getMiningActivationStatus } from './lib/citycoin';
 import { useAtom } from 'jotai';
-import { MiamiCoin } from './components/MiamiCoin';
+import Landing from './pages/Landing';
+import Austin from './pages/cities/Austin';
+import Miami from './pages/cities/Miami';
+import NewYorkCity from './pages/cities/NewYorkCity';
+import SanFrancisco from './pages/cities/SanFrancisco';
+import HeaderAuth from './components/common/HeaderAuth';
+import HeaderLogo from './components/common/HeaderLogo';
+import HeaderTitle from './components/common/HeaderTitle';
+import Footer from './components/common/Footer';
+import NotFound from './pages/NotFound';
 
 export default function App(props) {
   const { authOptions } = useConnect();
@@ -26,79 +29,43 @@ export default function App(props) {
 
   return (
     <Connect authOptions={authOptions}>
-      <header className="d-flex flex-wrap justify-content-between align-items-center mx-3 py-3 mb-4 border-bottom">
-        <div>
-          <a
-            href="/"
-            className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none"
-          >
-            <img src="/citycoin-icon-blue-reversed-75x75.png" width="75" alt="CityCoins CC Logo" />
-          </a>
+      <div className="container mt-3">
+        <div className="row align-items-center justify-content-between text-center mb-3">
+          <div className="col-md text-md-start pb-3 pb-md-0">
+            <HeaderLogo />
+          </div>
+          <div className="col-md-6 text-md-center pb-3 pb-md-0">
+            <HeaderTitle />
+          </div>
+          <div className="col-md text-md-end text-nowrap pb-3 pb-md-0">
+            <HeaderAuth userSession={userSession} />
+          </div>
         </div>
-        <div>
-          <span className="h1">CityCoins</span>
+        <hr />
+        <div className="row align-items-center">
+          <div className="col">
+            <Content />
+          </div>
         </div>
-        <div className="btn-group btn-group-lg" role="group" aria-label="CityCoins navigation">
-          <ProfileSmall userSession={userSession} />
-          <a
-            href="https://docs.citycoins.co"
-            target="_blank"
-            rel="noreferrer"
-            className="btn btn-outline-primary"
-          >
-            Read the Docs
-          </a>
-          <Link to="/mia" className="btn btn-outline-primary">
-            MIA Info
-          </Link>
-          <Auth />
-        </div>
-      </header>
-
-      <Content userSession={userSession} />
+      </div>
+      <Footer />
     </Connect>
   );
 }
 
-function AppBody(props) {
-  return <div>{props.children}</div>;
-}
-
-function Content({ userSession }) {
-  const authenticated = userSession && userSession.isUserSignedIn();
-  const decentralizedID =
-    userSession && userSession.isUserSignedIn() && userSession.loadUserData().decentralizedID;
-  const [miningActivated, setMiningActivated] = useState();
-
-  useEffect(() => {
-    getMiningActivationStatus()
-      .then(result => {
-        setMiningActivated(result);
-      })
-      .catch(e => {
-        setMiningActivated(false);
-        console.log(e);
-      });
-  }, []);
-
+function Content() {
   return (
     <>
       <Router>
-        <AppBody exact path="/">
-          {!authenticated && <Landing path="/" />}
-          {!miningActivated && (
-            <CityCoinRegistration
-              path="/"
-              decentralizedID={decentralizedID}
-              userSession={userSession}
-            />
-          )}
-          {decentralizedID && (
-            <CityCoinActions path="/" decentralizedID={decentralizedID} userSession={userSession} />
-          )}
-        </AppBody>
-        <MiamiCoin path="/mia" />
+        <Landing path="/" exact />
+        <Austin path="/atx/*" />
+        <Miami path="/mia/*" />
+        <NewYorkCity path="/nyc/*" />
+        <SanFrancisco path="/sfo/*" />
+        <NotFound default />
       </Router>
     </>
   );
 }
+
+// old idea: <CityLanding path="/:citySymbol" />

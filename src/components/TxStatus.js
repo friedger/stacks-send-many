@@ -73,7 +73,7 @@ export function TxStatus({ txId, resultPrefix }) {
       <div
         ref={spinner}
         role="status"
-        className="d-none spinner-border spinner-border-sm text-info align-text-top mr-2"
+        className="d-none spinner-border spinner-border-sm text-info align-text-top me-2"
       />
     </>
   );

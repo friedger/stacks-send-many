@@ -27,7 +27,7 @@ export const useConnect = () => {
     manifestPath: '/manifest.json',
     appDetails: {
       name: 'CityCoins',
-      icon: 'https://cdn.citycoins.co/logos/citycoin.png',
+      icon: 'https://minecitycoins.com/CityCoins_Logo_150x150.png',
     },
   };
 

@@ -11,6 +11,7 @@ import {
   transactionsApi,
 } from '../lib/constants';
 import { Address } from './Address';
+import LoadingSpinner from './common/LoadingSpinner';
 
 export function CityCoinTxList() {
   const [txs, setTxs] = useState();
@@ -107,7 +108,7 @@ export function CityCoinTxList() {
       </>
     );
   } else {
-    return 'Loading...';
+    return <LoadingSpinner />;
   }
 }
 
