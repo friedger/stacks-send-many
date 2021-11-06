@@ -1,5 +1,8 @@
+import { useConnect } from '@stacks/connect-react';
+import { noneCV, someCV, stringUtf8CV } from '@stacks/transactions';
+import { principalToString } from '@stacks/transactions/dist/clarity/types/principalCV';
 import { useAtom } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { userSessionState } from '../../lib/auth';
 import {
   getActivationBlock,
@@ -9,10 +12,12 @@ import {
   getUserId,
 } from '../../lib/citycoins';
 import { useStxAddresses } from '../../lib/hooks';
+import { NETWORK } from '../../lib/stacks';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function RegisterUser(props) {
+  const registerMemoRef = useRef();
   const [userCount, setUserCount] = useState(0);
   const [activationThreshold, setActivationThreshold] = useState(0);
   const [activationStatus, setActivationStatus] = useState(false);
@@ -20,12 +25,10 @@ export default function RegisterUser(props) {
   const [activationBlockHeight, setActivationBlockHeight] = useState(0);
   const [userId, setUserId] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [txId, setTxId] = useState('');
   const [userSession] = useAtom(userSessionState);
   const { ownerStxAddress } = useStxAddresses(userSession);
-
-  const styles = {
-    width: `${(userCount / activationThreshold) * 100}%`,
-  };
+  const { doContractCall } = useConnect();
 
   useEffect(() => {
     getActivationStatus(props.contracts.deployer, props.contracts.coreContract)
@@ -74,26 +77,35 @@ export default function RegisterUser(props) {
 
   const registerAction = async () => {
     setLoading(true);
-    console.log(`register!`);
+    const memo =
+      registerMemoRef.current.value === ''
+        ? ''
+        : stringUtf8CV(registerMemoRef.current.value.trim());
+    const registerMemoCV = memo ? someCV(memo) : noneCV();
+    await doContractCall({
+      contractAddress: props.contracts.deployer,
+      contractName: props.contracts.coreContract,
+      functionName: 'register-user',
+      functionArgs: [registerMemoCV],
+      network: NETWORK,
+      onFinish: result => {
+        setLoading(false);
+        setTxId(result.txId);
+      },
+      onCancel: () => {
+        setLoading(false);
+      },
+    });
     setLoading(false);
   };
 
-  // if contract is activated, display happy message
-  // else, display activation progress bar
-
-  // if user registered, display success message,
-  // else, display register form
-
-  // if activationStatusLoaded, display based on activationStatus
-  // if activationStatus true, update header, disable form
-  // else update header, enable form ?
-  // else loading spinner
-
-  if (activationStatus) {
+  if (activationStatusLoaded) {
     return (
       <div className="container-fluid p-6">
         <h3>
-          {props.token.symbol} is Activated{' '}
+          {activationStatus
+            ? `${props.token.symbol} is Activated `
+            : `Activate ${props.token.symbol} `}
           <a
             className="primary-link"
             target="_blank"
@@ -104,60 +116,90 @@ export default function RegisterUser(props) {
           </a>
         </h3>
         <CurrentStacksBlock />
-        <p>Activation Status: {activationStatus.toString()}</p>
-        <p>
-          Activation Threshold:{' '}
-          {activationThreshold > 0 ? activationThreshold.toLocaleString() : <LoadingSpinner />}
-        </p>
-        <p>
-          Activation Block Height:{' '}
-          {activationBlockHeight > 0 ? activationBlockHeight.toLocaleString() : <LoadingSpinner />}
-        </p>
-        <p>
-          Registered User Count: {userCount > 0 ? userCount.toLocaleString() : <LoadingSpinner />}
-        </p>
-        <p>User ID: {userId ? userId.toLocaleString() : <LoadingSpinner />}</p>
-      </div>
-    );
-  } else if (!activationStatus) {
-    return (
-      <div className="container-fluid p-6">
-        <h3>
-          Activate {props.token.symbol}{' '}
-          <a
-            className="primary-link"
-            target="_blank"
-            rel="noreferrer"
-            href="https://docs.citycoins.co/citycoins-core-protocol/registration-and-activation"
-          >
-            <i className="bi bi-question-circle"></i>
-          </a>
-        </h3>
-        <CurrentStacksBlock />
-        <p>
-          Registered User Count: {userCount > 0 ? userCount.toLocaleString() : <LoadingSpinner />}
-        </p>
-        <p>
-          Activation Threshold:{' '}
-          {activationThreshold > 0 ? activationThreshold.toLocaleString() : <LoadingSpinner />}
-        </p>
-        <p>Activation Status: {activationStatus.toString()}</p>
-        <p>
-          Activation Block Height:{' '}
-          {activationBlockHeight > 0 ? activationBlockHeight.toLocaleString() : <LoadingSpinner />}
-        </p>
-        <p>User ID: {userId ? userId.toLocaleString() : <LoadingSpinner />}</p>
+        <div className="row g-4 flex-column flex-md-row row-cols-md-2 align-items-center justify-content-center text-center text-nowrap">
+          <div className="col">
+            <div className="border rounded">
+              <p className="fs-5 pt-3">Threshold</p>
+              <p>
+                {activationThreshold > 0 ? (
+                  `${activationThreshold.toLocaleString()} users`
+                ) : (
+                  <LoadingSpinner />
+                )}
+              </p>
+            </div>
+          </div>
+          <div className="col">
+            <div className="border rounded">
+              <p className="fs-5 pt-3">Registered Users</p>
+              <p>{userCount > 0 ? `${userCount.toLocaleString()} users` : <LoadingSpinner />}</p>
+            </div>
+          </div>
+          <div className="col">
+            <div className="border rounded">
+              <p className="fs-5 pt-3">Activation Block</p>
+              <p>
+                {activationBlockHeight > 0 ? (
+                  activationBlockHeight.toLocaleString()
+                ) : (
+                  <LoadingSpinner />
+                )}
+              </p>
+            </div>
+          </div>
+          <div className="col">
+            <div className="border rounded">
+              <p className="fs-5 pt-3">Progress</p>
+              <p>
+                {activationThreshold && userCount > activationThreshold
+                  ? '100%'
+                  : `${(userCount / activationThreshold) * 100}%`}
+              </p>
+            </div>
+          </div>
+        </div>
+        {userId && userCount > activationThreshold ? (
+          <>
+            <h3 className="pt-3">Registration Info</h3>
+            <p>
+              Thanks for registering! Your {props.token.symbol} user ID is {userId}.
+            </p>
+          </>
+        ) : (
+          <>
+            <h3 className="pt-3">Register for {props.token.symbol}</h3>
+            <p></p>
+            <form>
+              <input
+                type="text"
+                className="form-control mt-3"
+                ref={registerMemoRef}
+                aria-label="Registration Message"
+                placeholder="Registration Message (optional)"
+                minLength="1"
+                maxLength="50"
+              />
+              <br />
+              <button
+                className="btn btn-block btn-primary"
+                type="button"
+                disabled={txId}
+                onClick={registerAction}
+              >
+                <div
+                  role="status"
+                  className={`${
+                    loading ? '' : 'd-none'
+                  } spinner-border spinner-border-sm text-info align-text-top me-2`}
+                />
+                Register
+              </button>
+            </form>
+          </>
+        )}
       </div>
     );
   } else {
     return <LoadingSpinner />;
   }
-}
-
-function ActivationStatus() {
-  // return either a form or success message
-}
-
-function ProgressBar() {
-  // return a progress bar for activation
 }
