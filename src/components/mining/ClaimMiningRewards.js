@@ -1,11 +1,10 @@
 import { useConnect } from '@stacks/connect-react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { currentBlockHeight } from '../../store/common';
 import { canClaimMiningReward, isBlockWinner } from '../../lib/citycoins';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import { useAtom } from 'jotai';
 import { useStxAddresses } from '../../lib/hooks';
-import { fetchAccount } from '../../lib/account';
 import { userSessionState } from '../../lib/auth';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { uintCV } from '@stacks/transactions';
@@ -16,26 +15,16 @@ export default function ClaimMiningRewards(props) {
 
   const singleBlockRef = useRef();
 
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(false);
+  const [loadingClaim, setLoadingClaim] = useState(false);
   const [canClaim, setCanClaim] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
   const [userSession] = useAtom(userSessionState);
   const { ownerStxAddress } = useStxAddresses(userSession);
-  const [profileState, setProfileState] = useState({
-    account: undefined,
-  });
 
   const [blockHeight] = useAtom(currentBlockHeight);
-
-  useEffect(() => {
-    if (ownerStxAddress) {
-      fetchAccount(ownerStxAddress).then(acc => {
-        setProfileState({ account: acc });
-      });
-    }
-  }, [ownerStxAddress]);
 
   const checkWinner = async () => {
     // check if we can claim
@@ -87,7 +76,7 @@ export default function ClaimMiningRewards(props) {
 
   const claimRewards = async () => {
     // claim the rewards
-    setLoading(true);
+    setLoadingClaim(true);
     const targetBlockCV = uintCV(singleBlockRef.current.value);
     await doContractCall({
       contractAddress: props.contracts.deployer,
@@ -96,11 +85,11 @@ export default function ClaimMiningRewards(props) {
       functionArgs: [targetBlockCV],
       network: NETWORK,
       onCancel: () => {
-        setLoading(false);
+        setLoadingClaim(false);
         setErrorMsg('Transaction cancelled.');
       },
       onFinish: result => {
-        setLoading(false);
+        setLoadingClaim(false);
         setErrorMsg('');
         setSuccessMsg(
           `Claimed rewards for block ${singleBlockRef.current.value}.\n\nTXID: ${result.txId}`
@@ -156,6 +145,12 @@ export default function ClaimMiningRewards(props) {
           disabled={!canClaim}
           onClick={claimRewards}
         >
+          <div
+            role="status"
+            className={`${
+              loadingClaim ? '' : 'd-none'
+            } spinner-border spinner-border-sm text-info align-text-top ms-1 me-2`}
+          />
           Claim Rewards
         </button>
       </form>

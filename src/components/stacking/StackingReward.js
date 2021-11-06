@@ -7,9 +7,7 @@ import {
 import { FungibleConditionCode, PostConditionMode, uintCV } from '@stacks/transactions';
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
-import { userSessionState } from '../../lib/auth';
-import { getStackerAtCycleOrDefault, getStackingReward, getUserId } from '../../lib/citycoins';
-import { useStxAddresses } from '../../lib/hooks';
+import { getStackerAtCycleOrDefault, getStackingReward } from '../../lib/citycoins';
 import { NETWORK, ustxToStx } from '../../lib/stacks';
 import { userId } from '../../store/common';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -141,6 +139,14 @@ export default function StackingReward(props) {
         </div>
       ) : (
         <p className="mt-3 text-center">Nothing to claim.</p>
+      )}
+      {txId && (
+        <p>
+          TXID:{' '}
+          <a href={`https://explorer.stacks.co/txid/${txId}`} target="_blank" rel="noreferrer">
+            {txId}
+          </a>
+        </p>
       )}
     </div>
   );

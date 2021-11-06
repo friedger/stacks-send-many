@@ -65,7 +65,7 @@ export async function getMiningActivationStatus() {
     network: NETWORK,
     senderAddress: GENESIS_CONTRACT_ADDRESS,
   });
-  if (result.type == ClarityType.BoolTrue) {
+  if (result.type === ClarityType.BoolTrue) {
     return true;
   } else {
     return false;

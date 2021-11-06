@@ -10,7 +10,7 @@ import { userSessionState } from '../../lib/auth';
 import { getBalance, getRewardCycle } from '../../lib/citycoins';
 import { useStxAddresses } from '../../lib/hooks';
 import { NETWORK } from '../../lib/stacks';
-import { cityBalances, currentBlockHeight, currentRewardCycle, userId } from '../../store/common';
+import { cityBalances, currentBlockHeight, currentRewardCycle } from '../../store/common';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import LoadingSpinner from '../common/LoadingSpinner';
 import StackingStats from '../dashboard/StackingStats';
@@ -43,6 +43,9 @@ export default function StackCityCoins(props) {
   }, [blockHeight, props.contracts.coreContract, props.contracts.deployer, setRewardCycle]);
 
   useEffect(() => {
+    const updateBalance = async (balance, symbol) => {
+      setBalance(prev => ({ ...prev, [symbol]: balance }));
+    };
     ownerStxAddress &&
       getBalance(props.contracts.deployer, props.contracts.tokenContract, ownerStxAddress)
         .then(result => updateBalance(result.value.value, props.token.symbol.toUpperCase()))
@@ -54,11 +57,8 @@ export default function StackCityCoins(props) {
     props.contracts.deployer,
     props.contracts.tokenContract,
     props.token.symbol,
+    setBalance,
   ]);
-
-  const updateBalance = async (balance, symbol) => {
-    setBalance(prev => ({ ...prev, [symbol]: balance }));
-  };
 
   const stackingAction = async () => {
     setLoading(true);
@@ -259,6 +259,14 @@ export default function StackCityCoins(props) {
         </button>
       </form>
       <div className={`alert alert-danger mt-3 ${isError ? '' : 'd-none'}`}>{errorMsg}</div>
+      {txId && (
+        <p>
+          TXID:{' '}
+          <a href={`https://explorer.stacks.co/txid/${txId}`} target="_blank" rel="noreferrer">
+            {txId}
+          </a>
+        </p>
+      )}
     </div>
   );
 }

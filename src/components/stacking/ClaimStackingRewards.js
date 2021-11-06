@@ -32,7 +32,7 @@ export default function ClaimStackingRewards(props) {
           console.log(err);
         });
     }
-  }, [blockHeight, props.contracts.coreContract, props.contracts.deployer]);
+  }, [blockHeight, props.contracts.coreContract, props.contracts.deployer, setRewardCycle]);
 
   useEffect(() => {
     ownerStxAddress &&

@@ -8,7 +8,6 @@ export default function TotalSupply(props) {
   const [blockHeight] = useAtom(currentBlockHeight);
   const [maxSupply, setMaxSupply] = useState(0);
   const [totalSupply, setTotalSupply] = useState(0);
-  const [marketCap, setMarketCap] = useState(0);
 
   useEffect(() => {
     if (blockHeight) {

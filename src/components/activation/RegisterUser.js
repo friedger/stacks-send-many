@@ -89,12 +89,12 @@ export default function RegisterUser(props) {
       functionName: 'register-user',
       functionArgs: [registerMemoCV],
       network: NETWORK,
+      onCancel: () => {
+        setLoading(false);
+      },
       onFinish: result => {
         setLoading(false);
         setTxId(result.txId);
-      },
-      onCancel: () => {
-        setLoading(false);
       },
     });
     setLoading(false);

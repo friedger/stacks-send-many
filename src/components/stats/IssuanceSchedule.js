@@ -13,6 +13,7 @@ export default function IssuanceSchedule(props) {
       var thresholdList = [];
       thresholdResult.map(threshold => {
         thresholdList.push(threshold[1].value);
+        return true;
       });
       setThresholds(thresholdList);
     });

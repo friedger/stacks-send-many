@@ -1,16 +1,9 @@
-import { useConnect } from '@stacks/connect-react';
 import {
-  bufferCVFromString,
   callReadOnlyFunction,
   cvToJSON,
   cvToValue,
-  FungibleConditionCode,
-  noneCV,
-  PostConditionMode,
   standardPrincipalCV,
-  someCV,
   uintCV,
-  makeStandardSTXPostCondition,
 } from '@stacks/transactions';
 import { NETWORK } from './stacks';
 

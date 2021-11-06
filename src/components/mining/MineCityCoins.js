@@ -337,6 +337,14 @@ export default function MineCityCoins(props) {
           </label>
         </div>
       </form>
+      {txId && (
+        <p>
+          TXID:{' '}
+          <a href={`https://explorer.stacks.co/txid/${txId}`} target="_blank" rel="noreferrer">
+            {txId}
+          </a>
+        </p>
+      )}
     </div>
   );
 }

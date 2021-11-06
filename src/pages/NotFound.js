@@ -10,13 +10,13 @@ export default function NotFound() {
         <p>Please use the navigation to select a new page.</p>
       </div>
       <hr />
-      <div class="row align-items-center">
-        <div class="col-md-3">
+      <div className="row align-items-center">
+        <div className="col-md-3">
           <Link to="/" className="btn btn-lg btn-outline-primary">
             Back Home
           </Link>
         </div>
-        <div class="col-md-9">
+        <div className="col-md-9">
           <SelectCity />
         </div>
       </div>
