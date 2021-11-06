@@ -24,6 +24,13 @@ export const currentCityList = {
   3: { name: 'San Francisco', symbol: 'SFO', logo: SanFranciscoCoinLogo },
 };
 
+export const cityBalances = atom({
+  ATX: 0,
+  MIA: 0,
+  NYC: 0,
+  SFO: 0,
+});
+
 export const currentCity = atom('');
 export const currentCitySymbol = atom('');
 export const currentRewardCycle = atom(0);

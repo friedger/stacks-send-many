@@ -199,6 +199,10 @@ export default function RegisterUser(props) {
       </div>
     );
   } else {
-    return <LoadingSpinner />;
+    return (
+      <p>
+        Checking contract activation status <LoadingSpinner />
+      </p>
+    );
   }
 }

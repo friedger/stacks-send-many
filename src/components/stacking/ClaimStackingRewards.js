@@ -13,6 +13,14 @@ export default function ClaimStackingRewards(props) {
         </a>
       </h3>
       <p>Claim rewards for stacking {props.token.symbol}</p>
+      <p>
+        When a reward cycle is complete, Stackers can claim their portion of the STX committed by
+        miners.
+      </p>
+      <p>
+        When the last selected cycle is complete, Stackers can claim their {props.token.symbol} back
+        in the same transaction.
+      </p>
     </div>
   );
 }

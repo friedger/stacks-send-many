@@ -52,7 +52,7 @@ export default function StackingContainer(props) {
             Stacking Tools
           </button>
         </div>
-        <div className="tab-content" id="v-pills-tabContent">
+        <div className="tab-content w-100" id="v-pills-tabContent">
           <hr className="d-md-none" />
           <div
             className="tab-pane fade show active"
