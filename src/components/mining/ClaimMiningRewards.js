@@ -8,6 +8,8 @@ import { useStxAddresses } from '../../lib/hooks';
 import { fetchAccount } from '../../lib/account';
 import { userSessionState } from '../../lib/auth';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { uintCV } from '@stacks/transactions';
+import { NETWORK } from '../../lib/stacks';
 
 export default function ClaimMiningRewards(props) {
   const { doContractCall } = useConnect();
@@ -85,6 +87,26 @@ export default function ClaimMiningRewards(props) {
 
   const claimRewards = async () => {
     // claim the rewards
+    setLoading(true);
+    const targetBlockCV = uintCV(singleBlockRef.current.value);
+    await doContractCall({
+      contractAddress: props.contracts.deployer,
+      contractName: props.contracts.coreContract,
+      functionName: 'claim-mining-reward',
+      functionArgs: [targetBlockCV],
+      network: NETWORK,
+      onCancel: () => {
+        setLoading(false);
+        setErrorMsg('Transaction cancelled.');
+      },
+      onFinish: result => {
+        setLoading(false);
+        setErrorMsg('');
+        setSuccessMsg(
+          `Claimed rewards for block ${singleBlockRef.current.value}.\n\nTXID: ${result.txId}`
+        );
+      },
+    });
   };
 
   return (
