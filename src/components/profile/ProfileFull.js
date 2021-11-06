@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { fetchAccount } from '../../lib/account';
 import { Address } from '../Address';
-import { Amount } from '../Amount';
 import { useAtom } from 'jotai';
-import {
-  cityBalancesAtom,
-  cityRatesAtom,
-  currentCity,
-  currentCityList,
-  stxBalanceAtom,
-  stxRateAtom,
-} from '../../store/common';
+import { currentCity, stxBalanceAtom, stxRateAtom } from '../../store/common';
 import SelectCity from '../common/SelectCity';
 import { userSessionState } from '../../lib/auth';
 import { useStxAddresses } from '../../lib/hooks';
@@ -24,12 +16,12 @@ export function ProfileFull(props) {
   const [profileState, setProfileState] = useState({
     account: undefined,
   });
-  const cities = Object.entries(currentCityList);
+  // const cities = Object.entries(currentCityList);
   const [city] = useAtom(currentCity);
   const [stxBalance, setStxBalance] = useAtom(stxBalanceAtom);
-  const [cityBalances, setCityBalances] = useAtom(cityBalancesAtom);
+  // const [cityBalances, setCityBalances] = useAtom(cityBalancesAtom);
   const [stxRate, setStxRate] = useAtom(stxRateAtom);
-  const [cityRates, setCityRates] = useAtom(cityRatesAtom);
+  // const [cityRates, setCityRates] = useAtom(cityRatesAtom);
 
   useEffect(() => {
     if (ownerStxAddress) {
@@ -40,7 +32,7 @@ export function ProfileFull(props) {
   }, [ownerStxAddress]);
 
   useEffect(() => {
-    const updateStxRate = async () => {
+    const updateStxPrice = async () => {
       const rate = await updateStxRate()
         .then(result => setStxRate(result))
         .catch(err => {
