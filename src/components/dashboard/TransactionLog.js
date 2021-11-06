@@ -23,7 +23,7 @@ export default function TransactionLog(props) {
       .catch(err => {
         console.log(err);
       });
-  }, []);
+  }, [props.contracts.coreContract, props.contracts.deployer]);
 
   const blockHeights = txs ? Object.keys(txs).sort().reverse() : undefined;
 
