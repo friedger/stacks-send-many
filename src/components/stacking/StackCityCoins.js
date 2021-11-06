@@ -10,7 +10,7 @@ import { userSessionState } from '../../lib/auth';
 import { getBalance, getRewardCycle } from '../../lib/citycoins';
 import { useStxAddresses } from '../../lib/hooks';
 import { NETWORK } from '../../lib/stacks';
-import { cityBalances, currentBlockHeight, currentRewardCycle } from '../../store/common';
+import { cityBalancesAtom, currentBlockHeight, currentRewardCycle } from '../../store/common';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import LoadingSpinner from '../common/LoadingSpinner';
 import StackingStats from '../dashboard/StackingStats';
@@ -26,7 +26,7 @@ export default function StackCityCoins(props) {
   const [errorMsg, setErrorMsg] = useState('');
   const [userSession] = useAtom(userSessionState);
   const { ownerStxAddress } = useStxAddresses(userSession);
-  const [balance, setBalance] = useAtom(cityBalances);
+  const [balance, setBalance] = useAtom(cityBalancesAtom);
   const { doContractCall } = useConnect();
 
   useEffect(() => {

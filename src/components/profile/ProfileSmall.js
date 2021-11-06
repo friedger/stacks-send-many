@@ -3,10 +3,10 @@ import { ProfileFull } from './ProfileFull';
 import { useStxAddresses } from '../../lib/hooks';
 import { Address } from '../Address';
 
-export function ProfileSmall({ userSession }) {
-  const { ownerStxAddress } = useStxAddresses(userSession);
+export function ProfileSmall(props) {
+  const { ownerStxAddress } = useStxAddresses(props.userSession);
 
-  if (userSession?.isUserSignedIn()) {
+  if (props.userSession?.isUserSignedIn()) {
     return (
       <>
         <a
@@ -20,7 +20,7 @@ export function ProfileSmall({ userSession }) {
           {ownerStxAddress ? <Address addr={ownerStxAddress} /> : 'Profile'}
         </a>
 
-        <ProfileFull stxAddress={ownerStxAddress} userSession={userSession} />
+        <ProfileFull />
       </>
     );
   } else {

@@ -3,23 +3,73 @@ import { fetchAccount } from '../../lib/account';
 import { Address } from '../Address';
 import { Amount } from '../Amount';
 import { useAtom } from 'jotai';
-import { currentCity } from '../../store/common';
+import {
+  cityBalancesAtom,
+  cityRatesAtom,
+  currentCity,
+  currentCityList,
+  stxBalanceAtom,
+  stxRateAtom,
+} from '../../store/common';
 import SelectCity from '../common/SelectCity';
+import { userSessionState } from '../../lib/auth';
+import { useStxAddresses } from '../../lib/hooks';
+import { ustxToStx } from '../../lib/stacks';
+import LoadingSpinner from '../common/LoadingSpinner';
+import { updateStxRate } from '../../lib/coingecko';
 
-export function ProfileFull({ stxAddress, userSession }) {
+export function ProfileFull(props) {
+  const [userSession] = useAtom(userSessionState);
+  const { ownerStxAddress } = useStxAddresses(userSession);
   const [profileState, setProfileState] = useState({
     account: undefined,
   });
-
+  const cities = Object.entries(currentCityList);
   const [city] = useAtom(currentCity);
+  const [stxBalance, setStxBalance] = useAtom(stxBalanceAtom);
+  const [cityBalances, setCityBalances] = useAtom(cityBalancesAtom);
+  const [stxRate, setStxRate] = useAtom(stxRateAtom);
+  const [cityRates, setCityRates] = useAtom(cityRatesAtom);
 
   useEffect(() => {
-    if (stxAddress) {
-      fetchAccount(stxAddress).then(acc => {
+    if (ownerStxAddress) {
+      fetchAccount(ownerStxAddress).then(acc => {
         setProfileState({ account: acc });
       });
     }
-  }, [stxAddress]);
+  }, [ownerStxAddress]);
+
+  useEffect(() => {
+    const updateStxRate = async () => {
+      const rate = await updateStxRate()
+        .then(result => setStxRate(result))
+        .catch(err => {
+          setStxRate(0);
+          console.log(err);
+        });
+    };
+    // update STX balance and rate
+    if (JSON.stringify(profileState) !== '{}') {
+      setStxBalance(profileState.account.balance);
+    }
+  }, [profileState, setStxBalance, setStxRate]);
+
+  /*
+  useEffect(() => {
+    const updateCityBalances = async (balance, symbol) => {
+      setCityBalances(prev => ({ ...prev, [symbol]: balance }));
+    };
+
+    if (ownerStxAddress) {
+      cities.map((value, idx) => {
+        // console.log(`value: ${JSON.stringify(value)}`);
+        // console.log(`idx: ${idx}`);
+        // update citycoins balances
+        // how to know contract addresses?
+      });
+    }
+  });
+  */
 
   return (
     <div
@@ -31,7 +81,7 @@ export function ProfileFull({ stxAddress, userSession }) {
       <div className="offcanvas-header">
         <h5 className="offcanvas-title" id="offcanvasProfileLabel">
           <i className="bi bi-person-circle me-2" />
-          {stxAddress ? <Address addr={stxAddress} /> : 'Profile'}{' '}
+          {ownerStxAddress ? <Address addr={ownerStxAddress} /> : 'Profile'}{' '}
         </h5>
         <button
           type="button"
@@ -54,7 +104,7 @@ export function ProfileFull({ stxAddress, userSession }) {
             <li>
               <a
                 className="dropdown-item"
-                href={'http://miamining.com/history/' + stxAddress}
+                href={'http://miamining.com/history/' + ownerStxAddress}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -64,7 +114,7 @@ export function ProfileFull({ stxAddress, userSession }) {
             <li>
               <a
                 className="dropdown-item"
-                href={'https://explorer.stacks.co/address/' + stxAddress}
+                href={'https://explorer.stacks.co/address/' + ownerStxAddress}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -106,8 +156,31 @@ export function ProfileFull({ stxAddress, userSession }) {
           <hr />
           {profileState.account && (
             <>
-              <h5 className="mb-3">Account Balances</h5>
-              <Amount ustx={profileState.account.balance} stxAddress={stxAddress} />
+              <h5 className="mb-3">Account Balance</h5>
+              <ul>
+                <li>
+                  {stxBalance ? (
+                    `${ustxToStx(stxBalance).toLocaleString(undefined, {
+                      style: 'decimal',
+                      minimumFractionDigits: 6,
+                      maximumFractionDigits: 6,
+                    })} Ӿ`
+                  ) : (
+                    <LoadingSpinner />
+                  )}
+                </li>
+                <li>
+                  {stxRate ? (
+                    `$${(ustxToStx(stxBalance) * stxRate).toLocaleString(undefined, {
+                      style: 'decimal',
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })} USD`
+                  ) : (
+                    <LoadingSpinner />
+                  )}
+                </li>
+              </ul>
               <p>Selected City: {city}</p>
               <SelectCity />
             </>
