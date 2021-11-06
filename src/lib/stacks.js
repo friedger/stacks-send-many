@@ -69,3 +69,11 @@ export function ustxToStx(ustx) {
 export function stxToUstx(stx) {
   return parseInt(stx * 1000000);
 }
+
+export async function getStxBalance(address) {
+  const url = `${STACKS_API_URL}/extended/v1/address/${address}/stx`;
+  const response = await fetch(url);
+  const json = await response.json();
+  debug && console.log(`getStxBalance result: ${json.balance}`);
+  return json.balance;
+}

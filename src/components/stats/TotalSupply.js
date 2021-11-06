@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
-import { currentBlockHeight } from '../../store/common';
+import { currentBlockHeight, stxRateAtom } from '../../store/common';
 import { getTotalSupply } from '../../lib/citycoins';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { updateStxRate } from '../../lib/coingecko';
 
 export default function TotalSupply(props) {
   const [blockHeight] = useAtom(currentBlockHeight);
+  const [stxRate, setStxRate] = useAtom(stxRateAtom);
   const [maxSupply, setMaxSupply] = useState(0);
   const [totalSupply, setTotalSupply] = useState(0);
 
@@ -38,6 +40,17 @@ export default function TotalSupply(props) {
     props.contracts.deployer,
     props.contracts.tokenContract,
   ]);
+
+  useEffect(() => {
+    const updateStxPrice = async () => {
+      const rate = await updateStxRate()
+        .then(result => setStxRate(result))
+        .catch(err => {
+          setStxRate(0);
+          console.log(err);
+        });
+    };
+  }, [setStxRate]);
 
   return (
     <div className="col-lg-6">
