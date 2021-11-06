@@ -34,3 +34,5 @@ export const cityBalances = atom({
 export const currentCity = atom('');
 export const currentCitySymbol = atom('');
 export const currentRewardCycle = atom(0);
+
+export const userId = atom(0);
