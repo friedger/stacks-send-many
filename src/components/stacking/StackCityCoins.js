@@ -10,7 +10,7 @@ import { userSessionState } from '../../lib/auth';
 import { getBalance, getRewardCycle } from '../../lib/citycoins';
 import { useStxAddresses } from '../../lib/hooks';
 import { NETWORK } from '../../lib/stacks';
-import { cityBalances, currentBlockHeight, currentRewardCycle } from '../../store/common';
+import { cityBalances, currentBlockHeight, currentRewardCycle, userId } from '../../store/common';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import LoadingSpinner from '../common/LoadingSpinner';
 import StackingStats from '../dashboard/StackingStats';
@@ -215,7 +215,7 @@ export default function StackCityCoins(props) {
         <li>STX rewards can be claimed after each cycle ends</li>
         <li>Stacked {props.token.symbol} can be claimed after the selected period ends</li>
         <li>
-          Stacking always occurs in the <span class="fst-italic">next reward cycle</span>
+          Stacking always occurs in the <span className="fst-italic">next reward cycle</span>
         </li>
         <li>Stackers must skip one cycle after the selected period ends</li>
       </ul>
