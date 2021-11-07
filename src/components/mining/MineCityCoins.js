@@ -128,7 +128,7 @@ export default function MineCityCoins(props) {
         console.log(`mine-many`);
         let amount;
         for (let i = 0; i < numberOfBlocks; i++) {
-          amount = stxToUstx(Math.floor(parseFloat(blockAmounts[i].amount)));
+          amount = stxToUstx(parseFloat(blockAmounts[i].amount).toFixed(6));
           mineManyArray.push(uintCV(amount));
           sum += amount;
         }
@@ -136,7 +136,7 @@ export default function MineCityCoins(props) {
         totalUstxCV = uintCV(sum);
       } else {
         console.log(`mine-single`);
-        amountUstx = stxToUstx(Math.floor(parseFloat(amountRef.current.value.trim())));
+        amountUstx = stxToUstx(parseFloat(amountRef.current.value.trim()).toFixed(6));
         totalUstxCV = uintCV(amountUstx);
         memo = memoRef.current.value.trim();
         memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
