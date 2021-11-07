@@ -24,7 +24,7 @@ export default function StackingStats(props) {
         } else {
           if (endBlock - blockHeight < props.config.rewardCycleLength) {
             setPercentComplete(
-              Math.round(((endBlock - blockHeight) / props.config.rewardCycleLength) * 100)
+              Math.round(100 - ((endBlock - blockHeight) / props.config.rewardCycleLength) * 100)
             );
           } else {
             setPercentComplete(0);
