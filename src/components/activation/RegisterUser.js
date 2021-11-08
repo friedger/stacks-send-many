@@ -12,7 +12,7 @@ import {
 } from '../../lib/citycoins';
 import { useStxAddresses } from '../../lib/hooks';
 import { NETWORK } from '../../lib/stacks';
-import { currentBlockHeight } from '../../store/common';
+import { currentBlockHeight, currentCityActivationStatus } from '../../store/common';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -22,7 +22,7 @@ export default function RegisterUser(props) {
   const [blockHeight] = useAtom(currentBlockHeight);
   const [userCount, setUserCount] = useState(0);
   const [activationThreshold, setActivationThreshold] = useState(0);
-  const [activationStatus, setActivationStatus] = useState(false);
+  const [activationStatus, setActivationStatus] = useAtom(currentCityActivationStatus);
   const [activationStatusLoaded, setActivationStatusLoaded] = useState(false);
   const [activationBlockHeight, setActivationBlockHeight] = useState(0);
   const [userId, setUserId] = useState(0);
