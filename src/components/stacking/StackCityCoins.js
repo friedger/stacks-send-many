@@ -172,7 +172,7 @@ export default function StackCityCoins(props) {
       </h3>
       <CurrentStacksBlock />
       <p>
-        Current {props.token.symbol} Reward Cycle: {rewardCycle ? rewardCycle : <LoadingSpinner />}
+        Current {props.token.symbol} Reward Cycle: {typeof rewardCycle === 'number' ? rewardCycle : <LoadingSpinner />}
       </p>
       <p>
         Stacking CityCoins locks up {props.token.symbol} in the contract for a selected number of
@@ -193,11 +193,11 @@ export default function StackCityCoins(props) {
             <p className="fs-5 text-center">Cycle Length</p>
             <div className="row text-center text-sm-start">
               <div className="col-sm-6">Current Cycle</div>
-              <div className="col-sm-6">{rewardCycle ? rewardCycle : <LoadingSpinner />}</div>
+              <div className="col-sm-6">{typeof rewardCycle === 'number' ? rewardCycle : <LoadingSpinner />}</div>
             </div>
             <div className="row text-center text-sm-start">
               <div className="col-sm-6">Next Cycle</div>
-              <div className="col-sm-6">{rewardCycle ? rewardCycle + 1 : <LoadingSpinner />}</div>
+              <div className="col-sm-6">{typeof rewardCycle === 'number' ? rewardCycle + 1 : <LoadingSpinner />}</div>
             </div>
             <div className="row text-center text-sm-start">
               <div className="col-sm-6">
@@ -219,7 +219,7 @@ export default function StackCityCoins(props) {
           </div>
         </div>
         <div className="col">
-          {rewardCycle ? (
+          {typeof rewardCycle === 'number' ? (
             <StackingStats
               contracts={props.contracts}
               token={props.token}
@@ -231,7 +231,7 @@ export default function StackCityCoins(props) {
           )}
         </div>
         <div className="col">
-          {rewardCycle ? (
+          {typeof rewardCycle === 'number' ? (
             <StackingStats
               contracts={props.contracts}
               token={props.token}
