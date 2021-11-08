@@ -151,7 +151,10 @@ export default function RegisterUser(props) {
           <p>
             Activation Block Height: {activationBlockHeight.toLocaleString()}{' '}
             <span className="fst-italic">
-              ({(blockHeight - activationBlockHeight).toLocaleString()} blocks ago)
+              ({blockHeight > activationBlockHeight
+                ? `${(blockHeight - activationBlockHeight).toLocaleString()} blocks ago`
+                : `in ${(activationBlockHeight - blockHeight).toLocaleString()} blocks`
+              })
             </span>
           </p>
         )}
