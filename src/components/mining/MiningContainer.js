@@ -3,6 +3,9 @@ import ClaimMiningRewards from './ClaimMiningRewards';
 import MiningTools from './MiningTools';
 import NotDeployed from '../common/NotDeloyed';
 
+// TODO: mining should display a message if contract is not activated
+// else load the mining content
+
 export default function MiningContainer(props) {
   if (props.contracts.deployer === '') {
     return <NotDeployed />;

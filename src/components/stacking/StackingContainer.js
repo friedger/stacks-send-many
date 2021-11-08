@@ -3,6 +3,9 @@ import ClaimStackingRewards from './ClaimStackingRewards';
 import StackingTools from './StackingTools';
 import NotDeployed from '../common/NotDeloyed';
 
+// TODO: stacking should display a message if contract is not activated
+// else load the stacking content
+
 export default function StackingContainer(props) {
   if (props.contracts.deployer === '') {
     return <NotDeployed />;

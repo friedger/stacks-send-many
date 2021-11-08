@@ -4,6 +4,9 @@ import MiningActivity from './MiningActivity';
 import StackingActivity from './StackingActivity';
 import TransactionLog from './TransactionLog';
 
+// TODO: dashboard should display a message if contract is not activated
+// else load the dashboard content
+
 export default function DashboardContainer(props) {
   if (props.contracts.deployer === '') {
     return <NotDeployed />;

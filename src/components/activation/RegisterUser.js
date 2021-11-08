@@ -31,6 +31,12 @@ export default function RegisterUser(props) {
   const { ownerStxAddress } = useStxAddresses(userSession);
   const { doContractCall } = useConnect();
 
+  // TODO: make activation status a global atom, set at container levels and here
+
+  // TODO: registered users does not return a value when 0 users are registered
+
+  // TODO: progress should be limited to two decimal places (same as stacking progress?)
+
   useEffect(() => {
     getActivationStatus(props.contracts.deployer, props.contracts.coreContract)
       .then(result => {
