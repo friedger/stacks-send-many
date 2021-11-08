@@ -156,7 +156,7 @@ export default function RegisterUser(props) {
               <p>
                 {activationThreshold && userCount > activationThreshold
                   ? '100%'
-                  : `${(userCount / activationThreshold) * 100}%`}
+                  : `${((userCount / activationThreshold) * 100).toFixed(2)}%`}
               </p>
             </div>
           </div>
