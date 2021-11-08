@@ -14,20 +14,11 @@ import TransactionLog from './TransactionLog';
 
 export default function DashboardContainer(props) {
   const [cityActivated, setCityActivated] = useAtom(currentCityActivationStatus);
-  const [cityStartBlock, setCityStartBlock] = useAtom(currentCityStartBlock);
 
   useEffect(() => {
     getActivationStatus(props.contracts.deployer, props.contracts.coreContract)
       .then(result => {
         setCityActivated(result.value);
-        getActivationBlock(props.contracts.deployer, props.contracts.coreContract)
-          .then(result => {
-            setCityStartBlock(result.value.value);
-          })
-          .catch(err => {
-            setCityStartBlock(0);
-            console.log(err);
-          });
       })
       .catch(err => {
         setCityActivated(false);
@@ -40,7 +31,7 @@ export default function DashboardContainer(props) {
   }
 
   if (!cityActivated) {
-    return <NotActivated />;
+    return <NotActivated symbol={props.token.symbol} />;
   }
 
   return (
