@@ -1,5 +1,7 @@
+import {testnet} from "../lib/constants"
+
 export const ATX_CONTRACTS = {
-  deployer: '',
+  deployer: testnet ? 'ST2NJ50P1WY54JRD21GDKFB1SQ6JFPR8EVFRHA42R' : '',
   coreContract: 'austincoin-core-v1',
   authContract: 'austincoin-auth',
   tokenContract: 'austincoin-token',
