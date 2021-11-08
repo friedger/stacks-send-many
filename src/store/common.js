@@ -44,6 +44,6 @@ export const cityRatesAtom = atom({
 
 export const currentCity = atom('');
 export const currentCitySymbol = atom('');
-export const currentRewardCycle = atom(0);
+export const currentRewardCycle = atom(undefined);
 
 export const userId = atom(0);

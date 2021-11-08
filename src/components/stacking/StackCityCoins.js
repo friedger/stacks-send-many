@@ -220,7 +220,7 @@ export default function StackCityCoins(props) {
         <li>Stackers must skip one cycle after the selected period ends</li>
       </ul>
 
-      <h3 className="mt-3">Stack{rewardCycle && ` in Cycle ${rewardCycle + 1}`}</h3>
+      <h3 className="mt-3">Stack{typeof rewardCycle === 'number' ? ` in Cycle ${rewardCycle + 1}` : ''}</h3>
       <form>
         <div className="input-group mb-3">
           <input
