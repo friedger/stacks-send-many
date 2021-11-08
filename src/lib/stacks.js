@@ -1,10 +1,13 @@
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
-import { testnet } from './constants';
+
+export const testnet = window.location.search.includes('chain=testnet');
 
 export const CITYCOIN_DEPLOYER = 'SP466FNC0P7JWTNM2R9T199QRZN1MYEDTAR0KP27';
 export const CITYCOIN_VRF = 'citycoin-vrf';
 
-export const STACKS_API_URL = testnet ? 'https://stacks-node-api.testnet.stacks.co' : 'https://stacks-node-api.mainnet.stacks.co';
+export const STACKS_API_URL = testnet
+  ? 'https://stacks-node-api.testnet.stacks.co'
+  : 'https://stacks-node-api.mainnet.stacks.co';
 export const STACKS_API_V2_INFO = `${STACKS_API_URL}/v2/info`;
 export const STACKS_API_ACCOUNTS_URL = `${STACKS_API_URL}/v2/accounts`;
 export const STACKS_API_ADDRESSINFO = `${STACKS_API_URL}/extended/v1/address/`;
