@@ -5,7 +5,12 @@ export default function NotDeployed() {
       <p>Sorry, we couldn't find a deployer address for this city's contracts.</p>
       <p>
         If this is a mistake, please share more information in the{' '}
-        <a href="https://discord.gg/whoabuddy" target="_blank" rel="noreferrer">
+        <a
+          className="link-primary"
+          href="https://discord.gg/citycoins"
+          target="_blank"
+          rel="noreferrer"
+        >
           CityCoins Discord
         </a>
         .

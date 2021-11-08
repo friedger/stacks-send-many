@@ -9,7 +9,12 @@ export default function RegisterTools(props) {
 
       <p>
         If there's a tool you'd like to see, please share it in our{' '}
-        <a href="https://discord.gg/citycoins" target="_blank" rel="noreferrer">
+        <a
+          className="link-primary"
+          href="https://discord.gg/citycoins"
+          target="_blank"
+          rel="noreferrer"
+        >
           community Discord
         </a>
         .
