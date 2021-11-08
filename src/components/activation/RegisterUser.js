@@ -14,6 +14,7 @@ import { useStxAddresses } from '../../lib/hooks';
 import { NETWORK } from '../../lib/stacks';
 import { currentBlockHeight } from '../../store/common';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
+import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function RegisterUser(props) {
@@ -26,10 +27,16 @@ export default function RegisterUser(props) {
   const [activationBlockHeight, setActivationBlockHeight] = useState(0);
   const [userId, setUserId] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [txId, setTxId] = useState('');
   const [userSession] = useAtom(userSessionState);
   const { ownerStxAddress } = useStxAddresses(userSession);
   const { doContractCall } = useConnect();
+
+  const [formMsg, setFormMsg] = useState({
+    type: '',
+    hidden: true,
+    text: '',
+    txId: '',
+  });
 
   // TODO: make activation status a global atom, set at container levels and here
 
@@ -84,6 +91,12 @@ export default function RegisterUser(props) {
 
   const registerAction = async () => {
     setLoading(true);
+    setFormMsg({
+      type: '',
+      hidden: true,
+      text: '',
+      txId: '',
+    });
     const memo =
       registerMemoRef.current.value === ''
         ? ''
@@ -97,10 +110,21 @@ export default function RegisterUser(props) {
       network: NETWORK,
       onCancel: () => {
         setLoading(false);
+        setFormMsg({
+          type: 'warning',
+          hidden: false,
+          text: 'Transaction was canceled, please try again.',
+          txId: '',
+        });
       },
       onFinish: result => {
         setLoading(false);
-        setTxId(result.txId);
+        setFormMsg({
+          type: 'success',
+          hidden: false,
+          text: 'User registered successfully',
+          txId: result.txId,
+        });
       },
     });
     setLoading(false);
@@ -188,7 +212,7 @@ export default function RegisterUser(props) {
               <button
                 className="btn btn-block btn-primary"
                 type="button"
-                disabled={txId || activationStatus}
+                disabled={formMsg.txId || activationStatus}
                 onClick={registerAction}
               >
                 <div
@@ -200,6 +224,12 @@ export default function RegisterUser(props) {
                 Register
               </button>
             </form>
+            <FormResponse
+              type={formMsg.type}
+              text={formMsg.text}
+              hidden={formMsg.hidden}
+              txId={formMsg.txId}
+            />
           </>
         )}
       </div>

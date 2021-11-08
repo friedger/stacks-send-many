@@ -24,6 +24,7 @@ import {
 } from '@stacks/transactions';
 import { useConnect } from '@stacks/connect-react';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
+import FormResponse from '../common/FormResponse';
 
 export default function MineCityCoins(props) {
   const { doContractCall } = useConnect();
@@ -45,10 +46,14 @@ export default function MineCityCoins(props) {
 
   const [isDisabled, setIsDisabled] = useState(true);
   const [loading, setLoading] = useState();
-  const [isError, setError] = useState();
-  const [errorMsg, setErrorMsg] = useState('');
   const [checked, setChecked] = useState(false);
-  const [txId, setTxId] = useState();
+
+  const [formMsg, setFormMsg] = useState({
+    type: '',
+    hidden: true,
+    text: '',
+    txId: '',
+  });
 
   useEffect(() => {
     if (ownerStxAddress) {
@@ -59,8 +64,12 @@ export default function MineCityCoins(props) {
   }, [ownerStxAddress]);
 
   const updateValue = numberOfBlocks => {
-    setError(false);
-    setErrorMsg('');
+    setFormMsg({
+      type: '',
+      hidden: true,
+      text: '',
+      txId: '',
+    });
     if (numberOfBlocks > 1) {
       for (let i = 1; i < numberOfBlocks + 1; i++) {
         setBlockAmounts(currentBlock => [
@@ -77,8 +86,12 @@ export default function MineCityCoins(props) {
         setButtonLabel(`Mine for ${numberOfBlocks} block`);
       } else {
         setButtonLabel('Mine');
-        setError(true);
-        setErrorMsg('Please enter a valid number');
+        setFormMsg({
+          type: 'danger',
+          hidden: false,
+          text: 'Please enter a valid number',
+          txId: '',
+        });
       }
     }
   };
@@ -94,28 +107,39 @@ export default function MineCityCoins(props) {
 
   const mineAction = async () => {
     setLoading(true);
-    setError(false);
-    setErrorMsg('');
-    console.log(`amountRef: ${amountRef.current.value}`);
+    setFormMsg({
+      type: '',
+      hidden: true,
+      text: '',
+      txId: '',
+    });
+    // console.log(`amountRef: ${amountRef.current.value}`);
     if (numberOfBlocks === 1 && !amountRef.current.value) {
-      console.log(`${numberOfBlocks} and ${amountRef.current.value}`);
-      setLoading(false);
-      setError(true);
-      setErrorMsg('Please enter a valid amount to mine for one block.');
+      // console.log(`${numberOfBlocks} and ${amountRef.current.value}`);
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Please enter a valid amount to mine for one block.',
+        txId: '',
+      });
     } else if (numberOfBlocks > 200) {
-      setLoading(false);
-      setError(true);
-      setErrorMsg('Cannot submit for more than 200 blocks.');
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Cannot submit for more than 200 blocks.',
+        txId: '',
+      });
+      // TODO: check if value > 0, use simpler returns
     } else {
       const estimatedFees = await getEstimatedStxFee(); // 1 STX
-      const mempoolFeeAvg = await getMempoolFeeAvg(); // ustx
-      const mempoolFeeMedian = await getMempoolFeeMedian(); // ustx
-      console.log(`attempting to mine.`);
-      console.log(`estimatedFees: ${estimatedFees}`);
-      console.log(`mempoolFeeAvg: ${mempoolFeeAvg}`);
-      console.log(`mempoolFeeMedian: ${mempoolFeeMedian}`);
-      console.log(`STX Address: ${ownerStxAddress}`);
-      console.log(`STX Balance: ${profileState.account.balance}`);
+      // const mempoolFeeAvg = await getMempoolFeeAvg(); // ustx
+      // const mempoolFeeMedian = await getMempoolFeeMedian(); // ustx
+      // console.log(`attempting to mine.`);
+      // console.log(`estimatedFees: ${estimatedFees}`);
+      // console.log(`mempoolFeeAvg: ${mempoolFeeAvg}`);
+      // console.log(`mempoolFeeMedian: ${mempoolFeeMedian}`);
+      // console.log(`STX Address: ${ownerStxAddress}`);
+      // console.log(`STX Balance: ${profileState.account.balance}`);
       const mineMany = numberOfBlocks > 1;
       let amountUstx = 0;
       let totalUstxCV = uintCV(0);
@@ -140,22 +164,24 @@ export default function MineCityCoins(props) {
         totalUstxCV = uintCV(amountUstx);
         memo = memoRef.current.value.trim();
         memoCV = memo ? someCV(bufferCVFromString(memo)) : noneCV();
-        console.log(`amount: ${amountUstx}`);
-        console.log(`memo: ${memo}`);
+        // console.log(`amount: ${amountUstx}`);
+        // console.log(`memo: ${memo}`);
       }
 
       let totalSubmitted = 0;
       mineMany ? (totalSubmitted = sum) : (totalSubmitted = amountUstx);
-      console.log(`total submitted ${totalSubmitted}`);
+      // console.log(`total submitted ${totalSubmitted}`);
 
       if (totalSubmitted >= profileState.account.balance - estimatedFees) {
         setLoading(false);
-        setError(true);
-        setErrorMsg(
-          `Not enough funds to cover estimated transaction fee of ${estimatedFees} STX.\nTotal submitted for mining: ${ustxToStx(
+        setFormMsg({
+          type: 'danger',
+          hidden: false,
+          text: `Not enough funds to cover estimated transaction fee of ${estimatedFees} STX.\nTotal submitted for mining: ${ustxToStx(
             totalSubmitted
-          )}\nAccount balance: ${ustxToStx(profileState.account.balance)} STX`
-        );
+          )}\nAccount balance: ${ustxToStx(profileState.account.balance)} STX`,
+          txId: '',
+        });
       } else {
         try {
           await doContractCall({
@@ -174,24 +200,33 @@ export default function MineCityCoins(props) {
             network: NETWORK,
             onCancel: () => {
               setLoading(false);
-              setError(true);
-              setErrorMsg('Transaction cancelled.');
+              setFormMsg({
+                type: 'warning',
+                hidden: false,
+                text: 'Transaction was canceled, please try again.',
+                txId: '',
+              });
             },
             onFinish: result => {
               setLoading(false);
-              setError(false);
-              setErrorMsg('');
-              setTxId(result.txId);
+              setFormMsg({
+                type: 'success',
+                hidden: false,
+                text: 'Mining transaction successfully sent',
+                txId: result.txId,
+              });
             },
           });
           setLoading(false);
-          setError(false);
-          setErrorMsg('');
         } catch (err) {
-          console.log(`error: ${err}`);
+          console.log(`Error: ${err.message}`);
           setLoading(false);
-          setError(true);
-          setErrorMsg(err.message);
+          setFormMsg({
+            type: 'danger',
+            hidden: false,
+            text: `Error: ${err.message}`,
+            txId: '',
+          });
         }
       }
     }
@@ -317,7 +352,12 @@ export default function MineCityCoins(props) {
           />
           {buttonLabel}
         </button>
-        <div className={`alert alert-danger ${isError ? '' : 'd-none'}`}>{errorMsg}</div>
+        <FormResponse
+          type={formMsg.type}
+          text={formMsg.text}
+          hidden={formMsg.hidden}
+          txId={formMsg.txId}
+        />
         <div className="form-check">
           <input
             className="form-check-input"
@@ -337,14 +377,6 @@ export default function MineCityCoins(props) {
           </label>
         </div>
       </form>
-      {txId && (
-        <p>
-          TXID:{' '}
-          <a href={`https://explorer.stacks.co/txid/${txId}`} target="_blank" rel="noreferrer">
-            {txId}
-          </a>
-        </p>
-      )}
     </div>
   );
 }

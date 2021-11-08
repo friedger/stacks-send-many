@@ -1,3 +1,5 @@
+import LinkTx from './LinkTx';
+
 export default function FormResponse(props) {
   // supports all Bootstrap 5 alert types
   // https://getbootstrap.com/docs/5.0/components/alerts/
@@ -8,6 +10,9 @@ export default function FormResponse(props) {
   // props.txId
 
   return (
-    <div className={`alert alert-${props.type} ${props.hidden && 'd-none'}`}>{props.text}</div>
+    <div className={`alert alert-${props.type} ${props.hidden && 'd-none'}`}>
+      {props.text}
+      {props.txId && <LinkTx txId={props.txId} />}
+    </div>
   );
 }
