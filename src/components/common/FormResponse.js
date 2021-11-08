@@ -10,9 +10,14 @@ export default function FormResponse(props) {
   // props.txId
 
   return (
-    <div className={`alert alert-${props.type} ${props.hidden && 'd-none'}`}>
+    <div className={`mt-3 alert alert-${props.type} ${props.hidden && 'd-none'}`}>
       {props.text}
-      {props.txId && <LinkTx txId={props.txId} />}
+      {props.txId && (
+        <>
+          <br />
+          <LinkTx txId={props.txId} />
+        </>
+      )}
     </div>
   );
 }

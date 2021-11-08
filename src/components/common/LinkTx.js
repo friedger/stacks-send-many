@@ -1,4 +1,5 @@
 export default function LinkTx({ txId, shorten = true }) {
+  !txId.startsWith('0x') && (txId = `0x${txId}`);
   const url = `https://explorer.stacks.co/txid/${txId}`;
   return (
     <a href={url} target="_blank" rel="noreferrer">
