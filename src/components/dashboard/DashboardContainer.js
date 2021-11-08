@@ -1,7 +1,7 @@
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
-import { getActivationBlock, getActivationStatus } from '../../lib/citycoins';
-import { currentCityActivationStatus, currentCityStartBlock } from '../../store/common';
+import { getActivationStatus } from '../../lib/citycoins';
+import { currentCityActivationStatus } from '../../store/common';
 import NotActivated from '../common/NotActivated';
 import NotDeployed from '../common/NotDeloyed';
 import StatsContainer from '../stats/StatsContainer';
