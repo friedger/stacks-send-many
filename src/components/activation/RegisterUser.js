@@ -9,10 +9,15 @@ import {
   getActivationThreshold,
   getRegisteredUsersNonce,
   getUserId,
+  isInitialized,
 } from '../../lib/citycoins';
 import { useStxAddresses } from '../../lib/hooks';
 import { NETWORK } from '../../lib/stacks';
-import { currentBlockHeight, currentCityActivationStatus } from '../../store/common';
+import {
+  currentBlockHeight,
+  currentCityActivationStatus,
+  currentCityInitialized,
+} from '../../store/common';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -21,6 +26,7 @@ export default function RegisterUser(props) {
   const registerMemoRef = useRef();
   const [blockHeight] = useAtom(currentBlockHeight);
   const [userCount, setUserCount] = useState(0);
+  const [initialized, setInitialized] = useAtom(currentCityInitialized);
   const [activationThreshold, setActivationThreshold] = useState(0);
   const [activationStatus, setActivationStatus] = useAtom(currentCityActivationStatus);
   const [activationStatusLoaded, setActivationStatusLoaded] = useState(false);
@@ -45,6 +51,14 @@ export default function RegisterUser(props) {
   // TODO: progress should be limited to two decimal places (same as stacking progress?)
 
   useEffect(() => {
+    isInitialized(props.contracts.deployer, props.contracts.authContract)
+      .then(result => {
+        setInitialized(result);
+      })
+      .catch(err => {
+        setInitialized(false);
+        console.log(err);
+      });
     getActivationStatus(props.contracts.deployer, props.contracts.coreContract)
       .then(result => {
         setActivationStatus(result.value);
@@ -151,10 +165,11 @@ export default function RegisterUser(props) {
           <p>
             Activation Block Height: {activationBlockHeight.toLocaleString()}{' '}
             <span className="fst-italic">
-              ({blockHeight > activationBlockHeight
+              (
+              {blockHeight > activationBlockHeight
                 ? `${(blockHeight - activationBlockHeight).toLocaleString()} blocks ago`
-                : `in ${(activationBlockHeight - blockHeight).toLocaleString()} blocks`
-              })
+                : `in ${(activationBlockHeight - blockHeight).toLocaleString()} blocks`}
+              )
             </span>
           </p>
         )}
@@ -200,10 +215,11 @@ export default function RegisterUser(props) {
           <>
             <h3 className="pt-3">Register for {props.token.symbol}</h3>
             {activationStatus && <p>Contract is activated, registration form disabled.</p>}
+            {!initialized && <p>Contract is not initialized, registration form disabled.</p>}
             <form>
               <input
                 type="text"
-                disabled={activationStatus}
+                disabled={!initialized || activationStatus || formMsg.txId}
                 className="form-control mt-3"
                 ref={registerMemoRef}
                 aria-label="Registration Message"
@@ -215,7 +231,7 @@ export default function RegisterUser(props) {
               <button
                 className="btn btn-block btn-primary"
                 type="button"
-                disabled={formMsg.txId || activationStatus}
+                disabled={!initialized || activationStatus || formMsg.txId}
                 onClick={registerAction}
               >
                 <div

@@ -3,20 +3,34 @@ import ClaimMiningRewards from './ClaimMiningRewards';
 import MiningTools from './MiningTools';
 import NotDeployed from '../common/NotDeployed';
 import { useAtom } from 'jotai';
-import { currentCityActivationStatus, currentBlockHeight } from '../../store/common';
-import { getActivationStatus } from '../../lib/citycoins';
+import {
+  currentCityActivationStatus,
+  currentBlockHeight,
+  currentCityInitialized,
+} from '../../store/common';
+import { getActivationStatus, isInitialized } from '../../lib/citycoins';
 import NotActivated from '../common/NotActivated';
 import { useEffect } from 'react';
 import ActivationCountdown from '../common/ActivationCountdown';
+import NotInitialized from '../common/NotInitialized';
 
 // TODO: mining should display a message if contract is not activated
 // else load the mining content
 
 export default function MiningContainer(props) {
+  const [initialized, setInitialized] = useAtom(currentCityInitialized);
   const [cityActivated, setCityActivated] = useAtom(currentCityActivationStatus);
   const [blockHeight] = useAtom(currentBlockHeight);
 
   useEffect(() => {
+    isInitialized(props.contracts.deployer, props.contracts.authContract)
+      .then(result => {
+        setInitialized(result);
+      })
+      .catch(err => {
+        setInitialized(false);
+        console.log(err);
+      });
     getActivationStatus(props.contracts.deployer, props.contracts.coreContract)
       .then(result => {
         setCityActivated(result.value);
@@ -29,6 +43,10 @@ export default function MiningContainer(props) {
 
   if (props.contracts.deployer === '') {
     return <NotDeployed />;
+  }
+
+  if (!initialized) {
+    return <NotInitialized />;
   }
 
   if (!cityActivated) {

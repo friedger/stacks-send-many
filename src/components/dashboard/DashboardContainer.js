@@ -1,10 +1,15 @@
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
-import { getActivationStatus } from '../../lib/citycoins';
-import { currentBlockHeight, currentCityActivationStatus } from '../../store/common';
+import { getActivationStatus, isInitialized } from '../../lib/citycoins';
+import {
+  currentBlockHeight,
+  currentCityActivationStatus,
+  currentCityInitialized,
+} from '../../store/common';
 import ActivationCountdown from '../common/ActivationCountdown';
 import NotActivated from '../common/NotActivated';
 import NotDeployed from '../common/NotDeployed';
+import NotInitialized from '../common/NotInitialized';
 import StatsContainer from '../stats/StatsContainer';
 import MiningActivity from './MiningActivity';
 import StackingActivity from './StackingActivity';
@@ -14,10 +19,19 @@ import TransactionLog from './TransactionLog';
 // else load the dashboard content
 
 export default function DashboardContainer(props) {
+  const [initialized, setInitialized] = useAtom(currentCityInitialized);
   const [cityActivated, setCityActivated] = useAtom(currentCityActivationStatus);
   const [blockHeight] = useAtom(currentBlockHeight);
 
   useEffect(() => {
+    isInitialized(props.contracts.deployer, props.contracts.authContract)
+      .then(result => {
+        setInitialized(result);
+      })
+      .catch(err => {
+        setInitialized(false);
+        console.log(err);
+      });
     getActivationStatus(props.contracts.deployer, props.contracts.coreContract)
       .then(result => {
         setCityActivated(result.value);
@@ -30,6 +44,10 @@ export default function DashboardContainer(props) {
 
   if (props.contracts.deployer === '') {
     return <NotDeployed />;
+  }
+
+  if (!initialized) {
+    return <NotInitialized />;
   }
 
   if (!cityActivated) {
