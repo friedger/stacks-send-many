@@ -8,6 +8,7 @@ import { userSessionState } from '../../lib/auth';
 import { useStxAddresses } from '../../lib/hooks';
 import { ustxToStx } from '../../lib/stacks';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { testnet } from '../../lib/stacks';
 
 export function ProfileFull(props) {
   const [userSession] = useAtom(userSessionState);
@@ -152,7 +153,8 @@ export function ProfileFull(props) {
                   )}
                 </li>
               </ul>
-              <p>Selected City: {city}</p>
+              <p>Selected City: {city ? city : 'None'}</p>
+              <p>Network: {testnet ? 'Testnet' : 'Mainnet'}</p>
               <SelectCity />
             </>
           )}
