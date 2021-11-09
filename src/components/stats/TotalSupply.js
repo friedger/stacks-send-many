@@ -18,7 +18,7 @@ export default function TotalSupply(props) {
       // TODO: separate this into a lib function
       const bonusPeriod = 10000;
       const startBlock = props.config.startBlock;
-      const blocksPast = blockHeight - startBlock;
+      const blocksPast = blockHeight - startBlock > 0 ? blockHeight - startBlock : 0;
       if (blocksPast > bonusPeriod) {
         setMaxSupply(bonusPeriod * 250000 + (blocksPast - bonusPeriod) * 100000);
       } else {
