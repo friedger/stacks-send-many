@@ -1,14 +1,10 @@
-import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
-import { updateStxRate } from '../../lib/coingecko';
 import { getStxBalance, ustxToStx } from '../../lib/stacks';
-import { stxRateAtom } from '../../store/common';
 import LinkAddress from '../common/LinkAddress';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function CityWallet(props) {
   const [cityWalletBalance, setCityWalletBalance] = useState(0);
-  const [stxRate, setStxRate] = useAtom(stxRateAtom);
 
   useEffect(() => {
     getStxBalance(props.config.cityWallet)
@@ -20,17 +16,6 @@ export default function CityWallet(props) {
         console.log(err);
       });
   }, [props.config.cityWallet]);
-
-  useEffect(() => {
-    const updateStxPrice = async () => {
-      const rate = await updateStxRate()
-        .then(result => setStxRate(result))
-        .catch(err => {
-          setStxRate(0);
-          console.log(err);
-        });
-    };
-  }, [setStxRate]);
 
   return (
     <div className="col-lg-6">
@@ -51,20 +36,6 @@ export default function CityWallet(props) {
                 minimumFractionDigits: 6,
                 maximumFractionDigits: 6,
               })} Ӿ`
-            ) : (
-              <LoadingSpinner />
-            )}
-          </div>
-        </div>
-        <div className="row text-center text-sm-start">
-          <div className="col-sm-6">USD Value</div>
-          <div className="col-sm-6">
-            {stxRate && cityWalletBalance ? (
-              `$${(ustxToStx(cityWalletBalance) * stxRate).toLocaleString(undefined, {
-                style: 'decimal',
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })} USD`
             ) : (
               <LoadingSpinner />
             )}
