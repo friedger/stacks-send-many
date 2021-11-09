@@ -39,7 +39,7 @@ export default function StackingContainer(props) {
         setCityActivated(false);
         console.log(err);
       });
-  });
+  }, [props.contracts.authContract, props.contracts.coreContract, props.contracts.deployer]);
 
   if (props.contracts.deployer === '') {
     return <NotDeployed />;

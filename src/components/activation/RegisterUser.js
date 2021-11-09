@@ -101,7 +101,12 @@ export default function RegisterUser(props) {
           setUserId(0);
           console.log(err);
         });
-  }, [props.contracts.deployer, props.contracts.coreContract, ownerStxAddress]);
+  }, [
+    props.contracts.deployer,
+    props.contracts.coreContract,
+    props.contracts.authContract,
+    ownerStxAddress,
+  ]);
 
   const registerAction = async () => {
     setLoading(true);
