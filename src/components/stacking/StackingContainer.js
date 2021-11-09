@@ -1,7 +1,7 @@
 import StackCityCoins from './StackCityCoins';
 import ClaimStackingRewards from './ClaimStackingRewards';
 import StackingTools from './StackingTools';
-import NotDeployed from '../common/NotDeloyed';
+import NotDeployed from '../common/NotDeployed';
 import { useAtom } from 'jotai';
 import { currentBlockHeight, currentCityActivationStatus } from '../../store/common';
 import { getActivationStatus } from '../../lib/citycoins';

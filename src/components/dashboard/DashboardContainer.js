@@ -4,7 +4,7 @@ import { getActivationStatus } from '../../lib/citycoins';
 import { currentBlockHeight, currentCityActivationStatus } from '../../store/common';
 import ActivationCountdown from '../common/ActivationCountdown';
 import NotActivated from '../common/NotActivated';
-import NotDeployed from '../common/NotDeloyed';
+import NotDeployed from '../common/NotDeployed';
 import StatsContainer from '../stats/StatsContainer';
 import MiningActivity from './MiningActivity';
 import StackingActivity from './StackingActivity';

@@ -1,7 +1,7 @@
 import MineCityCoins from './MineCityCoins';
 import ClaimMiningRewards from './ClaimMiningRewards';
 import MiningTools from './MiningTools';
-import NotDeployed from '../common/NotDeloyed';
+import NotDeployed from '../common/NotDeployed';
 import { useAtom } from 'jotai';
 import { currentCityActivationStatus, currentBlockHeight } from '../../store/common';
 import { getActivationStatus } from '../../lib/citycoins';
