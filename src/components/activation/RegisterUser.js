@@ -9,29 +9,56 @@ import {
   getActivationThreshold,
   getRegisteredUsersNonce,
   getUserId,
+  isInitialized,
 } from '../../lib/citycoins';
 import { useStxAddresses } from '../../lib/hooks';
 import { NETWORK } from '../../lib/stacks';
-import { currentBlockHeight } from '../../store/common';
+import {
+  currentBlockHeight,
+  currentCityActivationStatus,
+  currentCityInitialized,
+} from '../../store/common';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
+import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function RegisterUser(props) {
   const registerMemoRef = useRef();
   const [blockHeight] = useAtom(currentBlockHeight);
   const [userCount, setUserCount] = useState(0);
+  const [initialized, setInitialized] = useAtom(currentCityInitialized);
   const [activationThreshold, setActivationThreshold] = useState(0);
-  const [activationStatus, setActivationStatus] = useState(false);
+  const [activationStatus, setActivationStatus] = useAtom(currentCityActivationStatus);
   const [activationStatusLoaded, setActivationStatusLoaded] = useState(false);
   const [activationBlockHeight, setActivationBlockHeight] = useState(0);
   const [userId, setUserId] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [txId, setTxId] = useState('');
   const [userSession] = useAtom(userSessionState);
   const { ownerStxAddress } = useStxAddresses(userSession);
   const { doContractCall } = useConnect();
 
+  const [formMsg, setFormMsg] = useState({
+    type: '',
+    hidden: true,
+    text: '',
+    txId: '',
+  });
+
+  // TODO: make activation status a global atom, set at container levels and here
+
+  // TODO: registered users does not return a value when 0 users are registered
+
+  // TODO: progress should be limited to two decimal places (same as stacking progress?)
+
   useEffect(() => {
+    isInitialized(props.contracts.deployer, props.contracts.authContract)
+      .then(result => {
+        setInitialized(result);
+      })
+      .catch(err => {
+        setInitialized(false);
+        console.log(err);
+      });
     getActivationStatus(props.contracts.deployer, props.contracts.coreContract)
       .then(result => {
         setActivationStatus(result.value);
@@ -74,10 +101,21 @@ export default function RegisterUser(props) {
           setUserId(0);
           console.log(err);
         });
-  }, [props.contracts.deployer, props.contracts.coreContract, ownerStxAddress]);
+  }, [
+    props.contracts.deployer,
+    props.contracts.coreContract,
+    props.contracts.authContract,
+    ownerStxAddress,
+  ]);
 
   const registerAction = async () => {
     setLoading(true);
+    setFormMsg({
+      type: '',
+      hidden: true,
+      text: '',
+      txId: '',
+    });
     const memo =
       registerMemoRef.current.value === ''
         ? ''
@@ -91,10 +129,21 @@ export default function RegisterUser(props) {
       network: NETWORK,
       onCancel: () => {
         setLoading(false);
+        setFormMsg({
+          type: 'warning',
+          hidden: false,
+          text: 'Transaction was canceled, please try again.',
+          txId: '',
+        });
       },
       onFinish: result => {
         setLoading(false);
-        setTxId(result.txId);
+        setFormMsg({
+          type: 'success',
+          hidden: false,
+          text: 'User registered successfully',
+          txId: result.txId,
+        });
       },
     });
     setLoading(false);
@@ -121,7 +170,11 @@ export default function RegisterUser(props) {
           <p>
             Activation Block Height: {activationBlockHeight.toLocaleString()}{' '}
             <span className="fst-italic">
-              ({(blockHeight - activationBlockHeight).toLocaleString()} blocks ago)
+              (
+              {blockHeight > activationBlockHeight
+                ? `${(blockHeight - activationBlockHeight).toLocaleString()} blocks ago`
+                : `in ${(activationBlockHeight - blockHeight).toLocaleString()} blocks`}
+              )
             </span>
           </p>
         )}
@@ -150,7 +203,7 @@ export default function RegisterUser(props) {
               <p>
                 {activationThreshold && userCount > activationThreshold
                   ? '100%'
-                  : `${(userCount / activationThreshold) * 100}%`}
+                  : `${((userCount / activationThreshold) * 100).toFixed(2)}%`}
               </p>
             </div>
           </div>
@@ -167,10 +220,11 @@ export default function RegisterUser(props) {
           <>
             <h3 className="pt-3">Register for {props.token.symbol}</h3>
             {activationStatus && <p>Contract is activated, registration form disabled.</p>}
+            {!initialized && <p>Contract is not initialized, registration form disabled.</p>}
             <form>
               <input
                 type="text"
-                disabled={activationStatus}
+                disabled={!initialized || activationStatus || formMsg.txId}
                 className="form-control mt-3"
                 ref={registerMemoRef}
                 aria-label="Registration Message"
@@ -182,7 +236,7 @@ export default function RegisterUser(props) {
               <button
                 className="btn btn-block btn-primary"
                 type="button"
-                disabled={txId || activationStatus}
+                disabled={!initialized || activationStatus || formMsg.txId}
                 onClick={registerAction}
               >
                 <div
@@ -194,6 +248,12 @@ export default function RegisterUser(props) {
                 Register
               </button>
             </form>
+            <FormResponse
+              type={formMsg.type}
+              text={formMsg.text}
+              hidden={formMsg.hidden}
+              txId={formMsg.txId}
+            />
           </>
         )}
       </div>

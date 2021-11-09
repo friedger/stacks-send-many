@@ -1,4 +1,4 @@
-import NotDeployed from '../common/NotDeloyed';
+import NotDeployed from '../common/NotDeployed';
 import RegisterTools from './RegisterTools';
 import RegisterUser from './RegisterUser';
 

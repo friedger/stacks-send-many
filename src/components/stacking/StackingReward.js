@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { getStackerAtCycleOrDefault, getStackingReward } from '../../lib/citycoins';
 import { NETWORK, ustxToStx } from '../../lib/stacks';
 import { userId } from '../../store/common';
+import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function StackingReward(props) {
@@ -23,6 +24,13 @@ export default function StackingReward(props) {
   const [stats, setStats] = useState(false);
   const [id] = useAtom(userId);
   const { doContractCall } = useConnect();
+
+  const [formMsg, setFormMsg] = useState({
+    type: '',
+    hidden: true,
+    text: '',
+    txId: '',
+  });
 
   useEffect(() => {
     console.log(`id: ${JSON.stringify(id)}`);
@@ -58,6 +66,12 @@ export default function StackingReward(props) {
 
   const claimAction = async () => {
     setLoading(true);
+    setFormMsg({
+      type: '',
+      hidden: true,
+      text: '',
+      txId: '',
+    });
     const targetCycleCV = uintCV(props.cycle);
     const amountUstxCV = uintCV(stackingRewards);
     const amountCityCoinCV = uintCV(stackerStats.toReturn);
@@ -91,14 +105,21 @@ export default function StackingReward(props) {
       network: NETWORK,
       onCancel: () => {
         setLoading(false);
-        setError(true);
-        setErrorMsg('Transaction cancelled.');
+        setFormMsg({
+          type: 'warning',
+          hidden: false,
+          text: 'Transaction was canceled, please try again.',
+          txId: '',
+        });
       },
       onFinish: result => {
         setLoading(false);
-        setError(false);
-        setErrorMsg('');
-        setTxId(result.txId);
+        setFormMsg({
+          type: 'success',
+          hidden: false,
+          text: 'User registered successfully',
+          txId: result.txId,
+        });
       },
     });
   };
@@ -140,14 +161,12 @@ export default function StackingReward(props) {
       ) : (
         <p className="mt-3 text-center">Nothing to claim.</p>
       )}
-      {txId && (
-        <p>
-          TXID:{' '}
-          <a href={`https://explorer.stacks.co/txid/${txId}`} target="_blank" rel="noreferrer">
-            {txId}
-          </a>
-        </p>
-      )}
+      <FormResponse
+        type={formMsg.type}
+        text={formMsg.text}
+        hidden={formMsg.hidden}
+        txId={formMsg.txId}
+      />
     </div>
   );
 }

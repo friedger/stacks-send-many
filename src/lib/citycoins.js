@@ -594,3 +594,26 @@ export async function getTokenUri(contractAddress, contractName) {
 ///////////////////////////////////////////////////////////////////////////////
 
 // TODO: add send-many public function
+
+///////////////////////////////////////////////////////////////////////////////
+// AUTH
+///////////////////////////////////////////////////////////////////////////////
+
+//(define-read-only (is-initialized)
+//  (var-get initialized)
+//)
+
+// can be called against core or token contracts
+export async function isInitialized(contractAddress, contractName) {
+  const resultCv = await callReadOnlyFunction({
+    contractAddress: contractAddress,
+    contractName: contractName,
+    functionName: 'is-initialized',
+    functionArgs: [],
+    network: NETWORK,
+    senderAddress: contractAddress,
+  });
+  const result = cvToValue(resultCv);
+  debug && console.log(result);
+  return result;
+}

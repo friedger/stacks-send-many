@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { fetchAccount } from '../../lib/account';
 import { Address } from '../Address';
 import { useAtom } from 'jotai';
-import { currentCity, stxBalanceAtom, stxRateAtom } from '../../store/common';
+import { currentCity, stxBalanceAtom } from '../../store/common';
 import SelectCity from '../common/SelectCity';
 import { userSessionState } from '../../lib/auth';
 import { useStxAddresses } from '../../lib/hooks';
 import { ustxToStx } from '../../lib/stacks';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { updateStxRate } from '../../lib/coingecko';
+import { testnet } from '../../lib/stacks';
 
 export function ProfileFull(props) {
   const [userSession] = useAtom(userSessionState);
@@ -20,7 +20,6 @@ export function ProfileFull(props) {
   const [city] = useAtom(currentCity);
   const [stxBalance, setStxBalance] = useAtom(stxBalanceAtom);
   // const [cityBalances, setCityBalances] = useAtom(cityBalancesAtom);
-  const [stxRate, setStxRate] = useAtom(stxRateAtom);
   // const [cityRates, setCityRates] = useAtom(cityRatesAtom);
 
   useEffect(() => {
@@ -32,19 +31,11 @@ export function ProfileFull(props) {
   }, [ownerStxAddress]);
 
   useEffect(() => {
-    const updateStxPrice = async () => {
-      const rate = await updateStxRate()
-        .then(result => setStxRate(result))
-        .catch(err => {
-          setStxRate(0);
-          console.log(err);
-        });
-    };
     // update STX balance and rate
     if (JSON.stringify(profileState) !== '{}') {
       setStxBalance(profileState.account.balance);
     }
-  }, [profileState, setStxBalance, setStxRate]);
+  }, [profileState, setStxBalance]);
 
   /*
   useEffect(() => {
@@ -161,19 +152,9 @@ export function ProfileFull(props) {
                     <LoadingSpinner />
                   )}
                 </li>
-                <li>
-                  {stxRate ? (
-                    `$${(ustxToStx(stxBalance) * stxRate).toLocaleString(undefined, {
-                      style: 'decimal',
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })} USD`
-                  ) : (
-                    <LoadingSpinner />
-                  )}
-                </li>
               </ul>
-              <p>Selected City: {city}</p>
+              <p>Selected City: {city ? city : 'None'}</p>
+              <p>Network: {testnet ? 'Testnet' : 'Mainnet'}</p>
               <SelectCity />
             </>
           )}

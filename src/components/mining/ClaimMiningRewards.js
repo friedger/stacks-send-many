@@ -6,9 +6,9 @@ import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import { useAtom } from 'jotai';
 import { useStxAddresses } from '../../lib/hooks';
 import { userSessionState } from '../../lib/auth';
-import LoadingSpinner from '../common/LoadingSpinner';
 import { uintCV } from '@stacks/transactions';
 import { NETWORK } from '../../lib/stacks';
+import FormResponse from '../common/FormResponse';
 
 export default function ClaimMiningRewards(props) {
   const { doContractCall } = useConnect();
@@ -18,8 +18,13 @@ export default function ClaimMiningRewards(props) {
   const [loading, setLoading] = useState(false);
   const [loadingClaim, setLoadingClaim] = useState(false);
   const [canClaim, setCanClaim] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
+
+  const [formMsg, setFormMsg] = useState({
+    type: '',
+    hidden: true,
+    text: '',
+    txId: '',
+  });
 
   const [userSession] = useAtom(userSessionState);
   const { ownerStxAddress } = useStxAddresses(userSession);
@@ -29,19 +34,44 @@ export default function ClaimMiningRewards(props) {
   const checkWinner = async () => {
     // check if we can claim
     setLoading(true);
+    setFormMsg({
+      type: '',
+      hidden: true,
+      text: '',
+      txId: '',
+    });
 
     if (singleBlockRef.current.value === '') {
-      setErrorMsg('Please enter a block height to check');
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Please enter a block height to check',
+        txId: '',
+      });
       setLoading(false);
     } else if (blockHeight - singleBlockRef.current.value < 100) {
-      setErrorMsg('Please wait for 100 blocks to pass before checking.');
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Please wait for 100 blocks to pass before checking.',
+        txId: '',
+      });
       setLoading(false);
     } else if (singleBlockRef.current.value > blockHeight) {
-      setErrorMsg('Please select a block height in the past.');
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Please select a block height in the past.',
+        txId: '',
+      });
       setLoading(false);
     } else {
-      setSuccessMsg('');
-      setErrorMsg('');
+      setFormMsg({
+        type: '',
+        hidden: true,
+        text: '',
+        txId: '',
+      });
       isBlockWinner(
         props.contracts.deployer,
         props.contracts.coreContract,
@@ -50,7 +80,12 @@ export default function ClaimMiningRewards(props) {
       ).then(result => {
         console.log(`isBlockWinner; ${JSON.stringify(result)}`);
         if (result.value) {
-          setSuccessMsg(`Won block ${singleBlockRef.current.value}, checking if claimed...`);
+          setFormMsg({
+            type: 'success',
+            hidden: false,
+            text: `Won block ${singleBlockRef.current.value}, checking if claimed...`,
+            txId: '',
+          });
           canClaimMiningReward(
             props.contracts.deployer,
             props.contracts.coreContract,
@@ -59,15 +94,23 @@ export default function ClaimMiningRewards(props) {
           ).then(result => {
             console.log(`canClaimMiningReward; ${JSON.stringify(result)}`);
             setCanClaim(result.value);
-            result.value
-              ? setSuccessMsg(
-                  `Won block ${singleBlockRef.current.value}, eligible to claim rewards.`
-                )
-              : setSuccessMsg(`Won block ${singleBlockRef.current.value}, reward already claimed!`);
+            setFormMsg({
+              type: 'success',
+              hidden: false,
+              text: `Won block ${singleBlockRef.current.value}, ${
+                result.value ? 'eligible to claim rewards.' : 'reward already claimed!'
+              }`,
+              txId: '',
+            });
             setLoading(false);
           });
         } else {
-          setSuccessMsg(`Did not win block ${singleBlockRef.current.value}.`);
+          setFormMsg({
+            type: 'info',
+            hidden: false,
+            text: `Did not win block ${singleBlockRef.current.value}.`,
+            txId: '',
+          });
           setLoading(false);
         }
       });
@@ -77,6 +120,13 @@ export default function ClaimMiningRewards(props) {
   const claimRewards = async () => {
     // claim the rewards
     setLoadingClaim(true);
+    setFormMsg({
+      type: '',
+      hidden: true,
+      text: '',
+      txId: '',
+    });
+
     const targetBlockCV = uintCV(singleBlockRef.current.value);
     await doContractCall({
       contractAddress: props.contracts.deployer,
@@ -86,14 +136,21 @@ export default function ClaimMiningRewards(props) {
       network: NETWORK,
       onCancel: () => {
         setLoadingClaim(false);
-        setErrorMsg('Transaction cancelled.');
+        setFormMsg({
+          type: 'warning',
+          hidden: false,
+          text: 'Transaction was canceled, please try again.',
+          txId: '',
+        });
       },
       onFinish: result => {
         setLoadingClaim(false);
-        setErrorMsg('');
-        setSuccessMsg(
-          `Claimed rewards for block ${singleBlockRef.current.value}.\n\nTXID: ${result.txId}`
-        );
+        setFormMsg({
+          type: 'success',
+          hidden: false,
+          text: 'Mining claim transaction successfully sent',
+          txId: result.txId,
+        });
       },
     });
   };
@@ -154,8 +211,12 @@ export default function ClaimMiningRewards(props) {
           Claim Rewards
         </button>
       </form>
-      {successMsg ? <p>{successMsg}</p> : loading && <LoadingSpinner />}
-      {errorMsg ? <p className="text-danger">{errorMsg}</p> : null}
+      <FormResponse
+        type={formMsg.type}
+        text={formMsg.text}
+        hidden={formMsg.hidden}
+        txId={formMsg.txId}
+      />
     </div>
   );
 }

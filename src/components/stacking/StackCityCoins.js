@@ -12,6 +12,7 @@ import { useStxAddresses } from '../../lib/hooks';
 import { NETWORK } from '../../lib/stacks';
 import { cityBalancesAtom, currentBlockHeight, currentRewardCycle } from '../../store/common';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
+import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
 import StackingStats from '../dashboard/StackingStats';
 
@@ -20,14 +21,18 @@ export default function StackCityCoins(props) {
   const [rewardCycle, setRewardCycle] = useAtom(currentRewardCycle);
   const amountRef = useRef();
   const cyclesRef = useRef();
-  const [txId, setTxId] = useState();
   const [loading, setLoading] = useState();
-  const [isError, setError] = useState();
-  const [errorMsg, setErrorMsg] = useState('');
   const [userSession] = useAtom(userSessionState);
   const { ownerStxAddress } = useStxAddresses(userSession);
   const [balance, setBalance] = useAtom(cityBalancesAtom);
   const { doContractCall } = useConnect();
+
+  const [formMsg, setFormMsg] = useState({
+    type: '',
+    hidden: true,
+    text: '',
+    txId: '',
+  });
 
   useEffect(() => {
     if (blockHeight > 0) {
@@ -62,34 +67,54 @@ export default function StackCityCoins(props) {
 
   const stackingAction = async () => {
     setLoading(true);
-    setError(false);
-    setErrorMsg('');
+    setFormMsg({
+      type: '',
+      hidden: true,
+      text: '',
+      txId: '',
+    });
     const symbol = props.token.symbol;
 
     if (amountRef.current.value === '' || amountRef.current.value < 0) {
-      setError(true);
-      setErrorMsg('Please enter an amount to stack');
       setLoading(false);
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Please enter an amount to stack',
+        txId: '',
+      });
       return;
     }
     if (amountRef.current.value > balance[symbol]) {
-      setError(true);
-      setErrorMsg(
-        `Cannot Stack more than your current balance: ${balance[symbol].toLocaleString()} ${symbol}`
-      );
       setLoading(false);
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: `Cannot Stack more than your current balance: ${balance[
+          symbol
+        ].toLocaleString()} ${symbol}`,
+        txId: '',
+      });
       return;
     }
     if (cyclesRef.current.value === '' || cyclesRef.current.value < 0) {
-      setError(true);
-      setErrorMsg('Please enter the number of reward cycles');
       setLoading(false);
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Please enter the number of reward cycles',
+        txId: '',
+      });
       return;
     }
     if (cyclesRef.current.value > 32) {
-      setError(true);
-      setErrorMsg('Cannot select more than 32 cycles max');
       setLoading(false);
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Cannot select more than 32 cycles max',
+        txId: '',
+      });
       return;
     }
 
@@ -112,13 +137,22 @@ export default function StackCityCoins(props) {
         ),
       ],
       onCancel: () => {
-        setError(true);
-        setErrorMsg('Error processing transaction, try again');
         setLoading(false);
+        setFormMsg({
+          type: 'warning',
+          hidden: false,
+          text: 'Transaction was canceled, please try again.',
+          txId: '',
+        });
       },
       onFinish: result => {
         setLoading(false);
-        setTxId(result.txId);
+        setFormMsg({
+          type: 'success',
+          hidden: false,
+          text: 'Stacking transaction successfully sent',
+          txId: result.txId,
+        });
       },
     });
   };
@@ -138,7 +172,7 @@ export default function StackCityCoins(props) {
       </h3>
       <CurrentStacksBlock />
       <p>
-        Current {props.token.symbol} Reward Cycle: {rewardCycle ? rewardCycle : <LoadingSpinner />}
+        Current {props.token.symbol} Reward Cycle: {typeof rewardCycle === 'number' ? rewardCycle : <LoadingSpinner />}
       </p>
       <p>
         Stacking CityCoins locks up {props.token.symbol} in the contract for a selected number of
@@ -159,11 +193,11 @@ export default function StackCityCoins(props) {
             <p className="fs-5 text-center">Cycle Length</p>
             <div className="row text-center text-sm-start">
               <div className="col-sm-6">Current Cycle</div>
-              <div className="col-sm-6">{rewardCycle ? rewardCycle : <LoadingSpinner />}</div>
+              <div className="col-sm-6">{typeof rewardCycle === 'number' ? rewardCycle : <LoadingSpinner />}</div>
             </div>
             <div className="row text-center text-sm-start">
               <div className="col-sm-6">Next Cycle</div>
-              <div className="col-sm-6">{rewardCycle ? rewardCycle + 1 : <LoadingSpinner />}</div>
+              <div className="col-sm-6">{typeof rewardCycle === 'number' ? rewardCycle + 1 : <LoadingSpinner />}</div>
             </div>
             <div className="row text-center text-sm-start">
               <div className="col-sm-6">
@@ -185,7 +219,7 @@ export default function StackCityCoins(props) {
           </div>
         </div>
         <div className="col">
-          {rewardCycle ? (
+          {typeof rewardCycle === 'number' ? (
             <StackingStats
               contracts={props.contracts}
               token={props.token}
@@ -197,7 +231,7 @@ export default function StackCityCoins(props) {
           )}
         </div>
         <div className="col">
-          {rewardCycle ? (
+          {typeof rewardCycle === 'number' ? (
             <StackingStats
               contracts={props.contracts}
               token={props.token}
@@ -220,7 +254,9 @@ export default function StackCityCoins(props) {
         <li>Stackers must skip one cycle after the selected period ends</li>
       </ul>
 
-      <h3 className="mt-3">Stack{rewardCycle && ` in Cycle ${rewardCycle + 1}`}</h3>
+      <h3 className="mt-3">
+        Stack{typeof rewardCycle === 'number' ? ` in Cycle ${rewardCycle + 1}` : ''}
+      </h3>
       <form>
         <div className="input-group mb-3">
           <input
@@ -258,15 +294,12 @@ export default function StackCityCoins(props) {
           Stack
         </button>
       </form>
-      <div className={`alert alert-danger mt-3 ${isError ? '' : 'd-none'}`}>{errorMsg}</div>
-      {txId && (
-        <p>
-          TXID:{' '}
-          <a href={`https://explorer.stacks.co/txid/${txId}`} target="_blank" rel="noreferrer">
-            {txId}
-          </a>
-        </p>
-      )}
+      <FormResponse
+        type={formMsg.type}
+        text={formMsg.text}
+        hidden={formMsg.hidden}
+        txId={formMsg.txId}
+      />
     </div>
   );
 }
