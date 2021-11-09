@@ -1,4 +1,4 @@
-import {testnet} from "../lib/constants"
+import { testnet } from '../lib/stacks';
 
 export const MIA_CONTRACTS = {
   deployer: testnet ? '' : 'SP466FNC0P7JWTNM2R9T199QRZN1MYEDTAR0KP27',
