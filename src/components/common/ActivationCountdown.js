@@ -1,4 +1,5 @@
 import { Link } from '@reach/router';
+import { testnet } from '../../lib/stacks';
 
 export default function ActivationCountdown({ symbol, blocks }) {
   return (
@@ -15,7 +16,10 @@ export default function ActivationCountdown({ symbol, blocks }) {
       <hr />
       <p>
         Please see the{' '}
-        <Link className="link-primary" to={`/${symbol.toLowerCase()}/activation`}>
+        <Link
+          className="link-primary"
+          to={`/${symbol.toLowerCase()}/activation${testnet ? '?chain=testnet' : '?chain=mainnet'}`}
+        >
           activation page
         </Link>{' '}
         or{' '}

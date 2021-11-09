@@ -1,4 +1,5 @@
 import { Link } from '@reach/router';
+import { testnet } from '../../lib/stacks';
 
 export default function NotActivated({ symbol }) {
   return (
@@ -7,7 +8,10 @@ export default function NotActivated({ symbol }) {
       <p>The contract is deployed, but requires 20 independent users to activate it.</p>
       <p>
         Please see the{' '}
-        <Link className="link-primary" to={`/${symbol.toLowerCase()}/activation`}>
+        <Link
+          className="link-primary"
+          to={`/${symbol.toLowerCase()}/activation${testnet ? '?chain=testnet' : '?chain=mainnet'}`}
+        >
           activation page
         </Link>{' '}
         or{' '}
