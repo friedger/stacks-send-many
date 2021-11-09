@@ -3,16 +3,18 @@ import ClaimMiningRewards from './ClaimMiningRewards';
 import MiningTools from './MiningTools';
 import NotDeployed from '../common/NotDeloyed';
 import { useAtom } from 'jotai';
-import { currentCityActivationStatus } from '../../store/common';
+import { currentCityActivationStatus, currentBlockHeight } from '../../store/common';
 import { getActivationStatus } from '../../lib/citycoins';
 import NotActivated from '../common/NotActivated';
 import { useEffect } from 'react';
+import ActivationCountdown from '../common/ActivationCountdown';
 
 // TODO: mining should display a message if contract is not activated
 // else load the mining content
 
 export default function MiningContainer(props) {
   const [cityActivated, setCityActivated] = useAtom(currentCityActivationStatus);
+  const [blockHeight] = useAtom(currentBlockHeight);
 
   useEffect(() => {
     getActivationStatus(props.contracts.deployer, props.contracts.coreContract)
@@ -31,6 +33,15 @@ export default function MiningContainer(props) {
 
   if (!cityActivated) {
     return <NotActivated symbol={props.token.symbol} />;
+  }
+
+  if (blockHeight < props.config.startBlock) {
+    return (
+      <ActivationCountdown
+        symbol={props.token.symbol}
+        blocks={props.config.startBlock - blockHeight}
+      />
+    );
   }
 
   return (

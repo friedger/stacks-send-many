@@ -1,7 +1,8 @@
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import { getActivationStatus } from '../../lib/citycoins';
-import { currentCityActivationStatus } from '../../store/common';
+import { currentBlockHeight, currentCityActivationStatus } from '../../store/common';
+import ActivationCountdown from '../common/ActivationCountdown';
 import NotActivated from '../common/NotActivated';
 import NotDeployed from '../common/NotDeloyed';
 import StatsContainer from '../stats/StatsContainer';
@@ -14,6 +15,7 @@ import TransactionLog from './TransactionLog';
 
 export default function DashboardContainer(props) {
   const [cityActivated, setCityActivated] = useAtom(currentCityActivationStatus);
+  const [blockHeight] = useAtom(currentBlockHeight);
 
   useEffect(() => {
     getActivationStatus(props.contracts.deployer, props.contracts.coreContract)
@@ -32,6 +34,15 @@ export default function DashboardContainer(props) {
 
   if (!cityActivated) {
     return <NotActivated symbol={props.token.symbol} />;
+  }
+
+  if (blockHeight < props.config.startBlock) {
+    return (
+      <ActivationCountdown
+        symbol={props.token.symbol}
+        blocks={props.config.startBlock - blockHeight}
+      />
+    );
   }
 
   return (

@@ -3,16 +3,18 @@ import ClaimStackingRewards from './ClaimStackingRewards';
 import StackingTools from './StackingTools';
 import NotDeployed from '../common/NotDeloyed';
 import { useAtom } from 'jotai';
-import { currentCityActivationStatus } from '../../store/common';
+import { currentBlockHeight, currentCityActivationStatus } from '../../store/common';
 import { getActivationStatus } from '../../lib/citycoins';
 import { useEffect } from 'react';
 import NotActivated from '../common/NotActivated';
+import ActivationCountdown from '../common/ActivationCountdown';
 
 // TODO: stacking should display a message if contract is not activated
 // else load the stacking content
 
 export default function StackingContainer(props) {
   const [cityActivated, setCityActivated] = useAtom(currentCityActivationStatus);
+  const [blockHeight] = useAtom(currentBlockHeight);
 
   useEffect(() => {
     getActivationStatus(props.contracts.deployer, props.contracts.coreContract)
@@ -31,6 +33,15 @@ export default function StackingContainer(props) {
 
   if (!cityActivated) {
     return <NotActivated symbol={props.token.symbol} />;
+  }
+
+  if (blockHeight < props.config.startBlock) {
+    return (
+      <ActivationCountdown
+        symbol={props.token.symbol}
+        blocks={props.config.startBlock - blockHeight}
+      />
+    );
   }
 
   return (
