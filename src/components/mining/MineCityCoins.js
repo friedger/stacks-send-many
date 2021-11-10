@@ -369,8 +369,12 @@ export default function MineCityCoins(props) {
           <label className="form-check-label" htmlFor="flexCheckDefault">
             I confirm that by participating in mining, I understand:
             <ul>
+              {props.token.symbol !== 'MIA' && (
+                <li>the city has not claimed the protocol contribution</li>
+              )}
               <li>
-                participation does not guarantee winning the rights to claim newly minted $MIA
+                participation does not guarantee winning the rights to claim newly minted{' '}
+                {props.token.symbol}
               </li>
               <li>once STX are sent to the contract, they are not returned</li>
             </ul>
