@@ -21,5 +21,5 @@ export const NYC_CONFIG = {
     : 'SM18VBF2QYAAHN57Q28E2HSM15F6078JZYZ2FQBCX',
   halving: 210000,
   rewardCycleLength: 2100,
-  startBlock: testnet ? 19302 : 0,
+  startBlock: testnet ? 19302 : 37449,
 };
