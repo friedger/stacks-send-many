@@ -15,9 +15,6 @@ import LoadingSpinner from '../common/LoadingSpinner';
 
 export default function StackingReward(props) {
   const [loading, setLoading] = useState();
-  const [isError, setError] = useState();
-  const [errorMsg, setErrorMsg] = useState('');
-  const [txId, setTxId] = useState();
   const [stackingRewards, setStackingRewards] = useState(0);
   const [rewards, setRewards] = useState(false);
   const [stackerStats, setStackerStats] = useState({});
@@ -156,7 +153,6 @@ export default function StackingReward(props) {
             />
             Claim Rewards
           </button>
-          <div className={`alert alert-danger mt-3 ${isError ? '' : 'd-none'}`}>{errorMsg}</div>
         </div>
       ) : (
         <p className="mt-3 text-center">Nothing to claim.</p>
