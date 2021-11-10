@@ -1,17 +1,13 @@
-export default function LoadingSpinner(props) {
-
-  //props.text
+export default function LoadingSpinner({text}) {
 
   return (
-    <div
-      style={{display: 'flex', alignItems: 'center'}}>
+    <span
+      className="d-flex align-items-center">
       <span
         role="status"
         className="spinner-border spinner-border-sm text-info align-text-top ms-1 me-2"
       />
-      <span>
-        {props.text}
-      </span>
-    </div>
+      {text ? <span>{text}</span> : null}
+    </span>
   );
 }
