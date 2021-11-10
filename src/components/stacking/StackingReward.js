@@ -114,7 +114,7 @@ export default function StackingReward(props) {
         setFormMsg({
           type: 'success',
           hidden: false,
-          text: 'User registered successfully',
+          text: 'Stacking claim transaction successfully sent',
           txId: result.txId,
         });
       },
