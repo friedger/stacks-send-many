@@ -141,7 +141,7 @@ export default function RegisterUser(props) {
         setFormMsg({
           type: 'success',
           hidden: false,
-          text: 'User registered successfully',
+          text: 'User registration successfully sent',
           txId: result.txId,
         });
       },
