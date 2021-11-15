@@ -261,7 +261,7 @@ export default function RegisterUser(props) {
   } else {
     return (
       <p>
-        Checking contract activation status <LoadingSpinner />
+        <LoadingSpinner text="Checking contract activation status" />
       </p>
     );
   }
