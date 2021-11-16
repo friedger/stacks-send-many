@@ -9,6 +9,7 @@ import { useStxAddresses } from '../../lib/hooks';
 import { ustxToStx } from '../../lib/stacks';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { testnet } from '../../lib/stacks';
+import { TESTNET_FAUCET_URL } from '../../lib/constants';
 
 export function ProfileFull(props) {
   const [userSession] = useAtom(userSessionState);
@@ -104,6 +105,18 @@ export function ProfileFull(props) {
                 <i className="bi bi-box-arrow-up-right"></i> View Address on Explorer
               </a>
             </li>
+            {testnet && (
+              <li>
+                <a
+                  rel="noreferrer"
+                  href={TESTNET_FAUCET_URL}
+                  className="dropdown-item"
+                  target="_blank"
+                >
+                  <i className="bi bi-box-arrow-up-right" /> STX Faucet
+                </a>
+              </li>
+            )}
             <li>
               <a
                 className="dropdown-item"
