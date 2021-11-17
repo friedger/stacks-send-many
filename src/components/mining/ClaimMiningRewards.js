@@ -171,7 +171,7 @@ export default function ClaimMiningRewards(props) {
       <CurrentStacksBlock />
       <p>
         The winner for a block can be queried after 100 blocks pass (~16-17hrs), and the winner can
-        claim newly minted MIA.
+        claim newly minted {props.token.symbol}.
       </p>
       <p>
         There is only one winner per block, and STX sent to the contract for mining are not
