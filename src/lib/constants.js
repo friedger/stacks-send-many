@@ -48,7 +48,7 @@ export const STACKS_API_WS_URL = localNode
 export const STACKS_API_V2_INFO = `${STACKS_API_URL}/v2/info`;
 export const STACKS_API_ACCOUNTS_URL = `${STACKS_API_URL}/v2/accounts`;
 export const STACKS_API_FEE_URL = `${STACKS_API_URL}/v2/fees/transfer`;
-export const TESTNET_FAUCET_URL = 'https://explorer.stacks.co/sandbox/faucet';
+export const TESTNET_FAUCET_URL = 'https://explorer.stacks.co/sandbox/faucet?chain=testnet';
 
 export const NETWORK = mainnet ? new StacksMainnet() : new StacksTestnet();
 NETWORK.coreApiUrl = STACKS_API_URL;
