@@ -23,7 +23,7 @@ const NetworkIndicatorIcon = ({ chainSuffix }) => {
       title={`You are on the ${network.netType} network`}
     >
       <span
-        className={`position-absolute top-0 start-100 translate-middle p-2 ${network.color} border border-light rounded-circle`}
+        className={`position-absolute transform-network-indicator p-1 ${network.color} border-0 rounded-circle`}
       >
         <span className="visually-hidden">{network.netType}</span>
       </span>
