@@ -1,6 +1,10 @@
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
 
 export const testnet = window.location.search.includes('chain=testnet');
+export const localMocknet = !testnet && window.location.search.includes('mocknet=local');
+export const mainnet =
+  (!testnet && !localMocknet) || window.location.search.includes('chain=mainnet');
+export const chainSuffix = `?chain=${mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet'}`;
 
 export const CITYCOIN_DEPLOYER = 'SP466FNC0P7JWTNM2R9T199QRZN1MYEDTAR0KP27';
 export const CITYCOIN_VRF = 'citycoin-vrf';

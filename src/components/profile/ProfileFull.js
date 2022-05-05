@@ -6,9 +6,10 @@ import { currentCity, stxBalanceAtom } from '../../store/common';
 import SelectCity from '../common/SelectCity';
 import { userSessionState } from '../../lib/auth';
 import { useStxAddresses } from '../../lib/hooks';
-import { ustxToStx } from '../../lib/stacks';
+import { ustxToStx, chainSuffix } from '../../lib/stacks';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { testnet } from '../../lib/stacks';
+import NetworkIndicatorIcon from './NetworkIndicatorIcon';
 
 export function ProfileFull(props) {
   const [userSession] = useAtom(userSessionState);
@@ -63,7 +64,7 @@ export function ProfileFull(props) {
     >
       <div className="offcanvas-header">
         <h5 className="offcanvas-title" id="offcanvasProfileLabel">
-          <i className="bi bi-person-circle me-2" />
+          <NetworkIndicatorIcon chainSuffix={chainSuffix} />
           {ownerStxAddress ? <Address addr={ownerStxAddress} /> : 'Profile'}{' '}
         </h5>
         <button
