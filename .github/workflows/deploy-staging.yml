@@ -1,9 +1,9 @@
-name: Deploy Production
+name: Deploy Staging
 
 on:
   push:
     branches:
-      - main
+      - develop
   workflow_dispatch:
 
 jobs:
@@ -26,4 +26,3 @@ jobs:
           USER: root
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          environment: 'production'
