@@ -2,6 +2,8 @@ import React from 'react';
 import { ProfileFull } from './ProfileFull';
 import { useStxAddresses } from '../../lib/hooks';
 import { Address } from '../Address';
+import NetworkIndicatorIcon from './NetworkIndicatorIcon';
+import { chainSuffix } from '../../lib/constants';
 
 export function ProfileSmall(props) {
   const { ownerStxAddress } = useStxAddresses(props.userSession);
@@ -16,7 +18,7 @@ export function ProfileSmall(props) {
           role="button"
           aria-controls="offcanvasProfile"
         >
-          <i className="bi bi-person-circle me-2" />
+          <NetworkIndicatorIcon chainSuffix={chainSuffix}/>
           {ownerStxAddress ? <Address addr={ownerStxAddress} /> : 'Profile'}
         </a>
 
