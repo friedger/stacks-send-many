@@ -4,9 +4,11 @@
   /* Primary CityCoins Branding */
   --brand-primary: #3059d9;
   --brand-accent: #f7c600;
-  --brand-dark: #000;
-  --brand-gray: #d1d3d4;
-  --brand-light: #fff;
+  --brand-hover: #000;
+  --brand-text: #000;
+  --brand-layer-2: #c4c6c8;
+  --brand-layer-1: #d1d3d4;
+  --brand-background: #fff;
   /* Triadic and Complementary Variations */
   --brand-info: #30aed9;
   --brand-success: #59d930;
@@ -14,9 +16,25 @@
   --brand-danger: #d93059;
 }
 
+:root.dark-mode {
+  /* Primary CityCoins Branding */
+  --brand-primary: #3059d9;
+  --brand-accent: #f7c600DD;
+  --brand-hover: #3059d999;
+  --brand-text: #d1d3d4;
+  --brand-layer-2: #505456;
+  --brand-layer-1: #3d4042;
+  --brand-background: #2a2c2d;
+  /* Triadic and Complementary Variations */
+  --brand-info: #30aed9DD;
+  --brand-success: #59d930DD;
+  --brand-warning: #d9b030DD;
+  --brand-danger: #d93059DD;
+}
+
 html,
 body {
-  background-color: var(--brand-light);
+  background-color: var(--brand-background);
   font-family: Poppins, Arial, Helvetica, sans-serif;
 }
 
@@ -29,12 +47,12 @@ inspect {
 }
 
 .Landing {
-  background-color: var(--brand-light);
+  background-color: var(--brand-background);
 }
 
 .Landing .jumbotron {
   opacity: 0.92;
-  background-color: var(--brand-light);
+  background-color: var(--brand-background);
 }
 
 /* Bootstrap Overrides */
@@ -44,8 +62,8 @@ inspect {
 }
 
 .bg-secondary {
-  background-color: var(--brand-gray) !important;
-  color: var(--brand-dark);
+  background-color: var(--brand-layer-1) !important;
+  color: var(--brand-text);
 }
 
 .border-info {
@@ -64,20 +82,20 @@ inspect {
 
 .btn-outline-primary:hover {
   background-color: var(--brand-primary);
-  color: var(--brand-light);
+  color: var(--brand-background);
 }
 
 .btn-nav {
-  background-color: var(--brand-gray);
-  color: var(--brand-dark);
+  background-color: var(--brand-layer-1);
+  color: var(--brand-text);
 }
 
 .btn-nav:hover {
-  background-color: var(--brand-light);
+  background-color: var(--brand-background);
 }
 
 .btn-primary:hover {
-  background-color: var(--brand-dark);
+  background-color: var(--brand-hover);
 }
 
 .navbar-dark,
@@ -86,7 +104,7 @@ inspect {
 }
 
 .bg-footer a {
-  color: var(--brand-light);
+  color: var(--brand-background);
   text-decoration: underline;
 }
 
