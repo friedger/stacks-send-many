@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { userSessionState } from '../../lib/auth';
 import { getBalance, getRewardCycle } from '../../lib/citycoins';
 import { useStxAddresses } from '../../lib/hooks';
-import { NETWORK } from '../../lib/stacks';
+import { STACKS_NETWORK } from '../../lib/stacks';
 import { cityBalancesAtom, currentBlockHeight, currentRewardCycle } from '../../store/common';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import FormResponse from '../common/FormResponse';
@@ -126,7 +126,7 @@ export default function StackCityCoins(props) {
       contractName: props.contracts.coreContract,
       functionName: 'stack-tokens',
       functionArgs: [amountCV, cyclesCV],
-      network: NETWORK,
+      STACKS_NETWORK: STACKS_NETWORK,
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
         makeStandardFungiblePostCondition(
@@ -172,7 +172,8 @@ export default function StackCityCoins(props) {
       </h3>
       <CurrentStacksBlock />
       <p>
-        Current {props.token.symbol} Reward Cycle: {typeof rewardCycle === 'number' ? rewardCycle : <LoadingSpinner />}
+        Current {props.token.symbol} Reward Cycle:{' '}
+        {typeof rewardCycle === 'number' ? rewardCycle : <LoadingSpinner />}
       </p>
       <p>
         Stacking CityCoins locks up {props.token.symbol} in the contract for a selected number of
@@ -193,11 +194,15 @@ export default function StackCityCoins(props) {
             <p className="fs-5 text-center">Cycle Length</p>
             <div className="row text-center text-sm-start">
               <div className="col-sm-6">Current Cycle</div>
-              <div className="col-sm-6">{typeof rewardCycle === 'number' ? rewardCycle : <LoadingSpinner />}</div>
+              <div className="col-sm-6">
+                {typeof rewardCycle === 'number' ? rewardCycle : <LoadingSpinner />}
+              </div>
             </div>
             <div className="row text-center text-sm-start">
               <div className="col-sm-6">Next Cycle</div>
-              <div className="col-sm-6">{typeof rewardCycle === 'number' ? rewardCycle + 1 : <LoadingSpinner />}</div>
+              <div className="col-sm-6">
+                {typeof rewardCycle === 'number' ? rewardCycle + 1 : <LoadingSpinner />}
+              </div>
             </div>
             <div className="row text-center text-sm-start">
               <div className="col-sm-6">

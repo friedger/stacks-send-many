@@ -8,7 +8,7 @@ import { FungibleConditionCode, PostConditionMode, uintCV } from '@stacks/transa
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { getStackerAtCycleOrDefault, getStackingReward } from '../../lib/citycoins';
-import { NETWORK, ustxToStx } from '../../lib/stacks';
+import { STACKS_NETWORK, ustxToStx } from '../../lib/stacks';
 import { userId } from '../../store/common';
 import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -99,7 +99,7 @@ export default function StackingReward(props) {
       functionArgs: [targetCycleCV],
       postConditionMode: PostConditionMode.Deny,
       postConditions: postConditions,
-      network: NETWORK,
+      STACKS_NETWORK: STACKS_NETWORK,
       onCancel: () => {
         setLoading(false);
         setFormMsg({

@@ -5,7 +5,7 @@
 import { Link } from '@reach/router';
 import { useAtom } from 'jotai';
 import { userSessionState } from '../../lib/auth';
-import { testnet } from '../../lib/stacks';
+import { isTestnet } from '../../lib/stacks';
 
 export default function NavBar(props) {
   const basePath = `/${props.symbol.toLowerCase()}`;
@@ -21,7 +21,7 @@ export default function NavBar(props) {
             <li className="nav-item" key={value}>
               <Link
                 to={`${basePath}/${value.toLowerCase()}${
-                  testnet ? '?chain=testnet' : '?chain=mainnet'
+                  isTestnet ? '?chain=testnet' : '?chain=mainnet'
                 }`}
                 className={`nav-link ${value.toLowerCase() === props.path && 'active'} ${
                   idx > 0 && !isLoggedIn && 'disabled'

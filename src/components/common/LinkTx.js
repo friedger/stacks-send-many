@@ -1,11 +1,11 @@
-import { testnet } from '../../lib/stacks';
+import { isTestnet } from '../../lib/stacks';
 
 export default function LinkTx({ txId, shorten = true }) {
   !txId.startsWith('0x') && (txId = `0x${txId}`);
   const url = `https://explorer.stacks.co/txid/${txId}`;
   return (
     <a
-      href={`${url}${testnet ? '?chain=testnet' : '?chain=mainnet'}`}
+      href={`${url}${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`}
       target="_blank"
       rel="noreferrer"
     >

@@ -1,12 +1,12 @@
 import { navigate } from '@reach/router';
 import { currentCityList } from '../../store/common';
-import { testnet } from '../../lib/stacks';
+import { isTestnet } from '../../lib/stacks';
 
 const navToCity = city => {
   if (city === 'none' || city === undefined) {
-    navigate(`/${testnet ? '?chain=testnet' : '?chain=mainnet'}`);
+    navigate(`/${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`);
   } else {
-    navigate(`/${city.toLowerCase()}${testnet ? '?chain=testnet' : '?chain=mainnet'}`);
+    navigate(`/${city.toLowerCase()}${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`);
   }
 };
 

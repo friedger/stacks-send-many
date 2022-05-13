@@ -1,5 +1,5 @@
 import { Link } from '@reach/router';
-import { testnet } from '../../lib/stacks';
+import { isTestnet } from '../../lib/stacks';
 
 export default function ActivationCountdown({ symbol, blocks }) {
   return (

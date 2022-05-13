@@ -12,7 +12,7 @@ import {
   isInitialized,
 } from '../../lib/citycoins';
 import { useStxAddresses } from '../../lib/hooks';
-import { NETWORK } from '../../lib/stacks';
+import { STACKS_NETWORK } from '../../lib/stacks';
 import {
   currentBlockHeight,
   currentCityActivationStatus,
@@ -126,7 +126,7 @@ export default function RegisterUser(props) {
       contractName: props.contracts.coreContract,
       functionName: 'register-user',
       functionArgs: [registerMemoCV],
-      network: NETWORK,
+      STACKS_NETWORK: STACKS_NETWORK,
       onCancel: () => {
         setLoading(false);
         setFormMsg({

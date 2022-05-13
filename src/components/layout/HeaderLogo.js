@@ -1,6 +1,6 @@
 import { Link } from '@reach/router';
 import { useAtom } from 'jotai';
-import { testnet } from '../../lib/stacks';
+import { isTestnet } from '../../lib/stacks';
 import { CityCoinLogo, currentCity, currentCityList } from '../../store/common';
 import { AustinCoinLogo } from '../../store/common';
 import { MiamiCoinLogo } from '../../store/common';
@@ -49,7 +49,7 @@ export default function HeaderLogo() {
         <li>
           <Link
             className="dropdown-item link-primary"
-            to={`/${testnet ? '?chain=testnet' : '?chain=mainnet'}`}
+            to={`/${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`}
           >
             <img src={CityCoinLogo} alt="CityCoins Logo" className="pe-3 w-25 h-25" />
             Home
@@ -67,7 +67,7 @@ export default function HeaderLogo() {
         <li>
           <Link
             className="dropdown-item link-primary"
-            to={`/atx${testnet ? '?chain=testnet' : '?chain=mainnet'}`}
+            to={`/atx${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`}
           >
             <img src={AustinCoinLogo} alt="Austin Logo" className="pe-3 w-25 h-25" />
             Austin
@@ -76,7 +76,7 @@ export default function HeaderLogo() {
         <li>
           <Link
             className="dropdown-item link-primary"
-            to={`/mia${testnet ? '?chain=testnet' : '?chain=mainnet'}`}
+            to={`/mia${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`}
           >
             <img src={MiamiCoinLogo} alt="Miami Logo" className="pe-3 w-25 h-25" />
             Miami
@@ -85,7 +85,7 @@ export default function HeaderLogo() {
         <li>
           <Link
             className="dropdown-item link-primary"
-            to={`/nyc${testnet ? '?chain=testnet' : '?chain=mainnet'}`}
+            to={`/nyc${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`}
           >
             <img src={NewYorkCityCoinLogo} alt="New York City Logo" className="pe-3 w-25 h-25" />
             New York City
@@ -94,7 +94,7 @@ export default function HeaderLogo() {
         <li>
           <Link
             className="dropdown-item link-primary"
-            to={`/sfo${testnet ? '?chain=testnet' : '?chain=mainnet'}`}
+            to={`/sfo${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`}
           >
             <img src={SanFranciscoCoinLogo} alt="San Francisco Logo" className="pe-3 w-25 h-25" />
             San Francisco

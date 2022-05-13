@@ -1,14 +1,15 @@
 import React from 'react';
-import { STACK_API_URL, testnet, mainnet } from '../lib/constants';
+import { STACKS_API, isTestnet, isMainnet } from '../lib/stacks';
+
 export function Network() {
   return (
     <div
       className={`rounded border-secondary d-flex justify-content-around my-1 px-2 ${
-        mainnet ? 'bg-primary' : 'bg-secondary'
+        isTestnet ? 'bg-primary' : 'bg-secondary'
       }`}
-      title={STACK_API_URL}
+      title={STACKS_API}
     >
-      {mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet'}
+      {isMainnet ? 'mainnet' : isTestnet ? 'testnet' : 'mocknet'}
     </div>
   );
 }

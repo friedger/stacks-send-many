@@ -1,5 +1,5 @@
 import { Link } from '@reach/router';
-import { testnet } from '../../lib/stacks';
+import { isTestnet } from '../../lib/stacks';
 
 export default function NotActivated({ symbol }) {
   return (
@@ -10,7 +10,9 @@ export default function NotActivated({ symbol }) {
         Please see the{' '}
         <Link
           className="link-primary"
-          to={`/${symbol.toLowerCase()}/activation${testnet ? '?chain=testnet' : '?chain=mainnet'}`}
+          to={`/${symbol.toLowerCase()}/activation${
+            isTestnet ? '?chain=testnet' : '?chain=mainnet'
+          }`}
         >
           activation page
         </Link>{' '}

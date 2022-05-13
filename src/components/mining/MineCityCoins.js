@@ -4,7 +4,8 @@ import {
   getEstimatedStxFee,
   getMempoolFeeAvg,
   getMempoolFeeMedian,
-  NETWORK,
+  getStxBalance,
+  STACKS_NETWORK,
   stxToUstx,
   ustxToStx,
 } from '../../lib/stacks';
@@ -57,7 +58,7 @@ export default function MineCityCoins(props) {
 
   useEffect(() => {
     if (ownerStxAddress) {
-      fetchAccount(ownerStxAddress).then(acc => {
+      getStxBalance(ownerStxAddress).then(acc => {
         setProfileState({ account: acc });
       });
     }
@@ -197,7 +198,7 @@ export default function MineCityCoins(props) {
                 totalUstxCV.value
               ),
             ],
-            network: NETWORK,
+            STACKS_NETWORK: STACKS_NETWORK,
             onCancel: () => {
               setLoading(false);
               setFormMsg({

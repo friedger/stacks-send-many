@@ -1,6 +1,6 @@
 import { Link } from '@reach/router';
 import SelectCity from '../components/common/SelectCity';
-import { testnet } from '../lib/stacks';
+import { isTestnet } from '../lib/stacks';
 
 export default function NotFound() {
   return (
@@ -14,7 +14,7 @@ export default function NotFound() {
       <div className="row align-items-center">
         <div className="col-md-3">
           <Link
-            to={`/${testnet ? '?chain=testnet' : '?chain=mainnet'}`}
+            to={`/${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`}
             className="btn btn-lg btn-outline-primary"
           >
             Back Home

@@ -1,34 +1,65 @@
+import {
+  TransactionsApi,
+  SmartContractsApi,
+  AccountsApi,
+  Configuration,
+  InfoApi,
+} from '@stacks/blockchain-api-client';
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
+import { fetchJson } from './common';
 
-export const testnet = window.location.search.includes('chain=testnet');
-export const localMocknet = !testnet && window.location.search.includes('mocknet=local');
-export const mainnet =
-  (!testnet && !localMocknet) || window.location.search.includes('chain=mainnet');
-export const chainSuffix = `?chain=${mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet'}`;
+const enableLogs = false;
 
-export const CITYCOIN_DEPLOYER = 'SP466FNC0P7JWTNM2R9T199QRZN1MYEDTAR0KP27';
-export const CITYCOIN_VRF = 'citycoin-vrf';
+const debugLog = msg => enableLogs && console.log(msg);
 
-export const STACKS_API_URL = testnet
+export const isTestnet = window.location.search.includes('chain=testnet');
+export const isMocknet = !isTestnet && window.location.search.includes('mocknet=local');
+export const isMainnet =
+  (!isTestnet && !isMocknet) || window.location.search.includes('chain=mainnet');
+debugLog(`isTestnet: ${isTestnet}`);
+debugLog(`isMocknet: ${isMocknet}`);
+debugLog(`isMainnet: ${isMainnet}`);
+
+export const chainSuffix = `?chain=${isMainnet ? 'mainnet' : isTestnet ? 'testnet' : 'mocknet'}`;
+debugLog(`chainSuffix: ${chainSuffix}`);
+
+export const STACKS_API = isMainnet
+  ? 'https://stacks-node-api.mainnet.stacks.co'
+  : isTestnet
   ? 'https://stacks-node-api.testnet.stacks.co'
-  : 'https://stacks-node-api.mainnet.stacks.co';
-export const STACKS_API_V2_INFO = `${STACKS_API_URL}/v2/info`;
-export const STACKS_API_ACCOUNTS_URL = `${STACKS_API_URL}/v2/accounts`;
-export const STACKS_API_ADDRESSINFO = `${STACKS_API_URL}/extended/v1/address/`;
-export const STACKS_API_MEMPOOL = `${STACKS_API_URL}/extended/v1/tx/mempool`;
-export const STACKS_API_FEE_URL = `${STACKS_API_URL}/v2/fees/transfer`;
+  : 'http://localhost:3999';
+export const STACKS_API_WS = isMainnet
+  ? 'wss://stacks-node-api.mainnet.stacks.co/'
+  : isTestnet
+  ? 'wss://stacks-node-api.testnet.stacks.co/'
+  : 'ws://localhost:3999';
+debugLog(`STACKS_API: ${STACKS_API}`);
+debugLog(`STACKS_API_WS: ${STACKS_API_WS}`);
 
-export const NETWORK = testnet ? new StacksTestnet() : new StacksMainnet();
-NETWORK.coreApiUrl = STACKS_API_URL;
+export const TESTNET_FAUCET_URL = 'https://explorer.stacks.co/sandbox/faucet?chain=testnet';
 
-// enable/disable console logging for each function
-const debug = false;
+export const STACKS_NETWORK = isMainnet ? new StacksMainnet() : new StacksTestnet();
+STACKS_NETWORK.coreApiUrl = STACKS_API;
+
+export const STACKS_API_V2_INFO = `${STACKS_API}/v2/info`;
+export const STACKS_API_ACCOUNTS_URL = `${STACKS_API}/v2/accounts`;
+export const STACKS_API_ADDRESSINFO = `${STACKS_API}/extended/v1/address/`;
+export const STACKS_API_MEMPOOL = `${STACKS_API}/extended/v1/tx/mempool`;
+export const STACKS_API_FEE_URL = `${STACKS_API}/v2/fees/transfer`;
+
+const config = new Configuration({ STACKS_API });
+export const accountsApi = new AccountsApi(config);
+export const smartContractsApi = new SmartContractsApi(config);
+export const transactionsApi = new TransactionsApi(config);
+export const infoApi = new InfoApi(config);
+
+///////////////////////
 
 // return the current Stacks block height
 export const getCurrentBlockHeight = async () => {
   const response = await fetch(STACKS_API_V2_INFO);
   const json = await response.json();
-  debug && console.log(`currentBlockHeight result: ${json.stacks_tip_height}`);
+  debugLog(`currentBlockHeight result: ${json.stacks_tip_height}`);
   return json.stacks_tip_height;
 };
 
@@ -36,7 +67,7 @@ export const getCurrentBlockHeight = async () => {
 export async function getEstimatedStxFee() {
   const result = await fetch(STACKS_API_FEE_URL);
   const feeValue = await result.json();
-  debug && console.log(`getEstimatedStxFee result: ${feeValue}`);
+  debugLog(`getEstimatedStxFee result: ${feeValue}`);
   return feeValue;
 }
 
@@ -46,7 +77,7 @@ export const getMempoolFeeAvg = async () => {
   const json = await response.json();
   const txs = json.results;
   const sum = txs.map(fee => parseInt(fee.fee_rate)).reduce((a, b) => a + b, 0);
-  debug && console.log(`getMempoolFeeAvg result: ${sum / txs.length}`);
+  debugLog(`getMempoolFeeAvg result: ${sum / txs.length}`);
   return sum / txs.length;
 };
 
@@ -58,7 +89,7 @@ export const getMempoolFeeMedian = async () => {
   const fees = txs.map(fee => parseInt(fee.fee_rate));
   fees.sort((a, b) => a - b);
   const median = fees[Math.floor(fees.length / 2)];
-  debug && console.log(`getMempoolFeeMedian result: ${median}`);
+  debugLog(`getMempoolFeeMedian result: ${median}`);
   return median;
 };
 
@@ -66,7 +97,7 @@ export const getMempoolFeeMedian = async () => {
 export const getTxs = async address => {
   const response = await fetch(`${STACKS_API_ADDRESSINFO}/${address}/transactions`);
   const json = await response.json();
-  debug && console.log(`getTxs result: ${json.results}`);
+  debugLog(`getTxs result: ${json.results}`);
   return json.results;
 };
 
@@ -79,9 +110,6 @@ export function stxToUstx(stx) {
 }
 
 export async function getStxBalance(address) {
-  const url = `${STACKS_API_URL}/extended/v1/address/${address}/stx`;
-  const response = await fetch(url);
-  const json = await response.json();
-  debug && console.log(`getStxBalance result: ${json.balance}`);
-  return json.balance;
+  const url = `${STACKS_API}/extended/v1/address/${address}/stx`;
+  return fetchJson(url);
 }

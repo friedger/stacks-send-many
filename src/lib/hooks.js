@@ -1,9 +1,8 @@
 import { getUserData } from '@stacks/connect-react';
 import { addressToString } from '@stacks/transactions';
-
 import { useState, useEffect } from 'react';
 import { getStacksAccount } from './account';
-import { mocknet, testnet } from './constants';
+import { isMocknet, isTestnet } from './constants';
 
 export function useStxAddresses(userSession) {
   const [ownerStxAddress, setOwnerStxAddress] = useState();
@@ -17,7 +16,7 @@ export function useStxAddresses(userSession) {
             const { address } = getStacksAccount(userData.appPrivateKey);
             setAppStxAddress(addressToString(address));
             setOwnerStxAddress(
-              userData.profile.stxAddress[testnet || mocknet ? 'testnet' : 'mainnet']
+              userData.profile.stxAddress[isTestnet || isMocknet ? 'testnet' : 'mainnet']
             );
           })
           .catch(e => {

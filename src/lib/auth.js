@@ -6,6 +6,7 @@ import { useUpdateAtom } from 'jotai/utils';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 export const userSessionState = atom(new UserSession({ appConfig }));
+
 export const userDataState = atom();
 export const authResponseState = atom();
 

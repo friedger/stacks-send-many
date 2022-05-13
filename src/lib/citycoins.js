@@ -5,7 +5,7 @@ import {
   standardPrincipalCV,
   uintCV,
 } from '@stacks/transactions';
-import { NETWORK } from './stacks';
+import { STACKS_NETWORK } from './stacks';
 
 // enable/disable console logging for each function
 const debug = false;
@@ -21,7 +21,7 @@ export async function getCityWallet(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'get-city-wallet',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToValue(resultCv);
@@ -40,7 +40,7 @@ export async function getActivationBlock(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'get-activation-block',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -55,7 +55,7 @@ export async function getActivationDelay(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'get-activation-delay',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -70,7 +70,7 @@ export async function getActivationStatus(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'get-activation-status',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -85,7 +85,7 @@ export async function getActivationThreshold(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'get-activation-threshold',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -100,7 +100,7 @@ export async function getRegisteredUsersNonce(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'get-registered-users-nonce',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -115,7 +115,7 @@ export async function getUserId(contractAddress, contractName, address) {
     contractName: contractName,
     functionName: 'get-user-id',
     functionArgs: [standardPrincipalCV(address)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -130,7 +130,7 @@ export async function getUser(contractAddress, contractName, userId) {
     contractName: contractName,
     functionName: 'get-user',
     functionArgs: [uintCV(userId)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -151,7 +151,7 @@ export async function getMiningStatsAtBlock(contractAddress, contractName, block
     contractName: contractName,
     functionName: 'get-mining-stats-at-block',
     functionArgs: [uintCV(blockHeight)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -166,7 +166,7 @@ export async function getMiningStatsAtBlockOrDefaults(contractAddress, contractN
     contractName: contractName,
     functionName: 'get-mining-stats-at-block-or-default',
     functionArgs: [uintCV(blockHeight)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -181,7 +181,7 @@ export async function hasMinedAtBlock(contractAddress, contractName, blockHeight
     contractName: contractName,
     functionName: 'has-mined-at-block',
     functionArgs: [uintCV(blockHeight), uintCV(userId)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -196,7 +196,7 @@ export async function getMinerAtBlock(contractAddress, contractName, blockHeight
     contractName: contractName,
     functionName: 'get-miner-at-block',
     functionArgs: [uintCV(blockHeight), uintCV(userId)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -211,7 +211,7 @@ export async function getMinerAtBlockOrDefault(contractAddress, contractName, bl
     contractName: contractName,
     functionName: 'get-miner-at-block-or-default',
     functionArgs: [uintCV(blockHeight), uintCV(userId)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -226,7 +226,7 @@ export async function getLastHighValueAtBlock(contractAddress, contractName, blo
     contractName: contractName,
     functionName: 'get-last-high-value-at-block',
     functionArgs: [uintCV(blockHeight)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -241,7 +241,7 @@ export async function getBlockWinnerId(contractAddress, contractName, blockHeigh
     contractName: contractName,
     functionName: 'get-block-winner-id',
     functionArgs: [uintCV(blockHeight)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -270,7 +270,7 @@ export async function MineTokens(contractAddress, contractName, senderAddress, a
     functionArgs: [amountUstxCV, memoCV],
     postConditionMode: PostConditionMode.Deny,
     postConditions: postConditions,
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: senderAddress,
     onCancel: () => {
       console.log('mineTokens cancelled');
@@ -303,7 +303,7 @@ export async function isBlockWinner(contractAddress, contractName, address, bloc
     contractName: contractName,
     functionName: 'is-block-winner',
     functionArgs: [standardPrincipalCV(address), uintCV(blockHeight)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -318,7 +318,7 @@ export async function canClaimMiningReward(contractAddress, contractName, addres
     contractName: contractName,
     functionName: 'can-claim-mining-reward',
     functionArgs: [standardPrincipalCV(address), uintCV(blockHeight)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -337,7 +337,7 @@ export async function getStackingStatsAtCycle(contractAddress, contractName, cyc
     contractName: contractName,
     functionName: 'get-stacking-stats-at-cycle',
     functionArgs: [uintCV(cycleId)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -352,7 +352,7 @@ export async function getStackingStatsAtCycleOrDefault(contractAddress, contract
     contractName: contractName,
     functionName: 'get-stacking-stats-at-cycle-or-default',
     functionArgs: [uintCV(cycleId)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -367,7 +367,7 @@ export async function getStackerAtCycle(contractAddress, contractName, cycleId, 
     contractName: contractName,
     functionName: 'get-stacker-at-cycle',
     functionArgs: [uintCV(cycleId), uintCV(userId)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -382,7 +382,7 @@ export async function getStackerAtCycleOrDefault(contractAddress, contractName, 
     contractName: contractName,
     functionName: 'get-stacker-at-cycle-or-default',
     functionArgs: [uintCV(cycleId), uintCV(userId)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -397,7 +397,7 @@ export async function getRewardCycle(contractAddress, contractName, blockHeight)
     contractName: contractName,
     functionName: 'get-reward-cycle',
     functionArgs: [uintCV(blockHeight)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -412,7 +412,7 @@ export async function stackingActiveAtCycle(contractAddress, contractName, cycle
     contractName: contractName,
     functionName: 'stacking-active-at-cycle',
     functionArgs: [uintCV(cycleId)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -427,7 +427,7 @@ export async function getFirstStacksBlockInRewardCycle(contractAddress, contract
     contractName: contractName,
     functionName: 'get-first-stacks-block-in-reward-cycle',
     functionArgs: [uintCV(cycleId)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -442,7 +442,7 @@ export async function getStackingReward(contractAddress, contractName, userId, t
     contractName: contractName,
     functionName: 'get-stacking-reward',
     functionArgs: [uintCV(userId), uintCV(targetCycle)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -470,7 +470,7 @@ export async function getCoinbaseThresholds(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'get-coinbase-thresholds',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -485,7 +485,7 @@ export async function getCoinbaseAmount(contractAddress, contractName, blockHeig
     contractName: contractName,
     functionName: 'get-coinbase-amount',
     functionArgs: [uintCV(blockHeight)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -506,7 +506,7 @@ export async function getName(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'get-name',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -521,7 +521,7 @@ export async function getSymbol(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'get-symbol',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -536,7 +536,7 @@ export async function getDecimals(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'get-decimals',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -551,7 +551,7 @@ export async function getBalance(contractAddress, contractName, address) {
     contractName: contractName,
     functionName: 'get-balance',
     functionArgs: [standardPrincipalCV(address)],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -566,7 +566,7 @@ export async function getTotalSupply(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'get-total-supply',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -581,7 +581,7 @@ export async function getTokenUri(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'get-token-uri',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToJSON(resultCv);
@@ -610,7 +610,7 @@ export async function isInitialized(contractAddress, contractName) {
     contractName: contractName,
     functionName: 'is-initialized',
     functionArgs: [],
-    network: NETWORK,
+    STACKS_NETWORK: STACKS_NETWORK,
     senderAddress: contractAddress,
   });
   const result = cvToValue(resultCv);

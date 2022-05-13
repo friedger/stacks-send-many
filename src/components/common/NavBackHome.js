@@ -1,5 +1,5 @@
 import { Link } from '@reach/router';
-import { testnet } from '../../lib/stacks';
+import { isTestnet } from '../../lib/stacks';
 import SelectCity from './SelectCity';
 
 export default function NavBackHome() {

@@ -7,7 +7,7 @@ import { useAtom } from 'jotai';
 import { useStxAddresses } from '../../lib/hooks';
 import { userSessionState } from '../../lib/auth';
 import { uintCV } from '@stacks/transactions';
-import { NETWORK } from '../../lib/stacks';
+import { STACKS_NETWORK } from '../../lib/stacks';
 import FormResponse from '../common/FormResponse';
 
 export default function ClaimMiningRewards(props) {
@@ -133,7 +133,7 @@ export default function ClaimMiningRewards(props) {
       contractName: props.contracts.coreContract,
       functionName: 'claim-mining-reward',
       functionArgs: [targetBlockCV],
-      network: NETWORK,
+      STACKS_NETWORK: STACKS_NETWORK,
       onCancel: () => {
         setLoadingClaim(false);
         setFormMsg({

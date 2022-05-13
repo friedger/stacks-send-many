@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAccount } from '../../lib/account';
 import { Address } from '../Address';
 import { useAtom } from 'jotai';
 import { currentCity, stxBalanceAtom } from '../../store/common';
 import SelectCity from '../common/SelectCity';
 import { userSessionState } from '../../lib/auth';
 import { useStxAddresses } from '../../lib/hooks';
-import { ustxToStx, chainSuffix } from '../../lib/stacks';
+import { ustxToStx, chainSuffix, getStxBalance } from '../../lib/stacks';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { testnet } from '../../lib/stacks';
+import { isTestnet } from '../../lib/stacks';
 import { TESTNET_FAUCET_URL } from '../../lib/constants';
 import NetworkIndicatorIcon from './NetworkIndicatorIcon';
 
@@ -26,7 +25,7 @@ export function ProfileFull(props) {
 
   useEffect(() => {
     if (ownerStxAddress) {
-      fetchAccount(ownerStxAddress).then(acc => {
+      getStxBalance(ownerStxAddress).then(acc => {
         setProfileState({ account: acc });
       });
     }
@@ -106,7 +105,7 @@ export function ProfileFull(props) {
                 <i className="bi bi-box-arrow-up-right"></i> View Address on Explorer
               </a>
             </li>
-            {testnet && (
+            {isTestnet && (
               <li>
                 <a
                   rel="noreferrer"
@@ -168,7 +167,7 @@ export function ProfileFull(props) {
                 </li>
               </ul>
               <p>Selected City: {city ? city : 'None'}</p>
-              <p>Network: {testnet ? 'Testnet' : 'Mainnet'}</p>
+              <p>Network: {isTestnet ? 'Testnet' : 'Mainnet'}</p>
               <SelectCity />
             </>
           )}
