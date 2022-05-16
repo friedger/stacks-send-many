@@ -2,7 +2,7 @@ import { useAtom } from 'jotai';
 import { ProfileFull } from './ProfileFull';
 import { Address } from './Address';
 import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
-import { userBnsName, userLoggedIn, userStxAddress } from '../../lib/auth';
+import { userBnsName, userLoggedIn, userStxAddress } from '../../store/stacks';
 
 export function ProfileSmall() {
   const [signedIn] = useAtom(userLoggedIn);

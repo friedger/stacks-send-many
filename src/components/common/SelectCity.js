@@ -1,30 +1,14 @@
-import { navigate } from '@reach/router';
-import { currentCityList } from '../../store/common';
-import { isTestnet } from '../../lib/stacks';
-
-const navToCity = city => {
-  if (city === 'none' || city === undefined) {
-    navigate(`/${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`);
-  } else {
-    navigate(`/${city.toLowerCase()}${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`);
-  }
-};
+import { useAtom } from 'jotai';
+import { cityInfo, cityList } from '../../store/cities';
 
 export default function SelectCity() {
-  const cityListArray = Object.entries(currentCityList);
-
-  return (
-    <select
-      className="form-select form-select-lg w-75 mx-auto"
-      aria-label="Select a City"
-      onChange={e => navToCity(e.currentTarget.value)}
-    >
-      <option value="none">Choose a City...</option>
-      {cityListArray.map(([key, value]) => (
-        <option key={key} value={value.symbol}>
-          {value.name}
-        </option>
-      ))}
-    </select>
-  );
+  const [cities] = useAtom(cityList);
+  const [info] = useAtom(cityInfo);
+  const content = cities.map(city => (
+    <div key={city}>
+      <img height="25px" width="25px" src={info[city].logo} alt={city + ' logo'} />
+      {info[city].name}
+    </div>
+  ));
+  return content;
 }

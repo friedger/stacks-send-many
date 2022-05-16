@@ -108,6 +108,39 @@ inspect {
   text-decoration: underline;
 }
 
+/* Navigation */
+
+.cc-divider {
+  background-color: var(--brand-primary);
+  margin: 0.5rem 0;
+}
+
+.nav-item {
+  border: 1px solid transparent;
+  opacity: 0.5;
+  transition: opacity 0.5s ease-in,
+              border 0.5s ease-out;
+}
+
+.nav-item-title {
+  opacity: 1;
+  border-bottom: none !important;
+}
+
+.nav-item-active {
+  border-bottom: 1px solid var(--brand-hover);
+  opacity: 1;
+}
+
+.nav-item:hover {
+  opacity: 1;
+}
+
+.nav-logo {
+  width: 35px;
+  height: 35px;
+}
+
 /* Avatar */
 
 .avatar {

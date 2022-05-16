@@ -2,16 +2,11 @@ import { Fragment, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { Address } from './Address';
 import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
-import { getCCBalance, TESTNET_FAUCET_URL } from '../../lib/citycoinsV2';
+import { getCCBalance } from '../../lib/citycoinsV2';
 import LoadingSpinner from '../common/LoadingSpinner';
-import {
-  useConnect,
-  userBalances,
-  userBnsName,
-  userLoggedIn,
-  userStxAddress,
-} from '../../lib/auth';
-import { getStxBalance, isTestnet } from '../../lib/stacks';
+import { useConnect } from '../../lib/auth';
+import { getStxBalance, isTestnet, TESTNET_FAUCET_URL } from '../../lib/stacks';
+import { userBalances, userBnsName, userLoggedIn, userStxAddress } from '../../store/stacks';
 
 export function ProfileFull() {
   const [signedIn] = useAtom(userLoggedIn);

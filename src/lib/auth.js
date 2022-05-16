@@ -3,23 +3,12 @@ import { AppConfig, UserSession } from '@stacks/connect-react';
 import { showConnect } from '@stacks/connect';
 import { atom, useAtom } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
+import { userAppStxAddress, userBnsName, userLoggedIn, userStxAddress } from '../store/stacks';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 export const userSessionState = atom(new UserSession({ appConfig }));
-
 export const userDataState = atom();
 export const authResponseState = atom();
-export const userStxAddress = atom('');
-export const userAppStxAddress = atom('');
-export const userLoggedIn = atom(false);
-export const userBnsName = atom({
-  loaded: false,
-  data: '',
-});
-export const userBalances = atom({
-  loaded: false,
-  data: {},
-});
 
 export const useConnect = () => {
   const [userSession] = useAtom(userSessionState);

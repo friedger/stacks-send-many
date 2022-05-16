@@ -4,15 +4,9 @@ import { useUpdateAtom } from 'jotai/utils';
 import { getUserData } from '@stacks/connect';
 import { addressToString } from '@stacks/transactions';
 import { getStacksAccount } from '../../lib/account';
-import {
-  useConnect,
-  userAppStxAddress,
-  userBnsName,
-  userLoggedIn,
-  userSessionState,
-  userStxAddress,
-} from '../../lib/auth';
+import { useConnect, userSessionState } from '../../lib/auth';
 import { getBnsName, isMocknet, isTestnet } from '../../lib/stacks';
+import { userLoggedIn, userAppStxAddress, userStxAddress, userBnsName } from '../../store/stacks';
 import { ProfileSmall } from '../profile/ProfileSmall';
 
 export default function HeaderAuth() {
@@ -55,7 +49,7 @@ export default function HeaderAuth() {
   if (signedIn) return <ProfileSmall />;
 
   return (
-    <button className="btn btn-lg btn-outline-primary" type="button" onClick={handleOpenAuth}>
+    <button className="btn btn-md btn-outline-primary" type="button" onClick={handleOpenAuth}>
       Connect Wallet
     </button>
   );
