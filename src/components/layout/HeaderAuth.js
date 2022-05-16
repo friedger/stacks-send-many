@@ -45,6 +45,10 @@ export default function HeaderAuth() {
           console.error(`${err.message} Failed to fetch BNS name`);
         });
       });
+    } else {
+      setOwnerStxAddress('');
+      setAppStxAddress('');
+      setOwnerBnsName({ loaded: false, data: '' });
     }
   }, [signedIn, setAppStxAddress, setOwnerStxAddress, userSession, setOwnerBnsName]);
 

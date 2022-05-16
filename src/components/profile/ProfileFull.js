@@ -1,5 +1,9 @@
-import { Address } from './Address';
+import { Fragment, useEffect } from 'react';
 import { useAtom } from 'jotai';
+import { Address } from './Address';
+import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
+import { getCCBalance, TESTNET_FAUCET_URL } from '../../lib/citycoinsV2';
+import LoadingSpinner from '../common/LoadingSpinner';
 import {
   useConnect,
   userBalances,
@@ -8,11 +12,6 @@ import {
   userStxAddress,
 } from '../../lib/auth';
 import { getStxBalance, isTestnet } from '../../lib/stacks';
-import { TESTNET_FAUCET_URL } from '../../lib/constants';
-import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
-import { Fragment, useEffect } from 'react';
-import { getCCBalance } from '../../lib/citycoinsV2';
-import LoadingSpinner from '../common/LoadingSpinner';
 
 export function ProfileFull() {
   const [signedIn] = useAtom(userLoggedIn);
@@ -168,26 +167,3 @@ export function ProfileFull() {
   }
   return null;
 }
-
-/*
-Object.keys(ownerBalances.data).map(key => {
-                  return (
-                    <Fragment key={`${key}-container`}>
-                      {typeof ownerBalances.data[key] === 'object' ? (
-                        Object.keys(ownerBalances.data[key]).map(key2 => {
-                          return (
-                            <li key={`${key}-${key2}`}>
-                              {ownerBalances.data[key][key2]} {key2.toUpperCase()}{' '}
-                              {key.toUpperCase()}
-                            </li>
-                          );
-                        })
-                      ) : (
-                        <li>
-                          {ownerBalances.data[key].toString()} {key.toUpperCase()}
-                        </li>
-                      )}
-                    </Fragment>
-                  );
-                }
-*/

@@ -1,25 +1,12 @@
-import React, { useEffect } from 'react';
 import { Connect } from '@stacks/connect-react';
 import { Router } from '@reach/router';
-import {
-  userDataState,
-  userSessionState,
-  useConnect,
-  userStxAddress,
-  userAppStxAddress,
-  userBnsName,
-} from './lib/auth';
-import { useAtom } from 'jotai';
+import { useConnect } from './lib/auth';
 import Landing from './pages/Landing';
+import NotFound from './pages/NotFound';
 import HeaderAuth from './components/layout/HeaderAuth';
 import HeaderLogo from './components/layout/HeaderLogo';
 import HeaderTitle from './components/layout/HeaderTitle';
 import Footer from './components/layout/Footer';
-import NotFound from './pages/NotFound';
-import { useUpdateAtom } from 'jotai/utils';
-import { getStacksAccount } from './lib/account';
-import { addressToString } from '@stacks/transactions';
-import { getBnsName, isMocknet, isTestnet } from './lib/stacks';
 
 export default function App() {
   const { authOptions } = useConnect();
@@ -53,5 +40,3 @@ export default function App() {
 function Content() {
   return <p>Hello World</p>;
 }
-
-// old idea: <CityLanding path="/:citySymbol" />
