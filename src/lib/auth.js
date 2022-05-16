@@ -9,10 +9,13 @@ export const userSessionState = atom(new UserSession({ appConfig }));
 
 export const userDataState = atom();
 export const authResponseState = atom();
-export const userStxAddress = atom();
-export const userAppStxAddress = atom();
-export const userBnsName = atom();
-export const userLoggedIn = atom();
+export const userStxAddress = atom('');
+export const userAppStxAddress = atom('');
+export const userLoggedIn = atom(false);
+export const userBnsName = atom({
+  loaded: false,
+  data: '',
+});
 export const userBalances = atom({
   loaded: false,
   data: {},

@@ -1,15 +1,23 @@
 import { Address } from './Address';
 import { useAtom } from 'jotai';
-import { useConnect, userBalances, userLoggedIn, userStxAddress } from '../../lib/auth';
+import {
+  useConnect,
+  userBalances,
+  userBnsName,
+  userLoggedIn,
+  userStxAddress,
+} from '../../lib/auth';
 import { getStxBalance, isTestnet } from '../../lib/stacks';
 import { TESTNET_FAUCET_URL } from '../../lib/constants';
 import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
 import { Fragment, useEffect } from 'react';
 import { getCCBalance } from '../../lib/citycoinsV2';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 export function ProfileFull() {
   const [signedIn] = useAtom(userLoggedIn);
   const [ownerStxAddress] = useAtom(userStxAddress);
+  const [ownerBnsName] = useAtom(userBnsName);
   const [ownerBalances, setOwnerBalances] = useAtom(userBalances);
   const { handleSignOut } = useConnect();
 
@@ -34,20 +42,15 @@ export function ProfileFull() {
           v2: nycBalanceV2,
         },
       };
-      console.log(`balances: ${JSON.stringify(balances)}`);
       setOwnerBalances({
         loaded: true,
         data: balances,
       });
     };
     if (signedIn && ownerStxAddress) {
-      console.log('fetching balances');
-      console.log(`signedIn: ${signedIn}`);
-      console.log(`ownerStxAddress: ${ownerStxAddress}`);
       fetchBalances().catch(err => {
         console.error(`${err.message} Failed to fetch balances`);
       });
-      console.log('done');
     }
   }, [signedIn, ownerStxAddress, setOwnerBalances]);
 
@@ -62,7 +65,7 @@ export function ProfileFull() {
         <div className="offcanvas-header">
           <h5 className="offcanvas-title" id="offcanvasProfileLabel">
             <NetworkIndicatorIcon />
-            <Address addr={ownerStxAddress} />
+            <Address bns={ownerBnsName} addr={ownerStxAddress} />
           </h5>
           <button
             type="button"
@@ -131,16 +134,16 @@ export function ProfileFull() {
               </li>
             </ul>
             <hr />
-            <p>Owner Balances</p>
+            <p>Balances</p>
             <ul>
-              {ownerBalances.loaded &&
+              {ownerBalances.loaded ? (
                 Object.keys(ownerBalances.data).map(key => {
                   return (
-                    <Fragment key={key}>
+                    <Fragment key={`${key}-container`}>
                       {typeof ownerBalances.data[key] === 'object' ? (
                         Object.keys(ownerBalances.data[key]).map(key2 => {
                           return (
-                            <li>
+                            <li key={`${key}-${key2}`}>
                               {ownerBalances.data[key][key2]} {key2.toUpperCase()}{' '}
                               {key.toUpperCase()}
                             </li>
@@ -153,12 +156,38 @@ export function ProfileFull() {
                       )}
                     </Fragment>
                   );
-                })}
+                })
+              ) : (
+                <LoadingSpinner text="Loading balances..." />
+              )}
             </ul>
           </div>
-        </div>{' '}
+        </div>
       </div>
     );
   }
   return null;
 }
+
+/*
+Object.keys(ownerBalances.data).map(key => {
+                  return (
+                    <Fragment key={`${key}-container`}>
+                      {typeof ownerBalances.data[key] === 'object' ? (
+                        Object.keys(ownerBalances.data[key]).map(key2 => {
+                          return (
+                            <li key={`${key}-${key2}`}>
+                              {ownerBalances.data[key][key2]} {key2.toUpperCase()}{' '}
+                              {key.toUpperCase()}
+                            </li>
+                          );
+                        })
+                      ) : (
+                        <li>
+                          {ownerBalances.data[key].toString()} {key.toUpperCase()}
+                        </li>
+                      )}
+                    </Fragment>
+                  );
+                }
+*/

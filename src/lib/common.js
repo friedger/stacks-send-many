@@ -14,8 +14,6 @@ export const fetchJson = async (url, count = 1, debug = false) => {
     return json;
   }
   if (count < fetchLimit) {
-    console.log(`response.status: ${response.status}`);
-    console.log(`response: ${response.statusText}`);
     return fetchJson(url, count + 1);
   } else {
     throw new Error(`${response.status} ${response.statusText} ${url} (${count} attempts)`);

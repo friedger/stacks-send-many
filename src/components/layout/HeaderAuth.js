@@ -7,11 +7,12 @@ import { getStacksAccount } from '../../lib/account';
 import {
   useConnect,
   userAppStxAddress,
+  userBnsName,
   userLoggedIn,
   userSessionState,
   userStxAddress,
 } from '../../lib/auth';
-import { isMocknet, isTestnet } from '../../lib/stacks';
+import { getBnsName, isMocknet, isTestnet } from '../../lib/stacks';
 import { ProfileSmall } from '../profile/ProfileSmall';
 
 export default function HeaderAuth() {
@@ -20,6 +21,7 @@ export default function HeaderAuth() {
   const [signedIn] = useAtom(userLoggedIn);
   const setOwnerStxAddress = useUpdateAtom(userStxAddress);
   const setAppStxAddress = useUpdateAtom(userAppStxAddress);
+  const setOwnerBnsName = useUpdateAtom(userBnsName);
 
   useEffect(() => {
     if (signedIn) {
@@ -28,9 +30,23 @@ export default function HeaderAuth() {
         setAppStxAddress(addressToString(address));
         const stxAddress = data.profile.stxAddress[isTestnet || isMocknet ? 'testnet' : 'mainnet'];
         setOwnerStxAddress(stxAddress);
+        const fetchBnsName = async () => {
+          const bnsName = await getBnsName(stxAddress).catch(() => {
+            return undefined;
+          });
+          bnsName
+            ? setOwnerBnsName({
+                loaded: true,
+                data: bnsName,
+              })
+            : setOwnerBnsName({ loaded: false, data: '' });
+        };
+        fetchBnsName().catch(err => {
+          console.error(`${err.message} Failed to fetch BNS name`);
+        });
       });
     }
-  }, [signedIn, setAppStxAddress, setOwnerStxAddress, userSession]);
+  }, [signedIn, setAppStxAddress, setOwnerStxAddress, userSession, setOwnerBnsName]);
 
   if (signedIn) return <ProfileSmall />;
 

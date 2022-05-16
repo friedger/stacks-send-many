@@ -2,11 +2,12 @@ import { useAtom } from 'jotai';
 import { ProfileFull } from './ProfileFull';
 import { Address } from './Address';
 import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
-import { userLoggedIn, userStxAddress } from '../../lib/auth';
+import { userBnsName, userLoggedIn, userStxAddress } from '../../lib/auth';
 
 export function ProfileSmall() {
   const [signedIn] = useAtom(userLoggedIn);
   const [ownerStxAddress] = useAtom(userStxAddress);
+  const [ownerBnsName] = useAtom(userBnsName);
 
   if (signedIn) {
     return (
@@ -19,7 +20,7 @@ export function ProfileSmall() {
           aria-controls="offcanvasProfile"
         >
           <NetworkIndicatorIcon />
-          <Address addr={ownerStxAddress} />
+          <Address bns={ownerBnsName} addr={ownerStxAddress} />
         </a>
 
         <ProfileFull />

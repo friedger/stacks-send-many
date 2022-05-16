@@ -65,10 +65,10 @@ export const getStxBalance = async address => {
 
 // return the bns name, if found
 export const getBnsName = async address => {
-  const bnsName = await fetchJson(`${CC_API_BASE}/stacks/get-bns-name/${address}`).catch(() => {
+  const result = await fetchJson(`${CC_API_BASE}/stacks/get-bns-name/${address}`).catch(() => {
     return undefined;
   });
-  return bnsName;
+  return result.value;
 };
 
 // return the current Stacks block height
