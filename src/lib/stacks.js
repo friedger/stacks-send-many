@@ -55,6 +55,22 @@ export const infoApi = new InfoApi(config);
 
 ///////////////////////
 
+const CC_API_BASE = `https://citycoins-api.citycoins.workers.dev`;
+
+export const getStxBalance = async address => {
+  const url = `${CC_API_BASE}/stacks/get-stx-balance/${address}`;
+  const result = await fetchJson(url, undefined, enableLogs);
+  return result.value;
+};
+
+// return the bns name, if found
+export const getBnsName = async address => {
+  const bnsName = await fetchJson(`${CC_API_BASE}/stacks/get-bns-name/${address}`).catch(() => {
+    return undefined;
+  });
+  return bnsName;
+};
+
 // return the current Stacks block height
 export const getCurrentBlockHeight = async () => {
   const response = await fetch(STACKS_API_V2_INFO);
@@ -107,9 +123,4 @@ export function ustxToStx(ustx) {
 
 export function stxToUstx(stx) {
   return parseInt(stx * 1000000);
-}
-
-export async function getStxBalance(address) {
-  const url = `${STACKS_API}/extended/v1/address/${address}/stx`;
-  return fetchJson(url);
 }

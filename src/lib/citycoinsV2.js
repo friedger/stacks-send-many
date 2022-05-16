@@ -17,3 +17,9 @@ export const getActivationBlock = async (version, city) => {
   const url = `${CC_API_BASE}/${version}/${city}/get-activation-block`;
   return fetchJson(url, undefined, enableLogs);
 };
+
+export const getCCBalance = async (version, city, address) => {
+  const url = `${CC_API_BASE}/${version}/${city}/token/get-balance/${address}`;
+  const result = await fetchJson(url, undefined, enableLogs);
+  return result.value;
+};

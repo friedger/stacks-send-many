@@ -1,14 +1,14 @@
-import React from 'react';
+import { useAtom } from 'jotai';
 import { ProfileFull } from './ProfileFull';
-import { useStxAddresses } from '../../lib/hooks';
-import { Address } from '../Address';
-import NetworkIndicatorIcon from './NetworkIndicatorIcon';
-import { chainSuffix } from '../../lib/constants';
+import { Address } from './Address';
+import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
+import { userLoggedIn, userStxAddress } from '../../lib/auth';
 
-export function ProfileSmall(props) {
-  const { ownerStxAddress } = useStxAddresses(props.userSession);
+export function ProfileSmall() {
+  const [signedIn] = useAtom(userLoggedIn);
+  const [ownerStxAddress] = useAtom(userStxAddress);
 
-  if (props.userSession?.isUserSignedIn()) {
+  if (signedIn) {
     return (
       <>
         <a
@@ -18,14 +18,14 @@ export function ProfileSmall(props) {
           role="button"
           aria-controls="offcanvasProfile"
         >
-          <NetworkIndicatorIcon chainSuffix={chainSuffix}/>
-          {ownerStxAddress ? <Address addr={ownerStxAddress} /> : 'Profile'}
+          <NetworkIndicatorIcon />
+          <Address addr={ownerStxAddress} />
         </a>
 
         <ProfileFull />
       </>
     );
-  } else {
-    return null;
   }
+
+  return null;
 }

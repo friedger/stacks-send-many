@@ -1,32 +1,16 @@
 import { getUserData } from '@stacks/connect-react';
 import { addressToString } from '@stacks/transactions';
-import { useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { useUpdateAtom } from 'jotai/utils';
+import { useEffect } from 'react';
 import { getStacksAccount } from './account';
-import { isMocknet, isTestnet } from './constants';
+import { userAppStxAddress, userStxAddress } from './auth';
+import { mocknet, testnet } from './constants';
 
 export function useStxAddresses(userSession) {
-  const [ownerStxAddress, setOwnerStxAddress] = useState();
-  const [appStxAddress, setAppStxAddress] = useState();
-  const authenticated = userSession && userSession.isUserSignedIn();
-  useEffect(() => {
-    try {
-      if (authenticated && userSession) {
-        getUserData(userSession)
-          .then(userData => {
-            const { address } = getStacksAccount(userData.appPrivateKey);
-            setAppStxAddress(addressToString(address));
-            setOwnerStxAddress(
-              userData.profile.stxAddress[isTestnet || isMocknet ? 'testnet' : 'mainnet']
-            );
-          })
-          .catch(e => {
-            console.log(e);
-          });
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }, [userSession, authenticated]);
+  return null;
+}
 
-  return { ownerStxAddress, appStxAddress };
+export function updateStacksProfile(userSession) {
+  return null;
 }

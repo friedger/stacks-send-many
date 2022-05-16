@@ -9,16 +9,29 @@ export const userSessionState = atom(new UserSession({ appConfig }));
 
 export const userDataState = atom();
 export const authResponseState = atom();
+export const userStxAddress = atom();
+export const userAppStxAddress = atom();
+export const userBnsName = atom();
+export const userLoggedIn = atom();
+export const userBalances = atom({
+  loaded: false,
+  data: {},
+});
 
 export const useConnect = () => {
   const [userSession] = useAtom(userSessionState);
   const setUserData = useUpdateAtom(userDataState);
   const setAuthResponse = useUpdateAtom(authResponseState);
+  const setLoggedIn = useUpdateAtom(userLoggedIn);
+  const setStxAddress = useUpdateAtom(userStxAddress);
+  const setAppStxAddress = useUpdateAtom(userAppStxAddress);
+  const setBnsName = useUpdateAtom(userBnsName);
 
   const onFinish = async payload => {
     setAuthResponse(payload.authResponse);
     const userData = await payload.userSession.loadUserData();
     setUserData(userData);
+    setLoggedIn(true);
   };
 
   const authOptions = {
@@ -37,8 +50,12 @@ export const useConnect = () => {
   };
 
   const handleSignOut = useCallback(() => {
+    setLoggedIn(false);
+    setStxAddress('');
+    setAppStxAddress('');
+    setBnsName('');
     userSession?.signUserOut('/');
-  }, [userSession]);
+  }, [setAppStxAddress, setBnsName, setLoggedIn, setStxAddress, userSession]);
 
   return { handleOpenAuth, handleSignOut, authOptions };
 };

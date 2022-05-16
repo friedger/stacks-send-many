@@ -1,178 +1,164 @@
-import React, { useState, useEffect } from 'react';
-import { Address } from '../Address';
+import { Address } from './Address';
 import { useAtom } from 'jotai';
-import { currentCity, stxBalanceAtom } from '../../store/common';
-import SelectCity from '../common/SelectCity';
-import { userSessionState } from '../../lib/auth';
-import { useStxAddresses } from '../../lib/hooks';
-import { ustxToStx, chainSuffix, getStxBalance } from '../../lib/stacks';
-import LoadingSpinner from '../common/LoadingSpinner';
-import { isTestnet } from '../../lib/stacks';
+import { useConnect, userBalances, userLoggedIn, userStxAddress } from '../../lib/auth';
+import { getStxBalance, isTestnet } from '../../lib/stacks';
 import { TESTNET_FAUCET_URL } from '../../lib/constants';
-import NetworkIndicatorIcon from './NetworkIndicatorIcon';
+import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
+import { Fragment, useEffect } from 'react';
+import { getCCBalance } from '../../lib/citycoinsV2';
 
-export function ProfileFull(props) {
-  const [userSession] = useAtom(userSessionState);
-  const { ownerStxAddress } = useStxAddresses(userSession);
-  const [profileState, setProfileState] = useState({
-    account: undefined,
-  });
-  // const cities = Object.entries(currentCityList);
-  const [city] = useAtom(currentCity);
-  const [stxBalance, setStxBalance] = useAtom(stxBalanceAtom);
-  // const [cityBalances, setCityBalances] = useAtom(cityBalancesAtom);
-  // const [cityRates, setCityRates] = useAtom(cityRatesAtom);
+export function ProfileFull() {
+  const [signedIn] = useAtom(userLoggedIn);
+  const [ownerStxAddress] = useAtom(userStxAddress);
+  const [ownerBalances, setOwnerBalances] = useAtom(userBalances);
+  const { handleSignOut } = useConnect();
+
+  // could use get-full-city-info here
+  // then enumerate over city + version with getCCBalance
 
   useEffect(() => {
-    if (ownerStxAddress) {
-      getStxBalance(ownerStxAddress).then(acc => {
-        setProfileState({ account: acc });
+    const fetchBalances = async () => {
+      const stxBalance = await getStxBalance(ownerStxAddress);
+      const miaBalanceV1 = await getCCBalance('v1', 'mia', ownerStxAddress);
+      const miaBalanceV2 = await getCCBalance('v2', 'mia', ownerStxAddress);
+      const nycBalanceV1 = await getCCBalance('v1', 'nyc', ownerStxAddress);
+      const nycBalanceV2 = await getCCBalance('v2', 'nyc', ownerStxAddress);
+      const balances = {
+        stx: stxBalance,
+        mia: {
+          v1: miaBalanceV1,
+          v2: miaBalanceV2,
+        },
+        nyc: {
+          v1: nycBalanceV1,
+          v2: nycBalanceV2,
+        },
+      };
+      console.log(`balances: ${JSON.stringify(balances)}`);
+      setOwnerBalances({
+        loaded: true,
+        data: balances,
       });
-    }
-  }, [ownerStxAddress]);
-
-  useEffect(() => {
-    // update STX balance and rate
-    if (JSON.stringify(profileState) !== '{}') {
-      setStxBalance(profileState.account.balance);
-    }
-  }, [profileState, setStxBalance]);
-
-  /*
-  useEffect(() => {
-    const updateCityBalances = async (balance, symbol) => {
-      setCityBalances(prev => ({ ...prev, [symbol]: balance }));
     };
-
-    if (ownerStxAddress) {
-      cities.map((value, idx) => {
-        // console.log(`value: ${JSON.stringify(value)}`);
-        // console.log(`idx: ${idx}`);
-        // update citycoins balances
-        // how to know contract addresses?
+    if (signedIn && ownerStxAddress) {
+      console.log('fetching balances');
+      console.log(`signedIn: ${signedIn}`);
+      console.log(`ownerStxAddress: ${ownerStxAddress}`);
+      fetchBalances().catch(err => {
+        console.error(`${err.message} Failed to fetch balances`);
       });
+      console.log('done');
     }
-  });
-  */
+  }, [signedIn, ownerStxAddress, setOwnerBalances]);
 
-  return (
-    <div
-      className="offcanvas offcanvas-end"
-      tabIndex="-1"
-      id="offcanvasProfile"
-      aria-labelledby="offcanvasProfileLabel"
-    >
-      <div className="offcanvas-header">
-        <h5 className="offcanvas-title" id="offcanvasProfileLabel">
-          <NetworkIndicatorIcon chainSuffix={chainSuffix} />
-          {ownerStxAddress ? <Address addr={ownerStxAddress} /> : 'Profile'}{' '}
-        </h5>
-        <button
-          type="button"
-          className="btn-close text-reset"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div className="offcanvas-body text-start">
-        <div className="dropdown">
+  if (signedIn) {
+    return (
+      <div
+        className="offcanvas offcanvas-end"
+        tabIndex="-1"
+        id="offcanvasProfile"
+        aria-labelledby="offcanvasProfileLabel"
+      >
+        <div className="offcanvas-header">
+          <h5 className="offcanvas-title" id="offcanvasProfileLabel">
+            <NetworkIndicatorIcon />
+            <Address addr={ownerStxAddress} />
+          </h5>
           <button
-            className="btn btn-primary dropdown-toggle"
             type="button"
-            id="dropdownMenuButton"
-            data-bs-toggle="dropdown"
-          >
-            Actions
-          </button>
-          <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li>
-              <a
-                className="dropdown-item"
-                href={'http://miamining.com/history/' + ownerStxAddress}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <i className="bi bi-box-arrow-up-right"></i> View on MIA Block Explorer
-              </a>
-            </li>
-            <li>
-              <a
-                className="dropdown-item"
-                href={'https://explorer.stacks.co/address/' + ownerStxAddress}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <i className="bi bi-box-arrow-up-right"></i> View Address on Explorer
-              </a>
-            </li>
-            {isTestnet && (
+            className="btn-close text-reset"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div className="offcanvas-body text-start">
+          <div className="dropdown">
+            <button
+              className="btn btn-primary dropdown-toggle"
+              type="button"
+              id="dropdownMenuButton"
+              data-bs-toggle="dropdown"
+            >
+              Actions
+            </button>
+            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <li>
                 <a
-                  rel="noreferrer"
-                  href={TESTNET_FAUCET_URL}
                   className="dropdown-item"
+                  href={'https://explorer.stacks.co/address/' + ownerStxAddress}
                   target="_blank"
+                  rel="noreferrer"
                 >
-                  <i className="bi bi-box-arrow-up-right" /> STX Faucet
+                  <i className="bi bi-box-arrow-up-right"></i> View Address on Explorer
                 </a>
               </li>
-            )}
-            <li>
-              <a
-                className="dropdown-item"
-                href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Bug&template=bug_report.md&title=%F0%9F%90%9E%5BBUG%5D+"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <i className="bi bi-bug"></i> Report a Bug
-              </a>
-            </li>
-            <li>
-              <a
-                className="dropdown-item"
-                href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%E2%9A%A1%5BFEAT%5D+"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <i className="bi bi-lightning"></i> Request a Feature
-              </a>
-            </li>
-            <li>
-              <button
-                className="dropdown-item"
-                href="#"
-                onClick={() => {
-                  userSession.signUserOut('/');
-                }}
-              >
-                <i className="bi bi-x-circle"></i> Sign Out
-              </button>
-            </li>
-          </ul>
-          <hr />
-          {profileState.account && (
-            <>
-              <h5 className="mb-3">Account Balance</h5>
-              <ul>
+              {isTestnet && (
                 <li>
-                  {stxBalance ? (
-                    `${ustxToStx(stxBalance).toLocaleString(undefined, {
-                      style: 'decimal',
-                      minimumFractionDigits: 6,
-                      maximumFractionDigits: 6,
-                    })} Ӿ`
-                  ) : (
-                    <LoadingSpinner />
-                  )}
+                  <a
+                    rel="noreferrer"
+                    href={TESTNET_FAUCET_URL}
+                    className="dropdown-item"
+                    target="_blank"
+                  >
+                    <i className="bi bi-box-arrow-up-right" /> STX Faucet
+                  </a>
                 </li>
-              </ul>
-              <p>Selected City: {city ? city : 'None'}</p>
-              <p>Network: {isTestnet ? 'Testnet' : 'Mainnet'}</p>
-              <SelectCity />
-            </>
-          )}
-        </div>
-      </div>{' '}
-    </div>
-  );
+              )}
+              <li>
+                <a
+                  className="dropdown-item"
+                  href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Bug&template=bug_report.md&title=%F0%9F%90%9E%5BBUG%5D+"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <i className="bi bi-bug"></i> Report a Bug
+                </a>
+              </li>
+              <li>
+                <a
+                  className="dropdown-item"
+                  href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%E2%9A%A1%5BFEAT%5D+"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <i className="bi bi-lightning"></i> Request a Feature
+                </a>
+              </li>
+              <li>
+                <button className="dropdown-item" href="#" onClick={handleSignOut}>
+                  <i className="bi bi-x-circle"></i> Sign Out
+                </button>
+              </li>
+            </ul>
+            <hr />
+            <p>Owner Balances</p>
+            <ul>
+              {ownerBalances.loaded &&
+                Object.keys(ownerBalances.data).map(key => {
+                  return (
+                    <Fragment key={key}>
+                      {typeof ownerBalances.data[key] === 'object' ? (
+                        Object.keys(ownerBalances.data[key]).map(key2 => {
+                          return (
+                            <li>
+                              {ownerBalances.data[key][key2]} {key2.toUpperCase()}{' '}
+                              {key.toUpperCase()}
+                            </li>
+                          );
+                        })
+                      ) : (
+                        <li>
+                          {ownerBalances.data[key].toString()} {key.toUpperCase()}
+                        </li>
+                      )}
+                    </Fragment>
+                  );
+                })}
+            </ul>
+          </div>
+        </div>{' '}
+      </div>
+    );
+  }
+  return null;
 }

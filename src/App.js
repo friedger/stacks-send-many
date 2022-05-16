@@ -1,31 +1,28 @@
 import React, { useEffect } from 'react';
 import { Connect } from '@stacks/connect-react';
 import { Router } from '@reach/router';
-import { userDataState, userSessionState, useConnect } from './lib/auth';
+import {
+  userDataState,
+  userSessionState,
+  useConnect,
+  userStxAddress,
+  userAppStxAddress,
+  userBnsName,
+} from './lib/auth';
 import { useAtom } from 'jotai';
 import Landing from './pages/Landing';
-import Austin from './pages/cities/Austin';
-import Miami from './pages/cities/Miami';
-import NewYorkCity from './pages/cities/NewYorkCity';
-import SanFrancisco from './pages/cities/SanFrancisco';
 import HeaderAuth from './components/layout/HeaderAuth';
 import HeaderLogo from './components/layout/HeaderLogo';
 import HeaderTitle from './components/layout/HeaderTitle';
 import Footer from './components/layout/Footer';
 import NotFound from './pages/NotFound';
+import { useUpdateAtom } from 'jotai/utils';
+import { getStacksAccount } from './lib/account';
+import { addressToString } from '@stacks/transactions';
+import { getBnsName, isMocknet, isTestnet } from './lib/stacks';
 
-export default function App(props) {
+export default function App() {
   const { authOptions } = useConnect();
-  const [userSession] = useAtom(userSessionState);
-  const [, setUserData] = useAtom(userDataState);
-
-  useEffect(() => {
-    if (userSession?.isUserSignedIn()) {
-      setUserData(userSession.loadUserData());
-    } else if (userSession.isSignInPending()) {
-      userSession.handlePendingSignIn();
-    }
-  }, [userSession, setUserData]);
 
   return (
     <Connect authOptions={authOptions}>
@@ -38,7 +35,7 @@ export default function App(props) {
             <HeaderTitle />
           </div>
           <div className="col-md text-md-end text-nowrap pb-3 pb-md-0">
-            <p>Auth</p>
+            <HeaderAuth />
           </div>
         </div>
         <hr />
@@ -55,18 +52,6 @@ export default function App(props) {
 
 function Content() {
   return <p>Hello World</p>;
-  return (
-    <>
-      <Router>
-        <Landing path="/" exact />
-        <Austin path="/atx/*" />
-        <Miami path="/mia/*" />
-        <NewYorkCity path="/nyc/*" />
-        <SanFrancisco path="/sfo/*" />
-        <NotFound default />
-      </Router>
-    </>
-  );
 }
 
 // old idea: <CityLanding path="/:citySymbol" />

@@ -1,33 +1,30 @@
 import React from 'react';
+import { isMainnet } from '../../lib/stacks';
 
-const mainNetSettings = { netType: 'Mainnet', color: 'bg-success' };
-const testNetSettings = { netType: 'Testnet', color: 'bg-warning' };
-
-const getNetwork = chainSuffix => {
-  const net = chainSuffix.split('=')[1];
-
-  const netMap = new Map();
-  netMap.set('testnet', testNetSettings);
-  netMap.set('mainnet', mainNetSettings);
-
-  return netMap.get(net) || mainNetSettings;
+const mainnetIcon = {
+  name: 'Mainnet',
+  color: 'bg-success',
 };
 
-const NetworkIndicatorIcon = ({ chainSuffix }) => {
-  const network = getNetwork(chainSuffix);
+const testnetIcon = {
+  name: 'Testnet',
+  color: 'bg-warning',
+};
+
+export function NetworkIndicatorIcon() {
+  const network = isMainnet ? mainnetIcon : testnetIcon;
   return (
     <i
       className="bi bi-person-circle me-2 position-relative"
       data-toggle="tooltip"
       data-placement="top"
-      title={`You are on the ${network.netType} network`}
+      title={`You are on the ${network.name} network`}
     >
       <span
         className={`position-absolute transform-network-indicator p-1 ${network.color} border-0 rounded-circle`}
       >
-        <span className="visually-hidden">{network.netType}</span>
+        <span className="visually-hidden">{network.name}</span>
       </span>
     </i>
   );
-};
-export default NetworkIndicatorIcon;
+}
