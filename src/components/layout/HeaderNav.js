@@ -13,8 +13,10 @@ export default function HeaderNav() {
     return (
       <li key={city} className={`nav-item me-3 ${city === current ? 'nav-item-active' : ''}`}>
         <Link
-          className="nav-link"
-          to={`/${isMainnet ? '?chain=mainnet' : '?chain=testnet'}`}
+          className="nav-link d-block"
+          to={`/${action !== '' ? action.toLowerCase() : 'dashboard'}${
+            isMainnet ? '?chain=mainnet' : '?chain=testnet'
+          }`}
           onClick={() => setCurrent(city)}
         >
           <img className="nav-logo me-2" src={info[city].logo} alt={`${city} logo`} />
@@ -79,7 +81,12 @@ function CitySelected({ menu, actions }) {
 
   return (
     <nav className="navbar navbar-light bg-white">
-      <div className="container-fluid m-0 p-0 justify-content-around">
+      <div className="container-fluid m-0 p-0 justify-content-between flex-md-nowrap">
+        <div>
+          <ul className="nav nav-pills flex-column flex-md-row flex-nowrap align-items-center justify-content-center">
+            {actions}
+          </ul>
+        </div>
         <button
           className="navbar-toggler m-2"
           type="button"
@@ -91,25 +98,20 @@ function CitySelected({ menu, actions }) {
         >
           Select a City
         </button>
-        <div>
-          <ul className="nav nav-pills flex-column flex-md-row flex-nowrap align-items-center justify-content-center">
-            {actions}
-          </ul>
-        </div>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav">
-            <li className="nav-item nav-item-title">
-              <Link
-                className="nav-link"
-                to={`/${isMainnet ? '?chain=mainnet' : '?chain=testnet'}`}
-                onClick={() => setCurrent('')}
-              >
-                Clear Selection
-              </Link>
-            </li>
-            {menu}
-          </ul>
-        </div>
+      </div>
+      <div className="collapse navbar-collapse" id="navbarNav">
+        <ul className="navbar-nav align-items-md-end justify-content-center">
+          <li className="nav-item nav-item-title">
+            <Link
+              className="nav-link d-block"
+              to={`/${isMainnet ? '?chain=mainnet' : '?chain=testnet'}`}
+              onClick={() => setCurrent('')}
+            >
+              Clear Selection
+            </Link>
+          </li>
+          {menu}
+        </ul>
       </div>
     </nav>
   );
