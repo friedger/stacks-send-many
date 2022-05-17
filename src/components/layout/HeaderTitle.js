@@ -6,6 +6,8 @@ export default function HeaderTitle() {
   const [info] = useAtom(cityInfo);
 
   return (
-    <span className="h1 text-nowrap">{current !== '' ? info[current].name : 'CityCoins'}</span>
+    <span className={`h1 text-nowrap ${current !== '' ? 'text-' + info[current].bgText : ''}`}>
+      {current !== '' ? info[current].name : 'CityCoins'}
+    </span>
   );
 }

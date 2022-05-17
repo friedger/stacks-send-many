@@ -13,14 +13,25 @@ import Dashboard from './pages/CityDashboard';
 import Mining from './pages/CityMining';
 import Stacking from './pages/CityStacking';
 import Tools from './pages/CityTools';
+import { useAtom } from 'jotai';
+import { cityInfo, currentCity } from './store/cities';
 
 export default function App() {
   const { authOptions } = useConnect();
+  const [current] = useAtom(currentCity);
+  const [info] = useAtom(cityInfo);
 
   return (
     <Connect authOptions={authOptions}>
       <div className="container mt-3">
-        <div className="row align-items-center justify-content-between text-center mb-3">
+        <div
+          className="row align-items-center justify-content-between text-center py-3"
+          style={
+            current !== ''
+              ? { backgroundSize: 'cover', backgroundImage: `url(${info[current].background})` }
+              : { backgroundImage: 'none' }
+          }
+        >
           <div className="col-md-4 text-md-start pb-3 pb-md-0">
             <HeaderLogo />
           </div>

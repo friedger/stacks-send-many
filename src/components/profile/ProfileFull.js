@@ -69,93 +69,82 @@ export function ProfileFull() {
           ></button>
         </div>
         <div className="offcanvas-body text-start">
-          <div className="dropdown">
-            <button
-              className="btn btn-primary dropdown-toggle"
-              type="button"
-              id="dropdownMenuButton"
-              data-bs-toggle="dropdown"
+          <div className="btn-group" role="group" aria-label="Account control buttons">
+            <a
+              href={`https://explorer.stacks.co/address/${ownerStxAddress}`}
+              rel="noreferrer"
+              target="_blank"
+              class="btn btn-outline-primary"
+              title="View Address on Explorer"
             >
-              Actions
+              <i className="bi bi-box-arrow-up-right"></i>
+            </a>
+            {isTestnet && (
+              <a
+                rel="noreferrer"
+                href={TESTNET_FAUCET_URL}
+                target="_blank"
+                class="btn btn-outline-primary"
+                title="STX Testnet Faucet"
+              >
+                <i className="bi bi-box-arrow-up-right" />
+              </a>
+            )}
+            <a
+              href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Bug&template=bug_report.md&title=%F0%9F%90%9E%5BBUG%5D+"
+              rel="noreferrer"
+              target="_blank"
+              class="btn btn-outline-primary"
+              title="Report a Bug"
+            >
+              <i className="bi bi-bug"></i>
+            </a>
+            <a
+              href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%E2%9A%A1%5BFEAT%5D+"
+              rel="noreferrer"
+              target="_blank"
+              class="btn btn-outline-primary"
+              title="Request a Feature"
+            >
+              <i className="bi bi-lightning"></i>
+            </a>
+            <button
+              className="btn btn-outline-primary"
+              href="#"
+              title="Sign Out"
+              onClick={handleSignOut}
+            >
+              <i className="bi bi-x-circle"></i>
             </button>
-            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li>
-                <a
-                  className="dropdown-item"
-                  href={'https://explorer.stacks.co/address/' + ownerStxAddress}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <i className="bi bi-box-arrow-up-right"></i> View Address on Explorer
-                </a>
-              </li>
-              {isTestnet && (
-                <li>
-                  <a
-                    rel="noreferrer"
-                    href={TESTNET_FAUCET_URL}
-                    className="dropdown-item"
-                    target="_blank"
-                  >
-                    <i className="bi bi-box-arrow-up-right" /> STX Faucet
-                  </a>
-                </li>
-              )}
-              <li>
-                <a
-                  className="dropdown-item"
-                  href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Bug&template=bug_report.md&title=%F0%9F%90%9E%5BBUG%5D+"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <i className="bi bi-bug"></i> Report a Bug
-                </a>
-              </li>
-              <li>
-                <a
-                  className="dropdown-item"
-                  href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%E2%9A%A1%5BFEAT%5D+"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <i className="bi bi-lightning"></i> Request a Feature
-                </a>
-              </li>
-              <li>
-                <button className="dropdown-item" href="#" onClick={handleSignOut}>
-                  <i className="bi bi-x-circle"></i> Sign Out
-                </button>
-              </li>
-            </ul>
-            <hr className="cc-divider" />
-            <p>Balances</p>
-            <ul>
-              {ownerBalances.loaded ? (
-                Object.keys(ownerBalances.data).map(key => {
-                  return (
-                    <Fragment key={`${key}-container`}>
-                      {typeof ownerBalances.data[key] === 'object' ? (
-                        Object.keys(ownerBalances.data[key]).map(key2 => {
-                          return (
-                            <li key={`${key}-${key2}`}>
-                              {ownerBalances.data[key][key2]} {key2.toUpperCase()}{' '}
-                              {key.toUpperCase()}
-                            </li>
-                          );
-                        })
-                      ) : (
-                        <li>
-                          {ownerBalances.data[key].toString()} {key.toUpperCase()}
-                        </li>
-                      )}
-                    </Fragment>
-                  );
-                })
-              ) : (
-                <LoadingSpinner text="Loading balances..." />
-              )}
-            </ul>
           </div>
+
+          <hr className="cc-divider" />
+          <p>Balances</p>
+          <ul>
+            {ownerBalances.loaded ? (
+              Object.keys(ownerBalances.data).map(key => {
+                return (
+                  <Fragment key={`${key}-container`}>
+                    {typeof ownerBalances.data[key] === 'object' ? (
+                      Object.keys(ownerBalances.data[key]).map(key2 => {
+                        return (
+                          <li key={`${key}-${key2}`}>
+                            {ownerBalances.data[key][key2]} {key2.toUpperCase()} {key.toUpperCase()}
+                          </li>
+                        );
+                      })
+                    ) : (
+                      <li>
+                        {ownerBalances.data[key].toString()} {key.toUpperCase()}
+                      </li>
+                    )}
+                  </Fragment>
+                );
+              })
+            ) : (
+              <LoadingSpinner text="Loading balances..." />
+            )}
+          </ul>
         </div>
       </div>
     );

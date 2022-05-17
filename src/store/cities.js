@@ -1,7 +1,9 @@
 import { atom } from 'jotai';
 import CityCoin from '../images/CC_StandAlone.svg';
 import MiamiCoin from '../images/MIA_StandAlone.svg';
+import MiamiBG from '../images/MIA_BG_Horizontal.svg';
 import NewYorkCityCoin from '../images/NYC_StandAlone.svg';
+import NewYorkCityBG from '../images/NYC_BG_Horizontal.svg';
 
 export const CityCoinLogo = CityCoin;
 
@@ -11,6 +13,7 @@ export const currentAction = atom('');
 
 // setup to match endpoints in CityCoins API
 // but hardcoded to reduce number of lookups
+// and includes logo and bg for each city
 
 export const currentCity = atom('');
 
@@ -21,6 +24,8 @@ export const cityInfo = atom({
     name: 'Miami',
     symbol: 'MIA',
     logo: MiamiCoin,
+    background: MiamiBG,
+    bgText: 'dark',
     versions: ['v1', 'v2'],
     currentVersion: 'v2',
   },
@@ -28,6 +33,8 @@ export const cityInfo = atom({
     name: 'New York City',
     symbol: 'NYC',
     logo: NewYorkCityCoin,
+    background: NewYorkCityBG,
+    bgText: 'white',
     versions: ['v1', 'v2'],
     currentVersion: 'v2',
   },

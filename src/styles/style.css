@@ -80,9 +80,22 @@ inspect {
   color: var(--brand-primary);
 }
 
-.btn-outline-primary:hover {
+.btn-outline-white {
+  border-color: var(--brand-background);
+  color: var(--brand-background);
+}
+
+.btn-outline-dark {
+  border-color: var(--brand-hover);
+  color: var(--brand-text);
+}
+
+.btn-outline-white:hover,
+.btn-outline-white:hover,
+.btn-outline-dark:hover {
   background-color: var(--brand-primary);
   color: var(--brand-background);
+  border-color: var(--brand-primary);
 }
 
 .btn-nav {
@@ -139,6 +152,13 @@ inspect {
 .nav-logo {
   width: 35px;
   height: 35px;
+}
+
+.nav-bg {
+  z-index: -1;
+  pointer-events: none;
+  position: absolute;
+  object-fit: fill;
 }
 
 /* Avatar */

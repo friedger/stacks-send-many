@@ -28,7 +28,7 @@ export default function HeaderNav() {
 
   const actions = cityActions.map(value => {
     return (
-      <li key={value} className={`nav-item me-3 ${value === action ? 'nav-item-active' : ''}`}>
+      <li key={value} className={`nav-item ${value === action ? 'nav-item-active' : ''}`}>
         <Link
           className="nav-link"
           to={`/${value.toLowerCase()}${isMainnet ? '?chain=mainnet' : '?chain=testnet'}`}
@@ -81,12 +81,10 @@ function CitySelected({ menu, actions }) {
 
   return (
     <nav className="navbar navbar-light bg-white">
-      <div className="container-fluid m-0 p-0 justify-content-between flex-md-nowrap">
-        <div>
-          <ul className="nav nav-pills flex-column flex-md-row flex-nowrap align-items-center justify-content-center">
-            {actions}
-          </ul>
-        </div>
+      <div className="container-fluid m-0 p-0 flex-column flex-md-row justify-content-md-between flex-md-nowrap">
+        <ul className="nav nav-pills flex-column flex-md-row flex-md-nowrap align-items-center justify-content-center">
+          {actions}
+        </ul>
         <button
           className="navbar-toggler m-2"
           type="button"
