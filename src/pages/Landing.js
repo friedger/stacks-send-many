@@ -1,6 +1,6 @@
 // Landing page with Stacks Connect for authentication
 
-export default function Landing(props) {
+export default function Landing() {
   return (
     <div className="Landing">
       <div className="jumbotron jumbotron-fluid pt-3 mb-0">

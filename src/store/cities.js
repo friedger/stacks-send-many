@@ -5,6 +5,10 @@ import NewYorkCityCoin from '../images/NYC_StandAlone.svg';
 
 export const CityCoinLogo = CityCoin;
 
+export const cityActions = ['Dashboard', 'Activation', 'Mining', 'Stacking'];
+
+export const currentAction = atom('');
+
 // setup to match endpoints in CityCoins API
 // but hardcoded to reduce number of lookups
 

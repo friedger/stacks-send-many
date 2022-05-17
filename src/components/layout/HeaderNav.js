@@ -1,16 +1,17 @@
 import { Link } from '@reach/router';
 import { useAtom } from 'jotai';
 import { isMainnet } from '../../lib/stacks';
-import { cityInfo, cityList, currentCity } from '../../store/cities';
+import { cityActions, cityInfo, cityList, currentAction, currentCity } from '../../store/cities';
 
 export default function HeaderNav() {
   const [cities] = useAtom(cityList);
   const [info] = useAtom(cityInfo);
   const [current, setCurrent] = useAtom(currentCity);
+  const [action, setAction] = useAtom(currentAction);
 
   const cityMenu = cities.map(city => {
     return (
-      <li key={city} className={`nav-item me-3 ${city === current && 'nav-item-active'}`}>
+      <li key={city} className={`nav-item me-3 ${city === current ? 'nav-item-active' : ''}`}>
         <Link
           className="nav-link"
           to={`/${isMainnet ? '?chain=mainnet' : '?chain=testnet'}`}
@@ -23,7 +24,21 @@ export default function HeaderNav() {
     );
   });
 
-  if (current !== '') return <CitySelected menu={cityMenu} />;
+  const actions = cityActions.map(value => {
+    return (
+      <li key={value} className={`nav-item me-3 ${value === action ? 'nav-item-active' : ''}`}>
+        <Link
+          className="nav-link"
+          to={`/${isMainnet ? '?chain=mainnet' : '?chain=testnet'}`}
+          onClick={() => setAction(value)}
+        >
+          {value}
+        </Link>
+      </li>
+    );
+  });
+
+  if (current !== '') return <CitySelected menu={cityMenu} actions={actions} />;
 
   return <NoCitySelected menu={cityMenu} />;
 }
@@ -48,7 +63,7 @@ function NoCitySelected({ menu }) {
           id="navbarNav"
         >
           <ul className="navbar-nav align-items-center justify-content-center">
-            <li className="nav-item nav-item-title me-3">
+            <li className="nav-item nav-item-title">
               <span className="fs-5">Select a City</span>
             </li>
             {menu}
@@ -59,13 +74,12 @@ function NoCitySelected({ menu }) {
   );
 }
 
-function CitySelected({ menu }) {
-  const [current] = useAtom(currentCity);
-  const [info] = useAtom(cityInfo);
+function CitySelected({ menu, actions }) {
+  const [, setCurrent] = useAtom(currentCity);
 
   return (
     <nav className="navbar navbar-light bg-white">
-      <div className="container-fluid m-0 p-0 justify-content-start">
+      <div className="container-fluid m-0 p-0 justify-content-around">
         <button
           className="navbar-toggler m-2"
           type="button"
@@ -75,14 +89,26 @@ function CitySelected({ menu }) {
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <img className="nav-logo me-2" src={info[current].logo} alt={`${current} logo`} /> Select
-          a City
+          Select a City
         </button>
-        <div
-          className="collapse navbar-collapse align-items-start justify-content-start"
-          id="navbarNav"
-        >
-          <ul className="navbar-nav align-items-start justify-content-start">{menu}</ul>
+        <div>
+          <ul className="nav nav-pills flex-column flex-md-row flex-nowrap align-items-center justify-content-center">
+            {actions}
+          </ul>
+        </div>
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav">
+            <li className="nav-item nav-item-title">
+              <Link
+                className="nav-link"
+                to={`/${isMainnet ? '?chain=mainnet' : '?chain=testnet'}`}
+                onClick={() => setCurrent('')}
+              >
+                Clear Selection
+              </Link>
+            </li>
+            {menu}
+          </ul>
         </div>
       </div>
     </nav>
