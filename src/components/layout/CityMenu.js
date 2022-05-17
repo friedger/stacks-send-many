@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { isMainnet } from '../../lib/stacks';
 import { cityActions, cityInfo, cityList, currentAction, currentCity } from '../../store/cities';
 
-export default function HeaderNav() {
+export default function CityMenu({ menuName }) {
   const [cities] = useAtom(cityList);
   const [info] = useAtom(cityInfo);
   const [current, setCurrent] = useAtom(currentCity);
@@ -40,7 +40,7 @@ export default function HeaderNav() {
     );
   });
 
-  if (current !== '') return <CitySelected menu={cityMenu} actions={actions} />;
+  if (current !== '') return <CitySelected menu={cityMenu} actions={actions} name={menuName} />;
 
   return <NoCitySelected menu={cityMenu} />;
 }
@@ -76,7 +76,7 @@ function NoCitySelected({ menu }) {
   );
 }
 
-function CitySelected({ menu, actions }) {
+function CitySelected({ menu, actions, name }) {
   const [, setCurrent] = useAtom(currentCity);
 
   return (
@@ -89,15 +89,15 @@ function CitySelected({ menu, actions }) {
           className="navbar-toggler m-2"
           type="button"
           data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
+          data-bs-target={`#${name}`}
+          aria-controls={name}
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
           Select a City
         </button>
       </div>
-      <div className="collapse navbar-collapse" id="navbarNav">
+      <div className="collapse navbar-collapse" id={name}>
         <ul className="navbar-nav align-items-md-end justify-content-center">
           <li className="nav-item nav-item-title">
             <Link

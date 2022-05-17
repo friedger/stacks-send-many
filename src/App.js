@@ -5,7 +5,7 @@ import Landing from './pages/Landing';
 import NotFound from './pages/NotFound';
 import HeaderLogo from './components/layout/HeaderLogo';
 import HeaderTitle from './components/layout/HeaderTitle';
-import HeaderNav from './components/layout/HeaderNav';
+import CityMenu from './components/layout/CityMenu';
 import HeaderAuth from './components/layout/HeaderAuth';
 import Footer from './components/layout/Footer';
 import Activation from './pages/CityActivation';
@@ -45,13 +45,19 @@ export default function App() {
         <hr className="cc-divider" />
         <div className="row align-items-center">
           <div className="col">
-            <HeaderNav />
+            <CityMenu menuName="topnav" />
           </div>
         </div>
         <hr className="cc-divider" />
         <div className="row align-items-center">
           <div className="col">
             <Content />
+          </div>
+        </div>
+        <hr className="cc-divider" />
+        <div className="row align-items-center">
+          <div className="col">
+            <CityMenu menuName="bottomnav" />
           </div>
         </div>
       </div>
@@ -73,7 +79,3 @@ function Content() {
     </Router>
   );
 }
-
-// if no city selected, return landing
-// if action selected, display action
-// set action to dashboard, display dashboard
