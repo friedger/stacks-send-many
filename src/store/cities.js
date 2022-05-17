@@ -8,6 +8,8 @@ export const CityCoinLogo = CityCoin;
 // setup to match endpoints in CityCoins API
 // but hardcoded to reduce number of lookups
 
+export const currentCity = atom('');
+
 export const cityList = atom(['mia', 'nyc']);
 
 export const cityInfo = atom({

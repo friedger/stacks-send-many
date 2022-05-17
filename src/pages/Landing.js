@@ -1,9 +1,3 @@
-import { useAtom } from 'jotai';
-import React, { useEffect } from 'react';
-import { AlertMobile } from '../components/AlertMobile';
-import SelectCity from '../components/common/SelectCity';
-import { currentCity, currentCitySymbol } from '../store/common';
-
 // Landing page with Stacks Connect for authentication
 
 export default function Landing(props) {
