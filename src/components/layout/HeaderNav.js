@@ -29,7 +29,7 @@ export default function HeaderNav() {
       <li key={value} className={`nav-item me-3 ${value === action ? 'nav-item-active' : ''}`}>
         <Link
           className="nav-link"
-          to={`/${isMainnet ? '?chain=mainnet' : '?chain=testnet'}`}
+          to={`/${value.toLowerCase()}${isMainnet ? '?chain=mainnet' : '?chain=testnet'}`}
           onClick={() => setAction(value)}
         >
           {value}

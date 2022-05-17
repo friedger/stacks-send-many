@@ -1,10 +1,6 @@
-import NavBackHome from './NavBackHome';
-import NavBar from './NavBar';
-
-export default function Unauthorized(props) {
+export default function Unauthorized() {
   return (
     <>
-      <NavBar city={props.city} symbol={props.symbol} path={props.path} />
       <div className="text-center">
         <h3 className="mb-3">401 - Unauthorized!</h3>
         <p>
@@ -19,8 +15,7 @@ export default function Unauthorized(props) {
           select a new page.
         </p>
       </div>
-      <hr />
-      <NavBackHome />
+      <hr className="cc-divider" />
     </>
   );
 }

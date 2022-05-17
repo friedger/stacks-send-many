@@ -1,5 +1,4 @@
 import { Link } from '@reach/router';
-import SelectCity from '../components/common/SelectCity';
 import { isTestnet } from '../lib/stacks';
 
 export default function NotFound() {
@@ -10,7 +9,7 @@ export default function NotFound() {
         <p>Sorry, we couldn't find the page you're looking for.</p>
         <p>Please use the navigation to select a new page.</p>
       </div>
-      <hr />
+      <hr className="cc-divider" />
       <div className="row align-items-center">
         <div className="col-md-3">
           <Link
@@ -19,9 +18,6 @@ export default function NotFound() {
           >
             Back Home
           </Link>
-        </div>
-        <div className="col-md-9">
-          <SelectCity />
         </div>
       </div>
     </div>

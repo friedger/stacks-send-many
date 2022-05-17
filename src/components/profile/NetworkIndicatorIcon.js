@@ -1,4 +1,3 @@
-import React from 'react';
 import { isMainnet } from '../../lib/stacks';
 
 const mainnetIcon = {

@@ -5,7 +5,7 @@ import {
   AddressVersion,
   AddressHashMode,
 } from '@stacks/transactions';
-import { isMocknet, isTestnet } from './constants';
+import { isMocknet, isTestnet } from './stacks';
 
 export function getStacksAccount(appPrivateKey) {
   const privateKey = createStacksPrivateKey(appPrivateKey);

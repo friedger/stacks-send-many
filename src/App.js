@@ -8,6 +8,11 @@ import HeaderTitle from './components/layout/HeaderTitle';
 import HeaderNav from './components/layout/HeaderNav';
 import HeaderAuth from './components/layout/HeaderAuth';
 import Footer from './components/layout/Footer';
+import Activation from './pages/CityActivation';
+import Dashboard from './pages/CityDashboard';
+import Mining from './pages/CityMining';
+import Stacking from './pages/CityStacking';
+import Tools from './pages/CityTools';
 
 export default function App() {
   const { authOptions } = useConnect();
@@ -45,15 +50,19 @@ export default function App() {
 }
 
 function Content() {
-  return <Landing />;
+  return (
+    <Router>
+      <Landing path="/" exact />
+      <Activation path="/activation" />
+      <Dashboard path="/dashboard" />
+      <Mining path="/mining" />
+      <Stacking path="/stacking" />
+      <Tools path="/tools" />
+      <NotFound default />
+    </Router>
+  );
 }
 
-// navigation
-// / -> landing page
-// /action -> action page
-// no city: standard response
-// city: load relevant city pages
-
-// two different nav paths
-// 1. select a city -> city dashboard
-// 2. select an action -> city action
+// if no city selected, return landing
+// if action selected, display action
+// set action to dashboard, display dashboard

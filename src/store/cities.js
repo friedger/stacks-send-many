@@ -5,7 +5,7 @@ import NewYorkCityCoin from '../images/NYC_StandAlone.svg';
 
 export const CityCoinLogo = CityCoin;
 
-export const cityActions = ['Dashboard', 'Activation', 'Mining', 'Stacking'];
+export const cityActions = ['Dashboard', 'Activation', 'Mining', 'Stacking', 'Tools'];
 
 export const currentAction = atom('');
 

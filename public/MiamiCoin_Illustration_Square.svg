@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.2.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1080 1080" style="enable-background:new 0 0 1080 1080;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+	.st1{fill:#3059D9;}
+	.st2{opacity:0.8;clip-path:url(#SVGID_2_);fill:#E96380;}
+	.st3{opacity:0.8;clip-path:url(#SVGID_2_);}
+	.st4{fill:#9C339C;}
+	.st5{opacity:0.8;clip-path:url(#SVGID_2_);fill:url(#SVGID_3_);}
+	.st6{opacity:0.5;clip-path:url(#SVGID_2_);fill:url(#SVGID_4_);}
+	.st7{clip-path:url(#SVGID_6_);}
+	.st8{clip-path:url(#SVGID_8_);fill:url(#SVGID_9_);}
+	.st9{clip-path:url(#SVGID_8_);fill:url(#SVGID_10_);}
+	.st10{clip-path:url(#SVGID_8_);}
+	.st11{fill:url(#SVGID_11_);}
+	.st12{opacity:0.61;clip-path:url(#SVGID_8_);fill:#FC6870;}
+	.st13{clip-path:url(#SVGID_13_);}
+	.st14{clip-path:url(#SVGID_15_);fill:url(#SVGID_16_);}
+	.st15{clip-path:url(#SVGID_15_);fill:url(#SVGID_17_);}
+	.st16{clip-path:url(#SVGID_15_);}
+	.st17{fill:url(#SVGID_18_);}
+	.st18{opacity:0.61;clip-path:url(#SVGID_15_);fill:#FC6870;}
+	.st19{clip-path:url(#SVGID_20_);}
+	.st20{clip-path:url(#SVGID_22_);fill:url(#SVGID_23_);}
+	.st21{clip-path:url(#SVGID_22_);fill:url(#SVGID_24_);}
+	.st22{clip-path:url(#SVGID_22_);}
+	.st23{fill:url(#SVGID_25_);}
+	.st24{opacity:0.61;clip-path:url(#SVGID_22_);fill:#FC6870;}
+	.st25{opacity:0.8;clip-path:url(#SVGID_27_);fill:#E96380;}
+	.st26{opacity:0.8;clip-path:url(#SVGID_27_);}
+	.st27{opacity:0.8;clip-path:url(#SVGID_27_);fill:url(#SVGID_28_);}
+	.st28{opacity:0.5;clip-path:url(#SVGID_27_);fill:url(#SVGID_29_);}
+	.st29{opacity:0.8;clip-path:url(#SVGID_31_);fill:#E96380;}
+	.st30{opacity:0.8;clip-path:url(#SVGID_31_);}
+	.st31{opacity:0.8;clip-path:url(#SVGID_31_);fill:url(#SVGID_32_);}
+	.st32{opacity:0.5;clip-path:url(#SVGID_31_);fill:url(#SVGID_33_);}
+	.st33{opacity:0.8;clip-path:url(#SVGID_35_);fill:#E96380;}
+	.st34{opacity:0.8;clip-path:url(#SVGID_35_);}
+	.st35{opacity:0.8;clip-path:url(#SVGID_35_);fill:url(#SVGID_36_);}
+	.st36{opacity:0.5;clip-path:url(#SVGID_35_);fill:url(#SVGID_37_);}
+	.st37{clip-path:url(#SVGID_39_);}
+	.st38{clip-path:url(#SVGID_41_);fill:url(#SVGID_42_);}
+	.st39{clip-path:url(#SVGID_41_);fill:url(#SVGID_43_);}
+	.st40{clip-path:url(#SVGID_41_);}
+	.st41{fill:url(#SVGID_44_);}
+	.st42{opacity:0.61;clip-path:url(#SVGID_41_);fill:#FC6870;}
+	.st43{clip-path:url(#SVGID_46_);}
+	.st44{clip-path:url(#SVGID_48_);fill:url(#SVGID_49_);}
+	.st45{clip-path:url(#SVGID_48_);fill:url(#SVGID_50_);}
+	.st46{clip-path:url(#SVGID_48_);}
+	.st47{fill:url(#SVGID_51_);}
+	.st48{opacity:0.61;clip-path:url(#SVGID_48_);fill:#FC6870;}
+	.st49{fill:#EB738D;}
+	.st50{opacity:0.8;clip-path:url(#SVGID_53_);}
+	.st51{opacity:0.8;clip-path:url(#SVGID_53_);fill:url(#SVGID_54_);}
+	.st52{opacity:0.5;clip-path:url(#SVGID_53_);fill:url(#SVGID_55_);}
+	.st53{clip-path:url(#SVGID_57_);fill:#EB738D;}
+	.st54{opacity:0.8;clip-path:url(#SVGID_57_);}
+	.st55{opacity:0.8;clip-path:url(#SVGID_57_);fill:url(#SVGID_58_);}
+	.st56{opacity:0.5;clip-path:url(#SVGID_57_);fill:url(#SVGID_59_);}
+	.st57{opacity:0.8;clip-path:url(#SVGID_61_);fill:#E96380;}
+	.st58{clip-path:url(#SVGID_61_);fill:#9C339C;}
+	.st59{opacity:0.8;clip-path:url(#SVGID_61_);fill:url(#SVGID_62_);}
+	.st60{opacity:0.5;clip-path:url(#SVGID_61_);fill:url(#SVGID_63_);}
+	.st61{opacity:0.8;clip-path:url(#SVGID_65_);fill:#E96380;}
+	.st62{clip-path:url(#SVGID_65_);fill:#9C339C;}
+	.st63{opacity:0.8;clip-path:url(#SVGID_65_);fill:url(#SVGID_66_);}
+	.st64{opacity:0.5;clip-path:url(#SVGID_65_);fill:url(#SVGID_67_);}
+</style>
+<g id="Layer_1">
+	<g>
+		<defs>
+			<rect id="SVGID_60_" width="1080" height="1080"/>
+		</defs>
+		<clipPath id="SVGID_2_">
+			<use xlink:href="#SVGID_60_"  style="overflow:visible;"/>
+		</clipPath>
+		<rect x="-60.61" y="-162.28" class="st2" width="1600" height="1600"/>
+		<path style="clip-path:url(#SVGID_2_);fill:#9C339C;" d="M30,1254.75h-371.98V-155.11H30c389.32,0,704.93,315.61,704.93,704.93
+			C734.92,939.14,419.31,1254.75,30,1254.75"/>
+		
+			<radialGradient id="SVGID_3_" cx="-237.2587" cy="737.7313" r="748.8186" gradientTransform="matrix(0.8736 0 0 0.8736 973.2952 -136.8079)" gradientUnits="userSpaceOnUse">
+			<stop  offset="0" style="stop-color:#00B4CC;stop-opacity:0"/>
+			<stop  offset="0.519" style="stop-color:#00B4CC;stop-opacity:0.65"/>
+			<stop  offset="0.9996" style="stop-color:#00BED6;stop-opacity:0.95"/>
+		</radialGradient>
+		<circle class="st5" cx="766.03" cy="507.67" r="654.17"/>
+		
+			<linearGradient id="SVGID_4_" gradientUnits="userSpaceOnUse" x1="-5683.4575" y1="-16635.6602" x2="-4495.9478" y2="-16635.6602" gradientTransform="matrix(1 0 0 1 5725.5444 17320.5781)">
+			<stop  offset="0.0292" style="stop-color:#FFFFFF"/>
+			<stop  offset="0.4759" style="stop-color:#FFAFEB"/>
+			<stop  offset="1" style="stop-color:#00B4CC"/>
+		</linearGradient>
+		<polygon class="st6" points="731.8,168.34 138.04,1201.49 1325.55,1201.5 		"/>
+	</g>
+</g>
+<g id="Layer_2">
+</g>
+</svg>

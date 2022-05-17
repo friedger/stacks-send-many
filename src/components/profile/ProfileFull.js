@@ -2,7 +2,7 @@ import { Fragment, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { Address } from './Address';
 import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
-import { getCCBalance } from '../../lib/citycoinsV2';
+import { getCCBalance } from '../../lib/citycoins';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useConnect } from '../../lib/auth';
 import { getStxBalance, isTestnet, TESTNET_FAUCET_URL } from '../../lib/stacks';
@@ -127,7 +127,7 @@ export function ProfileFull() {
                 </button>
               </li>
             </ul>
-            <hr />
+            <hr className="cc-divider" />
             <p>Balances</p>
             <ul>
               {ownerBalances.loaded ? (
