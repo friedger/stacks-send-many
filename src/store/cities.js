@@ -7,16 +7,22 @@ import NewYorkCityBG from '../images/NYC_BG_Horizontal.svg';
 
 export const CityCoinLogo = CityCoin;
 
-export const cityActions = ['Dashboard', 'Activation', 'Mining', 'Stacking', 'Tools'];
+export const rewardCycleLength = 2100;
 
+export const cityActions = ['Dashboard', 'Activation', 'Mining', 'Stacking', 'Tools'];
 export const currentAction = atom('');
+
+export const currentRewardCycle = atom(0);
+
+// Stats
+export const miningStatsPerBlock = atom([]);
+export const stackingStatsPerCycle = atom([]);
 
 // setup to match endpoints in CityCoins API
 // but hardcoded to reduce number of lookups
 // and includes logo and bg for each city
 
 export const currentCity = atom('');
-
 export const cityList = atom(['mia', 'nyc']);
 
 export const cityInfo = atom({

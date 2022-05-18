@@ -3,11 +3,17 @@ export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // fetch and return JSON from URL
 // with set retry limit and timeout
-export const fetchJson = async (url, count = 1, debug = false) => {
+export const fetchJson = async (url, debug = false, signal = undefined, count = 1) => {
   const fetchLimit = 5;
   const fetchTimeout = 500;
   await sleep(count * fetchTimeout);
-  const response = await fetch(url);
+  const response = await fetch(url, signal ? { signal } : undefined).catch(err => {
+    if (err.name === 'AbortError') {
+      throw new Error(`fetchJson Aborted: ${url}`);
+    } else {
+      throw new Error(err);
+    }
+  });
   if (response.status === 200) {
     const json = await response.json();
     debug && console.log(`fetchJson result: ${JSON.stringify(json)}`);

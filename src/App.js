@@ -14,7 +14,13 @@ import Mining from './pages/CityMining';
 import Stacking from './pages/CityStacking';
 import Tools from './pages/CityTools';
 import { useAtom } from 'jotai';
-import { cityInfo, currentCity } from './store/cities';
+import { cityInfo, currentCity, currentRewardCycle } from './store/cities';
+import { useUpdateAtom } from 'jotai/utils';
+import { currentBlockHeight } from './store/stacks';
+import { useEffect } from 'react';
+import { getBlockHeight } from './lib/stacks';
+import { getRewardCycle } from './lib/citycoins';
+import { sleep } from './lib/common';
 
 export default function App() {
   const { authOptions } = useConnect();
@@ -32,13 +38,13 @@ export default function App() {
               : { backgroundImage: 'none' }
           }
         >
-          <div className="col-md-4 text-md-start pb-3 pb-md-0">
+          <div className="col-md-3 text-md-center pb-3 pb-md-0">
             <HeaderLogo />
           </div>
-          <div className="col-md-4 text-md-center pb-3 pb-md-0">
+          <div className="col-md-6 text-md-center pb-3 pb-md-0">
             <HeaderTitle />
           </div>
-          <div className="col-md-4 text-md-end text-nowrap pb-3 pb-md-0">
+          <div className="col-md-3 text-md-end text-nowrap pb-3 pb-md-0">
             <HeaderAuth />
           </div>
         </div>
@@ -67,6 +73,24 @@ export default function App() {
 }
 
 function Content() {
+  const [city] = useAtom(currentCity);
+  const [info] = useAtom(cityInfo);
+  const setBlockHeight = useUpdateAtom(currentBlockHeight);
+  const setRewardCycle = useUpdateAtom(currentRewardCycle);
+
+  useEffect(() => {
+    const updatePage = async () => {
+      const blockHeight = await getBlockHeight();
+      setBlockHeight(blockHeight);
+      if (city !== '') {
+        const rewardCycle = await getRewardCycle(info[city].currentVersion, city);
+        setRewardCycle(rewardCycle);
+      }
+      await sleep(1000 * 60); // 60 seconds
+    };
+    updatePage();
+  });
+
   return (
     <Router>
       <Landing path="/" exact />
