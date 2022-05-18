@@ -1,15 +1,9 @@
 import { atom } from 'jotai';
 
-export const currentBlockHeight = atom(0);
+export const loginStatusAtom = atom(false);
+export const stxAddressAtom = atom({ loaded: false, data: '' });
+export const appStxAddressAtom = atom({ loaded: false, data: '' });
+export const stxBnsNameAtom = atom({ loaded: false, data: '' });
+export const userBalancesAtom = atom({ loaded: false, data: {} });
 
-export const userStxAddress = atom('');
-export const userAppStxAddress = atom('');
-export const userLoggedIn = atom(false);
-export const userBnsName = atom({
-  loaded: false,
-  data: '',
-});
-export const userBalances = atom({
-  loaded: false,
-  data: {},
-});
+export const currentStacksBlockAtom = atom({ loaded: false, data: 0 });

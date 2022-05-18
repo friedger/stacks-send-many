@@ -5,27 +5,26 @@ import MiamiBG from '../images/MIA_BG_Horizontal.svg';
 import NewYorkCityCoin from '../images/NYC_StandAlone.svg';
 import NewYorkCityBG from '../images/NYC_BG_Horizontal.svg';
 
-export const CityCoinLogo = CityCoin;
+export const CITYCOIN_LOGO = CityCoin;
+export const REWARD_CYCLE_LENGTH = 2100;
 
-export const rewardCycleLength = 2100;
+// controls menu options and data queries
+export const CITY_LIST = ['mia', 'nyc'];
+export const CITY_ROUTES = ['Dashboard', 'Activation', 'Mining', 'Stacking', 'Tools'];
 
-export const cityActions = ['Dashboard', 'Activation', 'Mining', 'Stacking', 'Tools'];
-export const currentAction = atom('');
+// tracks current data and state
+export const currentCityAtom = atom({ loaded: false, data: '' });
+export const currentRouteAtom = atom({ loaded: false, data: '' });
+export const currentRewardCycleAtom = atom({ loaded: false, data: 0 });
+export const miningStatsAtom = atom([]);
+export const stackingStatsAtom = atom([]);
 
-export const currentRewardCycle = atom(0);
+// custom city info object with settings
+// specific to the UI and space to add
+// more properties as needed
 
-// Stats
-export const miningStatsPerBlock = atom([]);
-export const stackingStatsPerCycle = atom([]);
-
-// setup to match endpoints in CityCoins API
-// but hardcoded to reduce number of lookups
-// and includes logo and bg for each city
-
-export const currentCity = atom('');
-export const cityList = atom(['mia', 'nyc']);
-
-export const cityInfo = atom({
+// key: currentCityAtom
+export const CITY_INFO = {
   mia: {
     name: 'Miami',
     symbol: 'MIA',
@@ -44,9 +43,14 @@ export const cityInfo = atom({
     versions: ['v1', 'v2'],
     currentVersion: 'v2',
   },
-});
+};
 
-export const cityConfig = atom({
+// city configuration info that matches the
+// CityCoins API output, but hardcoded for
+// now to reduce number of lookups
+
+// key: currentCityAtom, cityInfoAtom
+export const CITY_CONFIG = {
   mia: {
     v1: {
       cityName: 'Miami',
@@ -140,4 +144,4 @@ export const cityConfig = atom({
       },
     },
   },
-});
+};

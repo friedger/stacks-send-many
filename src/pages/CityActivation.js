@@ -2,12 +2,18 @@ import { useAtom } from 'jotai';
 import RegisterUser from '../components/activation/RegisterUser';
 import NoCitySelected from '../components/common/NoCitySelected';
 import Unauthorized from '../components/common/Unauthorized';
-import { currentCity } from '../store/cities';
-import { userLoggedIn } from '../store/stacks';
+import { currentCityAtom } from '../store/cities';
+import { loginStatusAtom } from '../store/stacks';
 
 export default function CityActivation() {
-  const [signedIn] = useAtom(userLoggedIn);
-  const [city] = useAtom(currentCity);
+  const [loginStatus] = useAtom(loginStatusAtom);
+  const [currentCity] = useAtom(currentCityAtom);
 
-  return city === '' ? <NoCitySelected /> : signedIn ? <RegisterUser /> : <Unauthorized />;
+  return !currentCity.loaded ? (
+    <NoCitySelected />
+  ) : loginStatus ? (
+    <RegisterUser />
+  ) : (
+    <Unauthorized />
+  );
 }

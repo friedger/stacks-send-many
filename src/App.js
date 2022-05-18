@@ -14,9 +14,9 @@ import Mining from './pages/CityMining';
 import Stacking from './pages/CityStacking';
 import Tools from './pages/CityTools';
 import { useAtom } from 'jotai';
-import { cityInfo, currentCity, currentRewardCycle } from './store/cities';
+import { CITY_INFO, currentCityAtom, currentRewardCycleAtom } from './store/cities';
 import { useUpdateAtom } from 'jotai/utils';
-import { currentBlockHeight } from './store/stacks';
+import { currentStacksBlockAtom } from './store/stacks';
 import { useEffect } from 'react';
 import { getBlockHeight } from './lib/stacks';
 import { getRewardCycle } from './lib/citycoins';
@@ -24,8 +24,7 @@ import { sleep } from './lib/common';
 
 export default function App() {
   const { authOptions } = useConnect();
-  const [current] = useAtom(currentCity);
-  const [info] = useAtom(cityInfo);
+  const [currentCity] = useAtom(currentCityAtom);
 
   return (
     <Connect authOptions={authOptions}>
@@ -33,8 +32,11 @@ export default function App() {
         <div
           className="row align-items-center justify-content-between text-center py-3"
           style={
-            current !== ''
-              ? { backgroundSize: 'cover', backgroundImage: `url(${info[current].background})` }
+            currentCity.loaded
+              ? {
+                  backgroundSize: 'cover',
+                  backgroundImage: `url(${CITY_INFO[currentCity.data].background})`,
+                }
               : { backgroundImage: 'none' }
           }
         >
@@ -73,18 +75,23 @@ export default function App() {
 }
 
 function Content() {
-  const [city] = useAtom(currentCity);
-  const [info] = useAtom(cityInfo);
-  const setBlockHeight = useUpdateAtom(currentBlockHeight);
-  const setRewardCycle = useUpdateAtom(currentRewardCycle);
+  const [currentCity] = useAtom(currentCityAtom);
+  const setBlockHeight = useUpdateAtom(currentStacksBlockAtom);
+  const setRewardCycle = useUpdateAtom(currentRewardCycleAtom);
 
   useEffect(() => {
     const updatePage = async () => {
       const blockHeight = await getBlockHeight();
-      setBlockHeight(blockHeight);
-      if (city !== '') {
-        const rewardCycle = await getRewardCycle(info[city].currentVersion, city);
-        setRewardCycle(rewardCycle);
+      setBlockHeight({
+        loaded: true,
+        data: blockHeight,
+      });
+      if (currentCity.loaded) {
+        const rewardCycle = await getRewardCycle(
+          CITY_INFO[currentCity.data].currentVersion,
+          currentCity.data
+        );
+        setRewardCycle({ loaded: true, data: rewardCycle });
       }
       await sleep(1000 * 60); // 60 seconds
     };

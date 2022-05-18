@@ -1,10 +1,10 @@
 import { Link } from '@reach/router';
 import { useUpdateAtom } from 'jotai/utils';
 import { isTestnet } from '../../lib/stacks';
-import { currentAction } from '../../store/cities';
+import { currentRouteAtom } from '../../store/cities';
 
 export default function Unauthorized() {
-  const setAction = useUpdateAtom(currentAction);
+  const setCurrentRoute = useUpdateAtom(currentRouteAtom);
   return (
     <>
       <div className="text-center">
@@ -22,9 +22,9 @@ export default function Unauthorized() {
         <div className="col text-center">
           <Link
             to={`/dashboard${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`}
-            className="btn btn-lg btn-outline-primary"
+            className="btn btn-md btn-outline-primary"
             onClick={() => {
-              setAction('dashboard');
+              setCurrentRoute('dashboard');
             }}
           >
             Back to Dashboard

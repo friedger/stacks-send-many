@@ -1,13 +1,16 @@
 import { useAtom } from 'jotai';
-import { cityInfo, currentCity } from '../../store/cities';
+import { CITY_INFO, currentCityAtom } from '../../store/cities';
 
 export default function HeaderTitle() {
-  const [current] = useAtom(currentCity);
-  const [info] = useAtom(cityInfo);
+  const [currentCity] = useAtom(currentCityAtom);
 
   return (
-    <span className={`h1 text-nowrap ${current !== '' ? 'text-' + info[current].bgText : ''}`}>
-      {current !== '' ? info[current].name : 'CityCoins'}
+    <span
+      className={`h1 text-nowrap ${
+        currentCity.loaded ? 'text-' + CITY_INFO[currentCity.data].bgText : ''
+      }`}
+    >
+      {currentCity.loaded ? CITY_INFO[currentCity.data].name : 'CityCoins'}
     </span>
   );
 }

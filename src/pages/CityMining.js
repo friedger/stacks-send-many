@@ -2,17 +2,17 @@ import { useAtom } from 'jotai';
 import MineCityCoins from '../components/mining/MineCityCoins';
 import ClaimMiningRewards from '../components/mining/ClaimMiningRewards';
 import Unauthorized from '../components/common/Unauthorized';
-import { userLoggedIn } from '../store/stacks';
+import { loginStatusAtom } from '../store/stacks';
 import NoCitySelected from '../components/common/NoCitySelected';
-import { currentCity } from '../store/cities';
+import { currentCityAtom } from '../store/cities';
 
 export default function CityMining() {
-  const [signedIn] = useAtom(userLoggedIn);
-  const [city] = useAtom(currentCity);
+  const [loginStatus] = useAtom(loginStatusAtom);
+  const [currentCity] = useAtom(currentCityAtom);
 
-  return city === '' ? (
+  return !currentCity.loaded ? (
     <NoCitySelected />
-  ) : signedIn ? (
+  ) : loginStatus ? (
     <>
       <MineCityCoins />
       <ClaimMiningRewards />

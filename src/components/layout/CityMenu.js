@@ -1,38 +1,50 @@
 import { Link } from '@reach/router';
 import { useAtom } from 'jotai';
-import { isMainnet } from '../../lib/stacks';
-import { cityActions, cityInfo, cityList, currentAction, currentCity } from '../../store/cities';
+import { CHAIN_SUFFIX } from '../../lib/stacks';
+import {
+  CITY_INFO,
+  CITY_LIST,
+  CITY_ROUTES,
+  currentRouteAtom,
+  currentCityAtom,
+  miningStatsAtom,
+  stackingStatsAtom,
+} from '../../store/cities';
 
 export default function CityMenu({ menuName }) {
-  const [cities] = useAtom(cityList);
-  const [info] = useAtom(cityInfo);
-  const [current, setCurrent] = useAtom(currentCity);
-  const [action, setAction] = useAtom(currentAction);
+  const [currentCity, setCurrentCity] = useAtom(currentCityAtom);
+  const [currentRoute, setCurrentRoute] = useAtom(currentRouteAtom);
+  const [, setMiningStats] = useAtom(miningStatsAtom);
+  const [, setStackingStats] = useAtom(stackingStatsAtom);
 
-  const cityMenu = cities.map(city => {
+  const cityMenu = CITY_LIST.map(city => {
     return (
-      <li key={city} className={`nav-item me-3 ${city === current ? 'nav-item-active' : ''}`}>
+      <li key={city} className={`nav-item me-3 ${city === currentCity ? 'nav-item-active' : ''}`}>
         <Link
           className="nav-link d-block"
-          to={`/${action !== '' ? action.toLowerCase() : 'dashboard'}${
-            isMainnet ? '?chain=mainnet' : '?chain=testnet'
-          }`}
-          onClick={() => setCurrent(city)}
+          to={`/${
+            currentRoute.loaded ? currentRoute.data.toLowerCase() : 'dashboard'
+          }${CHAIN_SUFFIX}`}
+          onClick={() => {
+            setCurrentCity({ loaded: true, data: city });
+            setMiningStats([]);
+            setStackingStats([]);
+          }}
         >
-          <img className="nav-logo me-2" src={info[city].logo} alt={`${city} logo`} />
-          {info[city].name}
+          <img className="nav-logo me-2" src={CITY_INFO[city].logo} alt={`${city} logo`} />
+          {CITY_INFO[city].name}
         </Link>
       </li>
     );
   });
 
-  const actions = cityActions.map(value => {
+  const cityRoutes = CITY_ROUTES.map(value => {
     return (
-      <li key={value} className={`nav-item ${value === action ? 'nav-item-active' : ''}`}>
+      <li key={value} className={`nav-item ${value === currentRoute ? 'nav-item-active' : ''}`}>
         <Link
           className="nav-link"
-          to={`/${value.toLowerCase()}${isMainnet ? '?chain=mainnet' : '?chain=testnet'}`}
-          onClick={() => setAction(value)}
+          to={`/${value.toLowerCase()}${CHAIN_SUFFIX}`}
+          onClick={() => setCurrentRoute({ loaded: true, data: value })}
         >
           {value}
         </Link>
@@ -40,7 +52,8 @@ export default function CityMenu({ menuName }) {
     );
   });
 
-  if (current !== '') return <CitySelected menu={cityMenu} actions={actions} name={menuName} />;
+  if (currentCity.loaded)
+    return <CitySelected menu={cityMenu} actions={cityRoutes} name={menuName} />;
 
   return <NoCitySelected menu={cityMenu} />;
 }
@@ -77,7 +90,9 @@ function NoCitySelected({ menu }) {
 }
 
 function CitySelected({ menu, actions, name }) {
-  const [, setCurrent] = useAtom(currentCity);
+  const [, setCurrentCity] = useAtom(currentCityAtom);
+  const [, setMiningStats] = useAtom(miningStatsAtom);
+  const [, setStackingStats] = useAtom(stackingStatsAtom);
 
   return (
     <nav className="navbar navbar-light bg-white">
@@ -97,13 +112,17 @@ function CitySelected({ menu, actions, name }) {
           Select a City
         </button>
       </div>
-      <div className="collapse navbar-collapse" id={name}>
+      <div className="collapse navbar-collapse" id={name} style={{ zIndex: '1000' }}>
         <ul className="navbar-nav align-items-md-end justify-content-center">
           <li className="nav-item nav-item-title">
             <Link
               className="nav-link d-block"
-              to={`/${isMainnet ? '?chain=mainnet' : '?chain=testnet'}`}
-              onClick={() => setCurrent('')}
+              to={`/${CHAIN_SUFFIX}`}
+              onClick={() => {
+                setCurrentCity({ loaded: false, data: '' });
+                setMiningStats([]);
+                setStackingStats([]);
+              }}
             >
               Clear Selection
             </Link>

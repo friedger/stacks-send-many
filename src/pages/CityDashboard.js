@@ -2,12 +2,12 @@ import { useAtom } from 'jotai';
 import NoCitySelected from '../components/common/NoCitySelected';
 import MiningActivity from '../components/dashboard/MiningActivity';
 import StackingActivity from '../components/dashboard/StackingActivity';
-import { currentCity } from '../store/cities';
+import { currentCityAtom } from '../store/cities';
 
 export default function CityDashboard() {
-  const [city] = useAtom(currentCity);
+  const [currentCity] = useAtom(currentCityAtom);
 
-  return city === '' ? (
+  return !currentCity.loaded ? (
     <NoCitySelected />
   ) : (
     <>

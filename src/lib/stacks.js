@@ -19,8 +19,8 @@ debugLog(`isTestnet: ${isTestnet}`);
 debugLog(`isMocknet: ${isMocknet}`);
 debugLog(`isMainnet: ${isMainnet}`);
 
-export const chainSuffix = `?chain=${isMainnet ? 'mainnet' : isTestnet ? 'testnet' : 'mocknet'}`;
-debugLog(`chainSuffix: ${chainSuffix}`);
+export const CHAIN_SUFFIX = `?chain=${isMainnet ? 'mainnet' : isTestnet ? 'testnet' : 'mocknet'}`;
+debugLog(`chainSuffix: ${CHAIN_SUFFIX}`);
 
 export const STACKS_API = isMainnet
   ? 'https://stacks-node-api.mainnet.stacks.co'

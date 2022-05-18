@@ -2,22 +2,21 @@ import { useAtom } from 'jotai';
 import { ProfileFull } from './ProfileFull';
 import { Address } from './Address';
 import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
-import { userBnsName, userLoggedIn, userStxAddress } from '../../store/stacks';
-import { cityInfo, currentCity } from '../../store/cities';
+import { stxBnsNameAtom, loginStatusAtom, stxAddressAtom } from '../../store/stacks';
+import { CITY_INFO, currentCityAtom } from '../../store/cities';
 
 export function ProfileSmall() {
-  const [signedIn] = useAtom(userLoggedIn);
-  const [ownerStxAddress] = useAtom(userStxAddress);
-  const [ownerBnsName] = useAtom(userBnsName);
-  const [current] = useAtom(currentCity);
-  const [info] = useAtom(cityInfo);
+  const [loginStatus] = useAtom(loginStatusAtom);
+  const [stxAddress] = useAtom(stxAddressAtom);
+  const [bnsName] = useAtom(stxBnsNameAtom);
+  const [currentCity] = useAtom(currentCityAtom);
 
-  if (signedIn) {
+  if (loginStatus) {
     return (
       <>
         <a
           className={`btn btn-primary-outline btn-lg ${
-            current !== '' ? 'text-' + info[current].bgText : ''
+            currentCity !== '' ? 'text-' + CITY_INFO[currentCity].bgText : ''
           }`}
           data-bs-toggle="offcanvas"
           href="#offcanvasProfile"
@@ -25,7 +24,7 @@ export function ProfileSmall() {
           aria-controls="offcanvasProfile"
         >
           <NetworkIndicatorIcon />
-          <Address bns={ownerBnsName} addr={ownerStxAddress} />
+          <Address bns={bnsName} addr={stxAddress} />
         </a>
 
         <ProfileFull />

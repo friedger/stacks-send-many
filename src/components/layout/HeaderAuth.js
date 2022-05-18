@@ -2,59 +2,96 @@ import { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
 import { getUserData } from '@stacks/connect';
-import { addressToString } from '@stacks/transactions';
 import { getStacksAccount } from '../../lib/account';
-import { useConnect, userSessionState } from '../../lib/auth';
-import { getBnsName, isMocknet, isTestnet } from '../../lib/stacks';
-import { userLoggedIn, userAppStxAddress, userStxAddress, userBnsName } from '../../store/stacks';
+import { useConnect, userSessionStateAtom } from '../../lib/auth';
+import { getBnsName, getStxBalance, isMainnet } from '../../lib/stacks';
+import {
+  loginStatusAtom,
+  stxAddressAtom,
+  appStxAddressAtom,
+  stxBnsNameAtom,
+  userBalancesAtom,
+} from '../../store/stacks';
 import { ProfileSmall } from '../profile/ProfileSmall';
-import { cityInfo, currentCity } from '../../store/cities';
+import { CITY_INFO, currentCityAtom } from '../../store/cities';
+import { getCCBalance } from '../../lib/citycoins';
 
 export default function HeaderAuth() {
   const { handleOpenAuth } = useConnect();
-  const [userSession] = useAtom(userSessionState);
-  const [signedIn] = useAtom(userLoggedIn);
-  const [current] = useAtom(currentCity);
-  const [info] = useAtom(cityInfo);
-  const setOwnerStxAddress = useUpdateAtom(userStxAddress);
-  const setAppStxAddress = useUpdateAtom(userAppStxAddress);
-  const setOwnerBnsName = useUpdateAtom(userBnsName);
+  const [userSessionState] = useAtom(userSessionStateAtom);
+  const [loginStatus] = useAtom(loginStatusAtom);
+  const [currentCity] = useAtom(currentCityAtom);
+  const setStxAddress = useUpdateAtom(stxAddressAtom);
+  const setAppStxAddress = useUpdateAtom(appStxAddressAtom);
+  const setBnsName = useUpdateAtom(stxBnsNameAtom);
+  const setUserBalances = useUpdateAtom(userBalancesAtom);
 
   useEffect(() => {
-    if (signedIn) {
-      getUserData(userSession).then(data => {
-        const { address } = getStacksAccount(data.appPrivateKey);
-        setAppStxAddress(addressToString(address));
-        const stxAddress = data.profile.stxAddress[isTestnet || isMocknet ? 'testnet' : 'mainnet'];
-        setOwnerStxAddress(stxAddress);
-        const fetchBnsName = async () => {
-          const bnsName = await getBnsName(stxAddress).catch(() => {
-            return undefined;
-          });
-          bnsName
-            ? setOwnerBnsName({
-                loaded: true,
-                data: bnsName,
-              })
-            : setOwnerBnsName({ loaded: false, data: '' });
-        };
-        fetchBnsName().catch(err => {
+    const fetchUserData = async () => {
+      if (loginStatus) {
+        const userData = await getUserData(userSessionState);
+        const stxAddress = userData.profile.stxAddress[isMainnet ? 'mainnet' : 'testnet'];
+        setStxAddress({ loaded: true, data: stxAddress });
+        const { appStxAddress } = getStacksAccount(userData.appPrivateKey);
+        setAppStxAddress({ loaded: true, data: appStxAddress });
+      } else {
+        setStxAddress({ loaded: false, data: '' });
+        setAppStxAddress({ loaded: false, data: '' });
+        setBnsName({ loaded: false, data: '' });
+      }
+    };
+
+    const fetchBnsName = async stxAddress => {
+      const bnsName = await getBnsName(stxAddress).catch(() => undefined);
+      bnsName
+        ? setBnsName({ loaded: true, data: bnsName })
+        : setBnsName({ loaded: false, data: '' });
+    };
+
+    const fetchUserBalances = async stxAddress => {
+      const stxBalance = getStxBalance(stxAddress);
+      const miaBalanceV1 = getCCBalance('v1', 'mia', stxAddress);
+      const miaBalanceV2 = getCCBalance('v2', 'mia', stxAddress);
+      const nycBalanceV1 = getCCBalance('v1', 'nyc', stxAddress);
+      const nycBalanceV2 = getCCBalance('v2', 'nyc', stxAddress);
+      Promise.all([stxBalance, miaBalanceV1, miaBalanceV2, nycBalanceV1, nycBalanceV2]).then(
+        values => {
+          const balances = {
+            stx: values[0],
+            mia: {
+              v1: values[1],
+              v2: values[2],
+            },
+            nyc: {
+              v1: values[3],
+              v2: values[4],
+            },
+          };
+          setUserBalances({ loaded: true, data: balances });
+        }
+      );
+    };
+
+    fetchUserData().then(stxAddress => {
+      if (stxAddress) {
+        fetchBnsName(stxAddress).catch(err => {
           console.error(`${err.message} Failed to fetch BNS name`);
         });
-      });
-    } else {
-      setOwnerStxAddress('');
-      setAppStxAddress('');
-      setOwnerBnsName({ loaded: false, data: '' });
-    }
-  }, [signedIn, setAppStxAddress, setOwnerStxAddress, userSession, setOwnerBnsName]);
+        fetchUserBalances(stxAddress).catch(err => {
+          console.error(`${err.message} Failed to fetch user balances`);
+        });
+      }
+    });
+  }, [loginStatus, userSessionState, setStxAddress, setAppStxAddress, setBnsName, setUserBalances]);
 
-  if (signedIn) return <ProfileSmall />;
+  if (loginStatus) return <ProfileSmall />;
 
   return (
     <button
       className={`btn btn-md ${
-        current !== '' ? 'btn-outline-' + info[current].bgText : 'btn-outline-primary'
+        currentCity.loaded
+          ? 'btn-outline-' + CITY_INFO[currentCity.data].bgText
+          : 'btn-outline-primary'
       }`}
       type="button"
       onClick={handleOpenAuth}

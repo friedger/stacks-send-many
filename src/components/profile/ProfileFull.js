@@ -1,54 +1,25 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment } from 'react';
 import { useAtom } from 'jotai';
 import { Address } from './Address';
 import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
-import { getCCBalance } from '../../lib/citycoins';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useConnect } from '../../lib/auth';
-import { getStxBalance, isTestnet, TESTNET_FAUCET_URL } from '../../lib/stacks';
-import { userBalances, userBnsName, userLoggedIn, userStxAddress } from '../../store/stacks';
+import { isTestnet, TESTNET_FAUCET_URL } from '../../lib/stacks';
+import {
+  loginStatusAtom,
+  stxAddressAtom,
+  stxBnsNameAtom,
+  userBalancesAtom,
+} from '../../store/stacks';
 
 export function ProfileFull() {
-  const [signedIn] = useAtom(userLoggedIn);
-  const [ownerStxAddress] = useAtom(userStxAddress);
-  const [ownerBnsName] = useAtom(userBnsName);
-  const [ownerBalances, setOwnerBalances] = useAtom(userBalances);
+  const [loginStatus] = useAtom(loginStatusAtom);
+  const [stxAddress] = useAtom(stxAddressAtom);
+  const [bnsName] = useAtom(stxBnsNameAtom);
+  const [balances] = useAtom(userBalancesAtom);
   const { handleSignOut } = useConnect();
 
-  // could use get-full-city-info here
-  // then enumerate over city + version with getCCBalance
-
-  useEffect(() => {
-    const fetchBalances = async () => {
-      const stxBalance = await getStxBalance(ownerStxAddress);
-      const miaBalanceV1 = await getCCBalance('v1', 'mia', ownerStxAddress);
-      const miaBalanceV2 = await getCCBalance('v2', 'mia', ownerStxAddress);
-      const nycBalanceV1 = await getCCBalance('v1', 'nyc', ownerStxAddress);
-      const nycBalanceV2 = await getCCBalance('v2', 'nyc', ownerStxAddress);
-      const balances = {
-        stx: stxBalance,
-        mia: {
-          v1: miaBalanceV1,
-          v2: miaBalanceV2,
-        },
-        nyc: {
-          v1: nycBalanceV1,
-          v2: nycBalanceV2,
-        },
-      };
-      setOwnerBalances({
-        loaded: true,
-        data: balances,
-      });
-    };
-    if (signedIn && ownerStxAddress) {
-      fetchBalances().catch(err => {
-        console.error(`${err.message} Failed to fetch balances`);
-      });
-    }
-  }, [signedIn, ownerStxAddress, setOwnerBalances]);
-
-  if (signedIn) {
+  if (loginStatus) {
     return (
       <div
         className="offcanvas offcanvas-end"
@@ -59,7 +30,7 @@ export function ProfileFull() {
         <div className="offcanvas-header">
           <h5 className="offcanvas-title" id="offcanvasProfileLabel">
             <NetworkIndicatorIcon />
-            <Address bns={ownerBnsName} addr={ownerStxAddress} />
+            <Address bns={bnsName} addr={stxAddress} />
           </h5>
           <button
             type="button"
@@ -71,7 +42,7 @@ export function ProfileFull() {
         <div className="offcanvas-body text-start">
           <div className="btn-group" role="group" aria-label="Account control buttons">
             <a
-              href={`https://explorer.stacks.co/address/${ownerStxAddress}`}
+              href={`https://explorer.stacks.co/address/${stxAddress}`}
               rel="noreferrer"
               target="_blank"
               class="btn btn-outline-primary"
@@ -121,21 +92,21 @@ export function ProfileFull() {
           <hr className="cc-divider" />
           <p>Balances</p>
           <ul>
-            {ownerBalances.loaded ? (
-              Object.keys(ownerBalances.data).map(key => {
+            {balances.loaded ? (
+              Object.keys(balances.data).map(key => {
                 return (
                   <Fragment key={`${key}-container`}>
-                    {typeof ownerBalances.data[key] === 'object' ? (
-                      Object.keys(ownerBalances.data[key]).map(key2 => {
+                    {typeof balances.data[key] === 'object' ? (
+                      Object.keys(balances.data[key]).map(key2 => {
                         return (
                           <li key={`${key}-${key2}`}>
-                            {ownerBalances.data[key][key2]} {key2.toUpperCase()} {key.toUpperCase()}
+                            {balances.data[key][key2]} {key2.toUpperCase()} {key.toUpperCase()}
                           </li>
                         );
                       })
                     ) : (
                       <li>
-                        {ownerBalances.data[key].toString()} {key.toUpperCase()}
+                        {balances.data[key].toString()} {key.toUpperCase()}
                       </li>
                     )}
                   </Fragment>

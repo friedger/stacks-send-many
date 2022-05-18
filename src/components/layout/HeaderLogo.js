@@ -1,18 +1,19 @@
 import { Link } from '@reach/router';
 import { useAtom } from 'jotai';
-import { CityCoinLogo, currentCity, cityInfo } from '../../store/cities';
+import { CITYCOIN_LOGO, CITY_INFO, currentCityAtom, currentRouteAtom } from '../../store/cities';
 
 export default function HeaderLogo() {
-  const [current] = useAtom(currentCity);
-  const [info] = useAtom(cityInfo);
+  const [currentCity] = useAtom(currentCityAtom);
+  const [currentRoute] = useAtom(currentRouteAtom);
+  const path = currentCity.loaded ? `/${currentRoute.data.toLowerCase()}` : '/';
 
   return (
-    <Link to={current !== '' ? '/dashboard' : '/'}>
+    <Link to={path}>
       <img
         height="60px"
         width="60px"
-        src={current !== '' ? info[current].logo : CityCoinLogo}
-        alt={`${current !== '' ? info[current].name : 'CityCoins'} logo`}
+        src={currentCity.loaded ? CITY_INFO[currentCity.data].logo : CITYCOIN_LOGO}
+        alt={`${currentCity.loaded ? CITY_INFO[currentCity.data].name : 'CityCoins'} logo`}
       />
     </Link>
   );
