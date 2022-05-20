@@ -1,8 +1,8 @@
 import { useAtom } from 'jotai';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { getCoinbaseAmount, getMiningStatsAtBlock } from '../../lib/citycoins';
 import { sleep } from '../../lib/common';
-import { CITY_INFO, currentCityAtom, miningStatsAtom } from '../../store/cities';
+import { CITY_INFO, currentCityAtom, miningStatsPerCityAtom } from '../../store/cities';
 import { currentStacksBlockAtom } from '../../store/stacks';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -11,10 +11,33 @@ import MiningStats from './MiningStats';
 export default function MiningActivity() {
   const [currentStacksBlock] = useAtom(currentStacksBlockAtom);
   const [currentCity] = useAtom(currentCityAtom);
-  const [miningStats, setMiningStats] = useAtom(miningStatsAtom);
+  const [miningStatsPerCity, setMiningStatsPerCity] = useAtom(miningStatsPerCityAtom);
+
+  const cityMiningStats = useMemo(() => {
+    if (currentCity.loaded) {
+      const key = currentCity.data;
+      if (miningStatsPerCity[key]) {
+        return miningStatsPerCity[key];
+      }
+    }
+    return undefined;
+  }, [currentCity.loaded, currentCity.data, miningStatsPerCity]);
+
+  const updateMiningStats = useMemo(() => {
+    if (!currentStacksBlock.loaded) return false;
+    if (cityMiningStats.updating === true) return false;
+    if (cityMiningStats.lastUpdated === currentStacksBlock.data) return false;
+    return true;
+  }, [
+    cityMiningStats.lastUpdated,
+    cityMiningStats.updating,
+    currentStacksBlock.data,
+    currentStacksBlock.loaded,
+  ]);
 
   useEffect(() => {
-    const fetchMiningStats = async block => {
+    // async getter for the data per block
+    const fetchMiningStats = async (block, distance) => {
       const stats = await getMiningStatsAtBlock(
         CITY_INFO[currentCity.data].currentVersion,
         currentCity.data,
@@ -27,21 +50,38 @@ export default function MiningActivity() {
         block
       );
       stats.rewardAmount = reward;
-      setMiningStats(miningStats =>
-        [...miningStats, stats].sort((a, b) => (a.blockHeight < b.blockHeight ? 1 : -1))
-      );
+      setMiningStatsPerCity(prev => {
+        // copy of full object
+        const newStats = { ...prev };
+        // copy of city object
+        const newCityStats = newStats[currentCity.data];
+        newCityStats.data.push(stats);
+        newCityStats.data.sort((a, b) => a.blockHeight - b.blockHeight);
+        newCityStats.updating = distance === newCityStats.data.length ? false : true;
+        // rewrite city object in full object
+        newStats[currentCity.data] = newCityStats;
+        return newStats;
+      });
     };
-    if (currentStacksBlock.loaded && currentCity.loaded) {
-      const stacksBlock = +currentStacksBlock.data;
-      for (let i = stacksBlock - 2; i < stacksBlock + 3; i++) {
+    if (updateMiningStats) {
+      // check values and perform update if necessary
+      const key = currentCity.data;
+      const block = currentStacksBlock.data;
+      const start = block - 2;
+      const end = block + 2;
+      // clear old values
+      setMiningStatsPerCity(prev => {
+        const newStats = { ...prev };
+        newStats[key] = { data: [], updating: true, lastUpdated: block };
+        return newStats;
+      });
+      // fetch + set new values
+      for (let i = start; i <= end; i++) {
         sleep(500);
-        fetchMiningStats(i);
+        fetchMiningStats(i, end - start);
       }
     }
-    return () => {
-      console.log('unmounting mining activity');
-    };
-  }, [currentStacksBlock.loaded, currentStacksBlock.data, currentCity.loaded, currentCity.data]);
+  }, [currentCity.data, currentStacksBlock.data, setMiningStatsPerCity, updateMiningStats]);
 
   return (
     <>
@@ -49,17 +89,12 @@ export default function MiningActivity() {
         currentCity.loaded ? CITY_INFO[currentCity.data].symbol.toString() + ' ' : ''
       }Mining Activity`}</h3>
       <CurrentStacksBlock />
-      {currentStacksBlock.loaded && currentCity.loaded && miningStats.length === 5 ? (
-        miningStats.map(value => (
-          <MiningStats
-            key={`mining-${value.blockHeight}`}
-            stats={value}
-            current={currentStacksBlock.data}
-            symbol={CITY_INFO[currentCity.data].symbol}
-          />
-        ))
+      {cityMiningStats.updating ? (
+        <LoadingSpinner text={`Loading mining data`} />
       ) : (
-        <LoadingSpinner text={`Loading mining data (${miningStats.length} / 5)`} />
+        cityMiningStats.data.map(value => (
+          <MiningStats key={`stats-${value.blockHeight}`} stats={value} />
+        ))
       )}
     </>
   );

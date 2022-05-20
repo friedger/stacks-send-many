@@ -1,11 +1,15 @@
 import { Link } from '@reach/router';
+import { useUpdateAtom } from 'jotai/utils';
 import { isTestnet } from '../lib/stacks';
+import { currentRouteAtom } from '../store/cities';
 
 export default function NotFound() {
+  const setCurrentRoute = useUpdateAtom(currentRouteAtom);
+
   return (
     <div>
       <div className="text-center">
-        <h3 className="mb-3">Page Not Found!</h3>
+        <h3 className="my-3">Page Not Found!</h3>
         <p>Sorry, we couldn't find the page you're looking for.</p>
         <p>Please use the navigation to select a new page.</p>
       </div>
@@ -14,6 +18,7 @@ export default function NotFound() {
           <Link
             to={`/${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`}
             className="btn btn-lg btn-outline-primary"
+            onClick={setCurrentRoute({ loaded: false, data: '' })}
           >
             Back Home
           </Link>

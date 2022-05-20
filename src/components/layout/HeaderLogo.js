@@ -5,7 +5,8 @@ import { CITYCOIN_LOGO, CITY_INFO, currentCityAtom, currentRouteAtom } from '../
 export default function HeaderLogo() {
   const [currentCity] = useAtom(currentCityAtom);
   const [currentRoute] = useAtom(currentRouteAtom);
-  const path = currentCity.loaded ? `/${currentRoute.data.toLowerCase()}` : '/';
+  const path =
+    currentCity.loaded && currentRoute.loaded ? `/${currentRoute.data.toLowerCase()}` : '/';
 
   return (
     <Link to={path}>

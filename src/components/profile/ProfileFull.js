@@ -4,19 +4,15 @@ import { Address } from './Address';
 import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useConnect } from '../../lib/auth';
-import { isTestnet, TESTNET_FAUCET_URL } from '../../lib/stacks';
-import {
-  loginStatusAtom,
-  stxAddressAtom,
-  stxBnsNameAtom,
-  userBalancesAtom,
-} from '../../store/stacks';
+import { fromMicro, isTestnet, TESTNET_FAUCET_URL } from '../../lib/stacks';
+import { loginStatusAtom, stxAddressAtom, userBalancesAtom } from '../../store/stacks';
+import { userIdAtom } from '../../store/cities';
 
 export function ProfileFull() {
   const [loginStatus] = useAtom(loginStatusAtom);
   const [stxAddress] = useAtom(stxAddressAtom);
-  const [bnsName] = useAtom(stxBnsNameAtom);
   const [balances] = useAtom(userBalancesAtom);
+  const [userIds] = useAtom(userIdAtom);
   const { handleSignOut } = useConnect();
 
   if (loginStatus) {
@@ -30,7 +26,7 @@ export function ProfileFull() {
         <div className="offcanvas-header">
           <h5 className="offcanvas-title" id="offcanvasProfileLabel">
             <NetworkIndicatorIcon />
-            <Address bns={bnsName} addr={stxAddress} />
+            <Address />
           </h5>
           <button
             type="button"
@@ -40,12 +36,12 @@ export function ProfileFull() {
           ></button>
         </div>
         <div className="offcanvas-body text-start">
-          <div className="btn-group" role="group" aria-label="Account control buttons">
+          <div className="btn-group w-100" role="group" aria-label="Account control buttons">
             <a
-              href={`https://explorer.stacks.co/address/${stxAddress}`}
+              href={`https://explorer.stacks.co/address/${stxAddress.data}`}
               rel="noreferrer"
               target="_blank"
-              class="btn btn-outline-primary"
+              className="btn btn-outline-primary"
               title="View Address on Explorer"
             >
               <i className="bi bi-box-arrow-up-right"></i>
@@ -55,7 +51,7 @@ export function ProfileFull() {
                 rel="noreferrer"
                 href={TESTNET_FAUCET_URL}
                 target="_blank"
-                class="btn btn-outline-primary"
+                className="btn btn-outline-primary"
                 title="STX Testnet Faucet"
               >
                 <i className="bi bi-box-arrow-up-right" />
@@ -65,7 +61,7 @@ export function ProfileFull() {
               href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Bug&template=bug_report.md&title=%F0%9F%90%9E%5BBUG%5D+"
               rel="noreferrer"
               target="_blank"
-              class="btn btn-outline-primary"
+              className="btn btn-outline-primary"
               title="Report a Bug"
             >
               <i className="bi bi-bug"></i>
@@ -74,7 +70,7 @@ export function ProfileFull() {
               href="https://github.com/citycoins/citycoin-ui/issues/new?assignees=&labels=Enhancement&template=feature_request.md&title=%E2%9A%A1%5BFEAT%5D+"
               rel="noreferrer"
               target="_blank"
-              class="btn btn-outline-primary"
+              className="btn btn-outline-primary"
               title="Request a Feature"
             >
               <i className="bi bi-lightning"></i>
@@ -88,34 +84,61 @@ export function ProfileFull() {
               <i className="bi bi-x-circle"></i>
             </button>
           </div>
-
           <hr className="cc-divider" />
-          <p>Balances</p>
-          <ul>
+          <h4 className="text-center">Account Balances</h4>
+          <div className="row">
             {balances.loaded ? (
               Object.keys(balances.data).map(key => {
-                return (
+                return typeof balances.data[key] === 'object' ? (
+                  Object.keys(balances.data[key]).map(key2 => {
+                    return (
+                      <Fragment key={`${key}-${key2}-container`}>
+                        <div className="col-6 text-right text-nowrap">
+                          {key2 === 'v2'
+                            ? fromMicro(balances.data[key][key2]).toLocaleString()
+                            : balances.data[key][key2].toLocaleString()}
+                        </div>
+                        <div className="col-6">
+                          {key2.toUpperCase()} {key.toUpperCase()}
+                        </div>
+                      </Fragment>
+                    );
+                  })
+                ) : (
                   <Fragment key={`${key}-container`}>
-                    {typeof balances.data[key] === 'object' ? (
-                      Object.keys(balances.data[key]).map(key2 => {
-                        return (
-                          <li key={`${key}-${key2}`}>
-                            {balances.data[key][key2]} {key2.toUpperCase()} {key.toUpperCase()}
-                          </li>
-                        );
-                      })
-                    ) : (
-                      <li>
-                        {balances.data[key].toString()} {key.toUpperCase()}
-                      </li>
-                    )}
+                    <div className="col-6 text-right text-nowrap">
+                      {fromMicro(balances.data[key]).toLocaleString()}
+                    </div>
+                    <div className="col-6">{key.toUpperCase()}</div>
                   </Fragment>
                 );
               })
             ) : (
               <LoadingSpinner text="Loading balances..." />
             )}
-          </ul>
+            <hr className="cc-divider" />
+            <h4 className="text-center">CityCoin User IDs</h4>
+            {userIds.loaded ? (
+              Object.keys(userIds.data).map(key => {
+                return Object.keys(userIds.data[key]).map(key2 => {
+                  return (
+                    <Fragment key={`${key}-${key2}-container`}>
+                      <div className="col-6 text-right text-nowrap">
+                        {userIds.data[key][key2]
+                          ? userIds.data[key][key2].toLocaleString()
+                          : 'None'}
+                      </div>
+                      <div className="col-6">
+                        {key2.toUpperCase()} {key.toUpperCase()}
+                      </div>
+                    </Fragment>
+                  );
+                });
+              })
+            ) : (
+              <LoadingSpinner text="Loading user IDs..." />
+            )}
+          </div>
         </div>
       </div>
     );

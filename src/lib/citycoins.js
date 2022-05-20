@@ -37,6 +37,17 @@ export const getRewardCycle = async (version, city, block = undefined) => {
   }
 };
 
+export const getUserId = async (version, city, address) => {
+  const url = `${CC_API_BASE}/${version}/${city}/activation/get-user-id/${address}`;
+  try {
+    const result = await fetchJson(url, enableLogs);
+    return result.value;
+  } catch (err) {
+    console.log(`getUserId: ${err}`);
+    return undefined;
+  }
+};
+
 export const getFirstStacksBlockInRewardCycle = async (version, city, cycle) => {
   const url = `${CC_API_BASE}/${version}/${city}/stacking/get-first-stacks-block-in-reward-cycle/${cycle}`;
   try {
@@ -59,20 +70,20 @@ export const getStackingStatsAtCycle = async (version, city, cycle) => {
   }
 };
 
-export const getMiningStatsAtBlock = async (version, city, block) => {
+export const getMiningStatsAtBlock = async (version, city, block, signal = undefined) => {
   const url = `${CC_API_BASE}/${version}/${city}/mining/get-mining-stats-at-block/${block}/true`;
   try {
-    return await fetchJson(url, enableLogs);
+    return await fetchJson(url, enableLogs, signal ? signal : undefined);
   } catch (err) {
     console.log(`getMiningStatsAtBlock: ${err}`);
     return undefined;
   }
 };
 
-export const getCoinbaseAmount = async (version, city, block) => {
+export const getCoinbaseAmount = async (version, city, block, signal = undefined) => {
   const url = `${CC_API_BASE}/${version}/${city}/token/get-coinbase-amount/${block}`;
   try {
-    const result = await fetchJson(url, enableLogs);
+    const result = await fetchJson(url, enableLogs, signal ? signal : undefined);
     return result.value;
   } catch (err) {
     console.log(`getCoinbaseAmount: ${err}`);

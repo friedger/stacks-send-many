@@ -21,3 +21,29 @@ export default function CityStacking() {
     <Unauthorized />
   );
 }
+
+// STATES
+// auth contract not initialized
+// core contract registration active
+// core contract activation delay
+// core contract activated
+
+// INFO
+// current cycle
+// cycle length: 2,100 blocks ~2 weeks
+// max cycles: 32 cycles ~16 months
+// city balance (selected)
+// stacking stats atom? filter to current/next cycle?
+// same stacking info used in full profile
+
+// STACKING
+// user: already mining?
+// list of quick tips
+// city claimed contribution (CITY_INFO?)
+
+// STACKING CLAIM
+// enter cycle, chooses contract
+
+// Eventually... search past cycles. Add buttons.
+
+// + Docs links

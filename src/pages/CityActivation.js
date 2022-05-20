@@ -17,3 +17,17 @@ export default function CityActivation() {
     <Unauthorized />
   );
 }
+
+// STATES
+// auth contract not initialized
+// core contract registration active
+// core contract activation delay
+// core contract activated
+// user: already registered?
+
+// INFO
+// user ID
+// total registered
+// threshold
+// progress
+// activation block height

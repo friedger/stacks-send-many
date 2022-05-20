@@ -9,6 +9,7 @@ import {
   currentCityAtom,
   miningStatsAtom,
   stackingStatsAtom,
+  currentRewardCycleAtom,
 } from '../../store/cities';
 
 export default function CityMenu({ menuName }) {
@@ -16,6 +17,7 @@ export default function CityMenu({ menuName }) {
   const [currentRoute, setCurrentRoute] = useAtom(currentRouteAtom);
   const [, setMiningStats] = useAtom(miningStatsAtom);
   const [, setStackingStats] = useAtom(stackingStatsAtom);
+  const [, setCurrentRewardCycle] = useAtom(currentRewardCycleAtom);
 
   const cityMenu = CITY_LIST.map(city => {
     return (
@@ -27,8 +29,10 @@ export default function CityMenu({ menuName }) {
           }${CHAIN_SUFFIX}`}
           onClick={() => {
             setCurrentCity({ loaded: true, data: city });
+            !currentRoute.loaded && setCurrentRoute({ loaded: true, data: 'dashboard' });
             setMiningStats([]);
             setStackingStats([]);
+            setCurrentRewardCycle({ loaded: false, data: '' });
           }}
         >
           <img className="nav-logo me-2" src={CITY_INFO[city].logo} alt={`${city} logo`} />
@@ -40,7 +44,10 @@ export default function CityMenu({ menuName }) {
 
   const cityRoutes = CITY_ROUTES.map(value => {
     return (
-      <li key={value} className={`nav-item ${value === currentRoute ? 'nav-item-active' : ''}`}>
+      <li
+        key={value}
+        className={`nav-item ${value === currentRoute.data ? 'nav-item-active' : ''}`}
+      >
         <Link
           className="nav-link"
           to={`/${value.toLowerCase()}${CHAIN_SUFFIX}`}
@@ -93,6 +100,7 @@ function CitySelected({ menu, actions, name }) {
   const [, setCurrentCity] = useAtom(currentCityAtom);
   const [, setMiningStats] = useAtom(miningStatsAtom);
   const [, setStackingStats] = useAtom(stackingStatsAtom);
+  const [, setCurrentRewardCycle] = useAtom(currentRewardCycleAtom);
 
   return (
     <nav className="navbar navbar-light bg-white">
@@ -120,6 +128,7 @@ function CitySelected({ menu, actions, name }) {
               to={`/${CHAIN_SUFFIX}`}
               onClick={() => {
                 setCurrentCity({ loaded: false, data: '' });
+                setCurrentRewardCycle({ loaded: false, data: '' });
                 setMiningStats([]);
                 setStackingStats([]);
               }}

@@ -15,9 +15,37 @@ export const CITY_ROUTES = ['Dashboard', 'Activation', 'Mining', 'Stacking', 'To
 // tracks current data and state
 export const currentCityAtom = atom({ loaded: false, data: '' });
 export const currentRouteAtom = atom({ loaded: false, data: '' });
+
 export const currentRewardCycleAtom = atom({ loaded: false, data: 0 });
+export const userIdAtom = atom({ loaded: false, data: {} });
 export const miningStatsAtom = atom([]);
 export const stackingStatsAtom = atom([]);
+
+// stats objects per city for dashboard
+export const miningStatsPerCityAtom = atom({
+  mia: {
+    data: [],
+    lastUpdated: 0,
+    updating: false,
+  },
+  nyc: {
+    data: [],
+    lastUpdated: 0,
+    updating: false,
+  },
+});
+export const stackingStatsPerCityAtom = atom({
+  mia: {
+    data: [],
+    lastUpdated: 0,
+    updating: false,
+  },
+  nyc: {
+    data: [],
+    lastUpdated: 0,
+    updating: false,
+  },
+});
 
 // custom city info object with settings
 // specific to the UI and space to add

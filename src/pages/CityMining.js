@@ -21,3 +21,27 @@ export default function CityMining() {
     <Unauthorized />
   );
 }
+
+// STATES
+// auth contract not initialized
+// core contract registration active
+// core contract activation delay
+// core contract activated
+
+// INFO
+// current block
+// stx balance
+// cc balance
+// city balance (selected)
+// mining stats atom? filter to current/next block?
+
+// MINING
+// user: already mining?
+// city claimed contribution (CITY_INFO?)
+
+// MINING CLAIM
+// enter blockheight, chooses contract
+
+// Eventually... find unclaimed blocks in both contracts. Add buttons.
+
+// + Docs links

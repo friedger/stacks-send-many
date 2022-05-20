@@ -13,18 +13,19 @@ import {
   userBalancesAtom,
 } from '../../store/stacks';
 import { ProfileSmall } from '../profile/ProfileSmall';
-import { CITY_INFO, currentCityAtom } from '../../store/cities';
-import { getCCBalance } from '../../lib/citycoins';
+import { CITY_INFO, currentCityAtom, userIdAtom } from '../../store/cities';
+import { getCCBalance, getUserId } from '../../lib/citycoins';
 
 export default function HeaderAuth() {
   const { handleOpenAuth } = useConnect();
   const [userSessionState] = useAtom(userSessionStateAtom);
   const [loginStatus] = useAtom(loginStatusAtom);
   const [currentCity] = useAtom(currentCityAtom);
-  const setStxAddress = useUpdateAtom(stxAddressAtom);
+  const [stxAddress, setStxAddress] = useAtom(stxAddressAtom);
   const setAppStxAddress = useUpdateAtom(appStxAddressAtom);
   const setBnsName = useUpdateAtom(stxBnsNameAtom);
   const setUserBalances = useUpdateAtom(userBalancesAtom);
+  const setUserIds = useUpdateAtom(userIdAtom);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -37,17 +38,22 @@ export default function HeaderAuth() {
       } else {
         setStxAddress({ loaded: false, data: '' });
         setAppStxAddress({ loaded: false, data: '' });
-        setBnsName({ loaded: false, data: '' });
       }
     };
+    fetchUserData();
+  }, [loginStatus, setAppStxAddress, setStxAddress, userSessionState]);
 
+  useEffect(() => {
     const fetchBnsName = async stxAddress => {
       const bnsName = await getBnsName(stxAddress).catch(() => undefined);
       bnsName
         ? setBnsName({ loaded: true, data: bnsName })
         : setBnsName({ loaded: false, data: '' });
     };
+    stxAddress.loaded && fetchBnsName(stxAddress.data);
+  }, [setBnsName, stxAddress.loaded, stxAddress.data]);
 
+  useEffect(() => {
     const fetchUserBalances = async stxAddress => {
       const stxBalance = getStxBalance(stxAddress);
       const miaBalanceV1 = getCCBalance('v1', 'mia', stxAddress);
@@ -57,32 +63,45 @@ export default function HeaderAuth() {
       Promise.all([stxBalance, miaBalanceV1, miaBalanceV2, nycBalanceV1, nycBalanceV2]).then(
         values => {
           const balances = {
-            stx: values[0],
+            stx: +values[0],
             mia: {
-              v1: values[1],
-              v2: values[2],
+              v1: +values[1],
+              v2: +values[2],
             },
             nyc: {
-              v1: values[3],
-              v2: values[4],
+              v1: +values[3],
+              v2: +values[4],
             },
           };
           setUserBalances({ loaded: true, data: balances });
         }
       );
     };
+    stxAddress.loaded && fetchUserBalances(stxAddress.data);
+  }, [setUserBalances, stxAddress.loaded, stxAddress.data]);
 
-    fetchUserData().then(stxAddress => {
-      if (stxAddress) {
-        fetchBnsName(stxAddress).catch(err => {
-          console.error(`${err.message} Failed to fetch BNS name`);
-        });
-        fetchUserBalances(stxAddress).catch(err => {
-          console.error(`${err.message} Failed to fetch user balances`);
-        });
-      }
-    });
-  }, [loginStatus, userSessionState, setStxAddress, setAppStxAddress, setBnsName, setUserBalances]);
+  useEffect(() => {
+    const fetchUserIds = async stxAddress => {
+      const miaIdV1 = getUserId('v1', 'mia', stxAddress);
+      const miaIdV2 = getUserId('v2', 'mia', stxAddress);
+      const nycIdV1 = getUserId('v1', 'nyc', stxAddress);
+      const nycIdV2 = getUserId('v2', 'nyc', stxAddress);
+      Promise.all([miaIdV1, miaIdV2, nycIdV1, nycIdV2]).then(values => {
+        const userIds = {
+          mia: {
+            v1: values[0],
+            v2: values[1],
+          },
+          nyc: {
+            v1: values[2],
+            v2: values[3],
+          },
+        };
+        setUserIds({ loaded: true, data: userIds });
+      });
+    };
+    stxAddress.loaded && fetchUserIds(stxAddress.data);
+  }, [setUserIds, stxAddress.loaded, stxAddress.data]);
 
   if (loginStatus) return <ProfileSmall />;
 

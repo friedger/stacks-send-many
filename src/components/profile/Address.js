@@ -1,10 +1,18 @@
-import React from 'react';
+import { useAtom } from 'jotai';
+import { useMemo } from 'react';
+import { stxAddressAtom, stxBnsNameAtom } from '../../store/stacks';
 
-export function Address({ bns, addr }) {
-  const address = bns.loaded
-    ? bns.data
-    : addr.loaded
-    ? `${addr.data.substr(0, 5)}...${addr.data.substr(addr.data.length - 5)}`
-    : 'Profile';
-  return <span title={address}>{bns.loaded ? bns.data : address}</span>;
+export function Address() {
+  const [stxAddress] = useAtom(stxAddressAtom);
+  const [bnsName] = useAtom(stxBnsNameAtom);
+  const displayAddress = useMemo(() => {
+    if (bnsName.loaded) return bnsName.data;
+    if (stxAddress.loaded)
+      return `${stxAddress.data.substr(0, 5)}...${stxAddress.data.substr(
+        stxAddress.data.length - 5
+      )}`;
+    return 'Profile';
+  }, [stxAddress, bnsName]);
+
+  return <span title={displayAddress}>{displayAddress}</span>;
 }
