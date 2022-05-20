@@ -84,14 +84,14 @@ function Content() {
       const blockHeight = await getBlockHeight();
       setBlockHeight({
         loaded: true,
-        data: blockHeight,
+        data: +blockHeight,
       });
       if (currentCity.loaded) {
         const rewardCycle = await getRewardCycle(
           CITY_INFO[currentCity.data].currentVersion,
           currentCity.data
         );
-        setRewardCycle({ loaded: true, data: rewardCycle });
+        setRewardCycle({ loaded: true, data: +rewardCycle });
       }
       await sleep(1000 * 60); // 60 seconds
     };

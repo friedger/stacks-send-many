@@ -70,20 +70,20 @@ export const getStackingStatsAtCycle = async (version, city, cycle) => {
   }
 };
 
-export const getMiningStatsAtBlock = async (version, city, block, signal = undefined) => {
+export const getMiningStatsAtBlock = async (version, city, block) => {
   const url = `${CC_API_BASE}/${version}/${city}/mining/get-mining-stats-at-block/${block}/true`;
   try {
-    return await fetchJson(url, enableLogs, signal ? signal : undefined);
+    return await fetchJson(url, enableLogs);
   } catch (err) {
     console.log(`getMiningStatsAtBlock: ${err}`);
     return undefined;
   }
 };
 
-export const getCoinbaseAmount = async (version, city, block, signal = undefined) => {
+export const getCoinbaseAmount = async (version, city, block) => {
   const url = `${CC_API_BASE}/${version}/${city}/token/get-coinbase-amount/${block}`;
   try {
-    const result = await fetchJson(url, enableLogs, signal ? signal : undefined);
+    const result = await fetchJson(url, enableLogs);
     return result.value;
   } catch (err) {
     console.log(`getCoinbaseAmount: ${err}`);

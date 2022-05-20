@@ -52,13 +52,13 @@ const CC_API_BASE = `https://citycoins-api.citycoins.workers.dev`;
 
 export const getStxBalance = async address => {
   const url = `${CC_API_BASE}/stacks/get-stx-balance/${address}`;
-  const result = await fetchJson(url, undefined, enableLogs);
+  const result = await fetchJson(url, enableLogs);
   return result.value;
 };
 
 export const getBlockHeight = async () => {
   const url = `${CC_API_BASE}/stacks/get-block-height`;
-  const result = await fetchJson(url, undefined, enableLogs);
+  const result = await fetchJson(url, enableLogs);
   return result.value;
 };
 

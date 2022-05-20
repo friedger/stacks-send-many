@@ -2,7 +2,6 @@ import { useAtom } from 'jotai';
 import { useMemo } from 'react';
 import { fromMicro } from '../../lib/stacks';
 import { CITY_INFO, currentCityAtom, currentRewardCycleAtom } from '../../store/cities';
-import { currentStacksBlockAtom } from '../../store/stacks';
 
 export default function StackingStats({ stats }) {
   const [currentRewardCycle] = useAtom(currentRewardCycleAtom);
@@ -16,14 +15,14 @@ export default function StackingStats({ stats }) {
     <>
       <div
         className={`row text-nowrap text-center ${
-          stats.cycle === currentRewardCycle.data ? 'text-success' : ''
+          +stats.cycle === +currentRewardCycle.data ? 'text-success' : ''
         }`}
       >
         <div className="col">
           <span className="h5">{stats.cycle.toLocaleString()}</span>
           <br />
           <span className="text-muted">
-            {stats.cycle === currentRewardCycle.data ? 'Current' : 'Cycle #'}
+            {+stats.cycle === +currentRewardCycle.data ? 'Current' : 'Cycle #'}
           </span>
         </div>
         <div className="col">

@@ -50,14 +50,14 @@ export default function StackingActivity() {
         currentCity.data,
         cycle
       );
-      stats.cycle = cycle;
+      stats.cycle = +cycle;
       const startBlock = await getFirstStacksBlockInRewardCycle(
         CITY_INFO[currentCity.data].currentVersion,
         currentCity.data,
         cycle
       );
-      stats.startBlock = startBlock;
-      const currentBlock = +currentStacksBlock.data;
+      stats.startBlock = +startBlock;
+      const currentBlock = currentStacksBlock.data;
       stats.progress =
         startBlock > currentBlock
           ? 'Future'
@@ -71,7 +71,7 @@ export default function StackingActivity() {
         const newCityStats = newStats[currentCity.data];
         newCityStats.data.push(stats);
         newCityStats.data.sort((a, b) => a.cycle - b.cycle);
-        newCityStats.updating = distance === newCityStats.data.length ? false : true;
+        newCityStats.updating = distance === +newCityStats.data.length ? false : true;
         // rewrite city object in full object
         newStats[currentCity.data] = newCityStats;
         return newStats;
@@ -80,8 +80,8 @@ export default function StackingActivity() {
     if (updateStackingStats) {
       // check values and perform update if necessary
       const key = currentCity.data;
-      const block = currentStacksBlock.data;
-      const cycle = currentRewardCycle.data;
+      const block = +currentStacksBlock.data;
+      const cycle = +currentRewardCycle.data;
       const start = cycle - 2;
       const end = cycle + 2;
       // clear old values
@@ -92,8 +92,7 @@ export default function StackingActivity() {
       });
       // fetch + set new values
       for (let i = start; i <= end; i++) {
-        sleep(500);
-        fetchStackingStats(i, end - start);
+        fetchStackingStats(i, end - start + 1);
       }
     }
   }, [

@@ -1,7 +1,6 @@
 import { useAtom } from 'jotai';
 import { useEffect, useMemo } from 'react';
 import { getCoinbaseAmount, getMiningStatsAtBlock } from '../../lib/citycoins';
-import { sleep } from '../../lib/common';
 import { CITY_INFO, currentCityAtom, miningStatsPerCityAtom } from '../../store/cities';
 import { currentStacksBlockAtom } from '../../store/stacks';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
@@ -57,7 +56,7 @@ export default function MiningActivity() {
         const newCityStats = newStats[currentCity.data];
         newCityStats.data.push(stats);
         newCityStats.data.sort((a, b) => a.blockHeight - b.blockHeight);
-        newCityStats.updating = distance === newCityStats.data.length ? false : true;
+        newCityStats.updating = distance === +newCityStats.data.length ? false : true;
         // rewrite city object in full object
         newStats[currentCity.data] = newCityStats;
         return newStats;
@@ -66,7 +65,7 @@ export default function MiningActivity() {
     if (updateMiningStats) {
       // check values and perform update if necessary
       const key = currentCity.data;
-      const block = currentStacksBlock.data;
+      const block = +currentStacksBlock.data;
       const start = block - 2;
       const end = block + 2;
       // clear old values
@@ -77,8 +76,7 @@ export default function MiningActivity() {
       });
       // fetch + set new values
       for (let i = start; i <= end; i++) {
-        sleep(500);
-        fetchMiningStats(i, end - start);
+        fetchMiningStats(i, end - start + 1);
       }
     }
   }, [currentCity.data, currentStacksBlock.data, setMiningStatsPerCity, updateMiningStats]);

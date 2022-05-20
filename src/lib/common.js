@@ -1,21 +1,21 @@
+import throttledQueue from 'throttled-queue';
+
+let requestCount = 0;
+
+const throttle = throttledQueue(4, 1000, true); // at most 4 requests per second
+
 // async timer
 export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // fetch and return JSON from URL
-// with set retry limit and timeout
-export const fetchJson = async (url, debug = false, signal = undefined) => {
-  const fetchTimeout = 500;
-  await sleep(fetchTimeout);
-  const response = await fetch(url, signal ? { signal } : undefined).catch(err => {
-    if (err.name === 'AbortError') {
-      return undefined;
-    }
-    throw new Error(`fetchJson: unknown ${err}`);
-  });
+export const fetchJson = async (url, debug = false) => {
+  const response = await throttle(() => fetch(url));
+  console.log(`requests: ${++requestCount}`);
+  //console.log(`status: ${response.status}`);
   if (response.status === 200) {
     const json = await response.json();
-    debug && console.log(`fetchJson result: ${JSON.stringify(json)}`);
+    //console.log(`json: ${JSON.stringify(json)}`);
     return json;
   }
-  throw new Error(`fetchJson: ${response.status} ${response.statusText} ${url}`);
+  throw new Error(`fetchJson: ${url} ${response.status} ${response.statusText}`);
 };
