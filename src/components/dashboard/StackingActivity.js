@@ -1,7 +1,6 @@
 import { useAtom } from 'jotai';
 import { useEffect, useMemo } from 'react';
 import { getFirstStacksBlockInRewardCycle, getStackingStatsAtCycle } from '../../lib/citycoins';
-import { sleep } from '../../lib/common';
 import {
   CITY_INFO,
   REWARD_CYCLE_LENGTH,

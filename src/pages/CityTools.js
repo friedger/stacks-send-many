@@ -9,5 +9,14 @@ export default function CityTools() {
   const [loginStatus] = useAtom(loginStatusAtom);
   const [currentCity] = useAtom(currentCityAtom);
 
-  return !currentCity.loaded ? <NoCitySelected /> : loginStatus ? <ComingSoon /> : <Unauthorized />;
+  return !currentCity.loaded ? (
+    <NoCitySelected />
+  ) : loginStatus ? (
+    <>
+      <h4>Tools</h4>
+      <ComingSoon />
+    </>
+  ) : (
+    <Unauthorized />
+  );
 }

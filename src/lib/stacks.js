@@ -6,10 +6,7 @@ import {
   InfoApi,
 } from '@stacks/blockchain-api-client';
 import { StacksMainnet, StacksTestnet } from '@stacks/network';
-import { fetchJson } from './common';
-
-const enableLogs = false;
-const debugLog = msg => enableLogs && console.log(msg);
+import { fetchJson, debugLog } from './common';
 
 export const isTestnet = window.location.search.includes('chain=testnet');
 export const isMocknet = !isTestnet && window.location.search.includes('mocknet=local');
@@ -52,13 +49,13 @@ const CC_API_BASE = `https://citycoins-api.citycoins.workers.dev`;
 
 export const getStxBalance = async address => {
   const url = `${CC_API_BASE}/stacks/get-stx-balance/${address}`;
-  const result = await fetchJson(url, enableLogs);
+  const result = await fetchJson(url);
   return result.value;
 };
 
 export const getBlockHeight = async () => {
   const url = `${CC_API_BASE}/stacks/get-block-height`;
-  const result = await fetchJson(url, enableLogs);
+  const result = await fetchJson(url);
   return result.value;
 };
 

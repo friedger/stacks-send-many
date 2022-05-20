@@ -1,20 +1,24 @@
 import throttledQueue from 'throttled-queue';
 
-let requestCount = 0;
+// flags to enable console logging from all functions
+const ENABLE_LOGS = false;
 
-const throttle = throttledQueue(4, 1000, true); // at most 4 requests per second
+// helper to simplify consistent logging
+export const debugLog = msg => ENABLE_LOGS && console.log(msg);
+
+// at most 4 requests per second
+const throttle = throttledQueue(4, 1000, true);
 
 // async timer
 export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // fetch and return JSON from URL
-export const fetchJson = async (url, debug = false) => {
+export const fetchJson = async url => {
+  debugLog(`fetchJson: ${url}`);
   const response = await throttle(() => fetch(url));
-  console.log(`requests: ${++requestCount}`);
-  //console.log(`status: ${response.status}`);
   if (response.status === 200) {
     const json = await response.json();
-    //console.log(`json: ${JSON.stringify(json)}`);
+    debugLog(`fetchJson: ${json}`);
     return json;
   }
   throw new Error(`fetchJson: ${url} ${response.status} ${response.statusText}`);

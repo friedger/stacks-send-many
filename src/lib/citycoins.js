@@ -1,7 +1,4 @@
-import { fetchJson } from './common';
-
-// enable console logging
-const enableLogs = false;
+import { fetchJson, debugLog } from './common';
 
 // using develop branch until next release
 const CC_API_BASE = `https://citycoins-api.citycoins.workers.dev`;
@@ -10,17 +7,17 @@ const CC_API_BASE = `https://citycoins-api.citycoins.workers.dev`;
 // get a city's configuration file
 export const getCityConfig = async (version, city) => {
   const url = `${CC_API_BASE}/tools/${version}/${city}/get-city-configuration`;
-  return await fetchJson(url, enableLogs);
+  return await fetchJson(url);
 };
 
 export const getActivationBlock = async (version, city) => {
   const url = `${CC_API_BASE}/${version}/${city}/get-activation-block`;
-  return await fetchJson(url, enableLogs);
+  return await fetchJson(url);
 };
 
 export const getCCBalance = async (version, city, address) => {
   const url = `${CC_API_BASE}/${version}/${city}/token/get-balance/${address}`;
-  const result = await fetchJson(url, enableLogs);
+  const result = await fetchJson(url);
   return result.value;
 };
 
@@ -29,10 +26,10 @@ export const getRewardCycle = async (version, city, block = undefined) => {
     block ? block : 'current'
   }`;
   try {
-    const result = await fetchJson(url, enableLogs);
+    const result = await fetchJson(url);
     return result.value;
   } catch (err) {
-    console.log(`getRewardCycle: ${err}`);
+    debugLog(`getRewardCycle: ${err}`);
     return undefined;
   }
 };
@@ -40,10 +37,10 @@ export const getRewardCycle = async (version, city, block = undefined) => {
 export const getUserId = async (version, city, address) => {
   const url = `${CC_API_BASE}/${version}/${city}/activation/get-user-id/${address}`;
   try {
-    const result = await fetchJson(url, enableLogs);
+    const result = await fetchJson(url);
     return result.value;
   } catch (err) {
-    console.log(`getUserId: ${err}`);
+    debugLog(`getUserId: ${err}`);
     return undefined;
   }
 };
@@ -51,10 +48,10 @@ export const getUserId = async (version, city, address) => {
 export const getFirstStacksBlockInRewardCycle = async (version, city, cycle) => {
   const url = `${CC_API_BASE}/${version}/${city}/stacking/get-first-stacks-block-in-reward-cycle/${cycle}`;
   try {
-    const result = await fetchJson(url, enableLogs);
+    const result = await fetchJson(url);
     return result.value;
   } catch (err) {
-    console.log(`getFirstStacksBlockInRewardCycle: ${err}`);
+    debugLog(`getFirstStacksBlockInRewardCycle: ${err}`);
     return undefined;
   }
 };
@@ -62,10 +59,10 @@ export const getFirstStacksBlockInRewardCycle = async (version, city, cycle) => 
 export const getStackingStatsAtCycle = async (version, city, cycle) => {
   const url = `${CC_API_BASE}/${version}/${city}/stacking/get-stacking-stats-at-cycle/${cycle}/true`;
   try {
-    const result = await fetchJson(url, enableLogs);
+    const result = await fetchJson(url);
     return result;
   } catch (err) {
-    console.log(`getStackingStatsAtCycle: ${err}`);
+    debugLog(`getStackingStatsAtCycle: ${err}`);
     return undefined;
   }
 };
@@ -73,9 +70,9 @@ export const getStackingStatsAtCycle = async (version, city, cycle) => {
 export const getMiningStatsAtBlock = async (version, city, block) => {
   const url = `${CC_API_BASE}/${version}/${city}/mining/get-mining-stats-at-block/${block}/true`;
   try {
-    return await fetchJson(url, enableLogs);
+    return await fetchJson(url);
   } catch (err) {
-    console.log(`getMiningStatsAtBlock: ${err}`);
+    debugLog(`getMiningStatsAtBlock: ${err}`);
     return undefined;
   }
 };
@@ -83,10 +80,10 @@ export const getMiningStatsAtBlock = async (version, city, block) => {
 export const getCoinbaseAmount = async (version, city, block) => {
   const url = `${CC_API_BASE}/${version}/${city}/token/get-coinbase-amount/${block}`;
   try {
-    const result = await fetchJson(url, enableLogs);
+    const result = await fetchJson(url);
     return result.value;
   } catch (err) {
-    console.log(`getCoinbaseAmount: ${err}`);
+    debugLog(`getCoinbaseAmount: ${err}`);
     return undefined;
   }
 };
