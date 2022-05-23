@@ -1,4 +1,6 @@
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
+
 import CityCoin from '../images/CC_StandAlone.svg';
 import MiamiCoin from '../images/MIA_StandAlone.svg';
 import MiamiBG from '../images/MIA_BG_Horizontal.svg';
@@ -13,8 +15,8 @@ export const CITY_LIST = ['mia', 'nyc'];
 export const CITY_ROUTES = ['Dashboard', 'Activation', 'Mining', 'Stacking', 'Tools'];
 
 // tracks current data and state
-export const currentCityAtom = atom({ loaded: false, data: '' });
-export const currentRouteAtom = atom({ loaded: false, data: '' });
+export const currentCityAtom = atomWithStorage('currentCity', { loaded: false, data: '' });
+export const currentRouteAtom = atomWithStorage('currentRoute', { loaded: false, data: '' });
 
 export const currentRewardCycleAtom = atom({ loaded: false, data: 0 });
 export const userIdAtom = atom({ loaded: false, data: {} });
@@ -22,7 +24,7 @@ export const miningStatsAtom = atom([]);
 export const stackingStatsAtom = atom([]);
 
 // stats objects per city for dashboard
-export const miningStatsPerCityAtom = atom({
+export const miningStatsPerCityAtom = atomWithStorage('miningStatsPerCity', {
   mia: {
     data: [],
     lastUpdated: 0,
@@ -34,7 +36,7 @@ export const miningStatsPerCityAtom = atom({
     updating: false,
   },
 });
-export const stackingStatsPerCityAtom = atom({
+export const stackingStatsPerCityAtom = atomWithStorage('stackingStatsPerCity', {
   mia: {
     data: [],
     lastUpdated: 0,
