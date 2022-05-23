@@ -15,6 +15,7 @@ export default function CityMining() {
   ) : loginStatus ? (
     <>
       <MineCityCoins />
+      <hr className="cc-divider" />
       <ClaimMiningRewards />
     </>
   ) : (

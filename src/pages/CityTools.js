@@ -12,10 +12,10 @@ export default function CityTools() {
   return !currentCity.loaded ? (
     <NoCitySelected />
   ) : loginStatus ? (
-    <>
-      <h4>Tools</h4>
+    <div className="container-fluid p-6">
+      <h3>Tools</h3>
       <ComingSoon />
-    </>
+    </div>
   ) : (
     <Unauthorized />
   );

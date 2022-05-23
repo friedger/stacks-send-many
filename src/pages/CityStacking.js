@@ -15,6 +15,7 @@ export default function CityStacking() {
   ) : loginStatus ? (
     <>
       <StackCityCoins />
+      <hr className="cc-divider" />
       <ClaimStackingRewards />
     </>
   ) : (
