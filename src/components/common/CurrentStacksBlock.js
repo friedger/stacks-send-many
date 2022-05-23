@@ -1,12 +1,12 @@
 import { useAtom } from 'jotai';
-import { currentBlockHeight } from '../../store/common';
+import { currentStacksBlockAtom } from '../../store/stacks';
 import LoadingSpinner from './LoadingSpinner';
 
 export default function CurrentStacksBlock() {
-  const [blockHeight] = useAtom(currentBlockHeight);
-  return (
-    <p>
-      Current Stacks Block Height: {blockHeight ? blockHeight.toLocaleString() : <LoadingSpinner />}
-    </p>
+  const [currentStacksBlock] = useAtom(currentStacksBlockAtom);
+  return currentStacksBlock.loaded ? (
+    <p>Current Stacks Block: {currentStacksBlock.data.toLocaleString()}</p>
+  ) : (
+    <LoadingSpinner text="Loading current Stacks block" />
   );
 }

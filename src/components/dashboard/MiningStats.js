@@ -1,81 +1,50 @@
-import { useEffect, useState } from 'react';
-import { getMiningStatsAtBlockOrDefaults } from '../../lib/citycoins';
-import { ustxToStx } from '../../lib/stacks';
-import LoadingSpinner from '../common/LoadingSpinner';
+import { useAtom } from 'jotai';
+import { useMemo } from 'react';
+import { fromMicro } from '../../lib/stacks';
+import { CITY_INFO, currentCityAtom } from '../../store/cities';
+import { currentStacksBlockAtom } from '../../store/stacks';
 
-export default function MiningStats(props) {
-  const [totalMiners, setTotalMiners] = useState(0);
-  const [totalAmountUstx, setTotalAmountUstx] = useState(0);
-  const [totalAmountCity, setTotalAmountCity] = useState(0);
-  const [totalAmountStackers, setTotalAmountStackers] = useState(0);
+export default function MiningStats({ stats }) {
+  const [currentStacksBlock] = useAtom(currentStacksBlockAtom);
+  const [currentCity] = useAtom(currentCityAtom);
 
-  useEffect(() => {
-    getMiningStatsAtBlockOrDefaults(
-      props.contracts.deployer,
-      props.contracts.coreContract,
-      props.blockHeight
-    )
-      .then(result => {
-        setTotalMiners(result.value.minersCount.value);
-        setTotalAmountUstx(result.value.amount.value);
-        setTotalAmountCity(result.value.amountToCity.value);
-        setTotalAmountStackers(result.value.amountToStackers.value);
-      })
-      .catch(err => {
-        console.log(err);
-        setTotalMiners(0);
-        setTotalAmountUstx(0);
-        setTotalAmountCity(0);
-        setTotalAmountStackers(0);
-      });
-  });
+  const symbol = useMemo(() => {
+    return currentCity.loaded ? CITY_INFO[currentCity.data].symbol : undefined;
+  }, [currentCity.loaded, currentCity.data]);
 
   return (
-    <div className="border rounded p-3 text-nowrap">
-      <p className="fs-5 text-center">Block #{props.blockHeight.toLocaleString()}</p>
-      <div className="row text-center text-sm-start">
-        <div className="col-sm-6">Miners</div>
-        <div className="col-sm-6">{totalMiners ? totalMiners : <LoadingSpinner />}</div>
-      </div>
-      <div className="row text-center text-sm-start">
-        <div className="col-sm-6">Amount</div>
-        <div className="col-sm-6">
-          {totalAmountUstx ? (
-            ustxToStx(totalAmountUstx).toLocaleString(undefined, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }) + ' STX'
-          ) : (
-            <LoadingSpinner />
-          )}
+    <>
+      <div
+        className={`row text-nowrap text-center ${
+          stats.blockHeight === currentStacksBlock.data ? 'text-success' : ''
+        }`}
+      >
+        <div className="col">
+          <span className="h5">{stats.blockHeight.toLocaleString()}</span>
+          <br />
+          <span className="text-muted">
+            {stats.blockHeight === currentStacksBlock.data ? 'Current' : 'Block #'}
+          </span>
+        </div>
+        <div className="col">
+          <span className="h5">{fromMicro(stats.amount).toLocaleString()} STX</span>
+          <br />
+          <span className="text-muted">Committed</span>
+        </div>
+        <div className="col">
+          <span className="h5">{stats.minersCount}</span>
+          <br />
+          <span className="text-muted">Miners</span>
+        </div>
+        <div className="col">
+          <span className="h5">{`${fromMicro(
+            stats.rewardAmount
+          ).toLocaleString()} ${symbol}`}</span>
+          <br />
+          <span className="text-muted">Reward</span>
         </div>
       </div>
-      <div className="row text-center text-sm-start">
-        <div className="col-sm-6">To City</div>
-        <div className="col-sm-6">
-          {totalAmountCity ? (
-            ustxToStx(totalAmountCity).toLocaleString(undefined, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }) + ' STX'
-          ) : (
-            <LoadingSpinner />
-          )}
-        </div>
-      </div>
-      <div className="row text-center text-sm-start">
-        <div className="col-sm-6">To Stackers</div>
-        <div className="col-sm-6">
-          {totalAmountStackers ? (
-            ustxToStx(totalAmountStackers).toLocaleString(undefined, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }) + ' STX'
-          ) : (
-            <LoadingSpinner />
-          )}
-        </div>
-      </div>
-    </div>
+      <hr className="cc-divider" />
+    </>
   );
 }

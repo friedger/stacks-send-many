@@ -1,31 +1,34 @@
-import React from 'react';
+import { useAtom } from 'jotai';
 import { ProfileFull } from './ProfileFull';
-import { useStxAddresses } from '../../lib/hooks';
-import { Address } from '../Address';
-import NetworkIndicatorIcon from './NetworkIndicatorIcon';
-import { chainSuffix } from '../../lib/constants';
+import { Address } from './Address';
+import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
+import { loginStatusAtom } from '../../store/stacks';
+import { CITY_INFO, currentCityAtom } from '../../store/cities';
 
-export function ProfileSmall(props) {
-  const { ownerStxAddress } = useStxAddresses(props.userSession);
+export function ProfileSmall() {
+  const [loginStatus] = useAtom(loginStatusAtom);
+  const [currentCity] = useAtom(currentCityAtom);
 
-  if (props.userSession?.isUserSignedIn()) {
+  if (loginStatus) {
     return (
       <>
         <a
-          className="btn btn-primary-outline btn-lg"
+          className={`btn btn-primary-outline btn-lg ${
+            currentCity.loaded ? 'text-' + CITY_INFO[currentCity.data].bgText : ''
+          }`}
           data-bs-toggle="offcanvas"
           href="#offcanvasProfile"
           role="button"
           aria-controls="offcanvasProfile"
         >
-          <NetworkIndicatorIcon chainSuffix={chainSuffix}/>
-          {ownerStxAddress ? <Address addr={ownerStxAddress} /> : 'Profile'}
+          <NetworkIndicatorIcon />
+          <Address />
         </a>
 
         <ProfileFull />
       </>
     );
-  } else {
-    return null;
   }
+
+  return null;
 }
