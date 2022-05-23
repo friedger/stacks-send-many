@@ -32,6 +32,8 @@ export const STACKS_API_WS = isMainnet
 debugLog(`STACKS_API: ${STACKS_API}`);
 debugLog(`STACKS_API_WS: ${STACKS_API_WS}`);
 
+export const STACKS_EXPLORER = 'https://explorer.stacks.co';
+
 export const TESTNET_FAUCET_URL = 'https://explorer.stacks.co/sandbox/faucet?chain=testnet';
 
 export const STACKS_NETWORK = isMainnet ? new StacksMainnet() : new StacksTestnet();

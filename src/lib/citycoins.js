@@ -87,3 +87,25 @@ export const getCoinbaseAmount = async (version, city, block) => {
     return undefined;
   }
 };
+
+export const isBlockWinner = async (version, city, block, address) => {
+  const url = `${CC_API_BASE}/${version}/${city}/mining-claims/is-block-winner/${block}/${address}`;
+  try {
+    const result = await fetchJson(url);
+    return result.value;
+  } catch (err) {
+    debugLog(`isBlockWinner: ${err}`);
+    return undefined;
+  }
+};
+
+export const canClaimMiningReward = async (version, city, block, address) => {
+  const url = `${CC_API_BASE}/${version}/${city}/mining-claims/can-claim-mining-reward/${block}/${address}`;
+  try {
+    const result = await fetchJson(url);
+    return result.value;
+  } catch (err) {
+    debugLog(`canClaimMiningReward: ${err}`);
+    return undefined;
+  }
+};

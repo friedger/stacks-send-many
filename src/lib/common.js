@@ -18,7 +18,7 @@ export const fetchJson = async url => {
   const response = await throttle(() => fetch(url));
   if (response.status === 200) {
     const json = await response.json();
-    debugLog(`fetchJson: ${json}`);
+    debugLog(`fetchJson: ${JSON.stringify(json)}`);
     return json;
   }
   throw new Error(`fetchJson: ${url} ${response.status} ${response.statusText}`);
