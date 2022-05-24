@@ -49,6 +49,23 @@ export const stackingStatsPerCityAtom = atomWithStorage('stackingStatsPerCity', 
   },
 });
 
+// reward cycle claim object
+// expected structure
+// {
+//   "mia": {
+//     "17": {
+//      "v1": {
+//        stxReward: 0,
+//        toReturn: 0,
+//        }
+//     }
+// }
+//
+//
+//
+// }
+export const rewardCyclesToClaimAtom = atomWithStorage('rewardCyclesToClaim', {});
+
 // custom city info object with settings
 // specific to the UI and space to add
 // more properties as needed

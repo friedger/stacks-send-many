@@ -109,3 +109,27 @@ export const canClaimMiningReward = async (version, city, block, address) => {
     return undefined;
   }
 };
+
+// https://api.citycoins.co/{version}/{cityname}/stacking/get-stacker-at-cycle/{cycleid}/{userid}/{default}
+export const getStackerAtCycle = async (version, city, cycle, userId) => {
+  const url = `${CC_API_BASE}/${version}/${city}/stacking/get-stacker-at-cycle/${cycle}/${userId}/true`;
+  try {
+    const result = await fetchJson(url);
+    return result;
+  } catch (err) {
+    debugLog(`getStackerAtCycle: ${err}`);
+    return undefined;
+  }
+};
+
+// https://api.citycoins.co/{version}/{cityname}/stacking-claims/get-stacking-reward/{cycleid}/{userid}
+export const getStackingReward = async (version, city, cycle, userId) => {
+  const url = `${CC_API_BASE}/${version}/${city}/stacking-claims/get-stacking-reward/${cycle}/${userId}`;
+  try {
+    const result = await fetchJson(url);
+    return result.value;
+  } catch (err) {
+    debugLog(`getStackingReward: ${err}`);
+    return undefined;
+  }
+};

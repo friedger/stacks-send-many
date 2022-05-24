@@ -7,7 +7,7 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import { currentStacksBlockAtom, stxAddressAtom } from '../../store/stacks';
 import { CITY_CONFIG, CITY_INFO, currentCityAtom } from '../../store/cities';
 import { canClaimMiningReward, isBlockWinner } from '../../lib/citycoins';
-import { uintCV } from '@stacks/connect/node_modules/@stacks/transactions';
+import { uintCV } from '@stacks/transactions';
 import { STACKS_NETWORK } from '../../lib/stacks';
 
 export default function ClaimMiningRewards() {

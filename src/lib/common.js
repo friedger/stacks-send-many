@@ -23,3 +23,22 @@ export const fetchJson = async url => {
   }
   throw new Error(`fetchJson: ${url} ${response.status} ${response.statusText}`);
 };
+
+// helper to create a dynamically nested object
+// credit: https://gist.github.com/brianswisher/2ce1ffe3ec08634f78aacd1b7baa31f9
+// modified and didn't work first time around but pattern in
+// setRewardCyclesToClaim() is a good reference/test
+export const createNestedObject = (keys, data) => {
+  const result = {};
+
+  const lastIndex = keys.length - 1;
+
+  keys.reduce((o, k, i) => {
+    const isLastIndex = i === lastIndex;
+    console.log(`i: ${i} lastIndex: ${lastIndex} isLastIndex: ${isLastIndex}`);
+    const val = isLastIndex ? o[k] : data;
+    return (o[k] = val);
+  }, result);
+
+  return result;
+};
