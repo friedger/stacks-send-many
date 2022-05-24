@@ -14,37 +14,45 @@ export default function MiningStats({ stats }) {
 
   return (
     <>
+      <hr className="cc-divider-alt" />
       <div
-        className={`row text-nowrap text-center ${
+        className={`row text-nowrap text-center flex-column flex-md-row align-items-center justify-content-center ${
           stats.blockHeight === currentStacksBlock.data ? 'text-success' : ''
         }`}
       >
         <div className="col">
-          <span className="h5">{stats.blockHeight.toLocaleString()}</span>
-          <br />
-          <span className="text-muted">
-            {stats.blockHeight === currentStacksBlock.data ? 'Current' : 'Block #'}
-          </span>
+          <div className="row flex-column flex-sm-row">
+            <div className="col">
+              <span className="h5">{stats.blockHeight.toLocaleString()}</span>
+              <br />
+              <span className="text-muted">
+                {stats.blockHeight === currentStacksBlock.data ? 'Current' : 'Block #'}
+              </span>
+            </div>
+            <div className="col">
+              <span className="h5">{fromMicro(stats.amount).toLocaleString()} STX</span>
+              <br />
+              <span className="text-muted">Committed</span>
+            </div>
+          </div>
         </div>
         <div className="col">
-          <span className="h5">{fromMicro(stats.amount).toLocaleString()} STX</span>
-          <br />
-          <span className="text-muted">Committed</span>
-        </div>
-        <div className="col">
-          <span className="h5">{stats.minersCount}</span>
-          <br />
-          <span className="text-muted">Miners</span>
-        </div>
-        <div className="col">
-          <span className="h5">{`${fromMicro(
-            stats.rewardAmount
-          ).toLocaleString()} ${symbol}`}</span>
-          <br />
-          <span className="text-muted">Reward</span>
+          <div className="row flex-column flex-sm-row">
+            <div className="col">
+              <span className="h5">{stats.minersCount}</span>
+              <br />
+              <span className="text-muted">Miners</span>
+            </div>
+            <div className="col">
+              <span className="h5">{`${fromMicro(
+                stats.rewardAmount
+              ).toLocaleString()} ${symbol}`}</span>
+              <br />
+              <span className="text-muted">Reward</span>
+            </div>
+          </div>
         </div>
       </div>
-      <hr className="cc-divider" />
     </>
   );
 }

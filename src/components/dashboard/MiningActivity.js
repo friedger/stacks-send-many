@@ -82,7 +82,7 @@ export default function MiningActivity() {
   }, [currentCity.data, currentStacksBlock.data, setMiningStatsPerCity, updateMiningStats]);
 
   return (
-    <>
+    <div className="container-fluid p-6">
       <h3>{`${
         currentCity.loaded ? CITY_INFO[currentCity.data].symbol.toString() + ' ' : ''
       }Mining Activity`}</h3>
@@ -94,6 +94,6 @@ export default function MiningActivity() {
           <MiningStats key={`stats-${value.blockHeight}`} stats={value} />
         ))
       )}
-    </>
+    </div>
   );
 }

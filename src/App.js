@@ -50,13 +50,12 @@ export default function App() {
             <HeaderAuth />
           </div>
         </div>
-
         <div className="row align-items-center">
           <div className="col">
             <CityMenu menuName="topnav" />
           </div>
         </div>
-
+        <hr className="cc-divider" />
         <div className="row align-items-center">
           <div className="col">
             <Content />
@@ -69,6 +68,7 @@ export default function App() {
           </div>
         </div>
       </div>
+      <hr className="cc-divider" />
       <Footer />
     </Connect>
   );

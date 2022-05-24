@@ -12,6 +12,7 @@ export default function CityDashboard() {
   ) : (
     <>
       <MiningActivity />
+      <hr className="cc-divider" />
       <StackingActivity />
     </>
   );

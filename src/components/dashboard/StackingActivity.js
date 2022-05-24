@@ -103,7 +103,7 @@ export default function StackingActivity() {
   ]);
 
   return (
-    <>
+    <div className="container-fluid p-6">
       <h3>{`${
         currentCity.loaded ? CITY_INFO[currentCity.data].symbol.toString() + ' ' : ''
       }Stacking Activity`}</h3>
@@ -115,6 +115,6 @@ export default function StackingActivity() {
           <StackingStats key={`stats-${value.cycle}`} stats={value} />
         ))
       )}
-    </>
+    </div>
   );
 }
