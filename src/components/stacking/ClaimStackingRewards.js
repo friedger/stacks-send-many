@@ -118,11 +118,6 @@ export default function ClaimStackingRewards() {
         return newClaimsValue;
       });
     });
-    setFormMsg({
-      type: 'success',
-      hidden: false,
-      text: `Reward cycle ${cycle} data loading below.`,
-    });
     setLoading(false);
   };
 

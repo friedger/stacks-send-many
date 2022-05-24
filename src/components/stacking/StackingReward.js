@@ -88,60 +88,75 @@ export default function StackingReward({ cycle, version, data }) {
 
   return (
     <>
-      <div className="row text-nowrap text-center">
+      <hr className="cc-divider-alt" />
+      <div className="row text-nowrap text-center flex-column flex-md-row align-items-center justify-content-center">
         <div className="col">
-          <span className="h5">{cycle}</span>
-          <br />
-          <span className="text-muted">Cycle #</span>
+          <div className="row flex-column flex-sm-row">
+            <div className="col">
+              <span className="h5">{cycle}</span>
+              <br />
+              <span className="text-muted">Cycle #</span>
+            </div>
+            <div className="col">
+              <span className="h5">{version}</span>
+              <br />
+              <span className="text-muted">Version</span>
+            </div>
+          </div>
         </div>
         <div className="col">
-          <span className="h5">{version}</span>
-          <br />
-          <span className="text-muted">Version</span>
+          <div className="row flex-column flex-sm-row">
+            <div className="col">
+              <span className="h5">{fromMicro(data.stxReward).toLocaleString()}</span>
+              <br />
+              <span className="text-muted">STX Reward</span>
+            </div>
+            <div className="col">
+              <span className="h5">
+                {version === 'v1'
+                  ? data.toReturn.toLocaleString()
+                  : fromMicro(data.toReturn).toLocaleString()}
+              </span>
+              <br />
+              <span className="text-muted">{symbol} Returned</span>
+            </div>
+          </div>
         </div>
         <div className="col">
-          <span className="h5">{fromMicro(data.stxReward).toLocaleString()}</span>
-          <br />
-          <span className="text-muted">STX Reward</span>
-        </div>
-        <div className="col">
-          <span className="h5">
-            {version === 'v1'
-              ? data.toReturn.toLocaleString()
-              : fromMicro(data.toReturn).toLocaleString()}
-          </span>
-          <br />
-          <span className="text-muted">{symbol} Returned</span>
-        </div>
-        <div className="col">
-          {data.stxReward > 0 || data.toReturn > 0 ? (
-            submitted && txId ? (
-              <>
-                <LinkTx txId={txId} />
-                <br />
-                <span className="text-muted">Claim</span>
-              </>
-            ) : (
-              <button
-                className="btn btn-block btn-primary"
-                type="button"
-                onClick={claimReward}
-                disabled={submitted}
-              >
-                Claim
+          <div className="row flex-column flex-md-row">
+            <div className="col">
+              <LinkTx txId="test" />
+              <br />
+              <span className="text-muted">Claim</span>
+              {data.stxReward > 0 || data.toReturn > 0 ? (
+                submitted && txId ? (
+                  <>
+                    <LinkTx txId={txId} />
+                    <br />
+                    <span className="text-muted">Claim</span>
+                  </>
+                ) : (
+                  <button
+                    className="btn btn-block btn-primary"
+                    type="button"
+                    onClick={claimReward}
+                    disabled={submitted}
+                  >
+                    Claim
+                  </button>
+                )
+              ) : (
+                ''
+              )}
+            </div>
+            <div className="col">
+              <button className="btn btn-block" type="button" onClick={removeFromList}>
+                <i className="bi bi-x-circle" />
               </button>
-            )
-          ) : (
-            ''
-          )}
-        </div>
-        <div className="col">
-          <button className="btn btn-block" type="button" onClick={removeFromList}>
-            <i className="bi bi-x-circle" />
-          </button>
+            </div>
+          </div>
         </div>
       </div>
-      <hr className="cc-divider" />
     </>
   );
 }
