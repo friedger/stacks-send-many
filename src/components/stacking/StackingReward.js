@@ -2,7 +2,14 @@ import { useConnect } from '@stacks/connect-react';
 import { useAtom } from 'jotai';
 import { useMemo, useState } from 'react';
 import { fromMicro, STACKS_NETWORK } from '../../lib/stacks';
-import { uintCV } from '@stacks/transactions';
+import {
+  createAssetInfo,
+  makeContractFungiblePostCondition,
+  makeContractSTXPostCondition,
+  uintCV,
+  FungibleConditionCode,
+  PostConditionMode,
+} from '@stacks/transactions';
 import {
   CITY_CONFIG,
   CITY_INFO,
@@ -24,11 +31,41 @@ export default function StackingReward({ cycle, version, data }) {
 
   const claimReward = async () => {
     const targetCycleCV = uintCV(cycle);
+    const amountUstxCV = uintCV(data.stxReward);
+    const amountCityCoinsCV = uintCV(data.toReturn);
+    // set post conditions
+    let postConditions = [];
+    data.stxReward > 0 &&
+      postConditions.push(
+        makeContractSTXPostCondition(
+          CITY_CONFIG[currentCity.data][version].deployer,
+          CITY_CONFIG[currentCity.data][version].core.name,
+          FungibleConditionCode.Equal,
+          amountUstxCV.value
+        )
+      );
+    data.toReturn > 0 &&
+      postConditions.push(
+        makeContractFungiblePostCondition(
+          CITY_CONFIG[currentCity.data][version].deployer,
+          CITY_CONFIG[currentCity.data][version].core.name,
+          FungibleConditionCode.Equal,
+          amountCityCoinsCV.value,
+          createAssetInfo(
+            CITY_CONFIG[currentCity.data][version].deployer,
+            CITY_CONFIG[currentCity.data][version].token.name,
+            CITY_CONFIG[currentCity.data][version].token.tokenName
+          )
+        )
+      );
+    // submit tx
     await doContractCall({
       contractAddress: CITY_CONFIG[currentCity.data][version].deployer,
       contractName: CITY_CONFIG[currentCity.data][version].core.name,
       functionName: 'claim-stacking-reward',
       functionArgs: [targetCycleCV],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: postConditions,
       network: STACKS_NETWORK,
       onCancel: () => {
         setSubmitted(false);
