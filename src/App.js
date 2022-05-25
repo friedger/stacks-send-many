@@ -28,7 +28,7 @@ export default function App() {
 
   return (
     <Connect authOptions={authOptions}>
-      <div className="container mt-3">
+      <div className="container-fluid">
         <div
           className="row align-items-center justify-content-between text-center py-3"
           style={
@@ -50,7 +50,6 @@ export default function App() {
             <HeaderAuth />
           </div>
         </div>
-        <hr className="cc-divider" />
         <div className="row align-items-center">
           <div className="col">
             <CityMenu menuName="topnav" />
@@ -69,6 +68,7 @@ export default function App() {
           </div>
         </div>
       </div>
+      <hr className="cc-divider" />
       <Footer />
     </Connect>
   );
