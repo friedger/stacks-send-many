@@ -1,116 +1,64 @@
 import { useAtom } from 'jotai';
-import { useEffect, useState } from 'react';
-import {
-  getFirstStacksBlockInRewardCycle,
-  getStackingStatsAtCycleOrDefault,
-} from '../../lib/citycoins';
-import { ustxToStx } from '../../lib/stacks';
-import { currentBlockHeight } from '../../store/common';
-import LoadingSpinner from '../common/LoadingSpinner';
+import { useMemo } from 'react';
+import { fromMicro } from '../../lib/stacks';
+import { CITY_INFO, currentCityAtom, currentRewardCycleAtom } from '../../store/cities';
 
-export default function StackingStats(props) {
-  const [blockHeight] = useAtom(currentBlockHeight);
-  const [startBlock, setStartBlock] = useState(0);
-  const [endBlock, setEndBlock] = useState(0);
-  const [amountStacked, setAmountStacked] = useState(0);
-  const [stxRewards, setStxRewards] = useState(0);
-  const [percentComplete, setPercentComplete] = useState(0);
+export default function StackingStats({ stats }) {
+  const [currentRewardCycle] = useAtom(currentRewardCycleAtom);
+  const [currentCity] = useAtom(currentCityAtom);
 
-  useEffect(() => {
-    const calculatePercent = async endBlock => {
-      if (blockHeight > 0) {
-        if (blockHeight > endBlock) {
-          setPercentComplete(100);
-        } else {
-          if (endBlock - blockHeight < props.config.rewardCycleLength) {
-            setPercentComplete(
-              Math.round((1 - (endBlock - blockHeight) / props.config.rewardCycleLength) * 100)
-            );
-          } else {
-            setPercentComplete(0);
-          }
-        }
-      } else {
-        setPercentComplete(0);
-      }
-    };
-
-    getFirstStacksBlockInRewardCycle(
-      props.contracts.deployer,
-      props.contracts.coreContract,
-      props.cycle
-    )
-      .then(result => {
-        setStartBlock(result.value);
-        const endBlock = result.value + props.config.rewardCycleLength - 1;
-        setEndBlock(endBlock);
-        calculatePercent(endBlock);
-      })
-      .catch(err => {
-        setStartBlock(0);
-        console.log(err);
-      });
-    getStackingStatsAtCycleOrDefault(
-      props.contracts.deployer,
-      props.contracts.coreContract,
-      props.cycle
-    )
-      .then(result => {
-        setAmountStacked(result.value.amountToken.value);
-        setStxRewards(result.value.amountUstx.value);
-      })
-      .catch(err => {
-        setAmountStacked(0);
-        setStxRewards(0);
-        console.log(err);
-      });
-  }, [
-    blockHeight,
-    props.config.rewardCycleLength,
-    props.contracts.coreContract,
-    props.contracts.deployer,
-    props.cycle,
-  ]);
+  const symbol = useMemo(() => {
+    return currentCity.loaded ? CITY_INFO[currentCity.data].symbol : undefined;
+  }, [currentCity.loaded, currentCity.data]);
 
   return (
-    <div className="border rounded p-3 text-nowrap">
-      <p className="fs-5 text-center">Cycle #{props.cycle}</p>
-      <div className="row text-center text-sm-start">
-        <div className="col-sm-6">Start Block</div>
-        <div className="col-sm-6">
-          {startBlock ? startBlock.toLocaleString() : <LoadingSpinner />}
+    <>
+      <hr className="cc-divider-alt" />
+      <div
+        className={`row text-nowrap text-center flex-column flex-md-row align-items-center justify-content-center ${
+          +stats.cycle === +currentRewardCycle.data ? 'text-success' : ''
+        }`}
+      >
+        <div className="col col-md-2">
+          <div className="row flex-column flex-sm-row">
+            <div className="col">
+              <span className="h5">{stats.cycle.toLocaleString()}</span>
+              <br />
+              <span className="text-muted">
+                {+stats.cycle === +currentRewardCycle.data ? 'Current' : 'Cycle #'}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="col col-md-5">
+          <div className="row flex-column flex-sm-row">
+            <div className="col">
+              <span className="h5">{stats.startBlock.toLocaleString()}</span>
+              <br />
+              <span className="text-muted">Start Block</span>
+            </div>
+            <div className="col">
+              <span className="h5">{stats.progress}</span>
+              <br />
+              <span className="text-muted">Progress</span>
+            </div>
+          </div>
+        </div>
+        <div className="col col-md-5">
+          <div className="row flex-column flex-sm-row">
+            <div className="col">
+              <span className="h5">{fromMicro(stats.amountToken).toLocaleString()}</span>
+              <br />
+              <span className="text-muted">{symbol} Stacked</span>
+            </div>
+            <div className="col">
+              <span className="h5">{fromMicro(stats.amountUstx).toLocaleString()}</span>
+              <br />
+              <span className="text-muted">STX Rewards</span>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="row text-center text-sm-start">
-        <div className="col-sm-6">End Block</div>
-        <div className="col-sm-6">{endBlock ? endBlock.toLocaleString() : <LoadingSpinner />}</div>
-      </div>
-      <div className="row text-center text-sm-start">
-        <div className="col-sm-6">{props.token.symbol} Stacked</div>
-        <div className="col-sm-6">
-          {amountStacked ? (
-            amountStacked.toLocaleString(undefined, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            })
-          ) : (
-            <LoadingSpinner />
-          )}
-        </div>
-      </div>
-      <div className="row text-center text-sm-start">
-        <div className="col-sm-6">STX Rewards</div>
-        <div className="col-sm-6">
-          {ustxToStx(stxRewards).toLocaleString(undefined, {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-          })}
-        </div>
-      </div>
-      <div className="row text-center text-sm-start">
-        <div className="col-sm-6">Progress</div>
-        <div className="col-sm-6">{percentComplete + '%'}</div>
-      </div>
-    </div>
+    </>
   );
 }

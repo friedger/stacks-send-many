@@ -1,619 +1,135 @@
-import {
-  callReadOnlyFunction,
-  cvToJSON,
-  cvToValue,
-  standardPrincipalCV,
-  uintCV,
-} from '@stacks/transactions';
-import { NETWORK } from './stacks';
+import { fetchJson, debugLog } from './common';
 
-// enable/disable console logging for each function
-const debug = false;
+// using develop branch until next release
+const CC_API_BASE = `https://citycoins-api.citycoins.workers.dev`;
+// const CC_API_BASE = `https://api.citycoins.co`;
 
-///////////////////////////////////////////////////////////////////////////////
-// CORE: CITY WALLET
-///////////////////////////////////////////////////////////////////////////////
+// get a city's configuration file
+export const getCityConfig = async (version, city) => {
+  const url = `${CC_API_BASE}/tools/${version}/${city}/get-city-configuration`;
+  return await fetchJson(url);
+};
 
-// returns the city wallet principal
-export async function getCityWallet(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-city-wallet',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToValue(resultCv);
-  debug && console.log(result);
-  return result;
-}
+export const getActivationBlock = async (version, city) => {
+  const url = `${CC_API_BASE}/${version}/${city}/get-activation-block`;
+  return await fetchJson(url);
+};
 
-///////////////////////////////////////////////////////////////////////////////
-// CORE: REGISTRATION
-///////////////////////////////////////////////////////////////////////////////
+export const getCCBalance = async (version, city, address) => {
+  const url = `${CC_API_BASE}/${version}/${city}/token/get-balance/${address}`;
+  const result = await fetchJson(url);
+  return result.value;
+};
 
-// returns the activation block height
-export async function getActivationBlock(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-activation-block',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
+export const getRewardCycle = async (version, city, block = undefined) => {
+  const url = `${CC_API_BASE}/${version}/${city}/stacking/get-reward-cycle/${
+    block ? block : 'current'
+  }`;
+  try {
+    const result = await fetchJson(url);
+    return result.value;
+  } catch (err) {
+    debugLog(`getRewardCycle: ${err}`);
+    return undefined;
+  }
+};
 
-// returns the activation delay
-export async function getActivationDelay(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-activation-delay',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
+export const getUserId = async (version, city, address) => {
+  const url = `${CC_API_BASE}/${version}/${city}/activation/get-user-id/${address}`;
+  try {
+    const result = await fetchJson(url);
+    return result.value;
+  } catch (err) {
+    debugLog(`getUserId: ${err}`);
+    return undefined;
+  }
+};
 
-// returns the activation status
-export async function getActivationStatus(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-activation-status',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
+export const getFirstStacksBlockInRewardCycle = async (version, city, cycle) => {
+  const url = `${CC_API_BASE}/${version}/${city}/stacking/get-first-stacks-block-in-reward-cycle/${cycle}`;
+  try {
+    const result = await fetchJson(url);
+    return result.value;
+  } catch (err) {
+    debugLog(`getFirstStacksBlockInRewardCycle: ${err}`);
+    return undefined;
+  }
+};
 
-// returns the activation threshold
-export async function getActivationThreshold(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-activation-threshold',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
+export const getStackingStatsAtCycle = async (version, city, cycle) => {
+  const url = `${CC_API_BASE}/${version}/${city}/stacking/get-stacking-stats-at-cycle/${cycle}/true`;
+  try {
+    const result = await fetchJson(url);
+    return result;
+  } catch (err) {
+    debugLog(`getStackingStatsAtCycle: ${err}`);
+    return undefined;
+  }
+};
 
-// returns the current number of registered users
-export async function getRegisteredUsersNonce(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-registered-users-nonce',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
+export const getMiningStatsAtBlock = async (version, city, block) => {
+  const url = `${CC_API_BASE}/${version}/${city}/mining/get-mining-stats-at-block/${block}/true`;
+  try {
+    return await fetchJson(url);
+  } catch (err) {
+    debugLog(`getMiningStatsAtBlock: ${err}`);
+    return undefined;
+  }
+};
 
-// returns the user ID of the given address
-export async function getUserId(contractAddress, contractName, address) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-user-id',
-    functionArgs: [standardPrincipalCV(address)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
+export const getCoinbaseAmount = async (version, city, block) => {
+  const url = `${CC_API_BASE}/${version}/${city}/token/get-coinbase-amount/${block}`;
+  try {
+    const result = await fetchJson(url);
+    return result.value;
+  } catch (err) {
+    debugLog(`getCoinbaseAmount: ${err}`);
+    return undefined;
+  }
+};
 
-// returns the user address of the given ID
-export async function getUser(contractAddress, contractName, userId) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-user',
-    functionArgs: [uintCV(userId)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
+export const isBlockWinner = async (version, city, block, address) => {
+  const url = `${CC_API_BASE}/${version}/${city}/mining-claims/is-block-winner/${block}/${address}`;
+  try {
+    const result = await fetchJson(url);
+    return result.value;
+  } catch (err) {
+    debugLog(`isBlockWinner: ${err}`);
+    return undefined;
+  }
+};
 
-// TODO: add register-user public function
+export const canClaimMiningReward = async (version, city, block, address) => {
+  const url = `${CC_API_BASE}/${version}/${city}/mining-claims/can-claim-mining-reward/${block}/${address}`;
+  try {
+    const result = await fetchJson(url);
+    return result.value;
+  } catch (err) {
+    debugLog(`canClaimMiningReward: ${err}`);
+    return undefined;
+  }
+};
 
-///////////////////////////////////////////////////////////////////////////////
-// CORE: MINING
-///////////////////////////////////////////////////////////////////////////////
+// https://api.citycoins.co/{version}/{cityname}/stacking/get-stacker-at-cycle/{cycleid}/{userid}/{default}
+export const getStackerAtCycle = async (version, city, cycle, userId) => {
+  const url = `${CC_API_BASE}/${version}/${city}/stacking/get-stacker-at-cycle/${cycle}/${userId}/true`;
+  try {
+    const result = await fetchJson(url);
+    return result;
+  } catch (err) {
+    debugLog(`getStackerAtCycle: ${err}`);
+    return undefined;
+  }
+};
 
-// returns the mining stats for a given block height, or none
-export async function getMiningStatsAtBlock(contractAddress, contractName, blockHeight) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-mining-stats-at-block',
-    functionArgs: [uintCV(blockHeight)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the mining stats for a given block height, or defaults
-export async function getMiningStatsAtBlockOrDefaults(contractAddress, contractName, blockHeight) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-mining-stats-at-block-or-default',
-    functionArgs: [uintCV(blockHeight)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns true if user has mined at a block
-export async function hasMinedAtBlock(contractAddress, contractName, blockHeight, userId) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'has-mined-at-block',
-    functionArgs: [uintCV(blockHeight), uintCV(userId)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the mining stats for a given block height and user ID, or none
-export async function getMinerAtBlock(contractAddress, contractName, blockHeight, userId) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-miner-at-block',
-    functionArgs: [uintCV(blockHeight), uintCV(userId)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the mining stats for a given block height and user ID, or defaults
-export async function getMinerAtBlockOrDefault(contractAddress, contractName, blockHeight, userId) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-miner-at-block-or-default',
-    functionArgs: [uintCV(blockHeight), uintCV(userId)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the high value for a given block
-export async function getLastHighValueAtBlock(contractAddress, contractName, blockHeight) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-last-high-value-at-block',
-    functionArgs: [uintCV(blockHeight)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the block winner ID
-export async function getBlockWinnerId(contractAddress, contractName, blockHeight) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-block-winner-id',
-    functionArgs: [uintCV(blockHeight)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-/*
-PUBLIC FUNCTIONS NEED SOME EXTRA THOUGHT AND TRICKERY
-mostly because I need to learn more about react hooks
-
-// calls mine-tokens public function for a single block
-export async function MineTokens(contractAddress, contractName, senderAddress, amountUstx, memo) {
-  const { doContractCall } = useConnect();
-  const amountUstxCV = uintCV(amountUstx);
-  const memoCV = memo ? someCV(bufferCVFromString(memo.trim())) : noneCV();
-  const postConditions = makeStandardSTXPostCondition(
-    senderAddress,
-    FungibleConditionCode.Equal,
-    amountUstx.value
-  );
-  await doContractCall({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'mine-tokens',
-    functionArgs: [amountUstxCV, memoCV],
-    postConditionMode: PostConditionMode.Deny,
-    postConditions: postConditions,
-    network: NETWORK,
-    senderAddress: senderAddress,
-    onCancel: () => {
-      console.log('mineTokens cancelled');
-    },
-    onFinish: result => {
-      console.log('mineTokens finished');
-      debug && console.log(result);
-      return result;
-    },
-  }).catch(err => console.log(`mineTokens err: ${err}`));
-}
-
-// calls mine-many public function for multiple blocks
-export async function MineMany(contractAddress, contractName, senderAddress, amountUstx, memo) {
-  // mine many blocks
-}
-
-*/
-
-///////////////////////////////////////////////////////////////////////////////
-// CORE: MINING CLAIMS
-///////////////////////////////////////////////////////////////////////////////
-
-// TODO: add claim-mining-reward public function
-
-// returns if a user has won a given block
-export async function isBlockWinner(contractAddress, contractName, address, blockHeight) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'is-block-winner',
-    functionArgs: [standardPrincipalCV(address), uintCV(blockHeight)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns if a user won a given block and can claim the reward
-export async function canClaimMiningReward(contractAddress, contractName, address, blockHeight) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'can-claim-mining-reward',
-    functionArgs: [standardPrincipalCV(address), uintCV(blockHeight)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// CORE: STACKING
-///////////////////////////////////////////////////////////////////////////////
-
-// returns the stacking stats at a given cycle, or none
-export async function getStackingStatsAtCycle(contractAddress, contractName, cycleId) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-stacking-stats-at-cycle',
-    functionArgs: [uintCV(cycleId)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the stacking stats at a given cycle, or defaults
-export async function getStackingStatsAtCycleOrDefault(contractAddress, contractName, cycleId) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-stacking-stats-at-cycle-or-default',
-    functionArgs: [uintCV(cycleId)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the stacking stats at a given cycle for a given user ID, or none
-export async function getStackerAtCycle(contractAddress, contractName, cycleId, userId) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-stacker-at-cycle',
-    functionArgs: [uintCV(cycleId), uintCV(userId)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the stacking stats at a given cycle for a given user ID, or defaults
-export async function getStackerAtCycleOrDefault(contractAddress, contractName, cycleId, userId) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-stacker-at-cycle-or-default',
-    functionArgs: [uintCV(cycleId), uintCV(userId)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the reward cycle for a given block height
-export async function getRewardCycle(contractAddress, contractName, blockHeight) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-reward-cycle',
-    functionArgs: [uintCV(blockHeight)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns if stacking is active at a given cycle
-export async function stackingActiveAtCycle(contractAddress, contractName, cycleId) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'stacking-active-at-cycle',
-    functionArgs: [uintCV(cycleId)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the first stacks block in a given reward cycle
-export async function getFirstStacksBlockInRewardCycle(contractAddress, contractName, cycleId) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-first-stacks-block-in-reward-cycle',
-    functionArgs: [uintCV(cycleId)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the stacking reward for given user and a given reward cycle
-export async function getStackingReward(contractAddress, contractName, userId, targetCycle) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-stacking-reward',
-    functionArgs: [uintCV(userId), uintCV(targetCycle)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// TODO: add stack-tokens public function
-
-///////////////////////////////////////////////////////////////////////////////
-// CORE: STACKING CLAIMS
-///////////////////////////////////////////////////////////////////////////////
-
-// TODO: add claim-stacking-reward public function
-
-///////////////////////////////////////////////////////////////////////////////
-// CORE: TOKEN CONFIGURATION
-///////////////////////////////////////////////////////////////////////////////
-
-// returns the coinbase thresholds set by register-user
-// can be called against core or token contracts
-export async function getCoinbaseThresholds(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-coinbase-thresholds',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the coinbase amount minted for a given block height
-export async function getCoinbaseAmount(contractAddress, contractName, blockHeight) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-coinbase-amount',
-    functionArgs: [uintCV(blockHeight)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// TOKEN: SIP-010
-///////////////////////////////////////////////////////////////////////////////
-
-// TODO: add transfer public function
-
-// returns the name of the token
-export async function getName(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-name',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the symbol of the token
-export async function getSymbol(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-symbol',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the decimals of the token
-export async function getDecimals(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-decimals',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the balance for a given address
-export async function getBalance(contractAddress, contractName, address) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-balance',
-    functionArgs: [standardPrincipalCV(address)],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the total supply of the token
-export async function getTotalSupply(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-total-supply',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-// returns the token URI
-export async function getTokenUri(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'get-token-uri',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToJSON(resultCv);
-  debug && console.log(result);
-  return result;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// TOKEN: SEND MANY
-///////////////////////////////////////////////////////////////////////////////
-
-// TODO: add send-many public function
-
-///////////////////////////////////////////////////////////////////////////////
-// AUTH
-///////////////////////////////////////////////////////////////////////////////
-
-//(define-read-only (is-initialized)
-//  (var-get initialized)
-//)
-
-// can be called against core or token contracts
-export async function isInitialized(contractAddress, contractName) {
-  const resultCv = await callReadOnlyFunction({
-    contractAddress: contractAddress,
-    contractName: contractName,
-    functionName: 'is-initialized',
-    functionArgs: [],
-    network: NETWORK,
-    senderAddress: contractAddress,
-  });
-  const result = cvToValue(resultCv);
-  debug && console.log(result);
-  return result;
-}
+// https://api.citycoins.co/{version}/{cityname}/stacking-claims/get-stacking-reward/{cycleid}/{userid}
+export const getStackingReward = async (version, city, cycle, userId) => {
+  const url = `${CC_API_BASE}/${version}/${city}/stacking-claims/get-stacking-reward/${cycle}/${userId}`;
+  try {
+    const result = await fetchJson(url);
+    return result.value;
+  } catch (err) {
+    debugLog(`getStackingReward: ${err}`);
+    return undefined;
+  }
+};

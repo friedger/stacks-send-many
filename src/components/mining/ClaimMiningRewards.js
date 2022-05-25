@@ -1,169 +1,185 @@
+import { useMemo, useRef, useState } from 'react';
 import { useConnect } from '@stacks/connect-react';
-import { useRef, useState } from 'react';
-import { currentBlockHeight } from '../../store/common';
-import { canClaimMiningReward, isBlockWinner } from '../../lib/citycoins';
-import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import { useAtom } from 'jotai';
-import { useStxAddresses } from '../../lib/hooks';
-import { userSessionState } from '../../lib/auth';
-import { uintCV } from '@stacks/transactions';
-import { NETWORK } from '../../lib/stacks';
+import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import FormResponse from '../common/FormResponse';
+import LoadingSpinner from '../common/LoadingSpinner';
+import { currentStacksBlockAtom, stxAddressAtom } from '../../store/stacks';
+import { CITY_CONFIG, CITY_INFO, currentCityAtom } from '../../store/cities';
+import { canClaimMiningReward, isBlockWinner } from '../../lib/citycoins';
+import { uintCV } from '@stacks/transactions';
+import { STACKS_NETWORK } from '../../lib/stacks';
 
-export default function ClaimMiningRewards(props) {
+export default function ClaimMiningRewards() {
   const { doContractCall } = useConnect();
-
-  const singleBlockRef = useRef();
-
+  const [stxAddress] = useAtom(stxAddressAtom);
+  const [currentStacksBlock] = useAtom(currentStacksBlockAtom);
+  const [currentCity] = useAtom(currentCityAtom);
   const [loading, setLoading] = useState(false);
-  const [loadingClaim, setLoadingClaim] = useState(false);
-  const [canClaim, setCanClaim] = useState(false);
-
   const [formMsg, setFormMsg] = useState({
-    type: '',
+    type: 'light',
     hidden: true,
     text: '',
     txId: '',
   });
 
-  const [userSession] = useAtom(userSessionState);
-  const { ownerStxAddress } = useStxAddresses(userSession);
+  const symbol = useMemo(() => {
+    return currentCity.loaded ? CITY_INFO[currentCity.data].symbol : undefined;
+  }, [currentCity.loaded, currentCity.data]);
 
-  const [blockHeight] = useAtom(currentBlockHeight);
+  const blockHeightRef = useRef();
 
-  const checkWinner = async () => {
-    // check if we can claim
+  const claimPrep = async () => {
+    const block = +blockHeightRef.current.value;
+    // reset state
     setLoading(true);
     setFormMsg({
-      type: '',
+      type: 'light',
       hidden: true,
       text: '',
       txId: '',
     });
-
-    if (singleBlockRef.current.value === '') {
+    // current stacks block must be loaded
+    if (!currentStacksBlock.loaded) {
       setFormMsg({
         type: 'danger',
         hidden: false,
-        text: 'Please enter a block height to check',
-        txId: '',
+        text: 'Stacks block not loaded. Please try again or refresh.',
       });
       setLoading(false);
-    } else if (blockHeight - singleBlockRef.current.value < 100) {
+      return;
+    }
+    // stx address must be loaded
+    if (!stxAddress.loaded) {
       setFormMsg({
         type: 'danger',
         hidden: false,
-        text: 'Please wait for 100 blocks to pass before checking.',
-        txId: '',
+        text: 'Stacks address not loaded. Please try again or refresh.',
       });
       setLoading(false);
-    } else if (singleBlockRef.current.value > blockHeight) {
+      return;
+    }
+    // no empty values
+    if (block === '') {
       setFormMsg({
         type: 'danger',
         hidden: false,
-        text: 'Please select a block height in the past.',
-        txId: '',
+        text: 'Please enter a block height to claim.',
       });
       setLoading(false);
+      return;
+    }
+    // no claiming before mature
+    if (block > currentStacksBlock.data - 100) {
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Cannot claim, the winner is not known until 100 blocks pass.',
+      });
+      setLoading(false);
+      return;
+    }
+    // select target version based on block height
+    const version = await selectCityVersion(block);
+    console.log(`version: ${version}`);
+    if (!version) {
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Cannot find city version for block height.',
+      });
+      setLoading(false);
+      return;
+    }
+    // verify user is winner at block height
+    const winner = await isBlockWinner(version, currentCity.data, block, stxAddress.data);
+    if (winner) {
+      setFormMsg({
+        type: 'success',
+        hidden: false,
+        text: 'Winner at block height, checking if reward claimed.',
+      });
     } else {
       setFormMsg({
-        type: '',
-        hidden: true,
-        text: '',
-        txId: '',
+        type: 'danger',
+        hidden: false,
+        text: 'Cannot claim, did not win at the selected block height.',
       });
-      isBlockWinner(
-        props.contracts.deployer,
-        props.contracts.coreContract,
-        ownerStxAddress,
-        singleBlockRef.current.value
-      ).then(result => {
-        console.log(`isBlockWinner; ${JSON.stringify(result)}`);
-        if (result.value) {
-          setFormMsg({
-            type: 'success',
-            hidden: false,
-            text: `Won block ${singleBlockRef.current.value}, checking if claimed...`,
-            txId: '',
-          });
-          canClaimMiningReward(
-            props.contracts.deployer,
-            props.contracts.coreContract,
-            ownerStxAddress,
-            singleBlockRef.current.value
-          ).then(result => {
-            console.log(`canClaimMiningReward; ${JSON.stringify(result)}`);
-            setCanClaim(result.value);
-            setFormMsg({
-              type: 'success',
-              hidden: false,
-              text: `Won block ${singleBlockRef.current.value}, ${
-                result.value ? 'eligible to claim rewards.' : 'reward already claimed!'
-              }`,
-              txId: '',
-            });
-            setLoading(false);
-          });
-        } else {
-          setFormMsg({
-            type: 'info',
-            hidden: false,
-            text: `Did not win block ${singleBlockRef.current.value}.`,
-            txId: '',
-          });
-          setLoading(false);
-        }
-      });
+      setLoading(false);
+      return;
     }
+    // verify user can claim mining reward
+    const canClaim = await canClaimMiningReward(version, currentCity.data, block, stxAddress.data);
+    if (canClaim) {
+      setFormMsg({
+        type: 'success',
+        hidden: false,
+        text: 'Can claim reward, sending claim transaction.',
+      });
+    } else {
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Cannot claim, reward already claimed.',
+      });
+      setLoading(false);
+      return;
+    }
+    // submit mining claim transaction
+    await claimReward(version, block);
   };
 
-  const claimRewards = async () => {
-    // claim the rewards
-    setLoadingClaim(true);
-    setFormMsg({
-      type: '',
-      hidden: true,
-      text: '',
-      txId: '',
-    });
-
-    const targetBlockCV = uintCV(singleBlockRef.current.value);
+  const claimReward = async (version, block) => {
+    const targetBlockCV = uintCV(block);
     await doContractCall({
-      contractAddress: props.contracts.deployer,
-      contractName: props.contracts.coreContract,
+      contractAddress: CITY_CONFIG[currentCity.data][version].deployer,
+      contractName: CITY_CONFIG[currentCity.data][version].core.name,
       functionName: 'claim-mining-reward',
       functionArgs: [targetBlockCV],
-      network: NETWORK,
+      network: STACKS_NETWORK,
       onCancel: () => {
-        setLoadingClaim(false);
+        setLoading(false);
         setFormMsg({
           type: 'warning',
           hidden: false,
           text: 'Transaction was canceled, please try again.',
-          txId: '',
         });
       },
       onFinish: result => {
-        setLoadingClaim(false);
+        setLoading(false);
         setFormMsg({
           type: 'success',
           hidden: false,
-          text: 'Mining claim transaction successfully sent',
+          text: `Claim transaction succesfully sent for block ${block.toLocaleString()}.`,
           txId: result.txId,
         });
       },
     });
   };
 
+  const selectCityVersion = async block => {
+    return CITY_INFO[currentCity.data].versions.reduce((prev, curr) => {
+      const startBlock = CITY_CONFIG[currentCity.data][curr].core.startBlock;
+      const shutdown = CITY_CONFIG[currentCity.data][curr].core.shutdown;
+      const shutdownBlock = shutdown
+        ? CITY_CONFIG[currentCity.data][curr].core.shutdownBlock
+        : undefined;
+      if (block < startBlock) return prev;
+      if (shutdown && block < shutdownBlock) return curr;
+      if (!shutdown) return curr;
+      return undefined;
+    }, undefined);
+  };
+
   return (
     <div className="container-fluid p-6">
       <h3>
-        Claim Mining Rewards{' '}
+        {`Claim ${symbol ? symbol + ' ' : ''}Mining Rewards`}{' '}
         <a
           className="primary-link"
           target="_blank"
           rel="noreferrer"
-          href="https://docs.citycoins.co/citycoins-core-protocol/claiming-mining-rewards"
+          href="https://docs.citycoins.co/core-protocol/mining-citycoins"
         >
           <i className="bi bi-question-circle"></i>
         </a>
@@ -171,7 +187,7 @@ export default function ClaimMiningRewards(props) {
       <CurrentStacksBlock />
       <p>
         The winner for a block can be queried after 100 blocks pass (~16-17hrs), and the winner can
-        claim newly minted {props.token.symbol}.
+        claim newly minted {symbol}.
       </p>
       <p>
         There is only one winner per block, and STX sent to the contract for mining are not
@@ -181,42 +197,17 @@ export default function ClaimMiningRewards(props) {
         <div className="form-floating">
           <input
             className="form-control"
-            placeholder="Block Height?"
-            ref={singleBlockRef}
-            id="singleBlockHeight"
+            placeholder="Block Height to Claim?"
+            ref={blockHeightRef}
+            id="blockHeightRef"
           />
-          <label htmlFor="singleBlockHeight">Block Height?</label>
+          <label htmlFor="blockHeightRef">Block Height to Claim?</label>
         </div>
-        <button className="btn btn-block btn-primary my-3 me-3" type="button" onClick={checkWinner}>
-          <div
-            role="status"
-            className={`${
-              loading ? '' : 'd-none'
-            } spinner-border spinner-border-sm text-info align-text-top ms-1 me-2`}
-          />
-          Check if Winner
-        </button>
-        <button
-          className="btn btn-block btn-primary my-3"
-          type="button"
-          disabled={!canClaim}
-          onClick={claimRewards}
-        >
-          <div
-            role="status"
-            className={`${
-              loadingClaim ? '' : 'd-none'
-            } spinner-border spinner-border-sm text-info align-text-top ms-1 me-2`}
-          />
-          Claim Rewards
+        <button className="btn btn-block btn-primary my-3" type="button" onClick={claimPrep}>
+          {loading ? <LoadingSpinner text="Claim Mining Reward" /> : 'Claim Mining Reward'}
         </button>
       </form>
-      <FormResponse
-        type={formMsg.type}
-        text={formMsg.text}
-        hidden={formMsg.hidden}
-        txId={formMsg.txId}
-      />
+      <FormResponse {...formMsg} />
     </div>
   );
 }

@@ -3,21 +3,32 @@ import { AppConfig, UserSession } from '@stacks/connect-react';
 import { showConnect } from '@stacks/connect';
 import { atom, useAtom } from 'jotai';
 import { useUpdateAtom } from 'jotai/utils';
+import {
+  appStxAddressAtom,
+  stxBnsNameAtom,
+  loginStatusAtom,
+  stxAddressAtom,
+} from '../store/stacks';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
-export const userSessionState = atom(new UserSession({ appConfig }));
-export const userDataState = atom();
-export const authResponseState = atom();
+export const userSessionStateAtom = atom(new UserSession({ appConfig }));
+export const userDataStateAtom = atom();
+export const authResponseStateAtom = atom();
 
 export const useConnect = () => {
-  const [userSession] = useAtom(userSessionState);
-  const setUserData = useUpdateAtom(userDataState);
-  const setAuthResponse = useUpdateAtom(authResponseState);
+  const [userSession] = useAtom(userSessionStateAtom);
+  const setUserData = useUpdateAtom(userDataStateAtom);
+  const setAuthResponse = useUpdateAtom(authResponseStateAtom);
+  const setLoginStatus = useUpdateAtom(loginStatusAtom);
+  const setStxAddress = useUpdateAtom(stxAddressAtom);
+  const setAppStxAddress = useUpdateAtom(appStxAddressAtom);
+  const setBnsName = useUpdateAtom(stxBnsNameAtom);
 
   const onFinish = async payload => {
     setAuthResponse(payload.authResponse);
     const userData = await payload.userSession.loadUserData();
     setUserData(userData);
+    setLoginStatus(true);
   };
 
   const authOptions = {
@@ -36,8 +47,12 @@ export const useConnect = () => {
   };
 
   const handleSignOut = useCallback(() => {
+    setLoginStatus(false);
+    setStxAddress('');
+    setAppStxAddress('');
+    setBnsName('');
     userSession?.signUserOut('/');
-  }, [userSession]);
+  }, [setAppStxAddress, setBnsName, setLoginStatus, setStxAddress, userSession]);
 
   return { handleOpenAuth, handleSignOut, authOptions };
 };
