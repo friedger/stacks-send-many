@@ -125,9 +125,6 @@ export default function StackingReward({ cycle, version, data }) {
         <div className="col">
           <div className="row flex-column flex-md-row">
             <div className="col">
-              <LinkTx txId="test" />
-              <br />
-              <span className="text-muted">Claim</span>
               {data.stxReward > 0 || data.toReturn > 0 ? (
                 submitted && txId ? (
                   <>
