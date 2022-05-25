@@ -84,53 +84,66 @@ export function ProfileFull() {
               <i className="bi bi-x-circle"></i>
             </button>
           </div>
-          <hr className="cc-divider" />
-          <h4 className="text-center">Account Balances</h4>
-          <div className="row">
+          <h4 className="text-center mt-3">Account Balances</h4>
+          <div className="row align-items-center">
             {balances.loaded ? (
               Object.keys(balances.data).map(key => {
                 return typeof balances.data[key] === 'object' ? (
                   Object.keys(balances.data[key]).map(key2 => {
                     return (
                       <Fragment key={`${key}-${key2}-container`}>
-                        <div className="col-6 text-right text-nowrap">
+                        <div className="col-4 text-nowrap text-right">
                           {key2 === 'v2'
                             ? fromMicro(balances.data[key][key2]).toLocaleString()
                             : balances.data[key][key2].toLocaleString()}
                         </div>
-                        <div className="col-6">
-                          {key2.toUpperCase()} {key.toUpperCase()}
+                        <div className="col-4 text-center">
+                          {key.toUpperCase()} ({key2})
                         </div>
+                        <div className="col-4 text-center">
+                          {key2 === 'v1' && (
+                            <button
+                              className="btn btn-sm btn-outline-primary"
+                              title={`Convert V1 ${key.toUpperCase()} to V2 ${key.toUpperCase()}`}
+                            >
+                              Convert
+                            </button>
+                          )}
+                        </div>
+                        <hr className="cc-divider-alt" />
                       </Fragment>
                     );
                   })
                 ) : (
                   <Fragment key={`${key}-container`}>
-                    <div className="col-6 text-right text-nowrap">
+                    <div className="col-4 text-nowrap text-right">
                       {fromMicro(balances.data[key]).toLocaleString()}
                     </div>
-                    <div className="col-6">{key.toUpperCase()}</div>
+                    <div className="col-4 text-center">{key.toUpperCase()}</div>
+                    <div class="w-100"></div>
+                    <hr className="cc-divider-alt" />
                   </Fragment>
                 );
               })
             ) : (
               <LoadingSpinner text="Loading balances..." />
             )}
-            <hr className="cc-divider" />
-            <h4 className="text-center">CityCoin User IDs</h4>
+            <h4 className="text-center mt-3">CityCoin User IDs</h4>
             {userIds.loaded ? (
               Object.keys(userIds.data).map(key => {
                 return Object.keys(userIds.data[key]).map(key2 => {
                   return (
                     <Fragment key={`${key}-${key2}-container`}>
-                      <div className="col-6 text-right text-nowrap">
+                      <div className="col-4 text-right text-nowrap">
                         {userIds.data[key][key2]
                           ? userIds.data[key][key2].toLocaleString()
                           : 'None'}
                       </div>
-                      <div className="col-6">
-                        {key2.toUpperCase()} {key.toUpperCase()}
+                      <div className="col-4 text-center">
+                        {key.toUpperCase()} ({key2})
                       </div>
+                      <div class="w-100"></div>
+                      <hr className="cc-divider-alt" />
                     </Fragment>
                   );
                 });
