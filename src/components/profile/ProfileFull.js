@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { useAtom } from 'jotai';
 import { Address } from './Address';
 import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
@@ -95,11 +94,7 @@ export function ProfileFull() {
                   return (
                     <CityCoinBalance
                       key={`${symbol}-${version}-container`}
-                      balance={
-                        version === 'v2'
-                          ? fromMicro(balances.data[symbol][version]).toLocaleString()
-                          : balances.data[symbol][version].toLocaleString()
-                      }
+                      balances={balances}
                       symbol={symbol}
                       version={version}
                     />

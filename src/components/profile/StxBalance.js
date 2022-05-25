@@ -3,7 +3,7 @@ export default function StxBalance({ balance, symbol }) {
     <div className="row align-items-center">
       <div className="col-4 text-nowrap text-right">{balance}</div>
       <div className="col-4 text-center">{symbol.toUpperCase()}</div>
-      <div class="w-100"></div>
+      <div className="w-100"></div>
     </div>
   );
 }

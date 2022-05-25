@@ -5,7 +5,7 @@ export default function CityCoinUserIds({ userId, city, version }) {
       <div className="col-4 text-center">
         {city.toUpperCase()} ({version})
       </div>
-      <div class="w-100"></div>
+      <div className="w-100"></div>
     </div>
   );
 }
