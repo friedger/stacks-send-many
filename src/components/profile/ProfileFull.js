@@ -91,14 +91,14 @@ export function ProfileFull() {
             Object.keys(balances.data).map(symbol => {
               return typeof balances.data[symbol] === 'object' ? (
                 Object.keys(balances.data[symbol]).map(version => {
-                  return (
+                  return balances.data[symbol][version] > 0 ? (
                     <CityCoinBalance
                       key={`${symbol}-${version}-container`}
                       balances={balances}
                       symbol={symbol}
                       version={version}
                     />
-                  );
+                  ) : null;
                 })
               ) : (
                 <StxBalance
