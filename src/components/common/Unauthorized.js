@@ -16,10 +16,14 @@ export default function Unauthorized() {
           This page requires logging in with the{' '}
           <a href="https://hiro.so/wallet/install-web" target="_blank" rel="noreferrer">
             Hiro Wallet Browser Extension
+          </a>{' '}
+          or{' '}
+          <a href="https://xverse.app/" target="_blank" rel="noreferrer">
+            Xverse Mobile Wallet
           </a>
-          .
+          . .
         </p>
-        <p>Please check that you have the extension installed and enabled.</p>
+        <p>Please check that you have the wallet installed and enabled.</p>
       </div>
       <div className="row align-items-center mb-3">
         <div className="col text-center">
