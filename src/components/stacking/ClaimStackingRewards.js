@@ -85,15 +85,15 @@ export default function ClaimStackingRewards() {
       setLoading(false);
       return;
     }
-    // no claiming during/after current cycle
+    // warn if claiming during/after current cycle
     if (cycle >= currentRewardCycle.data) {
       setFormMsg({
-        type: 'danger',
+        type: 'warning',
         hidden: false,
-        text: 'Reward cycle must be before current cycle.',
+        text: `Reward cycle is in the future. Rewards will show 0 for the current version (${
+          CITY_INFO[currentCity.data].currentVersion
+        }) of the contract.`,
       });
-      setLoading(false);
-      return;
     }
     // get claim amounts for each version
     CITY_INFO[currentCity.data].versions.map(async version => {

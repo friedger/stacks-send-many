@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { useAtom } from 'jotai';
 import { Address } from './Address';
 import { NetworkIndicatorIcon } from './NetworkIndicatorIcon';
@@ -7,6 +6,9 @@ import { useConnect } from '../../lib/auth';
 import { fromMicro, isTestnet, TESTNET_FAUCET_URL } from '../../lib/stacks';
 import { loginStatusAtom, stxAddressAtom, userBalancesAtom } from '../../store/stacks';
 import { userIdAtom } from '../../store/cities';
+import CityCoinBalance from './CityCoinBalance';
+import StxBalance from './StxBalance';
+import CityCoinUserIds from './CityCoinUserIds';
 
 export function ProfileFull() {
   const [loginStatus] = useAtom(loginStatusAtom);
@@ -84,61 +86,53 @@ export function ProfileFull() {
               <i className="bi bi-x-circle"></i>
             </button>
           </div>
+          <h4 className="text-center mt-3">Account Balances</h4>
+          {balances.loaded ? (
+            Object.keys(balances.data).map(symbol => {
+              return typeof balances.data[symbol] === 'object' ? (
+                Object.keys(balances.data[symbol]).map(version => {
+                  return balances.data[symbol][version] > 0 ? (
+                    <CityCoinBalance
+                      key={`${symbol}-${version}-container`}
+                      balances={balances}
+                      symbol={symbol}
+                      version={version}
+                    />
+                  ) : null;
+                })
+              ) : (
+                <StxBalance
+                  key={`${symbol}-container`}
+                  balance={fromMicro(balances.data[symbol]).toLocaleString()}
+                  symbol={symbol}
+                />
+              );
+            })
+          ) : (
+            <LoadingSpinner text="Loading balances..." />
+          )}
           <hr className="cc-divider" />
-          <h4 className="text-center">Account Balances</h4>
-          <div className="row">
-            {balances.loaded ? (
-              Object.keys(balances.data).map(key => {
-                return typeof balances.data[key] === 'object' ? (
-                  Object.keys(balances.data[key]).map(key2 => {
-                    return (
-                      <Fragment key={`${key}-${key2}-container`}>
-                        <div className="col-6 text-right text-nowrap">
-                          {key2 === 'v2'
-                            ? fromMicro(balances.data[key][key2]).toLocaleString()
-                            : balances.data[key][key2].toLocaleString()}
-                        </div>
-                        <div className="col-6">
-                          {key2.toUpperCase()} {key.toUpperCase()}
-                        </div>
-                      </Fragment>
-                    );
-                  })
-                ) : (
-                  <Fragment key={`${key}-container`}>
-                    <div className="col-6 text-right text-nowrap">
-                      {fromMicro(balances.data[key]).toLocaleString()}
-                    </div>
-                    <div className="col-6">{key.toUpperCase()}</div>
-                  </Fragment>
+          <h4 className="text-center mt-3">CityCoin User IDs</h4>
+          {userIds.loaded ? (
+            Object.keys(userIds.data).map(city => {
+              return Object.keys(userIds.data[city]).map(version => {
+                return (
+                  <CityCoinUserIds
+                    key={`${city}-${version}-container`}
+                    userId={
+                      userIds.data[city][version]
+                        ? userIds.data[city][version].toLocaleString()
+                        : 'None'
+                    }
+                    city={city}
+                    version={version}
+                  />
                 );
-              })
-            ) : (
-              <LoadingSpinner text="Loading balances..." />
-            )}
-            <hr className="cc-divider" />
-            <h4 className="text-center">CityCoin User IDs</h4>
-            {userIds.loaded ? (
-              Object.keys(userIds.data).map(key => {
-                return Object.keys(userIds.data[key]).map(key2 => {
-                  return (
-                    <Fragment key={`${key}-${key2}-container`}>
-                      <div className="col-6 text-right text-nowrap">
-                        {userIds.data[key][key2]
-                          ? userIds.data[key][key2].toLocaleString()
-                          : 'None'}
-                      </div>
-                      <div className="col-6">
-                        {key2.toUpperCase()} {key.toUpperCase()}
-                      </div>
-                    </Fragment>
-                  );
-                });
-              })
-            ) : (
-              <LoadingSpinner text="Loading user IDs..." />
-            )}
-          </div>
+              });
+            })
+          ) : (
+            <LoadingSpinner text="Loading user IDs..." />
+          )}
         </div>
       </div>
     );
