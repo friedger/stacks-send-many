@@ -8,6 +8,7 @@
   --brand-text: #000;
   --brand-layer-2: #c4c6c8;
   --brand-layer-1: #d1d3d4;
+  --brand-layer-0: #ebeced;
   --brand-background: #fff;
   /* Triadic and Complementary Variations */
   --brand-info: #30aed9;
@@ -62,7 +63,7 @@ inspect {
 }
 
 .bg-secondary {
-  background-color: var(--brand-layer-1) !important;
+  background-color: var(--brand-layer-0) !important;
   color: var(--brand-text);
 }
 
