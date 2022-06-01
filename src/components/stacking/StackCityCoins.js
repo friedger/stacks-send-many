@@ -1,9 +1,15 @@
 import { useConnect } from '@stacks/connect-react';
-import { uintCV } from '@stacks/transactions';
+import {
+  createAssetInfo,
+  FungibleConditionCode,
+  makeStandardFungiblePostCondition,
+  PostConditionMode,
+  uintCV,
+} from '@stacks/transactions';
 import { useAtom } from 'jotai';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { isStringAllDigits } from '../../lib/common';
-import { fromMicro, STACKS_NETWORK } from '../../lib/stacks';
+import { fromMicro, STACKS_NETWORK, toMicro } from '../../lib/stacks';
 import {
   CITY_CONFIG,
   CITY_INFO,
@@ -11,7 +17,7 @@ import {
   currentRewardCycleAtom,
   stackingStatsPerCityAtom,
 } from '../../store/cities';
-import { userBalancesAtom } from '../../store/stacks';
+import { stxAddressAtom, userBalancesAtom } from '../../store/stacks';
 import CurrentRewardCycle from '../common/CurrentRewardCycle';
 import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -20,6 +26,7 @@ import StackingStats from '../dashboard/StackingStats';
 export default function StackCityCoins() {
   const { doContractCall } = useConnect();
 
+  const [stxAddress] = useAtom(stxAddressAtom);
   const [currentRewardCycle] = useAtom(currentRewardCycleAtom);
   const [currentCity] = useAtom(currentCityAtom);
   const [stackingStatsPerCity] = useAtom(stackingStatsPerCityAtom);
@@ -50,6 +57,19 @@ export default function StackCityCoins() {
     return undefined;
   }, [currentCity.loaded, currentCity.data, stackingStatsPerCity]);
 
+  useEffect(() => {
+    // reset state
+    setLoading(false);
+    setFormMsg({
+      type: 'light',
+      hidden: true,
+      text: '',
+      txId: '',
+    });
+    amountRef.current.value = undefined;
+    cyclesRef.current.value = undefined;
+  }, [currentCity.data]);
+
   const stackingPrep = async () => {
     const amount = +amountRef.current.value;
     const cycles = +cyclesRef.current.value;
@@ -61,22 +81,24 @@ export default function StackCityCoins() {
       text: '',
       txId: '',
     });
-    // check if amount is valid
-    if (isNaN(amount) || !isStringAllDigits(amount) || amount <= 0) {
+    // check if balances are loaded
+    if (!balances.loaded) {
       setFormMsg({
         type: 'danger',
         hidden: false,
-        text: `Please enter a valid amount to stack.${
-          balances.loaded
-            ? ' Current balance: ' +
-              fromMicro(balances.data[currentCity.data]['v2']).toLocaleString(undefined, {
-                minimumFractionDigits: 6,
-                maximumFractionDigits: 6,
-              }) +
-              ' ' +
-              symbol
-            : ''
-        }.`,
+        text: 'Balances not loaded. Please try again or refresh.',
+      });
+      return;
+    }
+    // check if amount is valid
+    const balance = +balances.data[currentCity.data]['v2'];
+    if (isNaN(amount) || !isStringAllDigits(amount) || amount <= 0 || toMicro(amount) > balance) {
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: `Please enter a valid amount to stack. Current balance: ${fromMicro(
+          balances.data[currentCity.data]['v2']
+        ).toLocaleString()} ${symbol}`,
       });
       setLoading(false);
       return;
@@ -91,11 +113,21 @@ export default function StackCityCoins() {
       setLoading(false);
       return;
     }
+    // stx address must be loaded
+    if (!stxAddress.loaded) {
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Stacks address not loaded. Please try again or refresh.',
+      });
+      setLoading(false);
+      return;
+    }
     await stack(amount, cycles);
   };
 
   const stack = async (amount, cycles) => {
-    const amountCV = uintCV(amount);
+    const amountCV = uintCV(toMicro(amount));
     const cyclesCV = uintCV(cycles);
     const version = CITY_INFO[currentCity.data].currentVersion;
     await doContractCall({
@@ -104,6 +136,19 @@ export default function StackCityCoins() {
       functionName: 'stack-tokens',
       functionArgs: [amountCV, cyclesCV],
       network: STACKS_NETWORK,
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        makeStandardFungiblePostCondition(
+          stxAddress.data,
+          FungibleConditionCode.Equal,
+          amountCV.value,
+          createAssetInfo(
+            CITY_CONFIG[currentCity.data][version].deployer,
+            CITY_CONFIG[currentCity.data][version].token.name,
+            CITY_CONFIG[currentCity.data][version].token.tokenName
+          )
+        ),
+      ],
       onCancel: () => {
         setLoading(false);
         setFormMsg({
@@ -122,6 +167,18 @@ export default function StackCityCoins() {
         });
       },
     });
+  };
+
+  const max = async () => {
+    if (!balances.loaded) {
+      setFormMsg({
+        type: 'danger',
+        hidden: false,
+        text: 'Balances not loaded. Please try again or refresh.',
+      });
+      return;
+    }
+    amountRef.current.value = fromMicro(balances.data[currentCity.data]['v2']);
   };
 
   return (
@@ -160,55 +217,57 @@ export default function StackCityCoins() {
           <StackingStats key={`stats-${value.cycle}`} stats={value} />
         ))
       )}
-      <div class="row flex-col bg-secondary rounded-3 p-3 mt-3">
-        <div class="col-lg-6">
-          <p className="fw-bold mt-3">Some quick notes:</p>
-          <ul>
-            <li>{symbol} are transferred to the contract while Stacking</li>
-            <li>STX rewards can be claimed after each cycle ends</li>
-            <li>Stacked {symbol} can be claimed after the selected period ends</li>
-            <li>
-              Stacking always occurs in the <span className="fst-italic">next reward cycle</span>
-            </li>
-            <li>Stackers must skip one cycle after the selected period ends</li>
-          </ul>
-        </div>
-        <div class="col">
-          <h4 className="mt-3">{`Stack ${symbol} in Cycle ${currentRewardCycle.data + 1}`}</h4>
-          <form>
-            <div className="input-group mb-3">
-              <input
-                type="number"
-                className="form-control"
-                ref={amountRef}
-                aria-label={`Amount in ${symbol}`}
-                placeholder={`Amount in ${symbol}`}
-                required
-                minLength="1"
-              />
-              <span className="input-group-text">{symbol}</span>
-              <button className="btn btn-sm btn-primary ms-3" type="button">
-                MAX
+      <div class="container-fluid">
+        <div class="row flex-col bg-secondary rounded-3 p-3 mt-3">
+          <div class="col-lg-6">
+            <p className="fs-4 fw-bold mt-3">Some quick notes:</p>
+            <ul>
+              <li>{symbol} are transferred to the contract while Stacking</li>
+              <li>STX rewards can be claimed after each cycle ends</li>
+              <li>Stacked {symbol} can be claimed after the selected period ends</li>
+              <li>
+                Stacking always occurs in the <span className="fst-italic">next reward cycle</span>
+              </li>
+              <li>Stackers must skip one cycle after the selected period ends</li>
+            </ul>
+          </div>
+          <div class="col">
+            <h4 className="mt-3">{`Stack ${symbol} in Cycle ${currentRewardCycle.data + 1}`}</h4>
+            <form>
+              <div className="input-group mb-3">
+                <input
+                  type="number"
+                  className="form-control"
+                  ref={amountRef}
+                  aria-label={`Amount in ${symbol}`}
+                  placeholder={`Amount in ${symbol}`}
+                  required
+                  minLength="1"
+                />
+                <span className="input-group-text">{symbol}</span>
+                <button className="btn btn-sm btn-primary ms-3" type="button" onClick={max}>
+                  MAX
+                </button>
+              </div>
+              <div className="input-group mb-3">
+                <input
+                  type="number"
+                  className="form-control"
+                  ref={cyclesRef}
+                  aria-label="Number of Reward Cycles"
+                  placeholder="Number of Reward Cycles"
+                  required
+                  max="32"
+                  minLength="1"
+                />
+              </div>
+              <button className="btn btn-block btn-primary" type="button" onClick={stackingPrep}>
+                {loading ? <LoadingSpinner text="Stacking..." /> : 'Stack'}
               </button>
-            </div>
-            <div className="input-group mb-3">
-              <input
-                type="number"
-                className="form-control"
-                ref={cyclesRef}
-                aria-label="Number of Reward Cycles"
-                placeholder="Number of Reward Cycles"
-                required
-                max="32"
-                minLength="1"
-              />
-            </div>
-            <button className="btn btn-block btn-primary" type="button" onClick={stackingPrep}>
-              {loading ? <LoadingSpinner text="Stacking..." /> : 'Stack'}
-            </button>
-          </form>
-          <br />
-          <FormResponse {...formMsg} />
+            </form>
+            <br />
+            <FormResponse {...formMsg} />
+          </div>
         </div>
       </div>
     </div>
