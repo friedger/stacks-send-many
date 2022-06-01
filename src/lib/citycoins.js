@@ -1,8 +1,8 @@
 import { fetchJson, debugLog } from './common';
 
 // using develop branch until next release
-const CC_API_BASE = `https://citycoins-api.citycoins.workers.dev`;
-// const CC_API_BASE = `https://api.citycoins.co`;
+// const CC_API_BASE = `https://citycoins-api.citycoins.workers.dev`;
+const CC_API_BASE = `https://api.citycoins.co`;
 
 // get a city's configuration file
 export const getCityConfig = async (version, city) => {
