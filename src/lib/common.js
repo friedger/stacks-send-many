@@ -24,6 +24,12 @@ export const fetchJson = async url => {
   throw new Error(`fetchJson: ${url} ${response.status} ${response.statusText}`);
 };
 
+// fix for isNaN not being reliable
+export function isStringAllDigits(value) {
+  return value.toString().match(/^[0-9]+$/g) !== null;
+}
+
+// INCOMPLETE
 // helper to create a dynamically nested object
 // credit: https://gist.github.com/brianswisher/2ce1ffe3ec08634f78aacd1b7baa31f9
 // modified and didn't work first time around but pattern in
