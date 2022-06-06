@@ -1,7 +1,7 @@
 import { Link } from '@reach/router';
 import { useUpdateAtom } from 'jotai/utils';
 import { useConnect } from '../../lib/auth';
-import { isTestnet } from '../../lib/stacks';
+import { CHAIN_SUFFIX } from '../../lib/stacks';
 import { currentRouteAtom } from '../../store/cities';
 
 export default function Unauthorized() {
@@ -35,7 +35,7 @@ export default function Unauthorized() {
             Connect Wallet
           </button>
           <Link
-            to={`/dashboard${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`}
+            to={`/dashboard${CHAIN_SUFFIX}`}
             className="btn btn-md btn-outline-primary"
             onClick={() => {
               setCurrentRoute({ loaded: true, data: 'dashboard' });

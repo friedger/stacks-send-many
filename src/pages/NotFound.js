@@ -1,6 +1,6 @@
 import { Link } from '@reach/router';
 import { useUpdateAtom } from 'jotai/utils';
-import { isTestnet } from '../lib/stacks';
+import { CHAIN_SUFFIX } from '../lib/stacks';
 import { currentRouteAtom } from '../store/cities';
 
 export default function NotFound() {
@@ -16,7 +16,7 @@ export default function NotFound() {
       <div className="row align-items-center">
         <div className="col text-center">
           <Link
-            to={`/${isTestnet ? '?chain=testnet' : '?chain=mainnet'}`}
+            to={`/${CHAIN_SUFFIX}`}
             className="btn btn-lg btn-outline-primary"
             onClick={setCurrentRoute({ loaded: false, data: '' })}
           >
