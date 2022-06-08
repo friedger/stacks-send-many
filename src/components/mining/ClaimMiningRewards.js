@@ -4,6 +4,7 @@ import { useAtom } from 'jotai';
 import CurrentStacksBlock from '../common/CurrentStacksBlock';
 import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
+import DocumentationLink from '../common/DocumentationLink';
 import { currentStacksBlockAtom, stxAddressAtom } from '../../store/stacks';
 import { CITY_CONFIG, CITY_INFO, currentCityAtom } from '../../store/cities';
 import { canClaimMiningReward, isBlockWinner } from '../../lib/citycoins';
@@ -175,14 +176,7 @@ export default function ClaimMiningRewards() {
     <div className="container-fluid p-6">
       <h3>
         {`Claim ${symbol ? symbol + ' ' : ''}Mining Rewards`}{' '}
-        <a
-          className="primary-link"
-          target="_blank"
-          rel="noreferrer"
-          href="https://docs.citycoins.co/core-protocol/mining-citycoins"
-        >
-          <i className="bi bi-question-circle"></i>
-        </a>
+        <DocumentationLink docLink="https://docs.citycoins.co/core-protocol/mining-citycoins" />
       </h3>
       <CurrentStacksBlock />
       <p>

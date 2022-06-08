@@ -21,6 +21,7 @@ import { stxAddressAtom, userBalancesAtom } from '../../store/stacks';
 import CurrentRewardCycle from '../common/CurrentRewardCycle';
 import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
+import DocumentationLink from '../common/DocumentationLink';
 import StackingStats from '../dashboard/StackingStats';
 
 export default function StackCityCoins() {
@@ -185,14 +186,7 @@ export default function StackCityCoins() {
     <div className="container-fluid p-6">
       <h3>
         {`Stacking ${symbol ? symbol : 'CityCoins'}`}{' '}
-        <a
-          className="primary-link"
-          target="_blank"
-          rel="noreferrer"
-          href="https://docs.citycoins.co/core-protocol/stacking-citycoins"
-        >
-          <i className="bi bi-question-circle"></i>
-        </a>
+        <DocumentationLink docLink="https://docs.citycoins.co/core-protocol/stacking-citycoins"/>
       </h3>
       <CurrentRewardCycle symbol={symbol} />
       <p>
