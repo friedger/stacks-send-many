@@ -13,6 +13,7 @@ import { currentStacksBlockAtom } from '../../store/stacks';
 import CurrentRewardCycle from '../common/CurrentRewardCycle';
 import FormResponse from '../common/FormResponse';
 import LoadingSpinner from '../common/LoadingSpinner';
+import DocumentationLink from '../common/DocumentationLink';
 import StackingReward from './StackingReward';
 
 export default function ClaimStackingRewards() {
@@ -140,14 +141,7 @@ export default function ClaimStackingRewards() {
     <div className="container-fluid p-6 mb-3">
       <h3>
         {`Claim ${symbol ? symbol + ' ' : ''}Stacking Rewards`}{' '}
-        <a
-          className="primary-link"
-          target="_blank"
-          rel="noreferrer"
-          href="https://docs.citycoins.co/core-protocol/stacking-citycoins"
-        >
-          <i className="bi bi-question-circle"></i>
-        </a>
+        <DocumentationLink docLink="https://docs.citycoins.co/core-protocol/stacking-citycoins" />
       </h3>
       <CurrentRewardCycle />
       <p>
