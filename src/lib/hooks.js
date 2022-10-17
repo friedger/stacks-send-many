@@ -11,12 +11,10 @@ export function useStxAddresses(userSession) {
   useEffect(() => {
     if (userSession) {
       getUserData(userSession).then(userData => {
-        const { address } = getStacksAccount(userData.appPrivateKey);
-        setAppStxAddress(addressToString(address));
         setOwnerStxAddress(userData.profile.stxAddress[testnet || mocknet ? 'testnet' : 'mainnet']);
       });
     }
   }, [userSession]);
 
-  return { ownerStxAddress, appStxAddress };
+  return { ownerStxAddress };
 }
