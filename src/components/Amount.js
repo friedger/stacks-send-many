@@ -3,7 +3,8 @@ import { AmountFiat } from './AmountFiat';
 import { AmountStx } from './AmountStx';
 import { AmountXbtc } from './AmountXbtc';
 export function Amount({ ustx, xsats, className }) {
-  if (ustx) {
+  console.log({ ustx, xsats });
+  if (ustx || ustx === 0) {
     if (isNaN(ustx)) {
       return ustx;
     }
@@ -12,7 +13,7 @@ export function Amount({ ustx, xsats, className }) {
         <AmountStx ustx={ustx} /> (<AmountFiat ustx={ustx} />)
       </span>
     );
-  } else if (xsats) {
+  } else if (xsats || xsats === 0) {
     if (isNaN(xsats)) {
       return xsats;
     }

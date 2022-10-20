@@ -59,7 +59,7 @@ export function Profile({ stxAddress, asset }) {
           ) : (
             <Amount
               className="font-weight-bold balance"
-              xsats={profileState.account.fungible_tokens[WRAPPED_BITCOIN_ASSET].balance}
+              xsats={profileState.account.fungible_tokens?.[WRAPPED_BITCOIN_ASSET]?.balance || 0}
             />
           )}
           <br />
