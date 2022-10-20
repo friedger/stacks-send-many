@@ -2,7 +2,7 @@ import { hexToCV } from '@stacks/transactions';
 import React, { useState, useEffect } from 'react';
 import { chainSuffix, CONTRACT_ADDRESS } from '../lib/constants';
 
-import { getTx } from '../lib/transactions';
+import { getTx, jsonStringify } from '../lib/transactions';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { TxEvent } from './TxEvent';
@@ -132,7 +132,7 @@ export function SendManyGroupTxs({ ownerStxAddress, userSession, txList }) {
         <>Transaction not found on server.</>
       )}
       {progress >= 100 && allTxs && !allTxs.firstTx && (
-        <>No transactions found with id {JSON.stringify(txList)}.</>
+        <>No transactions found with id {jsonStringify(txList)}.</>
       )}
       {status && (
         <>

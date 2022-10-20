@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, Fragment, useCallback } from 'react';
 
-import { getTxs, getTxsAsCSV, getTxsAsJSON } from '../lib/transactions';
+import { getTxs, getTxsAsCSV, getTxsAsJSON, jsonStringify } from '../lib/transactions';
 import DownloadLink from 'react-download-link';
 import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';
@@ -135,7 +135,7 @@ export function SendManyTxList({ userSession }) {
                           userSession,
                           filter(searchRef.current.value.trim())
                         );
-                        const result = JSON.stringify(txs);
+                        const result = jsonStringify(txs);
                         setExporting(false);
                         return result;
                       }}

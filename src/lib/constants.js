@@ -59,8 +59,8 @@ export const STACK_API_URL = localNode
 export const STACKS_API_WS_URL = localNode
   ? 'ws:localhost:3999/'
   : mainnet
-  ? 'ws://stacks-node-api.mainnet.stacks.co/'
-  : 'ws://stacks-node-api.testnet.stacks.co/';
+  ? 'wss://stacks-node-api.mainnet.stacks.co/'
+  : 'wss://stacks-node-api.testnet.stacks.co/';
 export const STACKS_API_ACCOUNTS_URL = `${STACK_API_URL}/v2/accounts`;
 
 export const NETWORK = mainnet ? new StacksMainnet() : new StacksTestnet();

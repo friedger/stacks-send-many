@@ -17,7 +17,7 @@ export function resultToStatus(result) {
     const txId = result.substr(1, 64);
     return txIdToStatus(txId);
   } else if (result && result.error) {
-    return JSON.stringify(result);
+    return jsonStringify(result);
   } else {
     return result.toString();
   }
@@ -47,6 +47,10 @@ export function txUrl(txId) {
   }
 }
 
+export function jsonStringify(data) {
+  return JSON.stringify(data, (_, value) => (typeof value === 'bigint' ? value.toString() : value));
+}
+
 const indexFileName = mainnet
   ? 'index-mainnet.json'
   : testnet
@@ -54,7 +58,7 @@ const indexFileName = mainnet
   : 'index-mocknet.json';
 
 export async function saveTxData(data, userSession) {
-  console.log(JSON.stringify(data));
+  console.log(jsonStringify(data));
   const storage = new Storage({ userSession });
   let indexArray;
   try {
@@ -65,8 +69,8 @@ export async function saveTxData(data, userSession) {
     indexArray = [];
   }
   indexArray.push(data.txId);
-  await storage.putFile(indexFileName, JSON.stringify(indexArray));
-  await storage.putFile(`txs/${data.txId}.json`, JSON.stringify({ data }));
+  await storage.putFile(indexFileName, jsonStringify(indexArray));
+  await storage.putFile(`txs/${data.txId}.json`, jsonStringify({ data }));
 }
 
 export async function getTxs(userSession) {
@@ -186,12 +190,11 @@ async function createTxWithApiData(txId, tx, storage) {
       events = events.concat(apiData.events);
       console.log(apiData.event_count);
     } else {
-
     }
   }
   const txWithApiData = { ...tx, apiData: { ...apiData, events } };
   if (storage && apiData.tx_status !== 'pending') {
-    await storage.putFile(`txs/${txId}.json`, JSON.stringify(txWithApiData));
+    await storage.putFile(`txs/${txId}.json`, jsonStringify(txWithApiData));
   }
   return txWithApiData;
 }
@@ -214,7 +217,7 @@ export function TxStatus({ txId, resultPrefix }) {
         console.log({ client, sub });
       } catch (e) {
         console.log(e);
-        setProcessingResult({ loading: false, result: { repr: 'Connection lost' } });
+        setProcessingResult({ loading: false, result: { repr: 'Please check manually.' } });
       }
     };
 

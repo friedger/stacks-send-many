@@ -185,7 +185,6 @@ export function SendManyInputContainer({ asset }) {
           });
       },
       onCancel: () => {
-        console.log('cancelled');
         setStatus('Transaction not sent.');
         setLoading(false);
       },
@@ -202,6 +201,7 @@ export function SendManyInputContainer({ asset }) {
 
   const sendAction = async () => {
     setLoading(true);
+    setStatus();
     const { parts, total, hasMemos } = getPartsFromRows(rows);
     const updatedParts = await addToCVValues(parts);
     let invalidNames = updatedParts.filter(r => !!r.error);

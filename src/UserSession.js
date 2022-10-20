@@ -2,6 +2,7 @@ import { AppConfig } from '@stacks/auth';
 import { Storage } from '@stacks/storage';
 import { addressToString } from '@stacks/transactions';
 import { getStacksAccount } from './lib/account';
+import { jsonStringify } from './lib/transactions';
 
 export const appConfig = new AppConfig(['store_write', 'publish_data']);
 export const STX_JSON_PATH = 'stx.json';
@@ -17,7 +18,7 @@ export function putStxAddress(userSession, address) {
   if (!stxAddressSemaphore.putting) {
     stxAddressSemaphore.putting = true;
     storage
-      .putFile(STX_JSON_PATH, JSON.stringify({ address }), {
+      .putFile(STX_JSON_PATH, jsonStringify({ address }), {
         encrypt: false,
       })
       .then(() => afterSTXAddressPublished())
@@ -26,7 +27,7 @@ export function putStxAddress(userSession, address) {
         console.log('STX address NOT published, retrying');
         storage.getFile(STX_JSON_PATH, { decrypt: false }).then(s => {
           userSession
-            .putFile(STX_JSON_PATH, JSON.stringify({ address }), {
+            .putFile(STX_JSON_PATH, jsonStringify({ address }), {
               encrypt: false,
             })
             .then(() => afterSTXAddressPublished())
@@ -46,6 +47,6 @@ export const finished = onDidConnect => ({ userSession }) => {
 
   const userData = userSession.loadUserData();
   const { address } = getStacksAccount(userData.appPrivateKey);
-  console.log(JSON.stringify({ address: addressToString(address) }));
+  console.log(jsonStringify({ address: addressToString(address) }));
   putStxAddress(userSession, addressToString(address));
 };
