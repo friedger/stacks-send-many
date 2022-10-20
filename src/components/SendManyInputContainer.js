@@ -33,6 +33,7 @@ import { c32addressDecode } from 'c32check';
 import { SendManyInput } from './SendManyInput';
 import { Address } from './Address';
 import { Amount } from './Amount';
+import toAscii from 'punycode2/to-ascii';
 
 const addrToCV = addr => {
   const toParts = addr.split('.');
@@ -53,7 +54,7 @@ const addToCVValues = async parts => {
         return { ...p, toCV: addrToCV(p.to) };
       } catch (e) {
         try {
-          const nameInfo = await namesApi.getNameInfo({ name: p.to });
+          const nameInfo = await namesApi.getNameInfo({ name: toAscii(p.to) });
           if (nameInfo.address) {
             return { ...p, toCV: addrToCV(nameInfo.address) };
           } else {
@@ -184,8 +185,8 @@ export function SendManyInputContainer({ asset }) {
           });
       },
       onCancel: () => {
-        console.log("cancelled")
-        setStatus("Transaction not sent.");
+        console.log('cancelled');
+        setStatus('Transaction not sent.');
         setLoading(false);
       },
     };
@@ -242,11 +243,7 @@ export function SendManyInputContainer({ asset }) {
           ),
         ],
         postConditions: [
-          makeStandardSTXPostCondition(
-            ownerStxAddress,
-            FungibleConditionCode.Equal,
-            total
-          ),
+          makeStandardSTXPostCondition(ownerStxAddress, FungibleConditionCode.Equal, total),
         ],
       };
     } else {
@@ -255,17 +252,17 @@ export function SendManyInputContainer({ asset }) {
         contractName: XBTC_SEND_MANY_CONTRACT.name,
         functionName: 'send-xbtc',
         functionArgs: [
-            nonEmptyParts.map(p => {
-              return tupleCV({
-                to: p.toCV,
-                'xbtc-in-sats': uintCV(p.ustx),
-                memo: bufferCVFromString(
-                  hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
-                ),
-                'swap-to-ustx': trueCV(),
-                'min-dy': noneCV(),
-              });
-            })[0]
+          nonEmptyParts.map(p => {
+            return tupleCV({
+              to: p.toCV,
+              'xbtc-in-sats': uintCV(p.ustx),
+              memo: bufferCVFromString(
+                hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
+              ),
+              'swap-to-ustx': trueCV(),
+              'min-dy': noneCV(),
+            });
+          })[0],
         ],
         postConditions: [
           makeStandardFungiblePostCondition(
@@ -400,7 +397,9 @@ export function SendManyInputContainer({ asset }) {
       </div>
       {status && (
         <>
-          <div><small>{status}</small></div>
+          <div>
+            <small>{status}</small>
+          </div>
         </>
       )}
     </div>

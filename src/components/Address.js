@@ -1,6 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { callReadOnlyFunction, standardPrincipalCV, ClarityType } from '@stacks/transactions';
+import {
+  callReadOnlyFunction,
+  standardPrincipalCV,
+  ClarityType,
+  cvToString,
+} from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
+import toUnicode from 'punycode2/to-unicode';
 
 function hex_to_ascii(bytes) {
   var str = '';
@@ -22,26 +28,51 @@ const getNameFromAddress = async addr => {
   return result;
 };
 
-const useResolveName = addr => {
+const useResolveName = addr => {};
+
+export function Address({ addr }) {
   const addressShort = useMemo(() => `${addr.substr(0, 5)}...${addr.substr(addr.length - 5)}`, [
     addr,
   ]);
 
   const [nameOrAddress, setNameOrAddress] = useState(addressShort);
+  const [nameAscii, setNameAscii] = useState();
+  const [showAscii, setShowAscii] = useState(false);
+
   useEffect(() => {
     getNameFromAddress(addr).then(data => {
-      if (data.value.type === ClarityType.Tuple) {
+      if (data.type === ClarityType.ResponseOk && data.value.type === ClarityType.Tuple) {
         const { name, namespace } = data.value.data;
-        const nameStr = hex_to_ascii(name.buffer).trim();
-        const namespaceStr = hex_to_ascii(namespace.buffer).trim();
-        setNameOrAddress(`${nameStr}.${namespaceStr}`);
+
+        const nameStr = hex_to_ascii(name.buffer);
+        const namePunycodeStr = toUnicode(nameStr);
+        const namespaceStr = hex_to_ascii(namespace.buffer);
+        setNameAscii(nameStr === namePunycodeStr ? undefined : `${nameStr}.${namespaceStr}`);
+        setNameOrAddress(`${namePunycodeStr}.${namespaceStr}`);
       }
     });
   }, [addr]);
-  return nameOrAddress;
-};
 
-export function Address({ addr }) {
-  const nameOrAddress = useResolveName(addr);
-  return <span title={nameOrAddress}>{nameOrAddress}</span>;
+  return (
+    <>
+      {nameAscii ? (
+        <span
+          onClick={() => {
+            setShowAscii(!showAscii);
+          }}
+          title={nameAscii}
+        >
+          {nameOrAddress} ⓘ
+          {showAscii && (
+            <>
+              <br />
+              {nameAscii}
+            </>
+          )}
+        </span>
+      ) : (
+        <span title={nameOrAddress}>{nameOrAddress}</span>
+      )}
+    </>
+  );
 }
