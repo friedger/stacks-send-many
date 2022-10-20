@@ -3,7 +3,6 @@ import {
   callReadOnlyFunction,
   standardPrincipalCV,
   ClarityType,
-  cvToString,
 } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
 import toUnicode from 'punycode2/to-unicode';
@@ -27,8 +26,6 @@ const getNameFromAddress = async addr => {
   });
   return result;
 };
-
-const useResolveName = addr => {};
 
 export function Address({ addr }) {
   const addressShort = useMemo(() => `${addr.substr(0, 5)}...${addr.substr(addr.length - 5)}`, [
