@@ -4,7 +4,7 @@ import {
   AccountsApi,
   Configuration,
   InfoApi,
-  BnsApi,
+  NamesApi,
 } from '@stacks/blockchain-api-client';
 import { StacksTestnet, StacksMainnet } from '@stacks/network';
 
@@ -38,6 +38,19 @@ export const GENESIS_CONTRACT_ADDRESS = mocknet
   : 'SP000000000000000000002Q6VF78';
 export const BNS_CONTRACT_NAME = 'bns';
 
+export const WRAPPED_BITCOIN_ASSET =
+  'SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin';
+export const WRAPPED_BITCOIN_CONTRACT = {
+  address: 'SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR',
+  name: 'Wrapped-Bitcoin',
+  asset: 'wrapped-bitcoin',
+};
+
+export const XBTC_SEND_MANY_CONTRACT = {
+  address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+  name: 'xbtc-send-many-v1',
+};
+
 export const STACK_API_URL = localNode
   ? 'http://localhost:3999'
   : mainnet
@@ -59,4 +72,4 @@ export const accountsApi = new AccountsApi(config);
 export const smartContractsApi = new SmartContractsApi(config);
 export const transactionsApi = new TransactionsApi(config);
 export const infoApi = new InfoApi(config);
-export const bnsApi = new BnsApi(config);
+export const namesApi = new NamesApi(config);

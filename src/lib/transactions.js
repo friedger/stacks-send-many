@@ -181,9 +181,13 @@ async function createTxWithApiData(txId, tx, storage) {
   while (!apiData || events.length < apiData.event_count) {
     eventOffset = events.length;
     apiData = await transactionsApi.getTransactionById({ txId, eventOffset, offsetLimit });
-    console.log(eventOffset, apiData.events.length, apiData.event_count);
-    events = events.concat(apiData.events);
-    console.log(apiData.event_count);
+    if (apiData.events) {
+      console.log(eventOffset, apiData.events.length, apiData.event_count);
+      events = events.concat(apiData.events);
+      console.log(apiData.event_count);
+    } else {
+
+    }
   }
   const txWithApiData = { ...tx, apiData: { ...apiData, events } };
   if (storage && apiData.tx_status !== 'pending') {

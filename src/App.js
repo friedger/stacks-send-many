@@ -85,12 +85,23 @@ function Content({ userSession }) {
           {!authenticated && <Landing path="/" />}
           {decentralizedID && (
             <>
-              <SendMany path="/" decentralizedID={decentralizedID} userSession={userSession} />
-
+              <SendMany
+                path="/xbtc"
+                decentralizedID={decentralizedID}
+                userSession={userSession}
+                asset="xbtc"
+              />
               <SendManyCyclePayout
                 path="/cycle/:cycleId"
                 decentralizedID={decentralizedID}
                 userSession={userSession}
+              />
+              <SendMany
+                path="/"
+                default
+                decentralizedID={decentralizedID}
+                userSession={userSession}
+                asset="stx"
               />
             </>
           )}

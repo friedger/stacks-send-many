@@ -6,7 +6,7 @@ import { SendManyTxList } from '../components/SendManyTxList';
 import { mocknet, testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
-export default function SendMany({ userSession }) {
+export default function SendMany({ userSession, asset }) {
   const { ownerStxAddress } = useStxAddresses(userSession);
   if (!userSession || !ownerStxAddress) {
     return <div>Loading</div>;
@@ -19,13 +19,7 @@ export default function SendMany({ userSession }) {
             <div className="row">
               <div className="col-sm-12 col-md-4 ">
                 <div className="p-4 m-4 mx-auto bg-light">
-                  <Profile
-                    stxAddress={ownerStxAddress}
-                    updateStatus={s => {
-                      console.log(s);
-                    }}
-                    showAddress
-                  />
+                  <Profile stxAddress={ownerStxAddress} asset={asset} />
                 </div>
                 <div className="p-4 m-4 mx-auto bg-light">
                   <Instructions />
@@ -35,9 +29,10 @@ export default function SendMany({ userSession }) {
               <div className="col-sm-12 col-md-8 p-4 container">
                 <div className="col-xs-10 col-md-12 p-2 bg-light p-4">
                   <h3 className="font-weight-bold mb-4">
-                    Send {testnet || mocknet ? 'Test' : ''} Stacks (STX)
+                    Send {testnet || mocknet ? 'Test' : ''}{' '}
+                    {asset === 'stx' ? 'Stacks (STX)' : 'Wrapped Bitcoin (xBTC)'}
                   </h3>
-                  <SendManyInputContainer ownerStxAddress={ownerStxAddress} />
+                  <SendManyInputContainer ownerStxAddress={ownerStxAddress} asset={asset} />
                 </div>
                 <div className="col-xs-10 col-md-12 mx-auto my-4 py-4 bg-light">
                   <SendManyTxList ownerStxAddress={ownerStxAddress} userSession={userSession} />

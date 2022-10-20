@@ -1,16 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  callReadOnlyFunction,
-  standardPrincipalCV,
-  cvToJSON,
-} from '@stacks/transactions';
+import { callReadOnlyFunction, standardPrincipalCV, ClarityType } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
 
-function hex_to_ascii(str1) {
-  var hex = str1.toString();
+function hex_to_ascii(bytes) {
   var str = '';
-  for (var n = 0; n < hex.length; n += 2) {
-    str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+  for (var n = 0; n < bytes.length; n += 1) {
+    str += String.fromCharCode(bytes[n]);
   }
   return str;
 }
@@ -24,7 +19,7 @@ const getNameFromAddress = async addr => {
     senderAddress: addr,
     network: new StacksMainnet(),
   });
-  return cvToJSON(result);
+  return result;
 };
 
 const useResolveName = addr => {
@@ -35,11 +30,10 @@ const useResolveName = addr => {
   const [nameOrAddress, setNameOrAddress] = useState(addressShort);
   useEffect(() => {
     getNameFromAddress(addr).then(data => {
-      if (!data.value.value.code) {
-        const { name, namespace } = data.value.value;
-        const nameStr = hex_to_ascii(name.value).trim();
-        const namespaceStr = hex_to_ascii(namespace.value).trim();
-        console.log(nameStr, namespaceStr)
+      if (data.value.type === ClarityType.Tuple) {
+        const { name, namespace } = data.value.data;
+        const nameStr = hex_to_ascii(name.buffer).trim();
+        const namespaceStr = hex_to_ascii(namespace.buffer).trim();
         setNameOrAddress(`${nameStr}.${namespaceStr}`);
       }
     });
@@ -48,6 +42,6 @@ const useResolveName = addr => {
 };
 
 export function Address({ addr }) {
-  const nameOrAddress = useResolveName(addr)
+  const nameOrAddress = useResolveName(addr);
   return <span title={nameOrAddress}>{nameOrAddress}</span>;
 }

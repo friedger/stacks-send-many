@@ -10,9 +10,19 @@ import {
   FungibleConditionCode,
   bufferCVFromString,
   cvToString,
+  makeStandardFungiblePostCondition,
+  createAssetInfo,
+  trueCV,
+  noneCV,
 } from '@stacks/transactions';
 
-import { bnsApi, CONTRACT_ADDRESS, NETWORK } from '../lib/constants';
+import {
+  CONTRACT_ADDRESS,
+  namesApi,
+  NETWORK,
+  WRAPPED_BITCOIN_CONTRACT,
+  XBTC_SEND_MANY_CONTRACT,
+} from '../lib/constants';
 import { fetchAccount } from '../lib/account';
 import { userSessionState } from '../lib/auth';
 import { useStxAddresses } from '../lib/hooks';
@@ -20,7 +30,6 @@ import { useAtomValue } from 'jotai/utils';
 import { useConnect } from '@stacks/connect-react';
 import { saveTxData, TxStatus } from '../lib/transactions';
 import { c32addressDecode } from 'c32check';
-import BigNum from 'bn.js';
 import { SendManyInput } from './SendManyInput';
 import { Address } from './Address';
 import { Amount } from './Amount';
@@ -44,7 +53,7 @@ const addToCVValues = async parts => {
         return { ...p, toCV: addrToCV(p.to) };
       } catch (e) {
         try {
-          const nameInfo = await bnsApi.getNameInfo({ name: p.to });
+          const nameInfo = await namesApi.getNameInfo({ name: p.to });
           if (nameInfo.address) {
             return { ...p, toCV: addrToCV(nameInfo.address) };
           } else {
@@ -62,7 +71,7 @@ function nonEmptyPart(p) {
   return !!p.toCV && p.stx !== '0' && p.stx !== '';
 }
 
-export function SendManyInputContainer() {
+export function SendManyInputContainer({ asset }) {
   const userSession = useAtomValue(userSessionState);
   const spinner = useRef();
   const [status, setStatus] = useState();
@@ -99,7 +108,8 @@ export function SendManyInputContainer() {
             c32addressDecode(p.to);
             return (
               <>
-                <Address addr={p.to} />: <Amount ustx={p.ustx} /> <br />
+                <Address addr={p.to} />:{' '}
+                {asset === 'stx' ? <Amount ustx={p.ustx} /> : <Amount xbtc={p.ustx} />} <br />
               </>
             );
           } catch (e) {
@@ -107,13 +117,13 @@ export function SendManyInputContainer() {
             return (
               <>
                 {p.error || (p.toCV ? <Address addr={cvToString(p.toCV)} /> : '...')}:{' '}
-                <Amount ustx={p.ustx} />
+                {asset === 'stx' ? <Amount ustx={p.ustx} /> : <Amount xsats={p.ustx} />} <br />
                 <br />
               </>
             );
           }
         })}{' '}
-        Total: <Amount ustx={total} />
+        Total: {asset === 'stx' ? <Amount ustx={total} /> : <Amount xsats={total} />} <br />
         <br />
         {hasMemos && (
           <>
@@ -121,7 +131,7 @@ export function SendManyInputContainer() {
             <br />
           </>
         )}
-        {total + 1000 > account.balance && (
+        {asset === 'stx' && total + 1000 > account.balance && (
           <small>
             That is more than you have. You have <Amount ustx={account.balance} />
           </small>
@@ -132,7 +142,10 @@ export function SendManyInputContainer() {
 
   const getPartsFromRows = currentRows => {
     const parts = currentRows.map(r => {
-      return { ...r, ustx: Math.floor(parseFloat(r.stx) * 1000000) };
+      return {
+        ...r,
+        ustx: Math.floor(parseFloat(r.stx) * (asset === 'stx' ? 1_000_000 : 100_000_000)),
+      };
     });
     const { total, hasMemos } = parts.reduce(
       (previous, r) => {
@@ -147,6 +160,43 @@ export function SendManyInputContainer() {
       }
     );
     return { parts, total, hasMemos };
+  };
+
+  const sendAsset = async options => {
+    options = {
+      ...options,
+      network: NETWORK,
+      postConditionMode: PostConditionMode.Deny,
+      onFinish: data => {
+        setStatus('Saving transaction to your storage');
+        setTxId(data.txId);
+        saveTxData(data, userSession)
+          .then(r => {
+            setRows([{ to: '', stx: '0', memo: '' }]);
+            setPreview(null);
+            setLoading(false);
+            setStatus(undefined);
+          })
+          .catch(e => {
+            console.log(e);
+            setLoading(false);
+            setStatus("Couldn't save the transaction");
+          });
+      },
+      onCancel: () => {
+        console.log("cancelled")
+        setStatus("Transaction not sent.");
+        setLoading(false);
+      },
+    };
+    try {
+      setStatus(`Sending transaction`);
+      await doContractCall(options);
+    } catch (e) {
+      console.log(e);
+      setStatus(e.toString());
+      setLoading(true);
+    }
   };
 
   const sendAction = async () => {
@@ -170,64 +220,68 @@ export function SendManyInputContainer() {
     console.log(nonEmptyParts[0]);
     const firstMemo =
       nonEmptyParts.length > 0 && nonEmptyParts[0].memo ? nonEmptyParts[0].memo.trim() : '';
-    const contractAddress = CONTRACT_ADDRESS;
-    const contractName = hasMemos ? 'send-many-memo' : 'send-many';
-    const functionName = 'send-many';
-    const functionArgs = [
-      listCV(
-        nonEmptyParts.map(p => {
-          return hasMemos
-            ? tupleCV({
-                to: p.toCV,
-                ustx: uintCV(p.ustx),
-                memo: bufferCVFromString(firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : ''),
-              })
-            : tupleCV({ to: p.toCV, ustx: uintCV(p.ustx) });
-        })
-      ),
-    ];
-    try {
-      await doContractCall({
-        contractAddress,
-        contractName,
-        functionName,
-        functionArgs,
-        network: NETWORK,
-        postConditionMode: PostConditionMode.Deny,
+    let options;
+    if (asset === 'stx') {
+      options = {
+        contractAddress: CONTRACT_ADDRESS,
+        contractName: hasMemos ? 'send-many-memo' : 'send-many',
+        functionName: 'send-many',
+        functionArgs: [
+          listCV(
+            nonEmptyParts.map(p => {
+              return hasMemos
+                ? tupleCV({
+                    to: p.toCV,
+                    ustx: uintCV(p.ustx),
+                    memo: bufferCVFromString(
+                      firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : ''
+                    ),
+                  })
+                : tupleCV({ to: p.toCV, ustx: uintCV(p.ustx) });
+            })
+          ),
+        ],
         postConditions: [
           makeStandardSTXPostCondition(
             ownerStxAddress,
             FungibleConditionCode.Equal,
-            new BigNum(total)
+            total
           ),
         ],
-        onFinish: data => {
-          setStatus('Saving transaction to your storage');
-          setTxId(data.txId);
-          saveTxData(data, userSession)
-            .then(r => {
-              setRows([{ to: '', stx: '0', memo: '' }]);
-              setPreview(null);
-              setLoading(false);
-              setStatus(undefined);
-            })
-            .catch(e => {
-              console.log(e);
-              setLoading(false);
-              setStatus("Couldn't save the transaction");
-            });
-        },
-        onCancel: () => {
-          setStatus(undefined);
-          setLoading(false);
-        },
-      });
-      setStatus(`Sending transaction`);
-    } catch (e) {
-      console.log(e);
-      setStatus(e.toString());
-      setLoading(true);
+      };
+    } else {
+      options = {
+        contractAddress: XBTC_SEND_MANY_CONTRACT.address,
+        contractName: XBTC_SEND_MANY_CONTRACT.name,
+        functionName: 'send-xbtc',
+        functionArgs: [
+            nonEmptyParts.map(p => {
+              return tupleCV({
+                to: p.toCV,
+                'xbtc-in-sats': uintCV(p.ustx),
+                memo: bufferCVFromString(
+                  hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
+                ),
+                'swap-to-ustx': trueCV(),
+                'min-dy': noneCV(),
+              });
+            })[0]
+        ],
+        postConditions: [
+          makeStandardFungiblePostCondition(
+            ownerStxAddress,
+            FungibleConditionCode.Equal,
+            total,
+            createAssetInfo(
+              WRAPPED_BITCOIN_CONTRACT.address,
+              WRAPPED_BITCOIN_CONTRACT.name,
+              WRAPPED_BITCOIN_CONTRACT.asset
+            )
+          ),
+        ],
+      };
     }
+    sendAsset(options);
   };
 
   const addNewRow = () => {
@@ -315,13 +369,13 @@ export function SendManyInputContainer() {
         <div className="row">
           <div className="col-md-12 col-xs-12 col-lg-12 text-right pb-2">
             <input
-              class="form-check-input"
+              className="form-check-input"
               type="checkbox"
               onChange={e => setFirstMemoForAll(e.target.checked)}
               id="firstMemoForAll"
               value={firstMemoForAll}
             />
-            <label class="form-check-label" for="firstMemoForAll">
+            <label className="form-check-label" forhtml="firstMemoForAll">
               First Memo for all?
             </label>
           </div>
@@ -346,7 +400,7 @@ export function SendManyInputContainer() {
       </div>
       {status && (
         <>
-          <div>{status}</div>
+          <div><small>{status}</small></div>
         </>
       )}
     </div>
