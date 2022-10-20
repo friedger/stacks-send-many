@@ -20,6 +20,7 @@ import {
   CONTRACT_ADDRESS,
   namesApi,
   NETWORK,
+  WRAPPED_BITCOIN_ASSET,
   WRAPPED_BITCOIN_CONTRACT,
   XBTC_SEND_MANY_CONTRACT,
 } from '../lib/constants';
@@ -137,6 +138,13 @@ export function SendManyInputContainer({ asset }) {
             That is more than you have. You have <Amount ustx={account.balance} />
           </small>
         )}
+        {asset === 'xbtc' &&
+          total > (account.fungible_tokens?.[WRAPPED_BITCOIN_ASSET]?.balance || 0) && (
+            <small>
+              That is more than you have. You have{' '}
+              <Amount xsats={account.fungible_tokens?.[WRAPPED_BITCOIN_ASSET]?.balance || 0} />
+            </small>
+          )}
       </>
     );
   };

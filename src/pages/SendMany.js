@@ -27,7 +27,13 @@ export default function SendMany({ userSession, asset }) {
               </div>
 
               <div className="col-sm-12 col-md-8 p-4 container">
-                <div className="col-xs-10 col-md-12 p-2 bg-light p-4">
+                <div className="col-xs-10 col-md-12 bg-light p-4">
+                  <div className='text-right'>
+                    <a href={asset !== 'stx' ? '/' : '/xbtc'} className="small">
+                      Send {testnet || mocknet ? 'Test' : ''}{' '}
+                      {asset !== 'stx' ? 'STX' : 'xBTC'}{' '}
+                    </a>
+                  </div>
                   <h3 className="font-weight-bold mb-4">
                     Send {testnet || mocknet ? 'Test' : ''}{' '}
                     {asset === 'stx' ? 'Stacks (STX)' : 'Wrapped Bitcoin (xBTC)'}
