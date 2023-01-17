@@ -1,10 +1,11 @@
 import React from 'react';
-import { useConnect } from '../lib/auth';
+import { useConnect, useWcConnect } from '../lib/auth';
 
 // Landing page demonstrating Blockstack connect for registration
 
-export default function Landing(props) {
+export default function Landing({ client, wcSession, setWcSession }) {
   const { handleOpenAuth } = useConnect();
+  const { handleWcOpenAuth } = useWcConnect({ client, wcSession, setWcSession });
 
   return (
     <div className="Landing">
@@ -51,7 +52,14 @@ export default function Landing(props) {
 
               <p className="card-link mb-5">
                 <button className="btn btn-outline-primary" type="button" onClick={handleOpenAuth}>
-                  Start now
+                  Start now with Hiro Wallet
+                </button>
+                <button
+                  className="btn btn-outline-primary"
+                  type="button"
+                  onClick={handleWcOpenAuth}
+                >
+                  Start now with Wallet Connect
                 </button>
               </p>
 

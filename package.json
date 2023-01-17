@@ -16,6 +16,11 @@
     "@stacks/profile": "^5.0.2",
     "@stacks/storage": "^5.0.2",
     "@stacks/transactions": "^5.0.2",
+    "@walletconnect/encoding": "^1.0.2",
+    "@walletconnect/qrcode-modal": "^1.8.0",
+    "@walletconnect/sign-client": "^2.2.1",
+    "@walletconnect/types": "^2.2.1",
+    "@walletconnect/utils": "^2.2.1",
     "c32check": "^2.0.0",
     "jdenticon": "^3.2.0",
     "jotai": "^1.8.6",
@@ -53,10 +58,10 @@
   },
   "devDependencies": {
     "@stacks/prettier-config": "0.0.10",
-    "bootstrap": "^5.2.2",
-    "netlify-cli": "^12.0.11",
+    "bootstrap": "^5.2.3",
+    "netlify-cli": "^12.7.2",
     "prettier": "^2.7.1",
-    "react-scripts": "^4.0.3",
-    "react-test-renderer": "^17.0.2"
+    "react-scripts": "^5.0.1",
+    "react-test-renderer": "^18.2.0"
   }
 }

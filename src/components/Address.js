@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   callReadOnlyFunction,
   standardPrincipalCV,
+  contractPrincipalCV,
   ClarityType,
 } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
@@ -16,11 +17,21 @@ function hex_to_ascii(bytes) {
 }
 
 const getNameFromAddress = async addr => {
+  console.log(addr);
+  let addrCV;
+  try {
+    addrCV = standardPrincipalCV(addr);
+  } catch (e) {
+    const [contractAddress, contractName] = addr.split('.');
+    addrCV = contractPrincipalCV(contractAddress, contractName);
+    addr = contractAddress;
+  }
+  console.log(addr);
   const result = await callReadOnlyFunction({
     contractAddress: 'SP000000000000000000002Q6VF78',
     contractName: 'bns',
     functionName: 'resolve-principal',
-    functionArgs: [standardPrincipalCV(addr)],
+    functionArgs: [addrCV],
     senderAddress: addr,
     network: new StacksMainnet(),
   });
@@ -28,9 +39,10 @@ const getNameFromAddress = async addr => {
 };
 
 export function Address({ addr }) {
-  const addressShort = useMemo(() => `${addr.substr(0, 5)}...${addr.substr(addr.length - 5)}`, [
-    addr,
-  ]);
+  const addressShort = useMemo(
+    () => `${addr.substr(0, 5)}...${addr.substr(addr.length - 5)}`,
+    [addr]
+  );
 
   const [nameOrAddress, setNameOrAddress] = useState(addressShort);
   const [nameAscii, setNameAscii] = useState();

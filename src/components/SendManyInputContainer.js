@@ -18,6 +18,7 @@ import {
 
 import {
   CONTRACT_ADDRESS,
+  mainnet,
   namesApi,
   NETWORK,
   WRAPPED_BITCOIN_ASSET,
@@ -25,8 +26,7 @@ import {
   XBTC_SEND_MANY_CONTRACT,
 } from '../lib/constants';
 import { fetchAccount } from '../lib/account';
-import { userSessionState } from '../lib/auth';
-import { useStxAddresses } from '../lib/hooks';
+import { chains, userSessionState } from '../lib/auth';
 import { useAtomValue } from 'jotai/utils';
 import { useConnect } from '@stacks/connect-react';
 import { saveTxData, TxStatus } from '../lib/transactions';
@@ -73,7 +73,7 @@ function nonEmptyPart(p) {
   return !!p.toCV && p.stx !== '0' && p.stx !== '';
 }
 
-export function SendManyInputContainer({ asset }) {
+export function SendManyInputContainer({ asset, ownerStxAddress, client, wcSession }) {
   const userSession = useAtomValue(userSessionState);
   const spinner = useRef();
   const [status, setStatus] = useState();
@@ -85,11 +85,10 @@ export function SendManyInputContainer({ asset }) {
   const [firstMemoForAll, setFirstMemoForAll] = useState(false);
 
   const [rows, setRows] = useState([{ to: '', stx: '0', memo: '' }]);
-  const { ownerStxAddress } = useStxAddresses(userSession);
   const { doContractCall } = useConnect();
 
   useEffect(() => {
-    if (userSession?.isUserSignedIn() && ownerStxAddress) {
+    if (ownerStxAddress) {
       fetchAccount(ownerStxAddress)
         .catch(e => {
           setStatus('Failed to access your account', e);
@@ -100,7 +99,7 @@ export function SendManyInputContainer({ asset }) {
           console.log({ acc });
         });
     }
-  }, [userSession, ownerStxAddress]);
+  }, [ownerStxAddress]);
 
   const updatePreview = async ({ parts, total, hasMemos }) => {
     setPreview(
@@ -133,11 +132,12 @@ export function SendManyInputContainer({ asset }) {
             <br />
           </>
         )}
-        {asset === 'stx' && total + 1000 > account.balance && (
-          <small>
-            That is more than you have. You have <Amount ustx={account.balance} />
-          </small>
-        )}
+        {asset === 'stx' &&
+          total + 1000 > parseInt(account.stx.balance) - parseInt(account.stx.locked) && (
+            <small>
+              That is more than you have. You have <Amount ustx={account.stx.balance} />
+            </small>
+          )}
         {asset === 'xbtc' &&
           total > (account.fungible_tokens?.[WRAPPED_BITCOIN_ASSET]?.balance || 0) && (
             <small>
@@ -179,18 +179,20 @@ export function SendManyInputContainer({ asset }) {
       onFinish: data => {
         setStatus('Saving transaction to your storage');
         setTxId(data.txId);
-        saveTxData(data, userSession)
-          .then(r => {
-            setRows([{ to: '', stx: '0', memo: '' }]);
-            setPreview(null);
-            setLoading(false);
-            setStatus(undefined);
-          })
-          .catch(e => {
-            console.log(e);
-            setLoading(false);
-            setStatus("Couldn't save the transaction");
-          });
+        if (userSession) {
+          saveTxData(data, userSession)
+            .then(r => {
+              setRows([{ to: '', stx: '0', memo: '' }]);
+              setPreview(null);
+              setLoading(false);
+              setStatus(undefined);
+            })
+            .catch(e => {
+              console.log(e);
+              setLoading(false);
+              setStatus("Couldn't save the transaction");
+            });
+        }
       },
       onCancel: () => {
         setStatus('Transaction not sent.');
@@ -199,7 +201,33 @@ export function SendManyInputContainer({ asset }) {
     };
     try {
       setStatus(`Sending transaction`);
-      await doContractCall(options);
+      if (wcSession) {
+        console.log('start client request', ownerStxAddress, options);
+        try {
+          const result = await client.request({
+            chainId: chains[mainnet ? 0 : 1],
+            topic: wcSession.topic,
+            request: {
+              method: 'stacks_contractCall',
+              params: {
+                pubkey: ownerStxAddress,
+                contractAddress: options.contractAddress,
+                contractName: options.contractName,
+                functionName: options.functionName,
+                functionArgs: options.functionArgs,
+                postConditions: options.postConditions,
+                postConditionMode: PostConditionMode.Deny,
+                version: '1',
+              },
+            },
+          });
+          console.log({ result });
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        await doContractCall(options);
+      }
     } catch (e) {
       console.log(e);
       setStatus(e.toString());
