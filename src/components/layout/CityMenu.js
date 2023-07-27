@@ -1,4 +1,4 @@
-import { Link } from '@reach/router';
+import { Link } from 'react-router-dom';
 import { useAtom } from 'jotai';
 import { CHAIN_SUFFIX } from '../../lib/stacks';
 import {

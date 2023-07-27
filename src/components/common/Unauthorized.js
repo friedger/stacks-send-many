@@ -1,11 +1,11 @@
-import { Link } from '@reach/router';
-import { useUpdateAtom } from 'jotai/utils';
+import { Link } from 'react-router-dom';
 import { useConnect } from '../../lib/auth';
 import { CHAIN_SUFFIX } from '../../lib/stacks';
 import { currentRouteAtom } from '../../store/cities';
+import { useSetAtom } from 'jotai';
 
 export default function Unauthorized() {
-  const setCurrentRoute = useUpdateAtom(currentRouteAtom);
+  const setCurrentRoute = useSetAtom(currentRouteAtom);
   const { handleOpenAuth } = useConnect();
 
   return (

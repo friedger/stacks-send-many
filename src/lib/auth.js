@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
 import { AppConfig, UserSession } from '@stacks/connect-react';
 import { showConnect } from '@stacks/connect';
-import { atom, useAtom } from 'jotai';
-import { useUpdateAtom } from 'jotai/utils';
+import { atom, useAtom, useSetAtom } from 'jotai';
 import {
   appStxAddressAtom,
   stxBnsNameAtom,
@@ -17,12 +16,12 @@ export const authResponseStateAtom = atom();
 
 export const useConnect = () => {
   const [userSession] = useAtom(userSessionStateAtom);
-  const setUserData = useUpdateAtom(userDataStateAtom);
-  const setAuthResponse = useUpdateAtom(authResponseStateAtom);
-  const setLoginStatus = useUpdateAtom(loginStatusAtom);
-  const setStxAddress = useUpdateAtom(stxAddressAtom);
-  const setAppStxAddress = useUpdateAtom(appStxAddressAtom);
-  const setBnsName = useUpdateAtom(stxBnsNameAtom);
+  const setUserData = useSetAtom(userDataStateAtom);
+  const setAuthResponse = useSetAtom(authResponseStateAtom);
+  const setLoginStatus = useSetAtom(loginStatusAtom);
+  const setStxAddress = useSetAtom(stxAddressAtom);
+  const setAppStxAddress = useSetAtom(appStxAddressAtom);
+  const setBnsName = useSetAtom(stxBnsNameAtom);
 
   const onFinish = async payload => {
     setAuthResponse(payload.authResponse);

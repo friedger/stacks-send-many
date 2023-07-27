@@ -1,10 +1,10 @@
-import { AppConfig } from '@stacks/auth';
 import { Storage } from '@stacks/storage';
 import { addressToString } from '@stacks/transactions';
 import { getStacksAccount } from './lib/account';
 import { debugLog } from './lib/common';
+import connect from '@stacks/connect';
 
-export const appConfig = new AppConfig(['store_write', 'publish_data']);
+export const appConfig = new connect.AppConfig(['store_write', 'publish_data']);
 export const STX_JSON_PATH = 'stx.json';
 
 function afterSTXAddressPublished() {

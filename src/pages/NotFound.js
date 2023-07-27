@@ -1,10 +1,10 @@
-import { Link } from '@reach/router';
-import { useUpdateAtom } from 'jotai/utils';
+import { Link } from 'react-router-dom';
 import { CHAIN_SUFFIX } from '../lib/stacks';
 import { currentRouteAtom } from '../store/cities';
+import { useSetAtom } from 'jotai';
 
 export default function NotFound() {
-  const setCurrentRoute = useUpdateAtom(currentRouteAtom);
+  const setCurrentRoute = useSetAtom(currentRouteAtom);
 
   return (
     <div>

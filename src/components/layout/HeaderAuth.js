@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { useAtom } from 'jotai';
-import { useUpdateAtom } from 'jotai/utils';
+import { useAtom, useSetAtom } from 'jotai';
 import { getUserData } from '@stacks/connect';
 import { getStacksAccount } from '../../lib/account';
 import { useConnect, userSessionStateAtom } from '../../lib/auth';
@@ -22,10 +21,10 @@ export default function HeaderAuth() {
   const [loginStatus] = useAtom(loginStatusAtom);
   const [currentCity] = useAtom(currentCityAtom);
   const [stxAddress, setStxAddress] = useAtom(stxAddressAtom);
-  const setAppStxAddress = useUpdateAtom(appStxAddressAtom);
-  const setBnsName = useUpdateAtom(stxBnsNameAtom);
-  const setUserBalances = useUpdateAtom(userBalancesAtom);
-  const setUserIds = useUpdateAtom(userIdAtom);
+  const setAppStxAddress = useSetAtom(appStxAddressAtom);
+  const setBnsName = useSetAtom(stxBnsNameAtom);
+  const setUserBalances = useSetAtom(userBalancesAtom);
+  const setUserIds = useSetAtom(userIdAtom);
 
   useEffect(() => {
     const fetchUserData = async () => {
