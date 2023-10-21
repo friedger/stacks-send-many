@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { fetchAccount } from '../lib/account';
 import { Address } from './Address';
 import { Amount } from './Amount';
-import { WRAPPED_BITCOIN_ASSET } from '../lib/constants';
+import { SBTC_ASSET, WRAPPED_BITCOIN_ASSET } from '../lib/constants';
 import * as jdenticon from 'jdenticon';
 
 function Jdenticon({ value, size }) {
@@ -56,6 +56,11 @@ export function Profile({ stxAddress, asset }) {
               />{' '}
               (locked)
             </>
+          ) : asset === 'sbtc' ? (
+            <Amount
+              className="font-weight-bold balance"
+              xsats={profileState.account.fungible_tokens?.[SBTC_ASSET]?.balance || 0}
+            />
           ) : (
             <Amount
               className="font-weight-bold balance"
@@ -64,7 +69,7 @@ export function Profile({ stxAddress, asset }) {
           )}
           <br />
           <a
-            href={'https://explorer.stacks.co/address/' + stxAddress}
+            href={'https://explorer.hiro.so/address/' + stxAddress}
             className="small"
             target="_blank"
             rel="noreferrer"

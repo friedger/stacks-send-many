@@ -5,6 +5,7 @@ import DownloadLink from 'react-download-link';
 import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';
 import { chainSuffix } from '../lib/constants';
+import { useConnect } from '../lib/auth';
 
 function dateOfTx(tx) {
   return tx.apiData?.burn_block_time_iso?.substring(0, 10) || 'unconfirmed';
@@ -29,7 +30,9 @@ function foundInEvents(tx, search) {
   );
 }
 
-export function SendManyTxList({ userSession }) {
+export function SendManyTxList() {
+  const { userSession } = useConnect();
+
   const [status, setStatus] = useState();
   const searchRef = useRef();
   const [txs, setTxs] = useState();

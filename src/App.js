@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Landing from './pages/Landing';
 import { Connect } from '@stacks/connect-react';
 import { Router } from '@reach/router';
 import Auth from './components/Auth';
-import { userDataState, userSessionState, useConnect, appMetaData } from './lib/auth';
+import { userDataState, useConnect, appMetaData, wcClientState, useWcConnect } from './lib/auth';
 import { useAtom } from 'jotai';
 import Client from '@walletconnect/sign-client';
 import SendMany from './pages/SendMany';
@@ -14,9 +14,12 @@ import { Rate } from './components/Rate';
 import { Network } from './components/Network';
 import metaverse from './styles/metaverse.png';
 import SendManyTransferDetails from './pages/SendManyTransferDetails';
+import { useStxAddresses, useWalletConnect } from './lib/hooks';
 
 /* global BigInt */
-BigInt.prototype.toJSON = function() { return this.toString() }
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
 
 const styles = {
   backgroundPosition: 'center',
@@ -25,12 +28,9 @@ const styles = {
 };
 
 export default function App(props) {
-  const { authOptions } = useConnect();
-  const [userSession] = useAtom(userSessionState);
+  const { authOptions, userSession } = useConnect();
   const [, setUserData] = useAtom(userDataState);
-  const [client, setClient] = useState(undefined);
-  const [wcSession, setWcSession] = useState(undefined);
-
+  const [wcClient, setWcClient] = useAtom(wcClientState);
   useEffect(() => {
     if (userSession?.isUserSignedIn()) {
       setUserData(userSession.loadUserData());
@@ -53,13 +53,13 @@ export default function App(props) {
         },
       });
 
-      setClient(c);
+      setWcClient(c);
     };
 
-    if (client === undefined) {
+    if (wcClient === undefined) {
       f();
     }
-  }, [client]);
+  }, [wcClient, setWcClient]);
 
   return (
     <Connect authOptions={authOptions}>
@@ -71,16 +71,11 @@ export default function App(props) {
         <div className="d-flex d-sm-block justify-content-xs-around">
           <Rate />
           <Network />
-          <Auth client={client} wcSession={wcSession} setWcSession={setWcSession} />
+          <Auth />
         </div>
       </nav>
 
-      <Content
-        userSession={userSession}
-        client={client}
-        wcSession={wcSession}
-        setWcSession={setWcSession}
-      />
+      <Content />
     </Connect>
   );
 }
@@ -88,61 +83,26 @@ export default function App(props) {
 function AppBody(props) {
   return <div>{props.children}</div>;
 }
-function Content({ userSession, client, wcSession, setWcSession }) {
-  const stacksAuthenticated = userSession && userSession.isUserSignedIn();
-  const wcAuthenticated = wcSession;
-  const authenticated = stacksAuthenticated || wcAuthenticated;
-  const decentralizedID = stacksAuthenticated && userSession.loadUserData().decentralizedID;
-  console.log(wcSession);
+function Content() {
+  const { ownerStxAddress } = useStxAddresses();
+  const { wcSession } = useWalletConnect();
+  const { client, isWcReady } = useWcConnect();
+  console.log({ ownerStxAddress, wcSession, client, wcReady: isWcReady() });
   return (
     <>
       <Router>
         <AppBody path="/">
-          <SendManyCyclePayout
-            path="/cycle/:cycleId"
-            decentralizedID={decentralizedID}
-            userSession={userSession}
-          />
-          <SendManyAdvocates
-            path="/advocates/:payoutId"
-            decentralizedID={decentralizedID}
-            userSession={userSession}
-          />
-          <SendManyDetails
-            path="/txid/:txId"
-            decentralizedID={decentralizedID}
-            userSession={userSession}
-          />
-          <SendManyTransferDetails
-            path="/txid/:txId/:eventIndex"
-            decentralizedID={decentralizedID}
-            userSession={userSession}
-          />
-          {!authenticated && (
-            <Landing path="/" client={client} wcSession={wcSession} setWcSession={setWcSession} />
-          )}
-          {authenticated && (
+          <SendManyCyclePayout path="/cycle/:cycleId" />
+          <SendManyAdvocates path="/advocates/:payoutId" />
+          <SendManyDetails path="/txid/:txId" />
+          <SendManyTransferDetails path="/txid/:txId/:eventIndex" />
+          {!ownerStxAddress && <Landing path="/" />}
+          {ownerStxAddress && (
             <>
-              <SendMany
-                path="/xbtc"
-                userSession={userSession}
-                wcSession={wcSession}
-                client={client}
-                asset="xbtc"
-              />
-              <SendManyCyclePayout
-                path="/cycle/:cycleId"
-                userSession={userSession}
-                wcSession={wcSession}
-              />
-              <SendMany
-                path="/"
-                default
-                userSession={userSession}
-                wcSession={wcSession}
-                client={client}
-                asset="stx"
-              />
+              <SendMany path="/xbtc" asset="xbtc" />
+              <SendMany path="/sbtc" asset="sbtc" />
+              <SendManyCyclePayout path="/cycle/:cycleId" />
+              <SendMany path="/" default asset="stx" />
             </>
           )}
         </AppBody>

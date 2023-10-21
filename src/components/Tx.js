@@ -9,7 +9,7 @@ export function Tx({ tx, onDetailsPage, hideEvents, hideHeader }) {
     navigator.clipboard.writeText(txId);
   };
   const openTxInExplorer = () => {
-    window.open(`https://explorer.stacks.co/txid/${txId}`, '_blank');
+    window.open(`https://explorer.hiro.so/txid/${txId}${chainSuffix}`, '_blank');
   };
   const openTx = () => {
     window.location.href = `/txid/${txId}`;

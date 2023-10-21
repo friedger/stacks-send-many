@@ -1,15 +1,19 @@
 import { useCallback } from 'react';
 import { AppConfig, UserSession } from '@stacks/connect-react';
 import { showConnect } from '@stacks/connect';
-import { authOrigin, mainnet } from './constants';
-import { atom, useAtom } from 'jotai';
-import { useUpdateAtom } from 'jotai/utils';
+import { authOrigin, chains } from './constants';
+import { atom, useAtom, useAtomValue, useSetAtom} from 'jotai';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 export const userSessionState = atom(new UserSession({ appConfig }));
+export const wcClientState = atom();
+
+export const wcSessionState = atom();
 export const userDataState = atom();
 export const authResponseState = atom();
+const authenticatedState = atom();
+
 export const appMetaData = {
   description: 'Send STX and xBTC to many users in one transaction.',
   url: 'https://sendstx.com',
@@ -19,15 +23,15 @@ export const appMetaData = {
   },
 };
 
-export const chains = ['stacks:1', 'stacks:2147483648'];
-
 export const useConnect = () => {
-  const [userSession] = useAtom(userSessionState);
-  const setUserData = useUpdateAtom(userDataState);
-  const setAuthResponse = useUpdateAtom(authResponseState);
+  const userSession = useAtomValue(userSessionState);
+  const setUserData = useSetAtom(userDataState);
+  const setAuthResponse = useSetAtom(authResponseState);
+  const [authenticated, setAuthenticated] = useAtom(authenticatedState);
 
   const onFinish = async payload => {
     setAuthResponse(payload.authResponse);
+    setAuthenticated(false);
     const userData = await payload.userSession.loadUserData();
     setUserData(userData);
   };
@@ -46,33 +50,48 @@ export const useConnect = () => {
   };
 
   const handleSignOut = useCallback(() => {
+    setAuthenticated(true);
     userSession?.signUserOut('/');
-  }, [userSession]);
+  }, [userSession, setAuthenticated]);
 
-  return { handleOpenAuth, handleSignOut, authOptions };
+  return { handleOpenAuth, handleSignOut, authOptions, userSession, authenticated };
 };
 
-export const useWcConnect = ({ client, wcSession, setWcSession }) => {
-  const handleWcOpenAuth = async () => {
-    const { uri, approval } = await client.connect({
-      pairingTopic: undefined,
-      requiredNamespaces: {
-        stacks: {
-          methods: ['stacks_contractCall'],
-          chains: [mainnet ? chains[0] : chains[1]],
-          events: [],
-        },
-      },
-    });
+export const useWcConnect = () => {
+  const client = useSetAtom(wcClientState);
+  const setWcSession = useSetAtom(wcSessionState);
+  const [authenticated, setAuthenticated] = useAtom(authenticatedState);
 
-    if (uri) {
-      QRCodeModal.open(uri, () => {
-        console.log('QR Code Modal closed');
+  const handleWcOpenAuth = async () => {
+    if (client) {
+      const { uri, approval } = await client.connect({
+        pairingTopic: undefined,
+        requiredNamespaces: {
+          stacks: {
+            methods: ['stacks_contractCall'],
+            chains: chains,
+            events: [],
+          },
+        },
       });
-      const session = await approval();
-      setWcSession(session);
-      QRCodeModal.close();
+
+      if (uri) {
+        QRCodeModal.open(uri, () => {
+          console.log('QR Code Modal closed');
+        });
+        const session = await approval();
+        setWcSession(session);
+        setAuthenticated(true);
+        QRCodeModal.close();
+      }
+    } else {
+      return Promise.reject('wallect connect client not ready');
     }
   };
-  return { handleWcOpenAuth };
+
+  const isWcReady = useCallback(() => {
+    return client !== undefined;
+  }, [client]);
+
+  return { handleWcOpenAuth, authenticated, isWcReady };
 };

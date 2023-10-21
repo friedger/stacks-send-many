@@ -17,18 +17,20 @@ import {
 } from '@stacks/transactions';
 
 import {
+  chains,
   CONTRACT_ADDRESS,
-  mainnet,
   namesApi,
   NETWORK,
+  SBTC_ASSET,
+  SBTC_CONTRACT,
   WRAPPED_BITCOIN_ASSET,
   WRAPPED_BITCOIN_CONTRACT,
   XBTC_SEND_MANY_CONTRACT,
 } from '../lib/constants';
 import { fetchAccount } from '../lib/account';
-import { chains, userSessionState } from '../lib/auth';
-import { useAtomValue } from 'jotai/utils';
-import { useConnect } from '@stacks/connect-react';
+import { useConnect } from '../lib/auth';
+import { useWalletConnect } from '../lib/hooks';
+import { useConnect as useStacksConnect } from '@stacks/connect-react';
 import { saveTxData, TxStatus } from '../lib/transactions';
 import { c32addressDecode } from 'c32check';
 import { SendManyInput } from './SendManyInput';
@@ -73,8 +75,11 @@ function nonEmptyPart(p) {
   return !!p.toCV && p.stx !== '0' && p.stx !== '';
 }
 
-export function SendManyInputContainer({ asset, ownerStxAddress, client, wcSession }) {
-  const userSession = useAtomValue(userSessionState);
+export function SendManyInputContainer({ asset, ownerStxAddress }) {
+  const { userSession } = useConnect();
+  const { doContractCall } = useStacksConnect();
+  const { wcClient, wcSession } = useWalletConnect();
+
   const spinner = useRef();
   const [status, setStatus] = useState();
   const [account, setAccount] = useState();
@@ -85,7 +90,6 @@ export function SendManyInputContainer({ asset, ownerStxAddress, client, wcSessi
   const [firstMemoForAll, setFirstMemoForAll] = useState(false);
 
   const [rows, setRows] = useState([{ to: '', stx: '0', memo: '' }]);
-  const { doContractCall } = useConnect();
 
   useEffect(() => {
     if (ownerStxAddress) {
@@ -110,7 +114,7 @@ export function SendManyInputContainer({ asset, ownerStxAddress, client, wcSessi
             return (
               <>
                 <Address addr={p.to} />:{' '}
-                {asset === 'stx' ? <Amount ustx={p.ustx} /> : <Amount xbtc={p.ustx} />} <br />
+                {asset === 'stx' ? <Amount ustx={p.ustx} /> : <Amount xsats={p.ustx} />} <br />
               </>
             );
           } catch (e) {
@@ -138,6 +142,12 @@ export function SendManyInputContainer({ asset, ownerStxAddress, client, wcSessi
               That is more than you have. You have <Amount ustx={account.stx.balance} />
             </small>
           )}
+        {asset === 'sbtc' && total > (account.fungible_tokens?.[SBTC_ASSET]?.balance || 0) && (
+          <small>
+            That is more than you have. You have{' '}
+            <Amount xsats={account.fungible_tokens?.[SBTC_ASSET]?.balance || 0} />
+          </small>
+        )}
         {asset === 'xbtc' &&
           total > (account.fungible_tokens?.[WRAPPED_BITCOIN_ASSET]?.balance || 0) && (
             <small>
@@ -172,28 +182,31 @@ export function SendManyInputContainer({ asset, ownerStxAddress, client, wcSessi
   };
 
   const sendAsset = async options => {
+    const handleSendResult = data => {
+      setStatus('Saving transaction to your storage');
+      setTxId(data.txId);
+      if (userSession) {
+        saveTxData(data, userSession)
+          .then(r => {
+            setRows([{ to: '', stx: '0', memo: '' }]);
+            setPreview(null);
+            setLoading(false);
+            setStatus(undefined);
+          })
+          .catch(e => {
+            console.log(e);
+            setLoading(false);
+            setStatus("Couldn't save the transaction");
+          });
+      }
+    };
+
     options = {
       ...options,
+      userSession,
       network: NETWORK,
       postConditionMode: PostConditionMode.Deny,
-      onFinish: data => {
-        setStatus('Saving transaction to your storage');
-        setTxId(data.txId);
-        if (userSession) {
-          saveTxData(data, userSession)
-            .then(r => {
-              setRows([{ to: '', stx: '0', memo: '' }]);
-              setPreview(null);
-              setLoading(false);
-              setStatus(undefined);
-            })
-            .catch(e => {
-              console.log(e);
-              setLoading(false);
-              setStatus("Couldn't save the transaction");
-            });
-        }
-      },
+      onFinish: handleSendResult,
       onCancel: () => {
         setStatus('Transaction not sent.');
         setLoading(false);
@@ -202,36 +215,33 @@ export function SendManyInputContainer({ asset, ownerStxAddress, client, wcSessi
     try {
       setStatus(`Sending transaction`);
       if (wcSession) {
-        console.log('start client request', ownerStxAddress, options);
-        try {
-          const result = await client.request({
-            chainId: chains[mainnet ? 0 : 1],
-            topic: wcSession.topic,
-            request: {
-              method: 'stacks_contractCall',
-              params: {
-                pubkey: ownerStxAddress,
-                contractAddress: options.contractAddress,
-                contractName: options.contractName,
-                functionName: options.functionName,
-                functionArgs: options.functionArgs,
-                postConditions: options.postConditions,
-                postConditionMode: PostConditionMode.Deny,
-                version: '1',
-              },
+        setStatus('Waiting for confirmation on wallet');
+        const result = await wcClient.request({
+          chainId: chains[0],
+          topic: wcSession.topic,
+          request: {
+            method: 'stacks_contractCall',
+            params: {
+              pubkey: ownerStxAddress,
+              contractAddress: options.contractAddress,
+              contractName: options.contractName,
+              functionName: options.functionName,
+              functionArgs: options.functionArgs,
+              postConditions: options.postConditions,
+              postConditionMode: PostConditionMode.Deny,
+              version: '1',
             },
-          });
-          console.log({ result });
-        } catch (e) {
-          console.log(e);
-        }
+          },
+        });
+        console.log('result', { result });
+        handleSendResult({ txId: result });
       } else {
         await doContractCall(options);
       }
     } catch (e) {
       console.log(e);
       setStatus(e.toString());
-      setLoading(true);
+      setLoading(false);
     }
   };
 
@@ -280,6 +290,32 @@ export function SendManyInputContainer({ asset, ownerStxAddress, client, wcSessi
         ],
         postConditions: [
           makeStandardSTXPostCondition(ownerStxAddress, FungibleConditionCode.Equal, total),
+        ],
+      };
+    }
+    if (asset === 'sbtc') {
+      options = {
+        contractAddress: SBTC_CONTRACT.address,
+        contractName: SBTC_CONTRACT.name,
+        functionName: 'request-send-sbtc',
+        functionArgs: [
+          nonEmptyParts.map(p => {
+            return tupleCV({
+              to: p.toCV,
+              'sbtc-in-sats': uintCV(p.ustx),
+              memo: bufferCVFromString(
+                hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
+              ),
+            });
+          })[0],
+        ],
+        postConditions: [
+          makeStandardFungiblePostCondition(
+            ownerStxAddress,
+            FungibleConditionCode.Equal,
+            total,
+            createAssetInfo(SBTC_CONTRACT.address, SBTC_CONTRACT.name, SBTC_CONTRACT.asset)
+          ),
         ],
       };
     } else {

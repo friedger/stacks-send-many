@@ -1,11 +1,11 @@
 import React from 'react';
-import { useConnect, userSessionState } from '../lib/auth';
-import { useAtom } from 'jotai';
+import { useConnect } from '../lib/auth';
+import { useWalletConnect } from '../lib/hooks';
 // Authentication button adapting to status
 
-export default function Auth({ client, wcSession, setWcSession }) {
-  const { handleSignOut } = useConnect();
-  const [userSession] = useAtom(userSessionState);
+export default function Auth() {
+  const { handleSignOut, userSession } = useConnect();
+  const { wcClient, wcSession, setWcSession } = useWalletConnect();
 
   if (userSession?.isUserSignedIn() || wcSession) {
     return (
@@ -17,7 +17,7 @@ export default function Auth({ client, wcSession, setWcSession }) {
             handleSignOut();
           }
           if (wcSession) {
-            client.disconnect({ topic: wcSession.topic }).then(() => {
+            wcClient.disconnect({ topic: wcSession.topic }).then(() => {
               setWcSession(undefined);
             });
           }

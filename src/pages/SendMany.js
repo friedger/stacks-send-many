@@ -6,8 +6,9 @@ import { SendManyTxList } from '../components/SendManyTxList';
 import { mocknet, testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
-export default function SendMany({ userSession, wcSession, asset, client }) {
-  const { ownerStxAddress } = useStxAddresses(userSession, wcSession);
+export default function SendMany({ asset }) {
+  const { ownerStxAddress } = useStxAddresses();
+
   if (!ownerStxAddress) {
     return <div>Loading</div>;
   }
@@ -29,23 +30,31 @@ export default function SendMany({ userSession, wcSession, asset, client }) {
               <div className="col-sm-12 col-md-8 p-4 container">
                 <div className="col-xs-10 col-md-12 bg-light p-4">
                   <div className="text-right">
-                    <a href={asset !== 'stx' ? '/' : '/xbtc'} className="small">
-                      Send {testnet || mocknet ? 'Test' : ''} {asset !== 'stx' ? 'STX' : 'xBTC'}{' '}
-                    </a>
+                    {asset !== 'stx' && (
+                      <a href="/" className="small">
+                        Send {testnet || mocknet ? 'Test' : ''} STX <div></div>
+                      </a>
+                    )}
+                    {asset !== 'sbtc' && (
+                      <a href="/sbtc" className="small">
+                        Send {testnet || mocknet ? 'Test' : ''} sBTC <div></div>
+                      </a>
+                    )}
+                    {asset !== 'xbtc' && (
+                      <a href="/xbtc" className="small">
+                        Send {testnet || mocknet ? 'Test' : ''} xBTC{' '}
+                      </a>
+                    )}
                   </div>
                   <h3 className="font-weight-bold mb-4">
-                    Send {testnet || mocknet ? 'Test' : ''}{' '}
-                    {asset === 'stx' ? 'Stacks (STX)' : 'Wrapped Bitcoin (xBTC)'}
+                    Send {testnet || mocknet ? 'Test' : ''} {asset === 'stx' && 'Stacks (STX)'}
+                    {asset === 'sbtc' && 'Wrapped Bitcoin (sBTC DR 0.1)'}
+                    {asset === 'xbtc' && 'Wrapped Bitcoin (xBTC)'}
                   </h3>
-                  <SendManyInputContainer
-                    ownerStxAddress={ownerStxAddress}
-                    asset={asset}
-                    client={client}
-                    wcSession={wcSession}
-                  />
+                  <SendManyInputContainer ownerStxAddress={ownerStxAddress} asset={asset} />
                 </div>
                 <div className="col-xs-10 col-md-12 mx-auto my-4 py-4 bg-light">
-                  <SendManyTxList ownerStxAddress={ownerStxAddress} userSession={userSession} />
+                  <SendManyTxList ownerStxAddress={ownerStxAddress} />
                 </div>
               </div>
             </div>

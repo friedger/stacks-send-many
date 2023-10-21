@@ -43,7 +43,7 @@ export function txUrl(txId) {
   if (mocknet) {
     return `${STACK_API_URL}/extended/v1/tx/0x${txId}`;
   } else {
-    return `https://explorer.stacks.co/txid/0x${txId}${chainSuffix}`;
+    return `https://explorer.hiro.so/txid/0x${txId}${chainSuffix}`;
   }
 }
 
@@ -106,9 +106,9 @@ export async function getTxsAsCSV(userSession, filter) {
               eventResult +
               `${e.asset.recipient}, ${e.asset.amount / 1000000}, ${
                 tx.apiData.burn_block_time_iso
-              }, https://explorer.stacks.co/txid/${
+              }, https://explorer.hiro.so/txid/${
                 tx.apiData.tx_id
-              }, https://stacks-send-many.pages.dev/txid/${tx.apiData.tx_id}\n`
+              }, https://stacks-send-many.pages.dev/txid/${tx.apiData.tx_id}${chainSuffix}\n`
             );
           }, '')
       );
@@ -130,7 +130,7 @@ export async function getTxsAsJSON(userSession, filter) {
               recipient: e.asset.recipient,
               amount: e.asset.amount / 1000000,
               timestamp: tx.apiData.burn_block_time_iso,
-              explorer_url: `https://explorer.stacks.co/txid/${tx.apiData.tx_id}`,
+              explorer_url: `https://explorer.hiro.so/txid/${tx.apiData.tx_id}${chainSuffix}`,
               send_many_url: `https://stacks-send-many.pages.dev/txid/${tx.apiData.tx_id}`,
             };
             return exportedTx;
@@ -248,7 +248,7 @@ export function TxStatus({ txId, resultPrefix }) {
       {processingResult.loading && (
         <>
           Checking transaction status:{' '}
-          <a href={`https://explorer.stacks.co/txid/${normalizedTxId}${chainSuffix}`}>
+          <a href={`https://explorer.hiro.so/txid/${normalizedTxId}${chainSuffix}`}>
             {normalizedTxId.substr(0, 10)}...
           </a>
         </>

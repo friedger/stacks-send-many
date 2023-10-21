@@ -13,6 +13,7 @@ export const localMocknet = !testnet && window.location.search.includes('mocknet
 export const mainnet =
   (!testnet && !localMocknet) || window.location.search.includes('chain=mainnet');
 
+export const chains = mainnet ? ['stacks:1'] : ['stacks:2147483648'];
 export const chainSuffix = `?chain=${mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet'}`;
 export const beta = window.location.search.includes('authorigin=beta');
 export const localNode = localMocknet;
@@ -38,6 +39,14 @@ export const GENESIS_CONTRACT_ADDRESS = mocknet
   : 'SP000000000000000000002Q6VF78';
 export const BNS_CONTRACT_NAME = 'bns';
 
+export const SBTC_ASSET = "ST3VA3Y7A2YQ8GW69T0N1ERPAD784R1Y2YHCSNJHH.asset::sbtc"
+export const SBTC_CONTRACT = {
+  address: 'ST3VA3Y7A2YQ8GW69T0N1ERPAD784R1Y2YHCSNJHH',
+  name: 'asset',
+  asset: 'sbtc',
+};
+
+
 export const WRAPPED_BITCOIN_ASSET =
   'SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin';
 export const WRAPPED_BITCOIN_CONTRACT = {
@@ -54,13 +63,14 @@ export const XBTC_SEND_MANY_CONTRACT = {
 export const STACK_API_URL = localNode
   ? 'http://localhost:3999'
   : mainnet
-  ? 'https://stacks-node-api.mainnet.stacks.co'
-  : 'https://stacks-node-api.testnet.stacks.co';
+  ? 'https://api.hiro.so'
+  : 'https://api.testnet.hiro.so';
+
 export const STACKS_API_WS_URL = localNode
   ? 'ws:localhost:3999/'
   : mainnet
-  ? 'wss://stacks-node-api.mainnet.stacks.co/'
-  : 'wss://stacks-node-api.testnet.stacks.co/';
+  ? 'wss://api.hiro.so/'
+  : 'wss://api.testnet.hiro.so/';
 export const STACKS_API_ACCOUNTS_URL = `${STACK_API_URL}/v2/accounts`;
 
 export const NETWORK = mainnet ? new StacksMainnet() : new StacksTestnet();
