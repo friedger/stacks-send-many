@@ -1,20 +1,21 @@
-import React, { useEffect } from 'react';
-import Landing from './pages/Landing';
-import { Connect } from '@stacks/connect-react';
 import { Router } from '@reach/router';
-import Auth from './components/Auth';
-import { userDataState, useConnect, appMetaData, wcClientState, useWcConnect } from './lib/auth';
-import { useAtom } from 'jotai';
+import { Connect } from '@stacks/connect-react';
 import Client from '@walletconnect/sign-client';
-import SendMany from './pages/SendMany';
-import SendManyDetails from './pages/SendManyDetails';
-import SendManyCyclePayout from './pages/SendManyCyclePayout';
-import SendManyAdvocates from './pages/SendManyAdvocates';
-import { Rate } from './components/Rate';
+import { useAtom } from 'jotai';
+import React, { useEffect } from 'react';
+import Auth from './components/Auth';
 import { Network } from './components/Network';
-import metaverse from './styles/metaverse.png';
-import SendManyTransferDetails from './pages/SendManyTransferDetails';
+import { Rate } from './components/Rate';
+import { appMetaData, useConnect, useWcConnect, userDataState, wcClientState } from './lib/auth';
 import { useStxAddresses, useWalletConnect } from './lib/hooks';
+import FulfillmentSBtc from './pages/FulfillmentSBtc';
+import Landing from './pages/Landing';
+import SendMany from './pages/SendMany';
+import SendManyAdvocates from './pages/SendManyAdvocates';
+import SendManyCyclePayout from './pages/SendManyCyclePayout';
+import SendManyDetails from './pages/SendManyDetails';
+import SendManyTransferDetails from './pages/SendManyTransferDetails';
+import metaverse from './styles/metaverse.png';
 
 /* global BigInt */
 BigInt.prototype.toJSON = function () {
@@ -100,9 +101,10 @@ function Content() {
           {ownerStxAddress && (
             <>
               <SendMany path="/xbtc" asset="xbtc" />
-              <SendMany path="/sbtc" asset="sbtc" />
+              <SendMany path="/sbtc/:assetContract" asset="sbtc" />
               <SendManyCyclePayout path="/cycle/:cycleId" />
               <SendMany path="/" default asset="stx" />
+              <FulfillmentSBtc path="/sbtc-bridge/:assetContract" />
             </>
           )}
         </AppBody>

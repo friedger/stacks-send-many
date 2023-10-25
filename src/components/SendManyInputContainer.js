@@ -21,8 +21,6 @@ import {
   CONTRACT_ADDRESS,
   namesApi,
   NETWORK,
-  SBTC_ASSET,
-  SBTC_CONTRACT,
   WRAPPED_BITCOIN_ASSET,
   WRAPPED_BITCOIN_CONTRACT,
   XBTC_SEND_MANY_CONTRACT,
@@ -75,7 +73,7 @@ function nonEmptyPart(p) {
   return !!p.toCV && p.stx !== '0' && p.stx !== '';
 }
 
-export function SendManyInputContainer({ asset, ownerStxAddress }) {
+export function SendManyInputContainer({ asset, ownerStxAddress, assetId }) {
   const { userSession } = useConnect();
   const { doContractCall } = useStacksConnect();
   const { wcClient, wcSession } = useWalletConnect();
@@ -90,6 +88,8 @@ export function SendManyInputContainer({ asset, ownerStxAddress }) {
   const [firstMemoForAll, setFirstMemoForAll] = useState(false);
 
   const [rows, setRows] = useState([{ to: '', stx: '0', memo: '' }]);
+
+  const [assetContract] = assetId.split('::');
 
   useEffect(() => {
     if (ownerStxAddress) {
@@ -113,8 +113,7 @@ export function SendManyInputContainer({ asset, ownerStxAddress }) {
             c32addressDecode(p.to);
             return (
               <>
-                <Address addr={p.to} />:{' '}
-                {asset === 'stx' ? <Amount ustx={p.ustx} /> : <Amount xsats={p.ustx} />} <br />
+                <Address addr={p.to} />: <Amount amount={p.ustx} asset={asset} /> <br />
               </>
             );
           } catch (e) {
@@ -122,13 +121,13 @@ export function SendManyInputContainer({ asset, ownerStxAddress }) {
             return (
               <>
                 {p.error || (p.toCV ? <Address addr={cvToString(p.toCV)} /> : '...')}:{' '}
-                {asset === 'stx' ? <Amount ustx={p.ustx} /> : <Amount xsats={p.ustx} />} <br />
+                <Amount amount={p.ustx} asset={asset} /> <br />
                 <br />
               </>
             );
           }
         })}{' '}
-        Total: {asset === 'stx' ? <Amount ustx={total} /> : <Amount xsats={total} />} <br />
+        Total: <Amount amount={total} asset={asset} /> <br />
         <br />
         {hasMemos && (
           <>
@@ -139,15 +138,10 @@ export function SendManyInputContainer({ asset, ownerStxAddress }) {
         {asset === 'stx' &&
           total + 1000 > parseInt(account.stx.balance) - parseInt(account.stx.locked) && (
             <small>
-              That is more than you have. You have <Amount ustx={account.stx.balance} />
+              That is more than you have. You have{' '}
+              <Amount ustx={account.stx.balance - account.stx.locked} /> (unlocked).
             </small>
           )}
-        {asset === 'sbtc' && total > (account.fungible_tokens?.[SBTC_ASSET]?.balance || 0) && (
-          <small>
-            That is more than you have. You have{' '}
-            <Amount xsats={account.fungible_tokens?.[SBTC_ASSET]?.balance || 0} />
-          </small>
-        )}
         {asset === 'xbtc' &&
           total > (account.fungible_tokens?.[WRAPPED_BITCOIN_ASSET]?.balance || 0) && (
             <small>
@@ -155,6 +149,12 @@ export function SendManyInputContainer({ asset, ownerStxAddress }) {
               <Amount xsats={account.fungible_tokens?.[WRAPPED_BITCOIN_ASSET]?.balance || 0} />
             </small>
           )}
+        {asset === 'sbtc' && total > (account.fungible_tokens?.[assetId]?.balance || 0) && (
+          <small>
+            That is more than you have. You have{' '}
+            <Amount ssats={account.fungible_tokens?.[assetId]?.balance || 0} />
+          </small>
+        )}
       </>
     );
   };
@@ -294,29 +294,25 @@ export function SendManyInputContainer({ asset, ownerStxAddress }) {
       };
     }
     if (asset === 'sbtc') {
+      const [contractAddress] = assetContract.split('.');
       options = {
-        contractAddress: SBTC_CONTRACT.address,
-        contractName: SBTC_CONTRACT.name,
-        functionName: 'request-send-sbtc',
+        contractAddress,
+        contractName: 'sbtc-send-many',
+        functionName: 'request-send-sbtc-many',
         functionArgs: [
-          nonEmptyParts.map(p => {
-            return tupleCV({
-              to: p.toCV,
-              'sbtc-in-sats': uintCV(p.ustx),
-              memo: bufferCVFromString(
-                hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
-              ),
-            });
-          })[0],
-        ],
-        postConditions: [
-          makeStandardFungiblePostCondition(
-            ownerStxAddress,
-            FungibleConditionCode.Equal,
-            total,
-            createAssetInfo(SBTC_CONTRACT.address, SBTC_CONTRACT.name, SBTC_CONTRACT.asset)
+          listCV(
+            nonEmptyParts.map(p => {
+              return tupleCV({
+                to: p.toCV,
+                'sbtc-in-sats': uintCV(p.ustx),
+                memo: bufferCVFromString(
+                  hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
+                ),
+              });
+            })
           ),
         ],
+        postConditions: [],
       };
     } else {
       options = {
@@ -400,7 +396,7 @@ export function SendManyInputContainer({ asset, ownerStxAddress }) {
 
   return (
     <div>
-      <div className="NoteField">
+      <div>
         {rows.map((row, index) => {
           return (
             <SendManyInput
@@ -460,7 +456,7 @@ export function SendManyInputContainer({ asset, ownerStxAddress }) {
                 loading ? '' : 'd-none'
               } spinner-border spinner-border-sm text-info align-text-top mr-2`}
             />
-            {namesResolved ? 'Send' : 'Preview'}
+            {namesResolved ? (asset === 'sbtc' ? 'Store request' : 'Send') : 'Preview'}
           </button>
         </div>
       </div>

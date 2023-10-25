@@ -3,15 +3,26 @@ import { Instructions } from '../components/Instructions';
 import { Profile } from '../components/Profile';
 import { SendManyInputContainer } from '../components/SendManyInputContainer';
 import { SendManyTxList } from '../components/SendManyTxList';
-import { mocknet, testnet } from '../lib/constants';
+import { SBTC_CONTRACT, WRAPPED_BITCOIN_ASSET, mocknet, testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
-export default function SendMany({ asset }) {
+export default function SendMany({ asset, assetContract }) {
   const { ownerStxAddress } = useStxAddresses();
-
+  console.log({ assetContract });
   if (!ownerStxAddress) {
     return <div>Loading</div>;
   }
+
+  let assetId;
+  if (asset === 'xbtc') {
+    assetId = WRAPPED_BITCOIN_ASSET;
+  } else if (asset === 'sbtc') {
+    assetId = `${assetContract || SBTC_CONTRACT}::sbtc`;
+  } else {
+    // for stx, assetId is ignored
+    assetId = undefined;
+  }
+
   return (
     <main className="panel-welcome mt-2 container">
       <div className="lead row mt-2">
@@ -20,7 +31,7 @@ export default function SendMany({ asset }) {
             <div className="row">
               <div className="col-sm-12 col-md-4 ">
                 <div className="p-4 m-4 mx-auto bg-light">
-                  <Profile stxAddress={ownerStxAddress} asset={asset} />
+                  <Profile stxAddress={ownerStxAddress} asset={asset} assetId={assetId} />
                 </div>
                 <div className="p-4 m-4 mx-auto bg-light">
                   <Instructions />
@@ -51,11 +62,17 @@ export default function SendMany({ asset }) {
                     {asset === 'sbtc' && 'Wrapped Bitcoin (sBTC DR 0.1)'}
                     {asset === 'xbtc' && 'Wrapped Bitcoin (xBTC)'}
                   </h3>
-                  <SendManyInputContainer ownerStxAddress={ownerStxAddress} asset={asset} />
+                  <SendManyInputContainer
+                    ownerStxAddress={ownerStxAddress}
+                    asset={asset}
+                    assetId={assetId}
+                  />
                 </div>
-                <div className="col-xs-10 col-md-12 mx-auto my-4 py-4 bg-light">
-                  <SendManyTxList ownerStxAddress={ownerStxAddress} />
-                </div>
+                {asset === 'stx' && (
+                  <div className="col-xs-10 col-md-12 mx-auto my-4 py-4 bg-light">
+                    <SendManyTxList ownerStxAddress={ownerStxAddress} />
+                  </div>
+                )}
               </div>
             </div>
           </div>

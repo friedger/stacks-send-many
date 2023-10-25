@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { fetchAccount } from '../lib/account';
 import { Address } from './Address';
 import { Amount } from './Amount';
-import { SBTC_ASSET, WRAPPED_BITCOIN_ASSET } from '../lib/constants';
 import * as jdenticon from 'jdenticon';
 
 function Jdenticon({ value, size }) {
@@ -15,13 +14,14 @@ function Jdenticon({ value, size }) {
 
   return <svg width={size} height={size} data-jdenticon-value={value} ref={icon} />;
 }
-export function Profile({ stxAddress, asset }) {
+export function Profile({ stxAddress, asset, assetId }) {
   const [profileState, setProfileState] = useState({
     account: undefined,
   });
 
   useEffect(() => {
     fetchAccount(stxAddress).then(acc => {
+      console.log({ acc });
       setProfileState({ account: acc });
     });
   }, [stxAddress]);
@@ -59,12 +59,12 @@ export function Profile({ stxAddress, asset }) {
           ) : asset === 'sbtc' ? (
             <Amount
               className="font-weight-bold balance"
-              xsats={profileState.account.fungible_tokens?.[SBTC_ASSET]?.balance || 0}
+              ssats={profileState.account.fungible_tokens?.[assetId]?.balance || 0}
             />
           ) : (
             <Amount
               className="font-weight-bold balance"
-              xsats={profileState.account.fungible_tokens?.[WRAPPED_BITCOIN_ASSET]?.balance || 0}
+              xsats={profileState.account.fungible_tokens?.[assetId]?.balance || 0}
             />
           )}
           <br />

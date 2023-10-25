@@ -1878,6 +1878,14 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@btc-helpers/rpc@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@btc-helpers/rpc/-/rpc-2.0.0.tgz#8a0f9c4bdbc2bbc8090b55efff987cf48d068801"
+  integrity sha512-Y5T3MUCW3lMENJiOJEk4DOwTW6GY/b/xmcf+kxoPZZw2uCyY+m3a9wV9wrJdIceqv3ET2iLFbGHjLwl25UYwGA==
+  dependencies:
+    "@scure/base" "^1.1.1"
+    cross-fetch "^3.1.5"
+
 "@bugsnag/browser@^7.20.2", "@bugsnag/browser@^7.21.0":
   version "7.21.0"
   resolved "https://registry.yarnpkg.com/@bugsnag/browser/-/browser-7.21.0.tgz#ee623ffa57c0fe2e2e4644a24bfc2008f18f83ef"
@@ -3119,10 +3127,22 @@
   dependencies:
     eslint-scope "5.1.1"
 
+"@noble/curves@~1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.2.0.tgz#92d7e12e4e49b23105a2555c6984d41733d65c35"
+  integrity sha512-oYclrNgRaM9SsBUBVbb8M6DTV7ZHRTKugureoYEncY5c65HOmRzvSiTE3y5CYaPYJA/GVkrhXEoF0M3Ya9PMnw==
+  dependencies:
+    "@noble/hashes" "1.3.2"
+
 "@noble/hashes@1.1.5":
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.1.5.tgz#1a0377f3b9020efe2fae03290bd2a12140c95c11"
   integrity sha512-LTMZiiLc+V4v1Yi16TD6aX2gmtKszNye0pQgbaLqkvhIqP7nVsSaJsWloGQjJfJ8offaoP5GtX3yY5swbcJxxQ==
+
+"@noble/hashes@1.3.2", "@noble/hashes@~1.3.1", "@noble/hashes@~1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.3.2.tgz#6f26dbc8fbc7205873ce3cee2f690eba0d421b39"
+  integrity sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ==
 
 "@noble/hashes@^1.1.2", "@noble/hashes@~1.1.1":
   version "1.1.3"
@@ -3138,6 +3158,11 @@
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/@noble/secp256k1/-/secp256k1-1.7.0.tgz#d15357f7c227e751d90aa06b05a0e5cf993ba8c1"
   integrity sha512-kbacwGSsH/CTout0ZnZWxnW1B+jH/7r/WAAKLBtrRJ/+CUH7lgmQzl3GTrQua3SGKWNSDsS6lmjnDpIJ5Dxyaw==
+
+"@noble/secp256k1@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@noble/secp256k1/-/secp256k1-2.0.0.tgz#c214269d45e0233ad6a8ae5104655453636e253d"
+  integrity sha512-rUGBd95e2a45rlmFTqQJYEFA4/gdIARFfuTuTqLglz0PZ6AKyzyXsEZZq7UZn8hZsvaBgpCzKKBJizT2cJERXw==
 
 "@nodelib/fs.scandir@2.1.4":
   version "2.1.4"
@@ -3871,10 +3896,24 @@
   dependencies:
     any-observable "^0.3.0"
 
+"@scure/base@^1.1.1", "@scure/base@^1.1.3", "@scure/base@~1.1.1", "@scure/base@~1.1.2", "@scure/base@~1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.1.3.tgz#8584115565228290a6c6c4961973e0903bb3df2f"
+  integrity sha512-/+SgoRjLq7Xlf0CWuLHq2LUZeL/w65kfzAPG5NH9pcmBhs+nunQTn4gvdwgMTIXnt9b2C/1SeL2XiysZEyIC9Q==
+
 "@scure/base@~1.1.0":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.1.1.tgz#ebb651ee52ff84f420097055f4bf46cfba403938"
   integrity sha512-ZxOhsSyxYwLJj3pLZCefNitxsj093tb2vq90mp2txoYeBqbcjDjqFhyM8eUjq/uFm6zJ+mUuqxlS2FkuSY1MTA==
+
+"@scure/bip32@^1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@scure/bip32/-/bip32-1.3.2.tgz#90e78c027d5e30f0b22c1f8d50ff12f3fb7559f8"
+  integrity sha512-N1ZhksgwD3OBlwTv3R6KFEcPojl/W4ElJOeCZdi+vuI5QmTFwLq3OFf2zd2ROpKvxFdgZ6hUpb0dx9bVNEwYCA==
+  dependencies:
+    "@noble/curves" "~1.2.0"
+    "@noble/hashes" "~1.3.2"
+    "@scure/base" "~1.1.2"
 
 "@scure/bip39@1.1.0":
   version "1.1.0"
@@ -3883,6 +3922,16 @@
   dependencies:
     "@noble/hashes" "~1.1.1"
     "@scure/base" "~1.1.0"
+
+"@scure/btc-signer@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@scure/btc-signer/-/btc-signer-1.1.0.tgz#d3b8c66ad4b588a98ab29a09796a03ac8b06ad4b"
+  integrity sha512-kCX7WaaTJr0VZIXDvaY0wNZfzZoZuLnPz4G0qmKXN8bnNx5M86wb1cce9XrZcfzb0jrVAbZJqNpxmE1e7Ka2hA==
+  dependencies:
+    "@noble/curves" "~1.2.0"
+    "@noble/hashes" "~1.3.1"
+    "@scure/base" "~1.1.3"
+    micro-packed "~0.3.2"
 
 "@sinclair/typebox@^0.24.1":
   version "0.24.51"
@@ -4088,7 +4137,7 @@
     socket.io-client "4.6.1"
     ws "7.5.6"
 
-"@stacks/common@^6.8.1":
+"@stacks/common@^6.7.0", "@stacks/common@^6.8.1":
   version "6.8.1"
   resolved "https://registry.yarnpkg.com/@stacks/common/-/common-6.8.1.tgz#4f13f4635014b1d50e78745d72ecb9085afed69d"
   integrity sha512-ewL9GLZNQYa5a/3K4xSHlHIgHkD4rwWW/QEaPId8zQIaL+1O9qCaF4LX9orNQeOmEk8kvG0x2xGV54fXKCZeWQ==
@@ -4123,7 +4172,7 @@
     "@stacks/transactions" "^6.1.1"
     jsontokens "^4.0.1"
 
-"@stacks/encryption@^6.9.0":
+"@stacks/encryption@^6.7.0", "@stacks/encryption@^6.9.0":
   version "6.9.0"
   resolved "https://registry.yarnpkg.com/@stacks/encryption/-/encryption-6.9.0.tgz#340141caabed37ea9aaa253db4aca82a55ef15ef"
   integrity sha512-hbpZ47eYgw9ZH5ly+GSgvw2Ffsu9L6d++2XIhvYSzL7yxYl4m1+FV5QYdJthJ2AS3vi8cI5otE254HTfCrhKzg==
@@ -4182,7 +4231,7 @@
     base64-js "^1.5.1"
     jsontokens "^4.0.1"
 
-"@stacks/transactions@^6.1.1", "@stacks/transactions@^6.9.0":
+"@stacks/transactions@^6.1.1", "@stacks/transactions@^6.7.0", "@stacks/transactions@^6.9.0":
   version "6.9.0"
   resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-6.9.0.tgz#99082bccf271cd8254eea644c23a7d2b30281a63"
   integrity sha512-hSs9+0Ew++GwMZMgPObOx0iVCQRxkiCqI+DHdPEikAmg2utpyLh2/txHOjfSIkQHvcBfJJ6O5KphmxDP4gUqiA==
@@ -12189,6 +12238,13 @@ micro-memoize@^4.0.11:
   resolved "https://registry.yarnpkg.com/micro-memoize/-/micro-memoize-4.0.11.tgz#f664afc8bd8c11cb2838716a7306d6e1ec205d3a"
   integrity sha512-CjxsaYe4j43df32DtzzNCwanPqZjZDwuQAZilsCYpa2ZVtSPDjHXbTlR4gsEZRyO9/twHs0b7HLjvy/sowl7sA==
 
+micro-packed@^0.3.2, micro-packed@~0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/micro-packed/-/micro-packed-0.3.2.tgz#3679188366c2283cb60a78366ed0416e5472b7cf"
+  integrity sha512-D1Bq0/lVOzdxhnX5vylCxZpdw5LylH7Vd81py0DfRsKUP36XYpwvy8ZIsECVo3UfnoROn8pdKqkOzL7Cd82sGA==
+  dependencies:
+    "@scure/base" "~1.1.1"
+
 micromatch@^3.1.10:
   version "3.1.10"
   resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-3.1.10.tgz#70859bc95c9840952f359a068a3fc49f9ecfac23"
@@ -15270,6 +15326,21 @@ saxes@^5.0.1:
   integrity sha512-5LBh1Tls8c9xgGjw3QrMwETmTMVk0oFgvrFSvWx62llR2hcEInrKNZ2GZCCuuy2lvWrdl5jhbpeqc5hRYKFOcw==
   dependencies:
     xmlchars "^2.2.0"
+
+sbtc@^0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/sbtc/-/sbtc-0.1.8.tgz#ed3242be8efe345471aea501cde223382c0eeba5"
+  integrity sha512-KX2MPLuhauTNbvKvODvdLqt+dlVAVglRVXzMkZNvbC94I5YovSrNM1qVAHWVLYojQxG46SMkywwyvQYMRwxaxA==
+  dependencies:
+    "@btc-helpers/rpc" "^2.0.0"
+    "@noble/secp256k1" "^2.0.0"
+    "@scure/base" "^1.1.3"
+    "@scure/btc-signer" "^1.1.0"
+    "@stacks/common" "^6.7.0"
+    "@stacks/encryption" "^6.7.0"
+    "@stacks/transactions" "^6.7.0"
+    c32check "^2.0.0"
+    micro-packed "^0.3.2"
 
 scheduler@^0.23.0:
   version "0.23.0"
