@@ -2,42 +2,41 @@ import * as btc from '@scure/btc-signer';
 import { bytesToHex, hexToBytes } from '@stacks/common';
 import {
   ClarityType,
+  callReadOnlyFunction,
   cvToString,
-  getContractMapEntry,
   principalCV,
-  tupleCV,
-  uintCV,
+  uintCV
 } from '@stacks/transactions';
 import React, { useRef, useState } from 'react';
-import { DevEnvHelper, TestnetHelper, WALLET_00, sbtcDepositHelper } from 'sbtc';
+import { DevEnvHelper, TESTNET, TestnetHelper, WALLET_00, sbtcDepositHelper } from 'sbtc';
 import { useConnect } from '../lib/auth';
 import { NETWORK, mocknet } from '../lib/constants';
 
-export function DepositBtc({ assetContract, ownerStxAddress, sendManyContractName }) {
+export function DepositBtc({assetContract, ownerStxAddress, sendManyContract }) {
   const spinner = useRef();
   const requestIdRef = useRef();
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState();
   const { userSession } = useConnect();
-
+  const [sendManyContractAddress, sendManyContractName] = sendManyContract.split('.');
   const sendAction = async () => {
     setLoading(true);
     setStatus();
-    const [contractAddress] = assetContract.split('.');
     const requestId = requestIdRef.current.value;
 
-    const requestDetailsEntry = await getContractMapEntry({
-      contractAddress,
+    const requestDetails = await callReadOnlyFunction({
+      contractAddress: sendManyContractAddress,
       contractName: sendManyContractName,
-      mapName: 'requests',
-      mapKey: tupleCV({ owner: principalCV(ownerStxAddress), 'request-id': uintCV(requestId) }),
+      functionName: 'get-request',
+      functionArgs: [principalCV(ownerStxAddress), uintCV(requestId)],
+      senderAddress: ownerStxAddress,
       network: NETWORK,
     });
-    setStatus(cvToString(requestDetailsEntry));
-    console.log(JSON.stringify(requestDetailsEntry));
+    setStatus(cvToString(requestDetails));
+    console.log(JSON.stringify(requestDetails));
 
-    if (requestDetailsEntry.type === ClarityType.OptionalSome) {
-      const total = requestDetailsEntry.value.list.reduce(
+    if (requestDetails.type === ClarityType.OptionalSome) {
+      const total = requestDetails.value.list.reduce(
         (sum, { data }) => sum + Number(data['sbtc-in-sats'].value),
         0
       );
@@ -46,7 +45,8 @@ export function DepositBtc({ assetContract, ownerStxAddress, sendManyContractNam
       const userData = userSession.loadUserData();
       let profile = userData.profile;
       let helper = new TestnetHelper();
-      let sbtcWalletAddress = 'TODO';
+      let sbtcWalletAddress = await helper.getSbtcPegAddress(assetContract);
+      // handle devenv
       if (mocknet) {
         console.log('Using mocknet');
         helper = new DevEnvHelper();
@@ -59,6 +59,8 @@ export function DepositBtc({ assetContract, ownerStxAddress, sendManyContractNam
         const sbtcWalletAccount = await helper.getBitcoinAccount(WALLET_00);
         sbtcWalletAddress = sbtcWalletAccount.tr.address;
       }
+
+      // get the address and public key from the user's profile
       const btcAddress = profile.btcAddress.p2wpkh.testnet;
       const btcPublicKey = userData.profile.btcPublicKey.p2wpkh;
       console.log({ btcAddress, btcPublicKey });
@@ -66,8 +68,9 @@ export function DepositBtc({ assetContract, ownerStxAddress, sendManyContractNam
       let utxos = await helper.fetchUtxos(btcAddress);
 
       const tx = await sbtcDepositHelper({
-        sbtcWalletAddress,
-        stacksAddress: `${(await helper.getStacksAccount(WALLET_00)).address}.sbtc-send-many`,
+        network: mocknet ? undefined : TESTNET,
+        pegAddress: sbtcWalletAddress,
+        stacksAddress: sendManyContract,
         amountSats: total,
         // we can use the helper to get an estimated fee for our transaction
         feeRate: await helper.estimateFeeRate('low'),

@@ -12,8 +12,9 @@ import {
 } from 'sbtc';
 import { useConnect } from '../lib/auth';
 import { NETWORK, mocknet } from '../lib/constants';
+import { getSbtcWalletAddress } from '../lib/sbtc';
 
-export function WithdrawSBtc() {
+export function WithdrawSBtc({ assetContract }) {
   const spinner = useRef();
   const amountSatsRef = useRef();
   const [loading, setLoading] = useState(false);
@@ -27,6 +28,7 @@ export function WithdrawSBtc() {
 
     const userData = userSession.loadUserData();
     let profile = userData.profile;
+
     if (mocknet) {
       console.log('Using mocknet');
       let helper = new DevEnvHelper();
@@ -69,7 +71,7 @@ export function WithdrawSBtc() {
 
     const userData = userSession.loadUserData();
     let profile = userData.profile;
-    let sbtcWalletAddress = 'TODO';
+    let sbtcWalletAddress = await getSbtcWalletAddress(assetContract);
     if (mocknet) {
       console.log('Using mocknet');
       helper = new DevEnvHelper();

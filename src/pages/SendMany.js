@@ -6,7 +6,7 @@ import { SendManyTxList } from '../components/SendManyTxList';
 import { SBTC_CONTRACT, WRAPPED_BITCOIN_ASSET, mocknet, testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
-export default function SendMany({ asset, assetContract }) {
+export default function SendMany({ asset, assetContract, sendManyContract }) {
   const { ownerStxAddress } = useStxAddresses();
   console.log({ assetContract });
   if (!ownerStxAddress) {
@@ -66,6 +66,7 @@ export default function SendMany({ asset, assetContract }) {
                     ownerStxAddress={ownerStxAddress}
                     asset={asset}
                     assetId={assetId}
+                    sendManyContract={sendManyContract}
                   />
                 </div>
                 {asset === 'stx' && (

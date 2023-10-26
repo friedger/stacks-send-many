@@ -3,19 +3,18 @@ import {
   ClarityType,
   FungibleConditionCode,
   PostConditionMode,
+  callReadOnlyFunction,
   createAssetInfo,
   cvToString,
-  getContractMapEntry,
   makeContractFungiblePostCondition,
   principalCV,
-  tupleCV,
   uintCV,
 } from '@stacks/transactions';
 import React, { useRef, useState } from 'react';
 import { useConnect } from '../lib/auth';
 import { NETWORK } from '../lib/constants';
 
-export function FulfillRequestSBtc({ assetContract, ownerStxAddress, sendManyContractName }) {
+export function FulfillRequestSBtc({ assetContract, ownerStxAddress, sendManyContract }) {
   const spinner = useRef();
   const requestIdRef = useRef();
   const [loading, setLoading] = useState(false);
@@ -23,41 +22,44 @@ export function FulfillRequestSBtc({ assetContract, ownerStxAddress, sendManyCon
   const { userSession } = useConnect();
   const { doContractCall } = useStacksConnect();
 
+  const [sendManyContractAddress, sendManyContractName] = sendManyContract.split('.');
+
   const sendAction = async () => {
     setLoading(true);
     setStatus();
-    const [contractAddress] = assetContract.split('.');
+    const [assetContractAddress, assetContractName] = assetContract.split('.');
     const requestId = requestIdRef.current.value;
 
-    const requestDetailsEntry = await getContractMapEntry({
-      contractAddress,
+    const requestDetails = await callReadOnlyFunction({
+      contractAddress: sendManyContractAddress,
       contractName: sendManyContractName,
-      mapName: 'requests',
-      mapKey: tupleCV({ owner: principalCV(ownerStxAddress), 'request-id': uintCV(requestId) }),
+      functionName: 'get-request',
+      functionArgs: [principalCV(ownerStxAddress), uintCV(requestId)],
+      senderAddress: ownerStxAddress,
       network: NETWORK,
     });
-    setStatus(cvToString(requestDetailsEntry));
-    console.log(JSON.stringify(requestDetailsEntry));
+    setStatus(cvToString(requestDetails));
+    console.log(JSON.stringify(requestDetails));
 
-    if (requestDetailsEntry.type === ClarityType.OptionalSome) {
-      const total = requestDetailsEntry.value.list.reduce(
+    if (requestDetails.type === ClarityType.OptionalSome) {
+      const total = requestDetails.value.list.reduce(
         (sum, { data }) => sum + Number(data['sbtc-in-sats'].value),
         0
       );
       console.log({ total });
 
       let options = {
-        contractAddress,
+        contractAddress: sendManyContractAddress,
         contractName: sendManyContractName,
         functionName: 'fulfill-send-request',
         functionArgs: [uintCV(requestId)],
         postConditions: [
           makeContractFungiblePostCondition(
-            contractAddress,
+            sendManyContractAddress,
             sendManyContractName,
             FungibleConditionCode.Equal,
             total,
-            createAssetInfo(contractAddress, 'asset', 'sbtc')
+            createAssetInfo(assetContractAddress, assetContractName, 'sbtc')
           ),
         ],
       };

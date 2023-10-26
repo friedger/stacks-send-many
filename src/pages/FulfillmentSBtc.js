@@ -3,18 +3,21 @@ import { DepositBtc } from '../components/DepositBtc';
 import { FulfillRequestSBtc } from '../components/FulfillRequestSBtc';
 import { InstructionsFulfillmentSBtc } from '../components/InstructionsFulfillmentSBtc';
 import { Profile } from '../components/Profile';
+import { WithdrawSBtc } from '../components/WithdrawSBtc';
 import { SBTC_CONTRACT, mocknet, testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
-import { WithdrawSBtc } from '../components/WithdrawSBtc';
 
-export default function FulfillmentSBtc({ assetContract }) {
+export default function FulfillmentSBtc({ assetContract, sendManyContract }) {
   const { ownerStxAddress } = useStxAddresses();
   if (!ownerStxAddress) {
     return <div>Loading</div>;
   }
 
-  const sendManyContractName = 'sbtc-send-many';
+  const [assetContractAddress] = assetContract
+    ? assetContract.split('.')
+    : SBTC_CONTRACT.split('.');
   const assetId = `${assetContract || SBTC_CONTRACT}::sbtc`;
+  const defaultSendManyContract = `${assetContractAddress}.sbtc-send-many`;
 
   return (
     <main className="panel-welcome mt-2 container">
@@ -39,7 +42,7 @@ export default function FulfillmentSBtc({ assetContract }) {
                   <DepositBtc
                     assetContract={assetContract || SBTC_CONTRACT}
                     ownerStxAddress={ownerStxAddress}
-                    sendManyContractName={sendManyContractName}
+                    sendManyContract={sendManyContract || defaultSendManyContract}
                   />
                 </div>
                 <div className="col-xs-10 col-md-12 bg-light p-4">
@@ -49,14 +52,14 @@ export default function FulfillmentSBtc({ assetContract }) {
                   <FulfillRequestSBtc
                     assetContract={assetContract || SBTC_CONTRACT}
                     ownerStxAddress={ownerStxAddress}
-                    sendManyContractName={sendManyContractName}
+                    sendManyContract={sendManyContract || defaultSendManyContract}
                   />
                 </div>
                 <div className="col-xs-10 col-md-12 bg-light p-4">
                   <h3 className="font-weight-bold mb-4">
                     Withdraw {testnet || mocknet ? 'Test' : ''} sBTC
                   </h3>
-                  <WithdrawSBtc />
+                  <WithdrawSBtc assetContract={assetContract || SBTC_CONTRACT} />
                 </div>
               </div>
             </div>

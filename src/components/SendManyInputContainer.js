@@ -73,7 +73,7 @@ function nonEmptyPart(p) {
   return !!p.toCV && p.stx !== '0' && p.stx !== '';
 }
 
-export function SendManyInputContainer({ asset, ownerStxAddress, assetId }) {
+export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendManyContract }) {
   const { userSession } = useConnect();
   const { doContractCall } = useStacksConnect();
   const { wcClient, wcSession } = useWalletConnect();
@@ -88,8 +88,6 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId }) {
   const [firstMemoForAll, setFirstMemoForAll] = useState(false);
 
   const [rows, setRows] = useState([{ to: '', stx: '0', memo: '' }]);
-
-  const [assetContract] = assetId.split('::');
 
   useEffect(() => {
     if (ownerStxAddress) {
@@ -294,10 +292,10 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId }) {
       };
     }
     if (asset === 'sbtc') {
-      const [contractAddress] = assetContract.split('.');
+      const [contractAddress, contractName] = sendManyContract.split('.');
       options = {
         contractAddress,
-        contractName: 'sbtc-send-many',
+        contractName,
         functionName: 'request-send-sbtc-many',
         functionArgs: [
           listCV(
