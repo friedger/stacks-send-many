@@ -62,6 +62,12 @@ export default function SendMany({ asset, assetContract, sendManyContract }) {
                     {asset === 'sbtc' && 'Wrapped Bitcoin (sBTC DR 0.1)'}
                     {asset === 'xbtc' && 'Wrapped Bitcoin (xBTC)'}
                   </h3>
+                  {asset === 'sbtc' && (
+                    <b>
+                      SBTC Send Many Contract is only experimental on testnet and not safe to use.
+                      You are sharing the escrow contract with other users.
+                    </b>
+                  )}
                   <SendManyInputContainer
                     ownerStxAddress={ownerStxAddress}
                     asset={asset}
