@@ -3,10 +3,9 @@ import { AmountFiat } from './AmountFiat';
 import { AmountStx } from './AmountStx';
 import { AmountXbtc } from './AmountXbtc';
 import { AmountSBtc } from './AmountSBtc';
-import {AmountWmno} from "./AmountWmno";
+import { AmountWmno } from './AmountWmno';
 
 export function Amount({ ustx, xsats, ssats, wmno, amount, asset, className }) {
-
   if (asset === 'stx') {
     ustx = amount;
   } else if (asset === 'xbtc') {
@@ -17,7 +16,7 @@ export function Amount({ ustx, xsats, ssats, wmno, amount, asset, className }) {
     wmno = amount;
   }
 
-  console.log({ ustx, xsats, ssats });
+  console.log({ ustx, xsats, ssats, wmno });
   if (ustx || ustx === 0) {
     if (isNaN(ustx)) {
       return ustx;
@@ -53,7 +52,7 @@ export function Amount({ ustx, xsats, ssats, wmno, amount, asset, className }) {
       <span className={className}>
         <AmountWmno wmno={wmno} />
       </span>
-    )
+    );
   } else {
     return null;
   }

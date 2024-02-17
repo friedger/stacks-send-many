@@ -3,7 +3,13 @@ import { Instructions } from '../components/Instructions';
 import { Profile } from '../components/Profile';
 import { SendManyInputContainer } from '../components/SendManyInputContainer';
 import { SendManyTxList } from '../components/SendManyTxList';
-import { SBTC_CONTRACT, WMNO_ASSET, WRAPPED_BITCOIN_ASSET, mocknet, testnet } from '../lib/constants';
+import {
+  SBTC_CONTRACT,
+  WMNO_ASSET,
+  WRAPPED_BITCOIN_ASSET,
+  mocknet,
+  testnet,
+} from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
 export default function SendMany({ asset, assetContract, sendManyContract }) {
