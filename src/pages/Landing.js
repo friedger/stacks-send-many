@@ -3,7 +3,7 @@ import { useConnect, useWcConnect } from '../lib/auth';
 
 // Landing page demonstrating Blockstack connect for registration
 
-export default function Landing() {
+export default function Landing({ asset }) {
   const { handleOpenAuth } = useConnect();
   const { handleWcOpenAuth, isWcReady } = useWcConnect();
   return (
@@ -12,10 +12,22 @@ export default function Landing() {
         <div className="container">
           <div className="panel-landing text-center mt-3">
             <p className="lead">
-              A UI to interact with the smart contracts
-              <br />"send-many", "send-many-memo" and "xbtc-send-many-v1".
+              {asset === 'wmno' ? (
+                <>
+                  A UI to interact with
+                  <br />
+                  Wrapped Nothing smart contracts "wrapped-nothing-v8"
+                  <br />
+                  and other send-many contracts.
+                </>
+              ) : (
+                <>
+                  A UI to interact with the smart contracts
+                  <br />
+                  "send-many", "send-many-memo", "wrapped-nothing-v8" and "xbtc-send-many-v1".
+                </>
+              )}
             </p>
-
             <p className="alert alert-info  border-info">
               Send Many is an{' '}
               <a
@@ -26,12 +38,12 @@ export default function Landing() {
                 open source
               </a>{' '}
               web app with the purpose of{' '}
-              <strong>helping everybody to send and view bulk STX/xBTC transfers.</strong>
+              <strong>helping everybody to send and view bulk STX/xBTC/WMNO transfers.</strong>
             </p>
 
             <div className="card mt-4 border-info">
               <div className="card-header">
-                <h5 className="card-title">Efficient STX/xBTC transfers</h5>
+                <h5 className="card-title">Efficient STX/xBTC/WMNO transfers</h5>
               </div>
               <div className="card-body">
                 <p className="card-text mb-3">
@@ -66,7 +78,7 @@ export default function Landing() {
               </p>
 
               <div className="card-footer text-info">
-                <strong>With additional features for Friedger Pool payouts</strong>
+                <strong>With additional features for Wrapped Nothing</strong>
               </div>
             </div>
           </div>

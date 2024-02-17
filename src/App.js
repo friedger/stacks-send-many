@@ -97,7 +97,12 @@ function Content() {
           <SendManyAdvocates path="/advocates/:payoutId" />
           <SendManyDetails path="/txid/:txId" />
           <SendManyTransferDetails path="/txid/:txId/:eventIndex" />
-          {!ownerStxAddress && <Landing path="/" />}
+          {!ownerStxAddress && (
+            <>
+              <Landing path="/:asset" />
+              <Landing path="/" default />
+            </>
+          )}
           {ownerStxAddress && (
             <>
               <SendMany path="/xbtc" asset="xbtc" />
