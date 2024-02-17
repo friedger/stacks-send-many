@@ -61,6 +61,11 @@ export function Profile({ stxAddress, asset, assetId }) {
               className="font-weight-bold balance"
               ssats={profileState.account.fungible_tokens?.[assetId]?.balance || 0}
             />
+          ) : asset === 'wmno' ? (
+            <Amount
+              className="font-weight-bold balance"
+              wmno={profileState.account.fungible_tokens?.[assetId]?.balance || 0}
+            />
           ) : (
             <Amount
               className="font-weight-bold balance"

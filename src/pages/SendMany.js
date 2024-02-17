@@ -3,7 +3,7 @@ import { Instructions } from '../components/Instructions';
 import { Profile } from '../components/Profile';
 import { SendManyInputContainer } from '../components/SendManyInputContainer';
 import { SendManyTxList } from '../components/SendManyTxList';
-import { SBTC_CONTRACT, WRAPPED_BITCOIN_ASSET, mocknet, testnet } from '../lib/constants';
+import { SBTC_CONTRACT, WMNO_ASSET, WRAPPED_BITCOIN_ASSET, mocknet, testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
 export default function SendMany({ asset, assetContract, sendManyContract }) {
@@ -18,6 +18,8 @@ export default function SendMany({ asset, assetContract, sendManyContract }) {
     assetId = WRAPPED_BITCOIN_ASSET;
   } else if (asset === 'sbtc') {
     assetId = `${assetContract || SBTC_CONTRACT}::sbtc`;
+  } else if (asset === 'wmno') {
+    assetId = WMNO_ASSET;
   } else {
     // for stx, assetId is ignored
     assetId = undefined;
@@ -53,7 +55,12 @@ export default function SendMany({ asset, assetContract, sendManyContract }) {
                     )}
                     {asset !== 'xbtc' && (
                       <a href="/xbtc" className="small">
-                        Send {testnet || mocknet ? 'Test' : ''} xBTC{' '}
+                        Send {testnet || mocknet ? 'Test' : ''} xBTC <div></div>
+                      </a>
+                    )}
+                    {asset !== 'wmno' && (
+                      <a href="/wmno" className="small">
+                        Send {testnet || mocknet ? 'Test' : ''} WMNO{' '}
                       </a>
                     )}
                   </div>
@@ -61,12 +68,28 @@ export default function SendMany({ asset, assetContract, sendManyContract }) {
                     Send {testnet || mocknet ? 'Test' : ''} {asset === 'stx' && 'Stacks (STX)'}
                     {asset === 'sbtc' && 'Wrapped Bitcoin (sBTC DR 0.1)'}
                     {asset === 'xbtc' && 'Wrapped Bitcoin (xBTC)'}
+                    {asset === 'wmno' && 'Wrapped Nothing (WMNO)'}
                   </h3>
                   {asset === 'sbtc' && (
-                    <b>
-                      SBTC Send Many Contract is only experimental on testnet and not safe to use.
-                      You are sharing the escrow contract with other users.
-                    </b>
+                    <>
+                      <p>
+                        <b>
+                          SBTC Send Many Contract is only experimental on testnet and not safe to
+                          use. You are sharing the escrow contract with other users.
+                        </b>
+                      </p>
+                      <p>
+                        Using asset{' '}
+                        <a
+                          href={`https://explorer.hiro.so/address/${
+                            assetContract || SBTC_CONTRACT
+                          }?chain=testnet`}
+                        >
+                          {assetId}
+                        </a>
+                        .
+                      </p>
+                    </>
                   )}
                   <SendManyInputContainer
                     ownerStxAddress={ownerStxAddress}

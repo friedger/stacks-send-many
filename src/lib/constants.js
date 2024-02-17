@@ -50,6 +50,13 @@ export const WRAPPED_BITCOIN_CONTRACT = {
   asset: 'wrapped-bitcoin',
 };
 
+export const WMNO_ASSET = 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.wrapped-nothing-v8::wrapped-nthng'
+export const WMNO_CONTRACT = {
+  address: 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ',
+  name: 'wrapped-nothing-v8',
+  asset: 'wrapped-nthng',
+}
+
 export const XBTC_SEND_MANY_CONTRACT = {
   address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
   name: 'xbtc-send-many-v1',

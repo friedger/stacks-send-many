@@ -21,6 +21,8 @@ import {
   CONTRACT_ADDRESS,
   namesApi,
   NETWORK,
+  WMNO_ASSET,
+  WMNO_CONTRACT,
   WRAPPED_BITCOIN_ASSET,
   WRAPPED_BITCOIN_CONTRACT,
   XBTC_SEND_MANY_CONTRACT,
@@ -153,6 +155,12 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
             <Amount ssats={account.fungible_tokens?.[assetId]?.balance || 0} />
           </small>
         )}
+        {asset === 'wmno' && total > (account.fungible_tokens?.[WMNO_ASSET]?.balance || 0) && (
+          <small>
+            That is more than you have. You have{' '}
+            <Amount wmno={account.fungible_tokens?.[WMNO_ASSET]?.balance || 0} />
+          </small>
+        )}
       </>
     );
   };
@@ -161,7 +169,9 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
     const parts = currentRows.map(r => {
       return {
         ...r,
-        ustx: Math.floor(parseFloat(r.stx) * (asset === 'stx' ? 1_000_000 : 100_000_000)),
+        ustx: Math.floor(
+          parseFloat(r.stx) * (asset === 'stx' ? 1_000_000 : asset === 'wmno' ? 1 : 100_000_000)
+        ),
       };
     });
     const { total, hasMemos } = parts.reduce(
@@ -266,84 +276,114 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
     const firstMemo =
       nonEmptyParts.length > 0 && nonEmptyParts[0].memo ? nonEmptyParts[0].memo.trim() : '';
     let options;
-    if (asset === 'stx') {
-      options = {
-        contractAddress: CONTRACT_ADDRESS,
-        contractName: hasMemos ? 'send-many-memo' : 'send-many',
-        functionName: 'send-many',
-        functionArgs: [
-          listCV(
-            nonEmptyParts.map(p => {
-              return hasMemos
-                ? tupleCV({
-                    to: p.toCV,
-                    ustx: uintCV(p.ustx),
-                    memo: bufferCVFromString(
-                      firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : ''
-                    ),
-                  })
-                : tupleCV({ to: p.toCV, ustx: uintCV(p.ustx) });
-            })
-          ),
-        ],
-        postConditions: [
-          makeStandardSTXPostCondition(ownerStxAddress, FungibleConditionCode.Equal, total),
-        ],
-      };
-    }
-    if (asset === 'sbtc') {
-      const [contractAddress, contractName] = sendManyContract.split('.');
-      options = {
-        contractAddress,
-        contractName,
-        functionName: 'request-send-sbtc-many',
-        functionArgs: [
-          listCV(
+    let contractAddress, contractName;
+    switch (asset) {
+      case 'stx':
+        options = {
+          contractAddress: CONTRACT_ADDRESS,
+          contractName: hasMemos ? 'send-many-memo' : 'send-many',
+          functionName: 'send-many',
+          functionArgs: [
+            listCV(
+              nonEmptyParts.map(p => {
+                return hasMemos
+                  ? tupleCV({
+                      to: p.toCV,
+                      ustx: uintCV(p.ustx),
+                      memo: bufferCVFromString(
+                        firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : ''
+                      ),
+                    })
+                  : tupleCV({ to: p.toCV, ustx: uintCV(p.ustx) });
+              })
+            ),
+          ],
+          postConditions: [
+            makeStandardSTXPostCondition(ownerStxAddress, FungibleConditionCode.Equal, total),
+          ],
+        };
+        break;
+      case 'sbtc':
+        [contractAddress, contractName] = sendManyContract.split('.');
+        options = {
+          contractAddress,
+          contractName,
+          functionName: 'request-send-sbtc-many',
+          functionArgs: [
+            listCV(
+              nonEmptyParts.map(p => {
+                return tupleCV({
+                  to: p.toCV,
+                  'sbtc-in-sats': uintCV(p.ustx),
+                  memo: bufferCVFromString(
+                    hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
+                  ),
+                });
+              })
+            ),
+          ],
+          postConditions: [],
+        };
+        break;
+      case 'wmno':
+        options = {
+          contractAddress: WMNO_CONTRACT.address,
+          contractName: WMNO_CONTRACT.name,
+          functionName: 'send-many',
+          functionArgs: [
+            listCV(
+              nonEmptyParts.map(p => {
+                return tupleCV({
+                  to: p.toCV,
+                  amount: uintCV(p.ustx),
+                });
+              })
+            ),
+          ],
+          postConditions: [
+            makeStandardFungiblePostCondition(
+              ownerStxAddress,
+              FungibleConditionCode.Equal,
+              total,
+              createAssetInfo(WMNO_CONTRACT.address, WMNO_CONTRACT.name, WMNO_CONTRACT.asset)
+            ),
+          ],
+        };
+        break;
+      default:
+        options = {
+          contractAddress: XBTC_SEND_MANY_CONTRACT.address,
+          contractName: XBTC_SEND_MANY_CONTRACT.name,
+          functionName: 'send-xbtc',
+          functionArgs: [
             nonEmptyParts.map(p => {
               return tupleCV({
                 to: p.toCV,
-                'sbtc-in-sats': uintCV(p.ustx),
+                'xbtc-in-sats': uintCV(p.ustx),
                 memo: bufferCVFromString(
                   hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
                 ),
+                'swap-to-ustx': trueCV(),
+                'min-dy': noneCV(),
               });
-            })
-          ),
-        ],
-        postConditions: [],
-      };
-    } else {
-      options = {
-        contractAddress: XBTC_SEND_MANY_CONTRACT.address,
-        contractName: XBTC_SEND_MANY_CONTRACT.name,
-        functionName: 'send-xbtc',
-        functionArgs: [
-          nonEmptyParts.map(p => {
-            return tupleCV({
-              to: p.toCV,
-              'xbtc-in-sats': uintCV(p.ustx),
-              memo: bufferCVFromString(
-                hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
-              ),
-              'swap-to-ustx': trueCV(),
-              'min-dy': noneCV(),
-            });
-          })[0],
-        ],
-        postConditions: [
-          makeStandardFungiblePostCondition(
-            ownerStxAddress,
-            FungibleConditionCode.Equal,
-            total,
-            createAssetInfo(
-              WRAPPED_BITCOIN_CONTRACT.address,
-              WRAPPED_BITCOIN_CONTRACT.name,
-              WRAPPED_BITCOIN_CONTRACT.asset
-            )
-          ),
-        ],
-      };
+            })[0],
+          ],
+          postConditions: [
+            makeStandardFungiblePostCondition(
+              ownerStxAddress,
+              FungibleConditionCode.Equal,
+              total,
+              createAssetInfo(
+                WRAPPED_BITCOIN_CONTRACT.address,
+                WRAPPED_BITCOIN_CONTRACT.name,
+                WRAPPED_BITCOIN_CONTRACT.asset
+              )
+            ),
+          ],
+        };
+        break;
     }
+
     sendAsset(options);
   };
 
