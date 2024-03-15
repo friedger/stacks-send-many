@@ -39,7 +39,6 @@ export function SendManyInput({ index, row, updateModel, maybeAddNewRow, lastRow
               onChange={e => updateModel(getRow())}
               placeholder={``}
               type="text"
-              maxLength="10"
               className="form-control"
               required=""
             />
