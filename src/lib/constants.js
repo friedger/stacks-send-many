@@ -39,8 +39,7 @@ export const GENESIS_CONTRACT_ADDRESS = mocknet
   : 'SP000000000000000000002Q6VF78';
 export const BNS_CONTRACT_NAME = 'bns';
 
-export const SBTC_CONTRACT = "ST3VA3Y7A2YQ8GW69T0N1ERPAD784R1Y2YHCSNJHH.asset"
-
+export const SBTC_CONTRACT = 'ST3VA3Y7A2YQ8GW69T0N1ERPAD784R1Y2YHCSNJHH.asset';
 
 export const WRAPPED_BITCOIN_ASSET =
   'SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin';
@@ -50,12 +49,20 @@ export const WRAPPED_BITCOIN_CONTRACT = {
   asset: 'wrapped-bitcoin',
 };
 
-export const WMNO_ASSET = 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.wrapped-nothing-v8::wrapped-nthng'
+export const WMNO_ASSET =
+  'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.wrapped-nothing-v8::wrapped-nthng';
 export const WMNO_CONTRACT = {
   address: 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ',
   name: 'wrapped-nothing-v8',
   asset: 'wrapped-nthng',
-}
+};
+
+export const NOT_ASSET = 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope::NOT';
+export const NOT_CONTRACT = {
+  address: 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ',
+  name: 'nope',
+  asset: 'NOT',
+};
 
 export const XBTC_SEND_MANY_CONTRACT = {
   address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',

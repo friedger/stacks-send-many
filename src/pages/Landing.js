@@ -12,7 +12,15 @@ export default function Landing({ asset }) {
         <div className="container">
           <div className="panel-landing text-center mt-3">
             <p className="lead">
-              {asset === 'wmno' ? (
+              {asset === 'not' ? (
+                <>
+                  A UI to interact with
+                  <br />
+                  NOT-hing
+                  <br />
+                  and other send-many contracts.
+                </>
+              ) : asset === 'wmno' ? (
                 <>
                   A UI to interact with
                   <br />
@@ -24,7 +32,7 @@ export default function Landing({ asset }) {
                 <>
                   A UI to interact with the smart contracts
                   <br />
-                  "send-many", "send-many-memo", "wrapped-nothing-v8" and "xbtc-send-many-v1".
+                  "send-many", "send-many-memo", "nothing" and "xbtc-send-many-v1".
                 </>
               )}
             </p>

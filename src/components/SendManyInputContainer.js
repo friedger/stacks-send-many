@@ -21,6 +21,8 @@ import {
   CONTRACT_ADDRESS,
   namesApi,
   NETWORK,
+  NOT_ASSET,
+  NOT_CONTRACT,
   WMNO_ASSET,
   WMNO_CONTRACT,
   WRAPPED_BITCOIN_ASSET,
@@ -161,6 +163,12 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
             <Amount wmno={account.fungible_tokens?.[WMNO_ASSET]?.balance || 0} />
           </small>
         )}
+        {asset === 'not' && total > (account.fungible_tokens?.[NOT_ASSET]?.balance || 0) && (
+          <small>
+            That is more than you have. You have{' '}
+            <Amount not={account.fungible_tokens?.[NOT_ASSET]?.balance || 0} />
+          </small>
+        )}
       </>
     );
   };
@@ -170,7 +178,8 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
       return {
         ...r,
         ustx: Math.floor(
-          parseFloat(r.stx) * (asset === 'stx' ? 1_000_000 : asset === 'wmno' ? 1 : 100_000_000)
+          parseFloat(r.stx) *
+            (asset === 'stx' ? 1_000_000 : asset === 'wmno' || asset === 'not' ? 1 : 100_000_000)
         ),
       };
     });
@@ -346,6 +355,34 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
               FungibleConditionCode.Equal,
               total,
               createAssetInfo(WMNO_CONTRACT.address, WMNO_CONTRACT.name, WMNO_CONTRACT.asset)
+            ),
+          ],
+        };
+        break;
+      case 'not':
+        options = {
+          contractAddress: NOT_CONTRACT.address,
+          contractName: NOT_CONTRACT.name,
+          functionName: 'send-many',
+          functionArgs: [
+            listCV(
+              nonEmptyParts.map(p => {
+                return tupleCV({
+                  to: p.toCV,
+                  amount: uintCV(p.ustx),
+                  memo: hasMemos
+                    ? someCV(bufferCVFromString(firstMemoForAll ? firstMemo : p.memo.trim()))
+                    : noneCV(),
+                });
+              })
+            ),
+          ],
+          postConditions: [
+            makeStandardFungiblePostCondition(
+              ownerStxAddress,
+              FungibleConditionCode.Equal,
+              total,
+              createAssetInfo(NOT_CONTRACT.address, NOT_CONTRACT.name, NOT_CONTRACT.asset)
             ),
           ],
         };

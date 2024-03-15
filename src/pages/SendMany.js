@@ -4,6 +4,7 @@ import { Profile } from '../components/Profile';
 import { SendManyInputContainer } from '../components/SendManyInputContainer';
 import { SendManyTxList } from '../components/SendManyTxList';
 import {
+  NOT_ASSET,
   SBTC_CONTRACT,
   WMNO_ASSET,
   WRAPPED_BITCOIN_ASSET,
@@ -26,6 +27,8 @@ export default function SendMany({ asset, assetContract, sendManyContract }) {
     assetId = `${assetContract || SBTC_CONTRACT}::sbtc`;
   } else if (asset === 'wmno') {
     assetId = WMNO_ASSET;
+  } else if (asset === 'not') {
+    assetId = NOT_ASSET;
   } else {
     // for stx, assetId is ignored
     assetId = undefined;
@@ -64,9 +67,9 @@ export default function SendMany({ asset, assetContract, sendManyContract }) {
                         Send {testnet || mocknet ? 'Test' : ''} xBTC <div></div>
                       </a>
                     )}
-                    {asset !== 'wmno' && (
-                      <a href="/wmno" className="small">
-                        Send {testnet || mocknet ? 'Test' : ''} WMNO{' '}
+                    {asset !== 'not' && (
+                      <a href="/not" className="small">
+                        Send {testnet || mocknet ? 'Test' : ''} $NOT{' '}
                       </a>
                     )}
                   </div>
@@ -75,6 +78,7 @@ export default function SendMany({ asset, assetContract, sendManyContract }) {
                     {asset === 'sbtc' && 'Wrapped Bitcoin (sBTC DR 0.1)'}
                     {asset === 'xbtc' && 'Wrapped Bitcoin (xBTC)'}
                     {asset === 'wmno' && 'Wrapped Nothing (WMNO)'}
+                    {asset === 'not' && 'Nothing (NOT)'}
                   </h3>
                   {asset === 'sbtc' && (
                     <>

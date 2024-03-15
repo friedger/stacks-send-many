@@ -107,6 +107,7 @@ function Content() {
             <>
               <SendMany path="/xbtc" asset="xbtc" />
               <SendMany path="/wmno" asset="wmno" />
+              <SendMany path="/not" asset="not" />
               <SendMany path="/sbtc/:assetContract/:sendManyContract" asset="sbtc" />
               <SendManyCyclePayout path="/cycle/:cycleId" />
               <SendMany path="/" default asset="stx" />
