@@ -14,6 +14,7 @@ import {
   createAssetInfo,
   trueCV,
   noneCV,
+  someCV,
 } from '@stacks/transactions';
 
 import {
