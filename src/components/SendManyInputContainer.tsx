@@ -33,7 +33,11 @@ import {
 import { fetchAccount } from '../lib/account';
 import { useConnect } from '../lib/auth';
 import { useWalletConnect } from '../lib/hooks';
-import { useConnect as useStacksConnect } from '@stacks/connect-react';
+import {
+  ContractCallOptions,
+  FinishedTxData,
+  useConnect as useStacksConnect,
+} from '@stacks/connect-react';
 import { saveTxData, TxStatus } from '../lib/transactions';
 import { c32addressDecode } from 'c32check';
 import { SendManyInput } from './SendManyInput';
@@ -86,7 +90,7 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
   const spinner = useRef();
   const [status, setStatus] = useState();
   const [account, setAccount] = useState();
-  const [txId, setTxId] = useState();
+  const [txId, setTxId] = useState<string>();
   const [preview, setPreview] = useState();
   const [loading, setLoading] = useState(false);
   const [namesResolved, setNamesResolved] = useState(true);
@@ -199,8 +203,8 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
     return { parts, total, hasMemos };
   };
 
-  const sendAsset = async options => {
-    const handleSendResult = data => {
+  const sendAsset = async (options: ContractCallOptions) => {
+    const handleSendResult = (data: FinishedTxData) => {
       setStatus('Saving transaction to your storage');
       setTxId(data.txId);
       if (userSession) {
@@ -229,7 +233,7 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
         setStatus('Transaction not sent.');
         setLoading(false);
       },
-    };
+    } as ContractCallOptions;
     try {
       setStatus(`Sending transaction`);
       if (wcSession) {

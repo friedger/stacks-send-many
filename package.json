@@ -13,11 +13,19 @@
     "@scure/bip32": "^1.3.2",
     "@scure/btc-signer": "^1.2.1",
     "@stacks/blockchain-api-client": "^7.8.2",
+    "@stacks/common": "^6.13.0",
     "@stacks/connect": "7.7.1",
     "@stacks/connect-react": "22.4.2",
+    "@stacks/network": "^6.13.0",
     "@stacks/profile": "^6.12.0",
+    "@stacks/stacks-blockchain-api-types": "^7.10.0",
     "@stacks/storage": "^6.12.0",
     "@stacks/transactions": "^6.12.0",
+    "@types/lodash.groupby": "^4.6.9",
+    "@types/reach__router": "^1.3.15",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react-swc": "^3.6.0",
     "@walletconnect/encoding": "^1.0.2",
     "@walletconnect/qrcode-modal": "^1.8.0",
     "@walletconnect/sign-client": "^2.10.1",
@@ -36,15 +44,17 @@
     "react-jdenticon": "^1.1.0",
     "react-router-dom": "^6.16.0",
     "sbtc": "^0.1.8",
-    "serve": "^14.2.1"
+    "serve": "^14.2.1",
+    "vite": "^5.2.11",
+    "vite-plugin-svgr": "^4.2.0",
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "prettier": "@stacks/prettier-config",
   "scripts": {
-    "dev": "netlify dev",
-    "start": "react-scripts start",
-    "build": "CI= react-scripts build",
-    "test": "react-scripts build",
-    "eject": "react-scripts eject"
+    "start": "vite",
+    "build": "CI= tsc && vite build",
+    "serve": "vite preview",
+    "dev": "netlify dev"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -71,7 +81,7 @@
     "bootstrap": "^5.3.2",
     "netlify-cli": "^17.16.2",
     "prettier": "^ 3.0.3",
-    "react-scripts": "^5.0.1",
-    "react-test-renderer": "^18.2.0"
+    "react-test-renderer": "^18.2.0",
+    "typescript": "^5.4.5"
   }
 }

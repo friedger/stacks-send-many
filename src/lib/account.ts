@@ -8,6 +8,8 @@ import {
   bufferCVFromString,
   ClarityType,
   cvToString,
+  TupleCV,
+  PrincipalCV,
 } from '@stacks/transactions';
 import {
   accountsApi,
@@ -18,8 +20,9 @@ import {
   STACKS_API_ACCOUNTS_URL,
   testnet,
 } from './constants';
+import { UserSession } from '@stacks/connect';
 
-export function getStacksAccount(appPrivateKey) {
+export function getStacksAccount(appPrivateKey: string) {
   const privateKey = createStacksPrivateKey(appPrivateKey);
   const publicKey = getPublicKey(privateKey);
   const address = addressFromPublicKeys(
@@ -31,7 +34,7 @@ export function getStacksAccount(appPrivateKey) {
   return { privateKey, address };
 }
 
-export async function getUserAddress(userSession, username) {
+export async function getUserAddress(userSession: UserSession, username: string) {
   const parts = username.split('.');
   if (parts.length === 2) {
     console.log(parts);
@@ -44,7 +47,15 @@ export async function getUserAddress(userSession, username) {
       senderAddress: GENESIS_CONTRACT_ADDRESS,
     });
     if (result.type === ClarityType.ResponseOk) {
-      return { address: cvToString(result.value.data.owner) };
+      const value = result.value as TupleCV<{
+        owner: PrincipalCV;
+        // FIXME: These parts are also returned but nobody cares really
+        // zonefile-hash: (get zonefile-hash name-props),
+        // owner: owner,
+        // lease-started-at: lease-started-at,
+        // lease-ending-at: (if (is-eq (get lifetime namespace-props) u0) none (some (+ lease-started-at (get lifetime namespace-props))))
+      }>;
+      return { address: cvToString(value.data.owner) };
     } else {
       return undefined;
     }
@@ -57,12 +68,12 @@ export async function getUserAddress(userSession, username) {
  * Uses the AccountsApi of the stacks blockchain api client library,
  * returns the stacks balance object with property `balance` in decimal.
  */
-export function fetchAccount(addressAsString) {
+export async function fetchAccount(addressAsString: string) {
   console.log(`Checking account "${addressAsString}"`);
   if (addressAsString) {
     return accountsApi.getAccountBalance({ principal: addressAsString });
   } else {
-    return Promise.reject();
+    throw new Error('Address is undefined');
   }
 }
 
@@ -70,11 +81,10 @@ export function fetchAccount(addressAsString) {
  * Uses the RCP api of the stacks node directly,
  * returns the json object with property `balance` in hex.
  */
-export function fetchAccount2(addressAsString) {
+export async function fetchAccount2(addressAsString: string) {
   console.log('Checking account');
   const balanceUrl = `${STACKS_API_ACCOUNTS_URL}/${addressAsString}`;
-  return fetch(balanceUrl).then(r => {
-    console.log({ r });
-    return r.json();
-  });
+  const r = await fetch(balanceUrl);
+  console.log({ r });
+  return await r.json();
 }

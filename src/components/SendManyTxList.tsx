@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, Fragment, useCallback } from 'react';
 
 import { getTxs, getTxsAsCSV, getTxsAsJSON, jsonStringify } from '../lib/transactions';
+import { type TokenTransferTransaction } from '@stacks/stacks-blockchain-api-types';
 import DownloadLink from 'react-download-link';
 import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';
@@ -40,7 +41,7 @@ export function SendManyTxList() {
   const [exportFormat, setExportFormat] = useState('csv');
   const [exporting, setExporting] = useState(false);
 
-  const filter = search => t => {
+  const filter = (search: string) => t => {
     return (
       !search ||
       foundInSenderAddress(t, search) ||

@@ -1,18 +1,20 @@
 import { useCallback } from 'react';
 import { AppConfig, UserSession } from '@stacks/connect-react';
-import { showConnect } from '@stacks/connect';
+import { AuthOptions, UserData, showConnect } from '@stacks/connect';
 import { authOrigin, chains } from './constants';
-import { atom, useAtom, useAtomValue, useSetAtom} from 'jotai';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import QRCodeModal from '@walletconnect/qrcode-modal';
+import Client from '@walletconnect/sign-client';
+import { SessionTypes } from '@walletconnect/types';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 export const userSessionState = atom(new UserSession({ appConfig }));
-export const wcClientState = atom();
+export const wcClientState = atom<Client | null>(null);
 
-export const wcSessionState = atom();
-export const userDataState = atom();
-export const authResponseState = atom();
-const authenticatedState = atom();
+export const wcSessionState = atom<SessionTypes.Struct | null>(null);
+export const userDataState = atom<UserData | null>(null);
+export const authResponseState = atom<string | null>(null);
+const authenticatedState = atom<boolean>(false);
 
 export const appMetaData = {
   description: 'Send STX and xBTC to many users in one transaction.',
@@ -29,16 +31,14 @@ export const useConnect = () => {
   const setAuthResponse = useSetAtom(authResponseState);
   const [authenticated, setAuthenticated] = useAtom(authenticatedState);
 
-  const onFinish = async payload => {
-    setAuthResponse(payload.authResponse);
-    setAuthenticated(false);
-    const userData = await payload.userSession.loadUserData();
-    setUserData(userData);
-  };
-
-  const authOptions = {
+  const authOptions: AuthOptions = {
     authOrigin: authOrigin,
-    onFinish,
+    onFinish: payload => {
+      setAuthResponse(payload.authResponse);
+      setAuthenticated(false);
+      const userData = payload.userSession.loadUserData();
+      setUserData(userData);
+    },
     userSession, // usersession is already in state, provide it here
     redirectTo: '/',
     manifestPath: '/manifest.json',
@@ -58,7 +58,7 @@ export const useConnect = () => {
 };
 
 export const useWcConnect = () => {
-  const client = useSetAtom(wcClientState);
+  const [client] = useAtom(wcClientState);
   const setWcSession = useSetAtom(wcSessionState);
   const [authenticated, setAuthenticated] = useAtom(authenticatedState);
 

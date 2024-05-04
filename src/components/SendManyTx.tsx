@@ -5,11 +5,12 @@ import { CONTRACT_ADDRESS } from '../lib/constants';
 import { getTx } from '../lib/transactions';
 import { Address } from './Address';
 import { Tx } from './Tx';
+import { Transaction } from '@stacks/stacks-blockchain-api-types';
 
 export function SendManyTx({ ownerStxAddress, userSession, txId }) {
   const spinner = useRef();
   const [status, setStatus] = useState();
-  const [tx, setTx] = useState();
+  const [tx, setTx] = useState<{ apiData: Transaction }>();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -39,8 +40,8 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
       (e1.asset.recipient === ownerStxAddress && e2.asset.recipient === ownerStxAddress)
         ? e1.asset.recipient > e2.asset.recipient
         : e1.asset.recipient === ownerStxAddress
-        ? -1
-        : 1
+          ? -1
+          : 1
     );
   const showMemo =
     tx &&

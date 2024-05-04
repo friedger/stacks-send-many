@@ -6,7 +6,7 @@ import {
   InfoApi,
   NamesApi,
 } from '@stacks/blockchain-api-client';
-import { StacksTestnet, StacksMainnet } from '@stacks/network';
+import { StacksTestnet, StacksMainnet, StacksDevnet } from '@stacks/network';
 
 export const testnet = window.location.search.includes('chain=testnet');
 export const localMocknet = !testnet && window.location.search.includes('mocknet=local');
@@ -24,19 +24,19 @@ console.log({ localNode, localAuth, beta, mocknet, testnet, mainnet });
 export const authOrigin = localAuth
   ? 'http://localhost:8080'
   : beta
-  ? 'https://pr-725.app.stacks.engineering/'
-  : 'https://app.blockstack.org';
+    ? 'https://pr-725.app.stacks.engineering/'
+    : 'https://app.blockstack.org';
 
 export const CONTRACT_ADDRESS = mocknet
   ? 'STB44HYPYAT2BB2QE513NSP81HTMYWBJP02HPGK6' //ADDR1 from Stacks.toml
   : testnet
-  ? 'STR8P3RD1EHA8AA37ERSSSZSWKS9T2GYQFGXNA4C'
-  : 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE';
+    ? 'STR8P3RD1EHA8AA37ERSSSZSWKS9T2GYQFGXNA4C'
+    : 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE';
 export const GENESIS_CONTRACT_ADDRESS = mocknet
   ? 'ST000000000000000000002AMW42H'
   : testnet
-  ? 'ST000000000000000000002AMW42H'
-  : 'SP000000000000000000002Q6VF78';
+    ? 'ST000000000000000000002AMW42H'
+    : 'SP000000000000000000002Q6VF78';
 export const BNS_CONTRACT_NAME = 'bns';
 
 export const SBTC_CONTRACT = 'ST3VA3Y7A2YQ8GW69T0N1ERPAD784R1Y2YHCSNJHH.asset';
@@ -72,18 +72,24 @@ export const XBTC_SEND_MANY_CONTRACT = {
 export const STACK_API_URL = localNode
   ? 'http://localhost:3999'
   : mainnet
-  ? 'https://api.hiro.so'
-  : 'https://api.testnet.hiro.so';
+    ? 'https://api.hiro.so'
+    : 'https://api.testnet.hiro.so';
 
 export const STACKS_API_WS_URL = localNode
   ? 'ws:localhost:3999/'
   : mainnet
-  ? 'wss://api.hiro.so/'
-  : 'wss://api.testnet.hiro.so/';
+    ? 'wss://api.hiro.so/'
+    : 'wss://api.testnet.hiro.so/';
 export const STACKS_API_ACCOUNTS_URL = `${STACK_API_URL}/v2/accounts`;
 
-export const NETWORK = mainnet ? new StacksMainnet() : new StacksTestnet();
-NETWORK.coreApiUrl = STACK_API_URL;
+export const NETWORK = localNode
+  ? new StacksDevnet()
+  : mainnet
+    ? new StacksMainnet()
+    : new StacksTestnet();
+
+// mainnet ? new StacksMainnet() : new StacksTestnet();
+// NETWORK.coreApiUrl = STACK_API_URL;
 
 const basePath = STACK_API_URL;
 const config = new Configuration({ basePath });

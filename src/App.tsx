@@ -28,7 +28,7 @@ const styles = {
   backgroundImage: `url(${metaverse})`,
 };
 
-export default function App(props) {
+export default function App() {
   const { authOptions, userSession } = useConnect();
   const [, setUserData] = useAtom(userDataState);
   const [wcClient, setWcClient] = useAtom(wcClientState);
@@ -81,7 +81,7 @@ export default function App(props) {
   );
 }
 
-function AppBody(props) {
+function AppBody(props: { path: string; children: React.ReactNode }) {
   return <div>{props.children}</div>;
 }
 function Content() {

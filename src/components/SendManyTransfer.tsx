@@ -6,7 +6,16 @@ import { getTx } from '../lib/transactions';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { Tx } from './Tx';
-export function SendManyTransfer({ userSession, txId, eventIndex }) {
+import { UserSession } from '@stacks/connect';
+export function SendManyTransfer({
+  userSession,
+  txId,
+  eventIndex,
+}: {
+  userSession: UserSession;
+  txId: string;
+  eventIndex: number;
+}) {
   const spinner = useRef();
   const [status, setStatus] = useState();
   const [tx, setTx] = useState();

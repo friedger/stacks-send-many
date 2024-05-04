@@ -6,6 +6,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './styles/style.css';
 import './styles/floating-label.css';
 
-const container = document.getElementById('App');
+const container = document.getElementById('App')!;
 const root = createRoot(container);
 root.render(<App />);

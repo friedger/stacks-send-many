@@ -3,7 +3,7 @@ import { callReadOnlyFunction } from '@stacks/transactions';
 import { MAINNET, REGTEST, TESTNET } from 'sbtc';
 import { NETWORK, mainnet, testnet } from './constants';
 
-export async function getSbtcWalletAddress(assetContract) {
+export async function getSbtcWalletAddress(assetContract: string) {
   const [contractAddress, contractName] = assetContract.split('.');
 
   const publicKey = await callReadOnlyFunction({

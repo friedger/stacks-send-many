@@ -1,4 +1,5 @@
 /* Globals */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css');
 
 :root {
   /* https://projects.invisionapp.com/boards/HE2VVROFSGB27 */
@@ -59,8 +60,6 @@ inspect {
 .text-right {
   text-align: right;
 }
-
-@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css');
 
 .balance {
   font-size: 20pt;
