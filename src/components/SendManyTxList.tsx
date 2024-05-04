@@ -12,7 +12,7 @@ import { Tx } from './Tx';
 import { chainSuffix } from '../lib/constants';
 import { useConnect } from '../lib/auth';
 
-function dateOfTx(tx: StoredTx) {
+export function dateOfTx(tx: StoredTx) {
   if (tx.apiData && !/^pending|dropped/.test(tx.apiData.tx_status)) {
     return (tx.apiData as Transaction)?.burn_block_time_iso?.substring(0, 10);
   }

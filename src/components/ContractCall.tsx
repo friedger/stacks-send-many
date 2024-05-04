@@ -1,5 +1,7 @@
 import React from 'react';
-export function ContractCall({ tx }) {
+import { StoredTx } from '../lib/transactions';
+import { ContractCallTransaction } from '@stacks/stacks-blockchain-api-types';
+export function ContractCall({ tx }: { tx: StoredTx }) {
   return (
     <div className="small container bg-white">
       <div className="row">
@@ -10,15 +12,19 @@ export function ContractCall({ tx }) {
           Contract Call
           <br />
           <span className="text-muted">
-            Function Call {new Date(tx.apiData.burn_block_time_iso).toLocaleString()}
+            Function Call{' '}
+            {new Date((tx.apiData as ContractCallTransaction).burn_block_time_iso).toLocaleString()}
           </span>
         </div>
         <div className="col-3 text-right">
-          {(tx.apiData.fee_rate / 1000000).toLocaleString(undefined, {
-            style: 'decimal',
-            minimumFractionDigits: 6,
-            maximumFractionDigits: 6,
-          })}
+          {(Number((tx.apiData as ContractCallTransaction).fee_rate) / 1000000).toLocaleString(
+            undefined,
+            {
+              style: 'decimal',
+              minimumFractionDigits: 6,
+              maximumFractionDigits: 6,
+            }
+          )}
           Ӿ
         </div>
       </div>

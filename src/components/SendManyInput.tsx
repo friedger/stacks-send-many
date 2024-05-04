@@ -1,14 +1,26 @@
 import React, { useRef } from 'react';
-export function SendManyInput({ index, row, updateModel, maybeAddNewRow, lastRow }) {
-  const to = useRef();
-  const stxValue = useRef();
-  const memo = useRef();
+export function SendManyInput({
+  index,
+  row,
+  updateModel,
+  maybeAddNewRow,
+  lastRow,
+}: {
+  index: number;
+  row: any;
+  updateModel: (data: { to: string; stx: string; memo: string }) => void;
+  maybeAddNewRow: () => void;
+  lastRow: boolean;
+}) {
+  const to = useRef<HTMLInputElement>(null);
+  const stxValue = useRef<HTMLInputElement>(null);
+  const memo = useRef<HTMLInputElement>(null);
 
   const getRow = () => {
     const value = {
-      to: to.current.value.trim(),
-      stx: stxValue.current.value.trim(),
-      memo: memo.current.value,
+      to: to.current!.value.trim(),
+      stx: stxValue.current!.value.trim(),
+      memo: memo.current!.value,
     };
     return value;
   };
@@ -25,8 +37,8 @@ export function SendManyInput({ index, row, updateModel, maybeAddNewRow, lastRow
               placeholder={``}
               type="text"
               className="form-control"
-              required=""
-              autoFocus={lastRow ? '' : undefined}
+              required
+              autoFocus={lastRow}
             />
             <label>Wallet Address #{index + 1}</label>
           </div>
@@ -40,7 +52,7 @@ export function SendManyInput({ index, row, updateModel, maybeAddNewRow, lastRow
               placeholder={``}
               type="text"
               className="form-control"
-              required=""
+              required
             />
             <label>Amount #{index + 1}</label>
           </div>
@@ -53,9 +65,9 @@ export function SendManyInput({ index, row, updateModel, maybeAddNewRow, lastRow
               onChange={e => updateModel(getRow())}
               placeholder={``}
               type="text"
-              maxLength="34"
+              maxLength={34}
               className="form-control"
-              required=""
+              required
               onKeyUp={e => {
                 if (e.key === 'Enter') maybeAddNewRow();
               }}

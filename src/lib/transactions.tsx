@@ -207,12 +207,7 @@ async function getTxWithStorage(txId: string, storage: Storage) {
 }
 
 async function getTxWithoutStorage(txId: string) {
-  try {
-    return await createTxWithApiData(txId, { data: { txId } });
-  } catch (e) {
-    console.log(e);
-    return {};
-  }
+  return createTxWithApiData(txId, { data: { txId } });
 }
 
 export async function getTx(txId: string, userSession: UserSession) {

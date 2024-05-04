@@ -3,19 +3,30 @@ import { fetchAccount } from '../lib/account';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import * as jdenticon from 'jdenticon';
+import { AddressBalanceResponse } from '@stacks/blockchain-api-client';
 
-function Jdenticon({ value, size }) {
-  const icon = useRef(null);
+function Jdenticon({ value, size }: { value: string; size: number }) {
+  const icon = useRef<SVGSVGElement>(null);
   useEffect(() => {
-    if (value) {
+    if (icon.current && value) {
       jdenticon.update(icon.current, value);
     }
   }, [value]);
 
   return <svg width={size} height={size} data-jdenticon-value={value} ref={icon} />;
 }
-export function Profile({ stxAddress, asset, assetId }) {
-  const [profileState, setProfileState] = useState({
+export function Profile({
+  stxAddress,
+  asset,
+  assetId,
+}: {
+  stxAddress: string;
+  asset?: string;
+  assetId?: string;
+}) {
+  const [profileState, setProfileState] = useState<{
+    account?: AddressBalanceResponse;
+  }>({
     account: undefined,
   });
 
@@ -47,34 +58,44 @@ export function Profile({ stxAddress, asset, assetId }) {
             <>
               <Amount
                 className="font-weight-bold balance"
-                ustx={profileState.account.stx.balance}
+                asset="stx"
+                amount={+profileState.account.stx.balance}
+                // ustx={+profileState.account.stx.balance}
               />
               <br />
               <Amount
                 className="font-weight-light balance"
-                ustx={profileState.account.stx.locked}
+                amount={+profileState.account.stx.locked}
+                asset="stx"
+
+                // ustx={profileState.account.stx.locked}
               />{' '}
               (locked)
             </>
           ) : asset === 'sbtc' ? (
             <Amount
               className="font-weight-bold balance"
-              ssats={profileState.account.fungible_tokens?.[assetId]?.balance || 0}
+              // ssats={profileState.account.fungible_tokens?.[assetId]?.balance || 0}
+              asset="sbtc"
+              amount={profileState.account.fungible_tokens?.[assetId!]?.balance || 0}
             />
           ) : asset === 'wmno' ? (
             <Amount
+              asset="wmno"
               className="font-weight-bold balance"
-              wmno={profileState.account.fungible_tokens?.[assetId]?.balance || 0}
+              amount={profileState.account.fungible_tokens?.[assetId!]?.balance || 0}
             />
           ) : asset === 'not' ? (
             <Amount
               className="font-weight-bold balance"
-              not={profileState.account.fungible_tokens?.[assetId]?.balance || 0}
+              asset="not"
+              amount={profileState.account.fungible_tokens?.[assetId!]?.balance || 0}
             />
           ) : (
             <Amount
               className="font-weight-bold balance"
-              xsats={profileState.account.fungible_tokens?.[assetId]?.balance || 0}
+              asset="xbtc"
+              amount={profileState.account.fungible_tokens?.[assetId!]?.balance || 0}
             />
           )}
           <br />

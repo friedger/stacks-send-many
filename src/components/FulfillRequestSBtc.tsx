@@ -14,7 +14,15 @@ import React, { useRef, useState } from 'react';
 import { useConnect } from '../lib/auth';
 import { NETWORK } from '../lib/constants';
 
-export function FulfillRequestSBtc({ assetContract, ownerStxAddress, sendManyContract }) {
+export function FulfillRequestSBtc({
+  assetContract,
+  ownerStxAddress,
+  sendManyContract,
+}: {
+  assetContract: string;
+  ownerStxAddress: string;
+  sendManyContract: string;
+}) {
   const spinner = useRef();
   const requestIdRef = useRef();
   const [loading, setLoading] = useState(false);

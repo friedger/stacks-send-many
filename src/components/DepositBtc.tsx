@@ -5,24 +5,32 @@ import {
   callReadOnlyFunction,
   cvToString,
   principalCV,
-  uintCV
+  uintCV,
 } from '@stacks/transactions';
 import React, { useRef, useState } from 'react';
 import { DevEnvHelper, TESTNET, TestnetHelper, WALLET_00, sbtcDepositHelper } from 'sbtc';
 import { useConnect } from '../lib/auth';
 import { NETWORK, mocknet } from '../lib/constants';
 
-export function DepositBtc({assetContract, ownerStxAddress, sendManyContract }) {
-  const spinner = useRef();
-  const requestIdRef = useRef();
+export function DepositBtc({
+  assetContract,
+  ownerStxAddress,
+  sendManyContract,
+}: {
+  assetContract: string;
+  ownerStxAddress: string;
+  sendManyContract: string;
+}) {
+  const spinner = useRef<HTMLDivElement>(null);
+  const requestIdRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState();
+  const [status, setStatus] = useState<string>();
   const { userSession } = useConnect();
   const [sendManyContractAddress, sendManyContractName] = sendManyContract.split('.');
   const sendAction = async () => {
     setLoading(true);
-    setStatus();
-    const requestId = requestIdRef.current.value;
+    setStatus(undefined);
+    const requestId = requestIdRef.current!.value;
 
     const requestDetails = await callReadOnlyFunction({
       contractAddress: sendManyContractAddress,
@@ -36,6 +44,7 @@ export function DepositBtc({assetContract, ownerStxAddress, sendManyContract }) 
     console.log(JSON.stringify(requestDetails));
 
     if (requestDetails.type === ClarityType.OptionalSome) {
+      //FIXME: not important rn but for sBTC in da futur
       const total = requestDetails.value.list.reduce(
         (sum, { data }) => sum + Number(data['sbtc-in-sats'].value),
         0
