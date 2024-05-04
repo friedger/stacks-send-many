@@ -58,7 +58,7 @@ export const useConnect = () => {
 };
 
 export const useWcConnect = () => {
-  const [client] = useAtom(wcClientState);
+  const client = useAtomValue(wcClientState);
   const setWcSession = useSetAtom(wcSessionState);
   const [authenticated, setAuthenticated] = useAtom(authenticatedState);
 

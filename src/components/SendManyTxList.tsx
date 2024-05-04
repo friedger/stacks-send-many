@@ -1,32 +1,40 @@
 import React, { useRef, useState, useEffect, Fragment, useCallback } from 'react';
 
-import { getTxs, getTxsAsCSV, getTxsAsJSON, jsonStringify } from '../lib/transactions';
-import { type TokenTransferTransaction } from '@stacks/stacks-blockchain-api-types';
+import { StoredTx, getTxs, getTxsAsCSV, getTxsAsJSON, jsonStringify } from '../lib/transactions';
+import {
+  Transaction,
+  TransactionEventStxAsset,
+  type TokenTransferTransaction,
+} from '@stacks/stacks-blockchain-api-types';
 import DownloadLink from 'react-download-link';
 import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';
 import { chainSuffix } from '../lib/constants';
 import { useConnect } from '../lib/auth';
 
-function dateOfTx(tx) {
-  return tx.apiData?.burn_block_time_iso?.substring(0, 10) || 'unconfirmed';
+function dateOfTx(tx: StoredTx) {
+  if (tx.apiData && !/^pending|dropped/.test(tx.apiData.tx_status)) {
+    return (tx.apiData as Transaction)?.burn_block_time_iso?.substring(0, 10);
+  }
+  return 'unconfirmed';
 }
 
-function foundInSenderAddress(tx, search) {
+function foundInSenderAddress(tx: StoredTx, search: string) {
   return tx.apiData && tx.apiData.sender_address.indexOf(search) >= 0;
 }
 
-function foundInTxId(tx, search) {
+function foundInTxId(tx: StoredTx, search: string) {
   return tx.apiData && tx.apiData.tx_id.indexOf(search) >= 0;
 }
 
-function foundInEvents(tx, search) {
+function foundInEvents(tx: StoredTx, search: string) {
   return (
     tx.apiData &&
     tx.apiData.events.findIndex(
       e =>
         e.event_type === 'stx_asset' &&
-        (e.asset.recipient.indexOf(search) >= 0 || e.asset.amount.indexOf(search) >= 0)
+        ((e as TransactionEventStxAsset).asset.recipient!.indexOf(search) >= 0 ||
+          e.asset.amount!.indexOf(search) >= 0)
     ) >= 0
   );
 }
@@ -34,25 +42,37 @@ function foundInEvents(tx, search) {
 export function SendManyTxList() {
   const { userSession } = useConnect();
 
-  const [status, setStatus] = useState();
-  const searchRef = useRef();
-  const [txs, setTxs] = useState();
-  const [filteredTxsByDate, setFilteredTxsByDate] = useState();
+  const [status, setStatus] = useState<string>();
+  const searchRef = useRef<HTMLInputElement>(null);
+  const [txs, setTxs] = useState<{
+    transactions: StoredTx[];
+    txsByDate: { [index: number]: StoredTx[] };
+  }>({ transactions: [], txsByDate: {} });
+  const [filteredTxsByDate, setFilteredTxsByDate] = useState<{ [x: string]: StoredTx[] }>({});
   const [exportFormat, setExportFormat] = useState('csv');
   const [exporting, setExporting] = useState(false);
 
-  const filter = (search: string) => t => {
-    return (
+  const filter = (search?: string) => (t: StoredTx) => {
+    return Boolean(
       !search ||
-      foundInSenderAddress(t, search) ||
-      foundInTxId(t, search) ||
-      foundInEvents(t, search)
+        foundInSenderAddress(t, search) ||
+        foundInTxId(t, search) ||
+        foundInEvents(t, search)
     );
   };
-  const filterAndGroup = useCallback((txs, search) => {
-    if (!txs) return;
-    setFilteredTxsByDate(_groupBy(txs.transactions.filter(filter(search)), dateOfTx));
-  }, []);
+  const filterAndGroup = useCallback(
+    (
+      txs: {
+        transactions: StoredTx[];
+        txsByDate: { [index: number]: StoredTx[] };
+      },
+      search: string
+    ) => {
+      if (!txs) return;
+      setFilteredTxsByDate(_groupBy(txs.transactions.filter(filter(search)), dateOfTx));
+    },
+    []
+  );
 
   useEffect(() => {
     setStatus('Loading');
@@ -62,7 +82,7 @@ export function SendManyTxList() {
         const txsByDate = _groupBy(transactions, dateOfTx);
         const txsObject = { transactions, txsByDate };
         setTxs(txsObject);
-        const searchTerm = searchRef.current.value.trim();
+        const searchTerm = searchRef.current?.value.trim();
         if (searchTerm) {
           filterAndGroup(txsObject, searchTerm);
         } else {
@@ -76,7 +96,8 @@ export function SendManyTxList() {
   }, [userSession, filterAndGroup]);
 
   const dates = filteredTxsByDate
-    ? Object.keys(filteredTxsByDate).sort((a, b) => a < b)
+    ? // FIXME: I'm not touching this lol I think it needs some date comparison or something tho
+      Object.keys(filteredTxsByDate).sort((a, b) => +a - +b)
     : undefined;
   return (
     <div>
@@ -120,7 +141,7 @@ export function SendManyTxList() {
                         setExporting(true);
                         const result = await getTxsAsCSV(
                           userSession,
-                          filter(searchRef.current.value.trim())
+                          filter(searchRef.current?.value.trim())
                         );
                         setExporting(false);
                         return result;
@@ -137,7 +158,7 @@ export function SendManyTxList() {
                         setExporting(true);
                         const txs = await getTxsAsJSON(
                           userSession,
-                          filter(searchRef.current.value.trim())
+                          filter(searchRef.current?.value.trim())
                         );
                         const result = jsonStringify(txs);
                         setExporting(false);

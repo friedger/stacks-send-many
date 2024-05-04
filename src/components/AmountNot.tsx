@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function AmountNot({ not, className }) {
+export function AmountNot({ not, className }: { not: number; className?: string }) {
   if (isNaN(not)) {
     return not;
   }
@@ -10,7 +10,7 @@ export function AmountNot({ not, className }) {
         style: 'decimal',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
-        useGrouping: 'always',
+        useGrouping: true,
       })}{' '}
       $NOT
     </span>

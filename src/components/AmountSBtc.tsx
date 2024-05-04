@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function AmountSBtc({ ssats, className }) {
+export function AmountSBtc({ ssats, className }: { ssats: number; className?: string }) {
   if (isNaN(ssats)) {
     return ssats;
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function AmountStx({ ustx, className }) {
+export function AmountStx({ ustx, className }: { ustx: number; className?: string }) {
   if (isNaN(ustx)) {
     return ustx;
   }

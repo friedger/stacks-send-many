@@ -3,7 +3,11 @@ import { useConnect, useWcConnect } from '../lib/auth';
 
 // Landing page demonstrating Blockstack connect for registration
 
-export default function Landing({ asset }) {
+export default function Landing({
+  asset,
+}: {
+  asset: 'walletConnect' | 'blockstack' | 'not' | 'wmno';
+}) {
   const { handleOpenAuth } = useConnect();
   const { handleWcOpenAuth, isWcReady } = useWcConnect();
   return (

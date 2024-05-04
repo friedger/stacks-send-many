@@ -1,7 +1,7 @@
 import { Router } from '@reach/router';
 import { Connect } from '@stacks/connect-react';
 import Client from '@walletconnect/sign-client';
-import { useAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import React, { useEffect } from 'react';
 import Auth from './components/Auth';
 import { Network } from './components/Network';
@@ -30,7 +30,7 @@ const styles = {
 
 export default function App() {
   const { authOptions, userSession } = useConnect();
-  const [, setUserData] = useAtom(userDataState);
+  const setUserData = useSetAtom(userDataState);
   const [wcClient, setWcClient] = useAtom(wcClientState);
   useEffect(() => {
     if (userSession?.isUserSignedIn()) {

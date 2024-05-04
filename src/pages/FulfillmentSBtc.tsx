@@ -7,7 +7,13 @@ import { WithdrawSBtc } from '../components/WithdrawSBtc';
 import { SBTC_CONTRACT, mocknet, testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
-export default function FulfillmentSBtc({ assetContract, sendManyContract }) {
+export default function FulfillmentSBtc({
+  assetContract,
+  sendManyContract,
+}: {
+  assetContract?: string;
+  sendManyContract?: string;
+}) {
   const { ownerStxAddress } = useStxAddresses();
   if (!ownerStxAddress) {
     return <div>Loading</div>;

@@ -13,7 +13,15 @@ import {
 } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
-export default function SendMany({ asset, assetContract, sendManyContract }) {
+export default function SendMany({
+  asset,
+  assetContract,
+  sendManyContract,
+}: {
+  asset?: string;
+  assetContract?: string;
+  sendManyContract: string;
+}) {
   const { ownerStxAddress } = useStxAddresses();
   console.log({ assetContract });
   if (!ownerStxAddress) {

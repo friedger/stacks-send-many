@@ -6,7 +6,25 @@ import { AmountSBtc } from './AmountSBtc';
 import { AmountWmno } from './AmountWmno';
 import { AmountNot } from './AmountNot';
 
-export function Amount({ ustx, xsats, ssats, not, wmno, amount, asset, className }) {
+export function Amount({
+  ustx,
+  xsats,
+  ssats,
+  not,
+  wmno,
+  amount,
+  asset,
+  className,
+}: {
+  ustx?: number;
+  xsats?: number;
+  ssats?: number;
+  not?: number;
+  wmno?: number;
+  amount: number;
+  asset: string;
+  className?: string;
+}) {
   if (asset === 'stx') {
     ustx = amount;
   } else if (asset === 'xbtc') {

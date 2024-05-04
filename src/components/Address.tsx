@@ -4,11 +4,15 @@ import {
   standardPrincipalCV,
   contractPrincipalCV,
   ClarityType,
+  TupleCV,
+  BufferCV,
+  ResponseOkCV,
+  ResponseErrorCV,
 } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
 import toUnicode from 'punycode2/to-unicode';
 
-function hex_to_ascii(bytes) {
+function hex_to_ascii(bytes: Uint8Array) {
   var str = '';
   for (var n = 0; n < bytes.length; n += 1) {
     str += String.fromCharCode(bytes[n]);
@@ -16,7 +20,7 @@ function hex_to_ascii(bytes) {
   return str;
 }
 
-const getNameFromAddress = async addr => {
+const getNameFromAddress = async (addr: string) => {
   console.log(addr);
   let addrCV;
   try {
@@ -27,25 +31,25 @@ const getNameFromAddress = async addr => {
     addr = contractAddress;
   }
   console.log(addr);
-  const result = await callReadOnlyFunction({
+  const result = (await callReadOnlyFunction({
     contractAddress: 'SP000000000000000000002Q6VF78',
     contractName: 'bns',
     functionName: 'resolve-principal',
     functionArgs: [addrCV],
     senderAddress: addr,
     network: new StacksMainnet(),
-  });
+  })) as ResponseOkCV<TupleCV<{ name: BufferCV; namespace: BufferCV }>> | ResponseErrorCV;
   return result;
 };
 
-export function Address({ addr }) {
+export function Address({ addr }: { addr: string }) {
   const addressShort = useMemo(
-    () => `${addr.substr(0, 5)}...${addr.substr(addr.length - 5)}`,
+    () => `${addr.substring(0, 5)}...${addr.substring(addr.length - 5)}`,
     [addr]
   );
 
   const [nameOrAddress, setNameOrAddress] = useState(addressShort);
-  const [nameAscii, setNameAscii] = useState();
+  const [nameAscii, setNameAscii] = useState<string>();
   const [showAscii, setShowAscii] = useState(false);
 
   useEffect(() => {

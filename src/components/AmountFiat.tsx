@@ -1,9 +1,9 @@
 import React from 'react';
 import { STX_USD } from '../lib/price';
-import { useSetAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 
-export function AmountFiat({ ustx, className }) {
-  const rate = useSetAtom(STX_USD);
+export function AmountFiat({ ustx, className }: { ustx: number; className?: string }) {
+  const rate = useAtomValue(STX_USD);
   if (isNaN(ustx)) {
     return ustx;
   }

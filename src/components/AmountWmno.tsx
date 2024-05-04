@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function AmountWmno({ wmno, className }) {
+export function AmountWmno({ wmno, className }: { wmno: number; className?: string }) {
   if (isNaN(wmno)) {
     return wmno;
   }
@@ -10,7 +10,7 @@ export function AmountWmno({ wmno, className }) {
         style: 'decimal',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
-        useGrouping: 'always',
+        useGrouping: true,
       })}{' '}
       WMNO
     </span>

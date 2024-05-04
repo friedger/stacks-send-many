@@ -17,9 +17,11 @@ export default function Auth() {
             handleSignOut();
           }
           if (wcSession) {
-            wcClient.disconnect({ topic: wcSession.topic }).then(() => {
-              setWcSession(undefined);
-            });
+            wcClient
+              ?.disconnect({ topic: wcSession.topic, reason: { code: 1, message: '' } })
+              .then(() => {
+                setWcSession(null);
+              });
           }
         }}
       >
