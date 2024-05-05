@@ -15,6 +15,7 @@ import {
   trueCV,
   noneCV,
   someCV,
+  PrincipalCV,
 } from '@stacks/transactions';
 
 import {
@@ -44,8 +45,15 @@ import { SendManyInput } from './SendManyInput';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import toAscii from 'punycode2/to-ascii';
-
-const addrToCV = addr => {
+import { AddressBalanceResponse } from '@stacks/stacks-blockchain-api-types';
+type Row = {
+  to: string;
+  stx: string;
+  memo?: string;
+  error?: string;
+  toCV?: PrincipalCV;
+};
+const addrToCV = (addr: string) => {
   const toParts = addr.split('.');
   if (toParts.length === 1) {
     return standardPrincipalCV(toParts[0]);
@@ -54,7 +62,7 @@ const addrToCV = addr => {
   }
 };
 
-const addToCVValues = async parts => {
+const addToCVValues = async <T extends Row>(parts: T[]) => {
   return Promise.all(
     parts.map(async p => {
       if (p.to === '') {
@@ -78,41 +86,51 @@ const addToCVValues = async parts => {
   );
 };
 
-function nonEmptyPart(p) {
+function nonEmptyPart(p: Row) {
   return !!p.toCV && p.stx !== '0' && p.stx !== '';
 }
 
-export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendManyContract }) {
+export function SendManyInputContainer({
+  asset,
+  ownerStxAddress,
+  assetId,
+  sendManyContract,
+}: {
+  asset: string;
+  ownerStxAddress: string;
+  assetId: string;
+  sendManyContract: string;
+}) {
   const { userSession } = useConnect();
   const { doContractCall } = useStacksConnect();
   const { wcClient, wcSession } = useWalletConnect();
 
-  const spinner = useRef();
-  const [status, setStatus] = useState();
-  const [account, setAccount] = useState();
+  const spinner = useRef<HTMLDivElement>(null);
+  const [status, setStatus] = useState<string>();
+  const [account, setAccount] = useState<AddressBalanceResponse>();
   const [txId, setTxId] = useState<string>();
-  const [preview, setPreview] = useState();
+  const [preview, setPreview] = useState<React.ReactNode>();
   const [loading, setLoading] = useState(false);
   const [namesResolved, setNamesResolved] = useState(true);
   const [firstMemoForAll, setFirstMemoForAll] = useState(false);
 
-  const [rows, setRows] = useState([{ to: '', stx: '0', memo: '' }]);
+  const [rows, setRows] = useState<Row[]>([{ to: '', stx: '0', memo: '' }]);
 
   useEffect(() => {
     if (ownerStxAddress) {
       fetchAccount(ownerStxAddress)
-        .catch(e => {
-          setStatus('Failed to access your account', e);
-          console.log(e);
-        })
         .then(async acc => {
           setAccount(acc);
           console.log({ acc });
+        })
+        .catch((e: Error) => {
+          setStatus('Failed to access your account');
+          console.log(e);
         });
     }
   }, [ownerStxAddress]);
 
-  const updatePreview = async ({ parts, total, hasMemos }) => {
+  const updatePreview = async ({ parts, total, hasMemos }: ReturnType<typeof getPartsFromRows>) => {
     setPreview(
       <>
         {parts.map(p => {
@@ -124,7 +142,7 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
               </>
             );
           } catch (e) {
-            setNamesResolved(p.toCV);
+            setNamesResolved(!!p.toCV);
             return (
               <>
                 {p.error || (p.toCV ? <Address addr={cvToString(p.toCV)} /> : '...')}:{' '}
@@ -142,43 +160,32 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
             <br />
           </>
         )}
-        {asset === 'stx' &&
-          total + 1000 > parseInt(account.stx.balance) - parseInt(account.stx.locked) && (
-            <small>
-              That is more than you have. You have{' '}
-              <Amount ustx={account.stx.balance - account.stx.locked} /> (unlocked).
-            </small>
-          )}
-        {asset === 'xbtc' &&
-          total > (account.fungible_tokens?.[WRAPPED_BITCOIN_ASSET]?.balance || 0) && (
-            <small>
-              That is more than you have. You have{' '}
-              <Amount xsats={account.fungible_tokens?.[WRAPPED_BITCOIN_ASSET]?.balance || 0} />
-            </small>
-          )}
-        {asset === 'sbtc' && total > (account.fungible_tokens?.[assetId]?.balance || 0) && (
-          <small>
-            That is more than you have. You have{' '}
-            <Amount ssats={account.fungible_tokens?.[assetId]?.balance || 0} />
-          </small>
-        )}
-        {asset === 'wmno' && total > (account.fungible_tokens?.[WMNO_ASSET]?.balance || 0) && (
-          <small>
-            That is more than you have. You have{' '}
-            <Amount wmno={account.fungible_tokens?.[WMNO_ASSET]?.balance || 0} />
-          </small>
-        )}
-        {asset === 'not' && total > (account.fungible_tokens?.[NOT_ASSET]?.balance || 0) && (
-          <small>
-            That is more than you have. You have{' '}
-            <Amount not={account.fungible_tokens?.[NOT_ASSET]?.balance || 0} />
-          </small>
+        {account && (
+          <>
+            {asset === 'stx' &&
+              total + 1000 > parseInt(account.stx.balance) - parseInt(account.stx.locked) && (
+                <small>
+                  That is more than you have. You have{' '}
+                  <Amount asset="stx" amount={+account.stx.balance - +account.stx.locked} />{' '}
+                  (unlocked).
+                </small>
+              )}
+            {asset !== 'stx' && total > +(account.fungible_tokens?.[assetId]?.balance || 0) && (
+              <small>
+                That is more than you have. You have{' '}
+                <Amount
+                  asset={asset}
+                  amount={+(account.fungible_tokens?.[assetId]?.balance || 0)}
+                />
+              </small>
+            )}
+          </>
         )}
       </>
     );
   };
 
-  const getPartsFromRows = currentRows => {
+  const getPartsFromRows = (currentRows: Row[]) => {
     const parts = currentRows.map(r => {
       return {
         ...r,
@@ -188,23 +195,26 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
         ),
       };
     });
-    const { total, hasMemos } = parts.reduce(
-      (previous, r) => {
-        return {
-          total: isNaN(r.ustx) ? previous.total : (previous.total += r.ustx),
-          hasMemos: previous.hasMemos || r.memo,
-        };
-      },
-      {
-        total: 0,
-        hasMemos: false,
-      }
-    );
+
+    const { total, hasMemos } = parts
+      .filter(part => !isNaN(part.ustx))
+      .reduce(
+        (previous, r) => {
+          return {
+            total: previous.total + r.ustx,
+            hasMemos: previous.hasMemos || Boolean(r.memo),
+          };
+        },
+        {
+          total: 0,
+          hasMemos: false,
+        }
+      );
     return { parts, total, hasMemos };
   };
 
   const sendAsset = async (options: ContractCallOptions) => {
-    const handleSendResult = (data: FinishedTxData) => {
+    const handleSendResult = (data: Pick<FinishedTxData, 'txId'> & Partial<FinishedTxData>) => {
       setStatus('Saving transaction to your storage');
       setTxId(data.txId);
       if (userSession) {
@@ -238,7 +248,7 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
       setStatus(`Sending transaction`);
       if (wcSession) {
         setStatus('Waiting for confirmation on wallet');
-        const result = await wcClient.request({
+        const result = await wcClient?.request({
           chainId: chains[0],
           topic: wcSession.topic,
           request: {
@@ -256,20 +266,20 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
           },
         });
         console.log('result', { result });
-        handleSendResult({ txId: result });
+        handleSendResult({ txId: result as string });
       } else {
         await doContractCall(options);
       }
     } catch (e) {
       console.log(e);
-      setStatus(e.toString());
+      setStatus((e as Error).toString());
       setLoading(false);
     }
   };
 
   const sendAction = async () => {
     setLoading(true);
-    setStatus();
+    setStatus(undefined);
     const { parts, total, hasMemos } = getPartsFromRows(rows);
     const updatedParts = await addToCVValues(parts);
     let invalidNames = updatedParts.filter(r => !!r.error);
@@ -302,13 +312,13 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
               nonEmptyParts.map(p => {
                 return hasMemos
                   ? tupleCV({
-                      to: p.toCV,
+                      to: p.toCV!,
                       ustx: uintCV(p.ustx),
                       memo: bufferCVFromString(
                         firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : ''
                       ),
                     })
-                  : tupleCV({ to: p.toCV, ustx: uintCV(p.ustx) });
+                  : tupleCV({ to: p.toCV!, ustx: uintCV(p.ustx) });
               })
             ),
           ],
@@ -327,7 +337,7 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
             listCV(
               nonEmptyParts.map(p => {
                 return tupleCV({
-                  to: p.toCV,
+                  to: p.toCV!,
                   'sbtc-in-sats': uintCV(p.ustx),
                   memo: bufferCVFromString(
                     hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
@@ -348,7 +358,7 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
             listCV(
               nonEmptyParts.map(p => {
                 return tupleCV({
-                  to: p.toCV,
+                  to: p.toCV!,
                   amount: uintCV(p.ustx),
                 });
               })
@@ -373,10 +383,14 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
             listCV(
               nonEmptyParts.map(p => {
                 return tupleCV({
-                  to: p.toCV,
+                  to: p.toCV!,
                   amount: uintCV(p.ustx),
                   memo: hasMemos
-                    ? someCV(bufferCVFromString(firstMemoForAll ? firstMemo : p.memo.trim()))
+                    ? firstMemoForAll
+                      ? someCV(bufferCVFromString(firstMemo))
+                      : p.memo
+                        ? someCV(bufferCVFromString(p.memo.trim()))
+                        : noneCV()
                     : noneCV(),
                 });
               })
@@ -400,7 +414,7 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
           functionArgs: [
             nonEmptyParts.map(p => {
               return tupleCV({
-                to: p.toCV,
+                to: p.toCV!,
                 'xbtc-in-sats': uintCV(p.ustx),
                 memo: bufferCVFromString(
                   hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
@@ -435,21 +449,21 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
     setRows(newRows);
   };
 
-  const updateRow = (row, index) => {
+  const updateRow = (row: Row, index: number) => {
     const newRows = [...rows];
     newRows[index] = row;
     setRows(newRows);
     return newRows;
   };
 
-  const updateModel = index => {
-    return row => {
+  const updateModel = (index: number) => {
+    return (row: Row) => {
       const rows = updateRow(row, index);
       updatePreview(getPartsFromRows(rows));
     };
   };
 
-  const maybeAddNewRow = index => {
+  const maybeAddNewRow = (index: number) => {
     return () => {
       if (index === rows.length - 1) {
         addNewRow();
@@ -457,7 +471,7 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
     };
   };
 
-  const handleOnPaste = e => {
+  const handleOnPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const entries = e.clipboardData
       .getData('Text')
@@ -518,9 +532,9 @@ export function SendManyInputContainer({ asset, ownerStxAddress, assetId, sendMa
               type="checkbox"
               onChange={e => setFirstMemoForAll(e.target.checked)}
               id="firstMemoForAll"
-              value={firstMemoForAll}
+              checked={firstMemoForAll}
             />
-            <label className="form-check-label" forhtml="firstMemoForAll">
+            <label className="form-check-label" htmlFor="firstMemoForAll">
               First Memo for all?
             </label>
           </div>

@@ -78,7 +78,10 @@ const indexFileName = mainnet
     ? 'index-testnet.json'
     : 'index-mocknet.json';
 
-export async function saveTxData(data: FinishedTxData, userSession: UserSession) {
+export async function saveTxData(
+  data: Pick<FinishedTxData, 'txId'> & Partial<FinishedTxData>,
+  userSession: UserSession
+) {
   console.log(jsonStringify(data));
   const storage = new Storage({ userSession });
   let indexArray;
@@ -267,7 +270,7 @@ async function createTxWithApiData(
   return txWithApiData;
 }
 
-export function TxStatus({ txId, resultPrefix }: { txId: string; resultPrefix?: string }) {
+export function TxStatus({ txId, resultPrefix }: { txId?: string; resultPrefix?: string }) {
   const [processingResult, setProcessingResult] = useState<{
     loading: boolean;
     result?: Transaction['tx_result'];

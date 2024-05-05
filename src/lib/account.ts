@@ -21,6 +21,7 @@ import {
   testnet,
 } from './constants';
 import { UserSession } from '@stacks/connect';
+import { AddressBalanceResponse } from '@stacks/stacks-blockchain-api-types';
 
 export function getStacksAccount(appPrivateKey: string) {
   const privateKey = createStacksPrivateKey(appPrivateKey);
@@ -70,11 +71,12 @@ export async function getUserAddress(userSession: UserSession, username: string)
  */
 export async function fetchAccount(addressAsString: string) {
   console.log(`Checking account "${addressAsString}"`);
-  if (addressAsString) {
-    return accountsApi.getAccountBalance({ principal: addressAsString });
-  } else {
+  if (!addressAsString) {
     throw new Error('Address is undefined');
   }
+  return accountsApi.getAccountBalance({
+    principal: addressAsString,
+  }) as Promise<AddressBalanceResponse>;
 }
 
 /**
