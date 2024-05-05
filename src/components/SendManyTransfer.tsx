@@ -1,12 +1,18 @@
-import { hexToCV } from '@stacks/transactions';
+import { BufferCV, hexToCV } from '@stacks/transactions';
 import React, { useRef, useState, useEffect } from 'react';
 import { CONTRACT_ADDRESS } from '../lib/constants';
 
-import { getTx } from '../lib/transactions';
+import { StoredTx, getTx } from '../lib/transactions';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { Tx } from './Tx';
 import { UserSession } from '@stacks/connect';
+import {
+  Transaction,
+  TransactionEvent,
+  TransactionEventFungibleAsset,
+  TransactionEventSmartContractLog,
+} from '@stacks/stacks-blockchain-api-types';
 export function SendManyTransfer({
   userSession,
   txId,
@@ -16,10 +22,10 @@ export function SendManyTransfer({
   txId: string;
   eventIndex: number;
 }) {
-  const spinner = useRef();
-  const [status, setStatus] = useState();
-  const [tx, setTx] = useState();
-  const [event, setEvent] = useState();
+  const spinner = useRef<HTMLDivElement>(null);
+  const [status, setStatus] = useState<string>();
+  const [tx, setTx] = useState<StoredTx>();
+  const [event, setEvent] = useState<TransactionEvent>();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -28,11 +34,11 @@ export function SendManyTransfer({
       .then(async transaction => {
         setStatus(undefined);
         setTx(transaction);
-        setEvent(transaction.apiData.events[eventIndex]);
+        setEvent(transaction.apiData?.events[eventIndex]);
         setLoading(false);
       })
       .catch(e => {
-        setStatus('Failed to get transactions', e);
+        setStatus('Failed to get transactions');
         console.log(e);
         setLoading(false);
       });
@@ -41,12 +47,15 @@ export function SendManyTransfer({
   const showMemo =
     tx &&
     tx.apiData &&
+    tx.apiData.tx_type === 'contract_call' &&
     tx.apiData.contract_call &&
     tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
   const memos = showMemo
     ? new Array(
         ...new Set(
-          tx.apiData.events.filter((_, index) => index % 2 === 1).map(e => e.contract_log.value.hex)
+          tx.apiData?.events
+            .filter((_, index) => index % 2 === 1)
+            .map(e => (e as TransactionEventSmartContractLog).contract_log.value.hex)
         )
       )
     : [];
@@ -62,11 +71,13 @@ export function SendManyTransfer({
       />
       {tx && tx.apiData && (
         <div className="p-2 mx-n4 mt-2 mb-2 bg-light">
-          {tx.apiData.burn_block_time_iso?.substring(0, 10) || 'pending'} ({tx.apiData.tx_status})
+          {(tx.apiData as unknown as Transaction).burn_block_time_iso?.substring(0, 10) ||
+            'pending'}{' '}
+          ({tx.apiData.tx_status})
           {showMemo && !showMemoPerRecipient && (
             <>
               <br />
-              <b>"{hexToCV(memos[0]).buffer.toString()}"</b>
+              <b>"{(hexToCV(memos[0]) as BufferCV).buffer.toString()}"</b>
             </>
           )}
           <div className="list-group m-4">
@@ -92,11 +103,14 @@ export function SendManyTransfer({
                         <line x1="13" y1="18" x2="19" y2="12"></line>
                         <line x1="13" y1="6" x2="19" y2="12"></line>
                       </svg>
-                      <Address addr={event.asset.recipient} />
+                      <Address addr={(event as TransactionEventFungibleAsset).asset.recipient} />
                     </small>
                   </div>
                   <div className="col-4 text-right small">
-                    <Amount ustx={event.asset.amount} />
+                    <Amount
+                      asset="stx"
+                      amount={+(event as TransactionEventFungibleAsset).asset.amount}
+                    />
                   </div>
                 </div>
               ) : (

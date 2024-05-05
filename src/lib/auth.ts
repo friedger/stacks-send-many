@@ -93,5 +93,5 @@ export const useWcConnect = () => {
     return client !== undefined;
   }, [client]);
 
-  return { handleWcOpenAuth, authenticated, isWcReady };
+  return { handleWcOpenAuth, authenticated, isWcReady, client };
 };

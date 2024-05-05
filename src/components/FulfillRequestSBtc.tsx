@@ -2,7 +2,10 @@ import { useConnect as useStacksConnect } from '@stacks/connect-react';
 import {
   ClarityType,
   FungibleConditionCode,
+  ListCV,
   PostConditionMode,
+  TupleCV,
+  UIntCV,
   callReadOnlyFunction,
   createAssetInfo,
   cvToString,
@@ -23,10 +26,10 @@ export function FulfillRequestSBtc({
   ownerStxAddress: string;
   sendManyContract: string;
 }) {
-  const spinner = useRef();
-  const requestIdRef = useRef();
+  const spinner = useRef<HTMLDivElement>(null);
+  const requestIdRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState();
+  const [status, setStatus] = useState<string>();
   const { userSession } = useConnect();
   const { doContractCall } = useStacksConnect();
 
@@ -34,9 +37,9 @@ export function FulfillRequestSBtc({
 
   const sendAction = async () => {
     setLoading(true);
-    setStatus();
+    setStatus(undefined);
     const [assetContractAddress, assetContractName] = assetContract.split('.');
-    const requestId = requestIdRef.current.value;
+    const requestId = requestIdRef.current!.value;
 
     const requestDetails = await callReadOnlyFunction({
       contractAddress: sendManyContractAddress,
@@ -50,10 +53,9 @@ export function FulfillRequestSBtc({
     console.log(JSON.stringify(requestDetails));
 
     if (requestDetails.type === ClarityType.OptionalSome) {
-      const total = requestDetails.value.list.reduce(
-        (sum, { data }) => sum + Number(data['sbtc-in-sats'].value),
-        0
-      );
+      const total = (
+        requestDetails.value as ListCV<TupleCV<{ 'sbtc-in-sats': UIntCV }>>
+      ).list.reduce((sum, { data }) => sum + Number(data['sbtc-in-sats'].value), 0);
       console.log({ total });
 
       let options = {
@@ -72,22 +74,19 @@ export function FulfillRequestSBtc({
         ],
       };
 
-      const handleSendResult = data => {
-        setStatus(data.txId);
-      };
-
-      options = {
+      await doContractCall({
         ...options,
         userSession,
         network: NETWORK,
         postConditionMode: PostConditionMode.Deny,
-        onFinish: handleSendResult,
+        onFinish: data => {
+          setStatus(data.txId);
+        },
         onCancel: () => {
           setStatus('Transaction not sent.');
           setLoading(false);
         },
-      };
-      await doContractCall(options);
+      });
     }
     setLoading(false);
   };

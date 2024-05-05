@@ -2,6 +2,9 @@ import * as btc from '@scure/btc-signer';
 import { bytesToHex, hexToBytes } from '@stacks/common';
 import {
   ClarityType,
+  ListCV,
+  TupleCV,
+  UIntCV,
   callReadOnlyFunction,
   cvToString,
   principalCV,
@@ -44,11 +47,10 @@ export function DepositBtc({
     console.log(JSON.stringify(requestDetails));
 
     if (requestDetails.type === ClarityType.OptionalSome) {
-      //FIXME: not important rn but for sBTC in da futur
-      const total = requestDetails.value.list.reduce(
-        (sum, { data }) => sum + Number(data['sbtc-in-sats'].value),
-        0
-      );
+      //FIXME: get rest of return data meh - hz
+      const total = (
+        requestDetails.value as ListCV<TupleCV<{ 'sbtc-in-sats': UIntCV }>>
+      ).list.reduce((sum, { data }) => sum + Number(data['sbtc-in-sats'].value), 0);
       console.log({ total });
 
       const userData = userSession.loadUserData();
@@ -96,7 +98,7 @@ export function DepositBtc({
         hex: bytesToHex(psbt),
       };
       // Call Leather API to sign the PSBT and finalize it
-      const txResponse = await window.btc.request('signPsbt', requestParams);
+      const txResponse = await (window as any).btc.request('signPsbt', requestParams);
       const formattedTx = btc.Transaction.fromPSBT(hexToBytes(txResponse.result.hex));
       formattedTx.finalize();
 

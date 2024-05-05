@@ -11,7 +11,7 @@ import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';
 import { chainSuffix } from '../lib/constants';
 import { useConnect } from '../lib/auth';
-
+const DownloadBtn = DownloadLink as any;
 export function dateOfTx(tx: StoredTx) {
   if (tx.apiData && !/^pending|dropped/.test(tx.apiData.tx_status)) {
     return (tx.apiData as Transaction)?.burn_block_time_iso?.substring(0, 10);
@@ -90,7 +90,7 @@ export function SendManyTxList() {
         }
       })
       .catch(e => {
-        setStatus('Failed to get transactions', e);
+        setStatus('Failed to get transactions');
         console.log(e);
       });
   }, [userSession, filterAndGroup]);
@@ -131,7 +131,7 @@ export function SendManyTxList() {
               <div className="input-group">
                 <div className="input-group-prepend">
                   {exportFormat === 'csv' ? (
-                    <DownloadLink
+                    <DownloadBtn
                       style={{ textDecoration: '' }}
                       className="btn btn-dark m-0 btn-sm"
                       tagName="button"
@@ -148,7 +148,7 @@ export function SendManyTxList() {
                       }}
                     />
                   ) : (
-                    <DownloadLink
+                    <DownloadBtn
                       style={{ textDecoration: '' }}
                       className="btn btn-dark m-0 btn-sm"
                       tagName="button"

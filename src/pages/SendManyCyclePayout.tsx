@@ -2,6 +2,8 @@ import React from 'react';
 import { SendManyGroupTxs } from '../components/SendManyGroupTxs';
 import { chainSuffix } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
+import { UserSession } from '@stacks/connect';
+import { RouteComponentProps } from '@reach/router';
 
 const cycles = {
   3: ['0xb855ff8858f6942dbc80815b4b143bb5f880f8d293e0871be492cf2c2c506397'],
@@ -114,24 +116,26 @@ const cycles = {
     '0xfac4bc1421fc325813333e74582a346a2cc687374ba6e96023af66229f015e92',
     '0x9d6a62058a46678e8284460f3c0983045c8dc43bfe4d3a064a34fbf1d0f4adc3',
   ],
-  16: [
-
-  ],
-  17: [
-
-  ],
+  16: [],
+  17: [],
   18: [
-    "0x2dadd634e000746c52f1d46df4d3691734b6ec1e08c6d74a25c07c211f6c246c",
-    "0x3152e74d8930daabec74e76e575211304c97ebf3203245edd3d79c5446a691fb",
-    "0xefd7ff1189ca4c4b1daff867b170e6397abbd541add0aacc828a3ac36f9d6ba2",
-    "0x5b96217941f101f25c2a39038cdd9aeb732009e9d54bd33ffcc4037d425599a1",
-    "0xc3f3fbc037030cb3a93205ffdb3a4673d1f3baea107b2756c3207c352e922e7e",
-    "0xb4595782a3bdb8253a8411a74935cffdfaa9868a4d70ad6bdcccb81393505db5",
-    "0xce950f9df2c7483a4d8bf93ae1df2076bfc4b7ed64594a2e6d40f6ed16b623c8",
-  ]
+    '0x2dadd634e000746c52f1d46df4d3691734b6ec1e08c6d74a25c07c211f6c246c',
+    '0x3152e74d8930daabec74e76e575211304c97ebf3203245edd3d79c5446a691fb',
+    '0xefd7ff1189ca4c4b1daff867b170e6397abbd541add0aacc828a3ac36f9d6ba2',
+    '0x5b96217941f101f25c2a39038cdd9aeb732009e9d54bd33ffcc4037d425599a1',
+    '0xc3f3fbc037030cb3a93205ffdb3a4673d1f3baea107b2756c3207c352e922e7e',
+    '0xb4595782a3bdb8253a8411a74935cffdfaa9868a4d70ad6bdcccb81393505db5',
+    '0xce950f9df2c7483a4d8bf93ae1df2076bfc4b7ed64594a2e6d40f6ed16b623c8',
+  ],
 };
-export default function SendManyDetails({ userSession, cycleId }) {
-  const { ownerStxAddress } = useStxAddresses(userSession);
+type keys = keyof typeof cycles;
+export default function SendManyDetails({
+  userSession,
+  cycleId,
+}: {
+  userSession: UserSession;
+} & RouteComponentProps<{ cycleId: keys }>) {
+  const { ownerStxAddress } = useStxAddresses();
   return (
     <main className="panel-welcome mt-5 container">
       <div className="lead row mt-5">
@@ -139,7 +143,7 @@ export default function SendManyDetails({ userSession, cycleId }) {
           <h1 className="card-title">Send-Many Transaction</h1>
         </div>
         <div className="col-xs-10 col-md-8 mx-auto mb-4 px-4">
-          {cycles[cycleId] ? (
+          {cycleId && cycles[cycleId] ? (
             <SendManyGroupTxs
               txList={cycles[cycleId]}
               ownerStxAddress={ownerStxAddress}

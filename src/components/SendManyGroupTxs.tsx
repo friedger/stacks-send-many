@@ -18,7 +18,7 @@ export function SendManyGroupTxs({
   userSession,
   txList,
 }: {
-  ownerStxAddress: string;
+  ownerStxAddress?: string;
   userSession: any;
   txList: string[];
 }) {

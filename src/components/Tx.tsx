@@ -30,7 +30,7 @@ export function Tx({
   const txEvents = apiData?.events.filter(event => {
     return event.event_type === 'stx_asset';
   }) as TransactionEventStxAsset[] | undefined;
-  const total = txEvents?.reduce((sum, e) => sum + parseInt(e.asset.amount!), 0);
+  const total = txEvents?.reduce((sum, e) => sum + parseInt(e.asset.amount!), 0) || 0;
   return (
     <div className="small container">
       {!hideHeader && (
@@ -60,7 +60,7 @@ export function Tx({
           </div>
           {total > 0 ? (
             <div className="col-lg-5 col-xs-12 text-danger text-right small">
-              <Amount ustx={-1 * total} />
+              <Amount asset="stx" amount={-1 * total} />
             </div>
           ) : (
             <div className="col-lg-5 col-xs-12 text-right small">

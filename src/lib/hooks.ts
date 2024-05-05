@@ -6,7 +6,7 @@ import { useConnect, userSessionState, wcClientState, wcSessionState } from './a
 import { mocknet, testnet } from './constants';
 
 export function useStxAddresses() {
-  const [ownerStxAddress, setOwnerStxAddress] = useState<string | null>();
+  const [ownerStxAddress, setOwnerStxAddress] = useState<string>();
   const userSession = useAtomValue(userSessionState);
   const wcSession = useAtomValue(wcSessionState);
   const { authenticated } = useConnect();

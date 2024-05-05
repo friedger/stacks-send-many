@@ -16,6 +16,13 @@ import SendManyCyclePayout from './pages/SendManyCyclePayout';
 import SendManyDetails from './pages/SendManyDetails';
 import SendManyTransferDetails from './pages/SendManyTransferDetails';
 import metaverse from './styles/metaverse.png';
+import {
+  CONTRACT_ADDRESS,
+  NOT_CONTRACT,
+  SBTC_CONTRACT,
+  WMNO_CONTRACT,
+  XBTC_SEND_MANY_CONTRACT,
+} from './lib/constants';
 
 /* global BigInt */
 BigInt.prototype.toJSON = function () {
@@ -88,15 +95,17 @@ function Content() {
   const { ownerStxAddress } = useStxAddresses();
   const { wcSession } = useWalletConnect();
   const { client, isWcReady } = useWcConnect();
+  const { userSession } = useConnect();
+
   console.log({ ownerStxAddress, wcSession, client, wcReady: isWcReady() });
   return (
     <>
       <Router>
         <AppBody path="/">
-          <SendManyCyclePayout path="/cycle/:cycleId" />
-          <SendManyAdvocates path="/advocates/:payoutId" />
-          <SendManyDetails path="/txid/:txId" />
-          <SendManyTransferDetails path="/txid/:txId/:eventIndex" />
+          <SendManyCyclePayout path="/cycle/:cycleId" userSession={userSession} />
+          <SendManyAdvocates path="/advocates/:payoutId" userSession={userSession} />
+          <SendManyDetails path="/txid/:txId" userSession={userSession} />
+          <SendManyTransferDetails path="/txid/:txId/:eventIndex" userSession={userSession} />
           {!ownerStxAddress && (
             <>
               <Landing path="/:asset" />
@@ -105,12 +114,35 @@ function Content() {
           )}
           {ownerStxAddress && (
             <>
-              <SendMany path="/xbtc" asset="xbtc" />
-              <SendMany path="/wmno" asset="wmno" />
-              <SendMany path="/not" asset="not" />
-              <SendMany path="/sbtc/:assetContract/:sendManyContract" asset="sbtc" />
-              <SendManyCyclePayout path="/cycle/:cycleId" />
-              <SendMany path="/" default asset="stx" />
+              <SendMany
+                path="/xbtc"
+                asset="xbtc"
+                sendManyContract={
+                  XBTC_SEND_MANY_CONTRACT.address + '.' + XBTC_SEND_MANY_CONTRACT.name
+                }
+              />
+              <SendMany
+                path="/wmno"
+                asset="wmno"
+                sendManyContract={WMNO_CONTRACT.address + '.' + WMNO_CONTRACT.name}
+              />
+              <SendMany
+                path="/not"
+                asset="not"
+                sendManyContract={NOT_CONTRACT.address + '.' + NOT_CONTRACT.name}
+              />
+              <SendMany
+                path="/sbtc/:assetContract/:sendManyContract"
+                asset="sbtc"
+                sendManyContract={SBTC_CONTRACT}
+              />
+              <SendManyCyclePayout path="/cycle/:cycleId" userSession={userSession} />
+              <SendMany
+                path="/"
+                default
+                asset="stx"
+                sendManyContract={`${CONTRACT_ADDRESS}.send-many-memo`}
+              />
               <FulfillmentSBtc path="/sbtc-bridge/:assetContract/:sendManyContract" />
             </>
           )}

@@ -12,16 +12,17 @@ import {
   testnet,
 } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
+import { RouteComponentProps } from '@reach/router';
 
 export default function SendMany({
   asset,
   assetContract,
   sendManyContract,
 }: {
-  asset?: string;
+  asset: string;
   assetContract?: string;
   sendManyContract: string;
-}) {
+} & RouteComponentProps) {
   const { ownerStxAddress } = useStxAddresses();
   console.log({ assetContract });
   if (!ownerStxAddress) {
@@ -118,7 +119,9 @@ export default function SendMany({
                 </div>
                 {asset === 'stx' && (
                   <div className="col-xs-10 col-md-12 mx-auto my-4 py-4 bg-light">
-                    <SendManyTxList ownerStxAddress={ownerStxAddress} />
+                    <SendManyTxList
+                    // ownerStxAddress={ownerStxAddress}
+                    />
                   </div>
                 )}
               </div>

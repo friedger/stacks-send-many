@@ -2,6 +2,8 @@ import React from 'react';
 import { SendManyGroupTxs } from '../components/SendManyGroupTxs';
 import { chainSuffix } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
+import { UserSession } from '@stacks/connect';
+import { RouteComponentProps } from '@reach/router';
 
 const payouts = {
   1: [
@@ -10,12 +12,17 @@ const payouts = {
     '0x07754658869f3a8f55ef9f3a6d8b4539fd507ea25ff69bde75ec321809b74b95',
     '0x6c61e7eb2d4ae820759609c8f98a6eaf92bf1b651cbd5a8a203df4f0231bd812',
   ],
-  2: [
-    '0x03aa24c49ffe17820c874bc9d7da89cced57bf6c8dbc373adb21957936fd6959',
-  ],
+  2: ['0x03aa24c49ffe17820c874bc9d7da89cced57bf6c8dbc373adb21957936fd6959'],
 };
-export default function SendManyDetails({ userSession, payoutId }) {
-  const { ownerStxAddress } = useStxAddresses(userSession);
+type payoutKey = keyof typeof payouts;
+export default function SendManyDetails({
+  userSession,
+  payoutId,
+}: {
+  userSession: UserSession;
+  payoutId?: payoutKey;
+} & RouteComponentProps) {
+  const { ownerStxAddress } = useStxAddresses();
   return (
     <main className="panel-welcome mt-5 container">
       <div className="lead row mt-5">
@@ -23,7 +30,7 @@ export default function SendManyDetails({ userSession, payoutId }) {
           <h1 className="card-title">Send-Many Transaction</h1>
         </div>
         <div className="col-xs-10 col-md-8 mx-auto mb-4 px-4">
-          {payouts[payoutId] ? (
+          {payoutId && payouts[payoutId] ? (
             <SendManyGroupTxs
               txList={payouts[payoutId]}
               ownerStxAddress={ownerStxAddress}

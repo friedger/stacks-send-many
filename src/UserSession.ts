@@ -42,14 +42,14 @@ export function putStxAddress(userSession: UserSession, address: string) {
   }
 }
 
-export const finished =
-  onDidConnect =>
-  ({ userSession }) => {
-    onDidConnect({ userSession });
-    console.log(userSession.loadUserData());
+// export const finished =
+//   onDidConnect =>
+//   ({ userSession }) => {
+//     onDidConnect({ userSession });
+//     console.log(userSession.loadUserData());
 
-    const userData = userSession.loadUserData();
-    const { address } = getStacksAccount(userData.appPrivateKey);
-    console.log(jsonStringify({ address: addressToString(address) }));
-    putStxAddress(userSession, addressToString(address));
-  };
+//     const userData = userSession.loadUserData();
+//     const { address } = getStacksAccount(userData.appPrivateKey);
+//     console.log(jsonStringify({ address: addressToString(address) }));
+//     putStxAddress(userSession, addressToString(address));
+//   };

@@ -3,7 +3,7 @@ import { fetchAccount } from '../lib/account';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import * as jdenticon from 'jdenticon';
-import { AddressBalanceResponse } from '@stacks/blockchain-api-client';
+import { AddressBalanceResponse } from '@stacks/stacks-blockchain-api-types';
 
 function Jdenticon({ value, size }: { value: string; size: number }) {
   const icon = useRef<SVGSVGElement>(null);
@@ -21,7 +21,7 @@ export function Profile({
   assetId,
 }: {
   stxAddress: string;
-  asset?: string;
+  asset: string;
   assetId?: string;
 }) {
   const [profileState, setProfileState] = useState<{
@@ -72,30 +72,12 @@ export function Profile({
               />{' '}
               (locked)
             </>
-          ) : asset === 'sbtc' ? (
-            <Amount
-              className="font-weight-bold balance"
-              // ssats={profileState.account.fungible_tokens?.[assetId]?.balance || 0}
-              asset="sbtc"
-              amount={profileState.account.fungible_tokens?.[assetId!]?.balance || 0}
-            />
-          ) : asset === 'wmno' ? (
-            <Amount
-              asset="wmno"
-              className="font-weight-bold balance"
-              amount={profileState.account.fungible_tokens?.[assetId!]?.balance || 0}
-            />
-          ) : asset === 'not' ? (
-            <Amount
-              className="font-weight-bold balance"
-              asset="not"
-              amount={profileState.account.fungible_tokens?.[assetId!]?.balance || 0}
-            />
           ) : (
             <Amount
               className="font-weight-bold balance"
-              asset="xbtc"
-              amount={profileState.account.fungible_tokens?.[assetId!]?.balance || 0}
+              // ssats={profileState.account.fungible_tokens?.[assetId]?.balance || 0}
+              asset={asset}
+              amount={Number(profileState.account.fungible_tokens?.[assetId!]?.balance || 0)}
             />
           )}
           <br />

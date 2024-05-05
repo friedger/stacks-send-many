@@ -98,7 +98,7 @@ export function SendManyInputContainer({
 }: {
   asset: string;
   ownerStxAddress: string;
-  assetId: string;
+  assetId?: string;
   sendManyContract: string;
 }) {
   const { userSession } = useConnect();
@@ -170,12 +170,13 @@ export function SendManyInputContainer({
                   (unlocked).
                 </small>
               )}
-            {asset !== 'stx' && total > +(account.fungible_tokens?.[assetId]?.balance || 0) && (
+            {/* Asset id is only undefined in stx */}
+            {asset !== 'stx' && total > +(account.fungible_tokens?.[assetId!]?.balance || 0) && (
               <small>
                 That is more than you have. You have{' '}
                 <Amount
                   asset={asset}
-                  amount={+(account.fungible_tokens?.[assetId]?.balance || 0)}
+                  amount={+(account.fungible_tokens?.[assetId!]?.balance || 0)}
                 />
               </small>
             )}

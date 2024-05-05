@@ -1,16 +1,31 @@
-import { hexToCV } from '@stacks/transactions';
+import { BufferCV, hexToCV } from '@stacks/transactions';
 import React, { useRef, useState, useEffect } from 'react';
 import { CONTRACT_ADDRESS } from '../lib/constants';
 
-import { getTx } from '../lib/transactions';
+import { StoredTx, getTx } from '../lib/transactions';
 import { Address } from './Address';
 import { Tx } from './Tx';
-import { Transaction } from '@stacks/stacks-blockchain-api-types';
 
-export function SendManyTx({ ownerStxAddress, userSession, txId }) {
-  const spinner = useRef();
-  const [status, setStatus] = useState();
-  const [tx, setTx] = useState<{ apiData: Transaction }>();
+import { UserSession } from '@stacks/connect';
+import {
+  Transaction,
+  TransactionEventFungibleAsset,
+  TransactionEventSmartContractLog,
+} from '@stacks/stacks-blockchain-api-types';
+import { dateOfTx } from './SendManyTxList';
+
+export function SendManyTx({
+  ownerStxAddress,
+  userSession,
+  txId,
+}: {
+  ownerStxAddress?: string;
+  userSession: UserSession;
+  txId: string;
+}) {
+  const spinner = useRef<HTMLDivElement>(null);
+  const [status, setStatus] = useState<string>();
+  const [tx, setTx] = useState<StoredTx>();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -22,7 +37,7 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
         setLoading(false);
       })
       .catch(e => {
-        setStatus('Failed to get transactions', e);
+        setStatus('Failed to get transactions');
         console.log(e);
         setLoading(false);
       });
@@ -35,23 +50,25 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
       return event.event_type === 'stx_asset';
     });
   txEvents &&
-    txEvents.sort((e1, e2) =>
-      (e1.asset.recipient !== ownerStxAddress && e2.asset.recipient !== ownerStxAddress) ||
-      (e1.asset.recipient === ownerStxAddress && e2.asset.recipient === ownerStxAddress)
-        ? e1.asset.recipient > e2.asset.recipient
-        : e1.asset.recipient === ownerStxAddress
-          ? -1
-          : 1
-    );
+    (txEvents as TransactionEventFungibleAsset[]).sort((e1, e2) => {
+      if (e1.asset.recipient === ownerStxAddress && e2.asset.recipient !== ownerStxAddress)
+        return -1;
+      if (e1.asset.recipient !== ownerStxAddress && e2.asset.recipient === ownerStxAddress)
+        return 1;
+      return e1.asset.recipient! > e2.asset.recipient! ? 1 : -1;
+    });
   const showMemo =
     tx &&
     tx.apiData &&
+    tx.apiData.tx_type === 'contract_call' &&
     tx.apiData.contract_call &&
     tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
   const memos = showMemo
     ? new Array(
         ...new Set(
-          tx.apiData.events.filter((_, index) => index % 2 === 1).map(e => e.contract_log.value.hex)
+          tx.apiData?.events
+            .filter((_, index) => index % 2 === 1)
+            .map(e => (e as TransactionEventSmartContractLog).contract_log.value.hex)
         )
       )
     : [];
@@ -67,7 +84,7 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
       />
       {tx && tx.apiData && (
         <div className="p-2 mx-n4 mt-2 mb-2 bg-light">
-          {tx.apiData.burn_block_time_iso?.substring(0, 10) || 'pending'} ({tx.apiData.tx_status})
+          {dateOfTx(tx)} ({tx.apiData.tx_status})
           <br />
           from{' '}
           <span
@@ -76,7 +93,9 @@ export function SendManyTx({ ownerStxAddress, userSession, txId }) {
             <Address addr={tx.apiData.sender_address} />
           </span>
           <br />
-          {showMemo && !showMemoPerRecipient && <b>"{hexToCV(memos[0]).buffer.toString()}"</b>}
+          {showMemo && !showMemoPerRecipient && (
+            <b>"{(hexToCV(memos[0]) as BufferCV).buffer.toString()}"</b>
+          )}
           <div className="list-group m-2">
             <div className="list-group-item">
               <Tx tx={tx} onDetailsPage />

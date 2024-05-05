@@ -13,18 +13,19 @@ import {
 import { useConnect } from '../lib/auth';
 import { NETWORK, mocknet } from '../lib/constants';
 import { getSbtcWalletAddress } from '../lib/sbtc';
+import { P2TROut } from '@scure/btc-signer/lib/payment';
 
-export function WithdrawSBtc({ assetContract }) {
-  const spinner = useRef();
-  const amountSatsRef = useRef();
+export function WithdrawSBtc({ assetContract }: { assetContract: string }) {
+  const spinner = useRef<HTMLDivElement>(null);
+  const amountSatsRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState();
+  const [status, setStatus] = useState<string>();
   const { userSession } = useConnect();
   const [signature, setSignature] = useState('');
 
-  const signMessage = async e => {
+  const signMessage = async (e: React.UIEvent) => {
     e.preventDefault();
-    const total = parseInt(amountSatsRef.current.value);
+    const total = parseInt(amountSatsRef.current!.value);
 
     const userData = userSession.loadUserData();
     let profile = userData.profile;
@@ -62,16 +63,16 @@ export function WithdrawSBtc({ assetContract }) {
 
   const sendAction = async () => {
     setLoading(true);
-    setStatus();
+    setStatus(undefined);
 
-    const total = parseInt(amountSatsRef.current.value);
+    const total = parseInt(amountSatsRef.current!.value);
     console.log({ total });
 
     let helper = new TestnetHelper();
 
     const userData = userSession.loadUserData();
     let profile = userData.profile;
-    let sbtcWalletAddress = await getSbtcWalletAddress(assetContract);
+    let sbtcWalletAddress: P2TROut | string = await getSbtcWalletAddress(assetContract);
     if (mocknet) {
       console.log('Using mocknet');
       helper = new DevEnvHelper();
@@ -91,7 +92,7 @@ export function WithdrawSBtc({ assetContract }) {
     let utxos = await helper.fetchUtxos(btcAddress);
 
     const tx = await sbtcWithdrawHelper({
-      sbtcWalletAddress,
+      // sbtcWalletAddress,
       bitcoinAddress: btcAddress,
       amountSats: total,
       signature,
@@ -111,7 +112,10 @@ export function WithdrawSBtc({ assetContract }) {
       hex: bytesToHex(psbt),
     };
     // Call Leather API to sign the PSBT and finalize it
-    const txResponse = await window.btc.request('signPsbt', requestParams);
+    // FIXME: xverse has their own wallet sats-connect :eye_roll:
+    // and Leather has theirs too and they complete over the global
+    // I'm not 100% sure where unisat stands on this but i refuse to participate - hz
+    const txResponse = await (window as any).btc.request('signPsbt', requestParams);
     const formattedTx = btc.Transaction.fromPSBT(hexToBytes(txResponse.result.hex));
     formattedTx.finalize();
 
