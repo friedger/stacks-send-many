@@ -35,7 +35,7 @@ export const useConnect = () => {
     authOrigin: authOrigin,
     onFinish: payload => {
       setAuthResponse(payload.authResponse);
-      setAuthenticated(false);
+      setAuthenticated(true);
       const userData = payload.userSession.loadUserData();
       setUserData(userData);
     },
@@ -50,7 +50,7 @@ export const useConnect = () => {
   };
 
   const handleSignOut = useCallback(() => {
-    setAuthenticated(true);
+    setAuthenticated(false);
     userSession?.signUserOut('/');
   }, [userSession, setAuthenticated]);
 
