@@ -286,7 +286,7 @@ export function TxStatus({ txId, resultPrefix }: { txId?: string; resultPrefix?:
     let sub: Subscription;
     const subscribe = async (
       txId: string,
-      update: (event: Transaction | MempoolTransaction) => any
+      update: (event: Transaction | MempoolTransaction) => void
     ) => {
       try {
         const client = await connectWebSocketClient(STACKS_API_WS_URL);

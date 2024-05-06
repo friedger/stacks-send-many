@@ -1,4 +1,12 @@
-import React, { useRef, useState, useEffect, Fragment, useCallback } from 'react';
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  Fragment,
+  useCallback,
+  Component,
+  CSSProperties,
+} from 'react';
 
 import { StoredTx, getTxs, getTxsAsCSV, getTxsAsJSON, jsonStringify } from '../lib/transactions';
 import {
@@ -6,12 +14,22 @@ import {
   TransactionEventStxAsset,
   type TokenTransferTransaction,
 } from '@stacks/stacks-blockchain-api-types';
-import DownloadLink from 'react-download-link';
+import DownloadLinkDef from 'react-download-link';
 import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';
 import { chainSuffix } from '../lib/constants';
 import { useConnect } from '../lib/auth';
-const DownloadBtn = DownloadLink as any;
+// FIXME: DownloadLink type definitions are wrong
+// className somehow is passed but the types are out of date
+const DownloadLink = DownloadLinkDef as unknown as React.FC<{
+  filename?: string;
+  label?: string | number | JSX.Element;
+  className?: string;
+  style?: CSSProperties;
+  tagName?: string;
+  exportFile?(type?: string): void;
+}>;
+
 export function dateOfTx(tx: StoredTx) {
   if (tx.apiData && !/^pending|dropped/.test(tx.apiData.tx_status)) {
     return (tx.apiData as Transaction)?.burn_block_time_iso?.substring(0, 10);
@@ -131,7 +149,7 @@ export function SendManyTxList() {
               <div className="input-group">
                 <div className="input-group-prepend">
                   {exportFormat === 'csv' ? (
-                    <DownloadBtn
+                    <DownloadLink
                       style={{ textDecoration: '' }}
                       className="btn btn-dark m-0 btn-sm"
                       tagName="button"
@@ -148,7 +166,7 @@ export function SendManyTxList() {
                       }}
                     />
                   ) : (
-                    <DownloadBtn
+                    <DownloadLink
                       style={{ textDecoration: '' }}
                       className="btn btn-dark m-0 btn-sm"
                       tagName="button"

@@ -12,6 +12,7 @@ import {
   TransactionEventStxAsset,
 } from '@stacks/stacks-blockchain-api-types';
 import { dateOfTx } from './SendManyTxList';
+import { UserSession } from '@stacks/auth';
 
 export function SendManyGroupTxs({
   ownerStxAddress,
@@ -19,7 +20,7 @@ export function SendManyGroupTxs({
   txList,
 }: {
   ownerStxAddress?: string;
-  userSession: any;
+  userSession: UserSession;
   txList: string[];
 }) {
   const [status, setStatus] = useState<string>();

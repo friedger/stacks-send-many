@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { Row } from './SendManyInputContainer';
 export function SendManyInput({
   index,
   row,
@@ -7,7 +8,7 @@ export function SendManyInput({
   lastRow,
 }: {
   index: number;
-  row: any;
+  row: Row;
   updateModel: (data: { to: string; stx: string; memo: string }) => void;
   maybeAddNewRow: () => void;
   lastRow: boolean;

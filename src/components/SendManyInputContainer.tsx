@@ -46,7 +46,7 @@ import { Address } from './Address';
 import { Amount } from './Amount';
 import toAscii from 'punycode2/to-ascii';
 import { AddressBalanceResponse } from '@stacks/stacks-blockchain-api-types';
-type Row = {
+export type Row = {
   to: string;
   stx: string;
   memo?: string;
