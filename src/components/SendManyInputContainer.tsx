@@ -114,6 +114,27 @@ export function SendManyInputContainer({
   const [namesResolved, setNamesResolved] = useState(true);
   const [firstMemoForAll, setFirstMemoForAll] = useState(false);
 
+  useEffect(() => {
+    const search = new URL(window.location.href).searchParams;
+    const rows = search.getAll('recipient').map(item => {
+      const { amount, recipient, memo } =
+        /(?<recipient>[^,]+),(?<amount>[0-9]+),?(?<memo>".*")?/.exec(item)?.groups as {
+          recipient: string;
+          amount: string;
+          memo?: string;
+        };
+      return {
+        to: recipient,
+        stx: amount,
+        memo: memo ? memo.replace(/\"/g, '') : '',
+      } as Row;
+    });
+
+    if (rows.length) {
+      setRows(rows);
+    }
+  }, []);
+
   const [rows, setRows] = useState<Row[]>([{ to: '', stx: '0', memo: '' }]);
 
   useEffect(() => {
