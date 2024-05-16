@@ -83,7 +83,7 @@ export default function Landing({
                 <button
                   className="btn btn-outline-primary"
                   type="button"
-                  disabled={!isWcReady}
+                  disabled={!isWcReady()}
                   onClick={handleWcOpenAuth}
                 >
                   Start now with Wallet Connect

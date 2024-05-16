@@ -90,7 +90,7 @@ export const useWcConnect = () => {
   };
 
   const isWcReady = useCallback(() => {
-    return client !== undefined;
+    return client !== undefined && client !== null;
   }, [client]);
 
   return { handleWcOpenAuth, authenticated, isWcReady, client };
