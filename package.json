@@ -40,7 +40,6 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-download-link": "^2.3.0",
-    "react-input-switch": "^2.2.2",
     "react-jdenticon": "^1.1.0",
     "react-router-dom": "^6.23.1",
     "sbtc": "^0.1.9",
