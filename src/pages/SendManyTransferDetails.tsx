@@ -1,19 +1,17 @@
 import React from 'react';
 import { SendManyTransfer } from '../components/SendManyTransfer';
-import { useStxAddresses } from '../lib/hooks';
-import { UserSession } from '@stacks/connect';
-import { RouteComponentProps } from '@reach/router';
+
+import { useConnect } from '../lib/auth';
 
 export default function SendManyTransferDetails({
-  userSession,
   txId,
   eventIndex,
 }: {
-  userSession: UserSession;
   txId?: string;
   eventIndex?: number;
-} & RouteComponentProps) {
-  // const { ownerStxAddress } = useStxAddresses();
+}) {
+  const { userSession } = useConnect();
+
   return (
     <main className="panel-welcome mt-5 container">
       <div className="lead row mt-5">

@@ -9,16 +9,13 @@ import React, {
 } from 'react';
 
 import { StoredTx, getTxs, getTxsAsCSV, getTxsAsJSON, jsonStringify } from '../lib/transactions';
-import {
-  Transaction,
-  TransactionEventStxAsset,
-  type TokenTransferTransaction,
-} from '@stacks/stacks-blockchain-api-types';
+import { Transaction, TransactionEventStxAsset } from '@stacks/stacks-blockchain-api-types';
 import DownloadLinkDef from 'react-download-link';
 import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';
 import { chainSuffix } from '../lib/constants';
 import { useConnect } from '../lib/auth';
+import { Link } from 'react-router-dom';
 // FIXME: DownloadLink type definitions are wrong
 // className somehow is passed but the types are out of date
 const DownloadLink = DownloadLinkDef as unknown as React.FC<{
@@ -235,9 +232,9 @@ export function SendManyTxList() {
         searchRef.current.value.trim() &&
         searchRef.current.value.trim().startsWith('0x') &&
         searchRef.current.value.trim().length === 66 ? (
-          <a href={`/txid/${searchRef.current.value.trim()}${chainSuffix}`}>
+          <Link to={`/txid/${searchRef.current.value.trim()}${chainSuffix}`}>
             See transaction details
-          </a>
+          </Link>
         ) : (
           <>No transactions yet</>
         ))}

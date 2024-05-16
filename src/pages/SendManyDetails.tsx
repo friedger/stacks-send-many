@@ -1,17 +1,12 @@
 import React from 'react';
 import { SendManyTx } from '../components/SendManyTx';
 import { useStxAddresses } from '../lib/hooks';
-import { UserSession } from '@stacks/connect';
-import { RouteComponentProps } from '@reach/router';
 
-export default function SendManyDetails({
-  userSession,
-  txId,
-}: {
-  userSession: UserSession;
-  txId?: string;
-} & RouteComponentProps) {
+import { useConnect } from '../lib/auth';
+
+export default function SendManyDetails({ txId }: { txId?: string }) {
   const { ownerStxAddress } = useStxAddresses();
+  const { userSession } = useConnect();
   return (
     <main className="panel-welcome mt-5 container">
       <div className="lead row mt-5">

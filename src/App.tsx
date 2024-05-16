@@ -1,4 +1,3 @@
-import { Router } from '@reach/router';
 import { Connect } from '@stacks/connect-react';
 import Client from '@walletconnect/sign-client';
 import { useAtom, useSetAtom } from 'jotai';
@@ -6,23 +5,10 @@ import React, { useEffect } from 'react';
 import Auth from './components/Auth';
 import { Network } from './components/Network';
 import { Rate } from './components/Rate';
-import { appMetaData, useConnect, useWcConnect, userDataState, wcClientState } from './lib/auth';
-import { useStxAddresses, useWalletConnect } from './lib/hooks';
-import FulfillmentSBtc from './pages/FulfillmentSBtc';
-import Landing from './pages/Landing';
-import SendMany from './pages/SendMany';
-import SendManyAdvocates from './pages/SendManyAdvocates';
-import SendManyCyclePayout from './pages/SendManyCyclePayout';
-import SendManyDetails from './pages/SendManyDetails';
-import SendManyTransferDetails from './pages/SendManyTransferDetails';
+import { appMetaData, useConnect, userDataState, wcClientState } from './lib/auth';
 import metaverse from './styles/metaverse.png';
-import {
-  CONTRACT_ADDRESS,
-  NOT_CONTRACT,
-  SBTC_CONTRACT,
-  WMNO_CONTRACT,
-  XBTC_SEND_MANY_CONTRACT,
-} from './lib/constants';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './router';
 
 /* global BigInt */
 BigInt.prototype.toJSON = function () {
@@ -83,71 +69,7 @@ export default function App() {
         </div>
       </nav>
 
-      <Content />
+      <RouterProvider router={router} />
     </Connect>
-  );
-}
-
-function AppBody(props: { path: string; children: React.ReactNode }) {
-  return <div>{props.children}</div>;
-}
-function Content() {
-  const { ownerStxAddress } = useStxAddresses();
-  const { wcSession } = useWalletConnect();
-  const { client, isWcReady } = useWcConnect();
-  const { userSession } = useConnect();
-
-  console.log({ ownerStxAddress, wcSession, client, wcReady: isWcReady() });
-  return (
-    <>
-      <Router>
-        <AppBody path="/">
-          <SendManyCyclePayout path="/cycle/:cycleId" userSession={userSession} />
-          <SendManyAdvocates path="/advocates/:payoutId" userSession={userSession} />
-          <SendManyDetails path="/txid/:txId" userSession={userSession} />
-          <SendManyTransferDetails path="/txid/:txId/:eventIndex" userSession={userSession} />
-          {!ownerStxAddress && (
-            <>
-              <Landing path="/:asset" />
-              <Landing path="/" default />
-            </>
-          )}
-          {ownerStxAddress && (
-            <>
-              <SendMany
-                path="/xbtc"
-                asset="xbtc"
-                sendManyContract={
-                  XBTC_SEND_MANY_CONTRACT.address + '.' + XBTC_SEND_MANY_CONTRACT.name
-                }
-              />
-              <SendMany
-                path="/wmno"
-                asset="wmno"
-                sendManyContract={WMNO_CONTRACT.address + '.' + WMNO_CONTRACT.name}
-              />
-              <SendMany
-                path="/not"
-                asset="not"
-                sendManyContract={NOT_CONTRACT.address + '.' + NOT_CONTRACT.name}
-              />
-              <SendMany
-                path="/sbtc/:assetContract/:sendManyContract"
-                asset="sbtc"
-                sendManyContract={SBTC_CONTRACT}
-              />
-              <SendManyCyclePayout path="/cycle/:cycleId" userSession={userSession} />
-              <SendMany
-                path="/"
-                default
-                asset="stx"
-                sendManyContract={`${CONTRACT_ADDRESS}.send-many-memo`}
-              />
-              <FulfillmentSBtc path="/sbtc-bridge/:assetContract/:sendManyContract" />
-            </>
-          )}
-        </AppBody>
-      </Router>
-    </>
   );
 }

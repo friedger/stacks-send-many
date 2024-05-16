@@ -12,7 +12,7 @@ import {
   testnet,
 } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
-import { RouteComponentProps } from '@reach/router';
+import { Link } from 'react-router-dom';
 
 export default function SendMany({
   asset,
@@ -22,7 +22,7 @@ export default function SendMany({
   asset: string;
   assetContract?: string;
   sendManyContract: string;
-} & RouteComponentProps) {
+}) {
   const { ownerStxAddress } = useStxAddresses();
   console.log({ assetContract });
   if (!ownerStxAddress) {
@@ -62,24 +62,24 @@ export default function SendMany({
                 <div className="col-xs-10 col-md-12 bg-light p-4">
                   <div className="text-right">
                     {asset !== 'stx' && (
-                      <a href="/" className="small">
+                      <Link to="/" className="small">
                         Send {testnet || mocknet ? 'Test' : ''} STX <div></div>
-                      </a>
+                      </Link>
                     )}
                     {asset !== 'sbtc' && (
-                      <a href="/sbtc" className="small">
+                      <Link to="/sbtc" className="small">
                         Send {testnet || mocknet ? 'Test' : ''} sBTC <div></div>
-                      </a>
+                      </Link>
                     )}
                     {asset !== 'xbtc' && (
-                      <a href="/xbtc" className="small">
+                      <Link to="/xbtc" className="small">
                         Send {testnet || mocknet ? 'Test' : ''} xBTC <div></div>
-                      </a>
+                      </Link>
                     )}
                     {asset !== 'not' && (
-                      <a href="/not" className="small">
+                      <Link to="/not" className="small">
                         Send {testnet || mocknet ? 'Test' : ''} $NOT{' '}
-                      </a>
+                      </Link>
                     )}
                   </div>
                   <h3 className="font-weight-bold mb-4">
