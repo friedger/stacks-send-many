@@ -87,7 +87,7 @@ export function WithdrawSBtc({ assetContract }: { assetContract: string }) {
     }
     const btcAddress = profile.btcAddress.p2wpkh.testnet;
     const btcPublicKey = profile.btcPublicKey.p2wpkh;
-    console.log({ btcAddress, btcPublicKey });
+    console.log({ btcAddress, btcPublicKey, sbtcWalletAddress });
 
     let utxos = await helper.fetchUtxos(btcAddress);
 

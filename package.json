@@ -1,6 +1,6 @@
 {
   "name": "stacks-send-many",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "type": "module",
   "description": "Send STX tokens as quickly as possible",
   "author": "Friedger Müffke",
@@ -40,7 +40,6 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-download-link": "^2.3.0",
-    "react-input-switch": "^2.2.2",
     "react-jdenticon": "^1.1.0",
     "react-router-dom": "^6.23.1",
     "sbtc": "^0.1.9",
@@ -61,11 +60,8 @@
   },
   "browserslist": {
     "production": [
-      "chrome >= 67",
-      "edge >= 79",
-      "firefox >= 68",
-      "opera >= 54",
-      "safari >= 14"
+      "defaults and fully supports es6-module",
+      "maintained node versions"
     ],
     "development": [
       "last 1 chrome version",
@@ -74,7 +70,7 @@
     ]
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "devDependencies": {
     "@stacks/prettier-config": "0.0.10",

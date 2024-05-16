@@ -1,17 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { StacksMainnet } from '@stacks/network';
 import {
-  callReadOnlyFunction,
-  standardPrincipalCV,
-  contractPrincipalCV,
-  ClarityType,
-  TupleCV,
   BufferCV,
-  ResponseOkCV,
+  ClarityType,
   ResponseErrorCV,
+  ResponseOkCV,
+  TupleCV,
+  callReadOnlyFunction,
   principalCV,
 } from '@stacks/transactions';
-import { StacksMainnet } from '@stacks/network';
 import toUnicode from 'punycode2/to-unicode';
+import { useEffect, useMemo, useState } from 'react';
 
 function hex_to_ascii(bytes: Uint8Array) {
   var str = '';
