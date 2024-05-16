@@ -8,6 +8,7 @@ import {
   BufferCV,
   ResponseOkCV,
   ResponseErrorCV,
+  principalCV,
 } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
 import toUnicode from 'punycode2/to-unicode';
@@ -22,15 +23,7 @@ function hex_to_ascii(bytes: Uint8Array) {
 
 const getNameFromAddress = async (addr: string) => {
   console.log(addr);
-  let addrCV;
-  try {
-    addrCV = standardPrincipalCV(addr);
-  } catch (e) {
-    const [contractAddress, contractName] = addr.split('.');
-    addrCV = contractPrincipalCV(contractAddress, contractName);
-    addr = contractAddress;
-  }
-  console.log(addr);
+  let addrCV = principalCV(addr);
   const result = (await callReadOnlyFunction({
     contractAddress: 'SP000000000000000000002Q6VF78',
     contractName: 'bns',
