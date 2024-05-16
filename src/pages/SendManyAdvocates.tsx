@@ -2,8 +2,9 @@ import React from 'react';
 import { SendManyGroupTxs } from '../components/SendManyGroupTxs';
 import { chainSuffix } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
-import { UserSession } from '@stacks/connect';
-import { RouteComponentProps } from '@reach/router';
+
+import { useConnect } from '@stacks/connect-react';
+import { Link } from 'react-router-dom';
 
 const payouts = {
   1: [
@@ -15,14 +16,9 @@ const payouts = {
   2: ['0x03aa24c49ffe17820c874bc9d7da89cced57bf6c8dbc373adb21957936fd6959'],
 };
 type payoutKey = keyof typeof payouts;
-export default function SendManyDetails({
-  userSession,
-  payoutId,
-}: {
-  userSession: UserSession;
-  payoutId?: payoutKey;
-} & RouteComponentProps) {
+export default function SendManyDetails({ payoutId }: { payoutId?: payoutKey }) {
   const { ownerStxAddress } = useStxAddresses();
+  const { userSession } = useConnect();
   return (
     <main className="panel-welcome mt-5 container">
       <div className="lead row mt-5">
@@ -43,7 +39,7 @@ export default function SendManyDetails({
               Payout data available for cylces:{' '}
               {Object.keys(payouts).map(payoutId => (
                 <>
-                  <a href={`/advocates/${payoutId}${chainSuffix}`}>#{payoutId}</a>{' '}
+                  <Link to={`/advocates/${payoutId}${chainSuffix}`}>#{payoutId}</Link>{' '}
                 </>
               ))}
             </>

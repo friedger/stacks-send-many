@@ -1,6 +1,5 @@
 import React from 'react';
 import { useConnect, useWcConnect } from '../lib/auth';
-import { RouteComponentProps } from '@reach/router';
 
 // Landing page demonstrating Blockstack connect for registration
 
@@ -9,7 +8,7 @@ export default function Landing({
 }: {
   // asset: 'walletConnect' | 'blockstack' | 'not' | 'wmno';
   asset?: string;
-} & RouteComponentProps) {
+}) {
   const { handleOpenAuth } = useConnect();
   const { handleWcOpenAuth, isWcReady } = useWcConnect();
   return (

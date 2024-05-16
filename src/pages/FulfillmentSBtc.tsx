@@ -6,7 +6,6 @@ import { Profile } from '../components/Profile';
 import { WithdrawSBtc } from '../components/WithdrawSBtc';
 import { SBTC_CONTRACT, mocknet, testnet } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
-import { RouteComponentProps } from '@reach/router';
 
 export default function FulfillmentSBtc({
   assetContract,
@@ -14,7 +13,7 @@ export default function FulfillmentSBtc({
 }: {
   assetContract?: string;
   sendManyContract?: string;
-} & RouteComponentProps) {
+}) {
   const { ownerStxAddress } = useStxAddresses();
   if (!ownerStxAddress) {
     return <div>Loading</div>;

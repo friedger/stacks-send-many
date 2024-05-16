@@ -1,4 +1,3 @@
-import { Router } from '@reach/router';
 import { Connect } from '@stacks/connect-react';
 import Client from '@walletconnect/sign-client';
 import { useAtom, useSetAtom } from 'jotai';
@@ -6,8 +5,8 @@ import React, { useEffect } from 'react';
 import Auth from './components/Auth';
 import { Network } from './components/Network';
 import { Rate } from './components/Rate';
-import { appMetaData, useConnect, useWcConnect, userDataState, wcClientState } from './lib/auth';
-import { useStxAddresses, useWalletConnect } from './lib/hooks';
+import { appMetaData, useConnect, userDataState, wcClientState } from './lib/auth';
+import { useStxAddresses } from './lib/hooks';
 import FulfillmentSBtc from './pages/FulfillmentSBtc';
 import Landing from './pages/Landing';
 import SendMany from './pages/SendMany';
@@ -23,6 +22,15 @@ import {
   WMNO_CONTRACT,
   XBTC_SEND_MANY_CONTRACT,
 } from './lib/constants';
+import {
+  Navigate,
+  Outlet,
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+  useLocation,
+} from 'react-router-dom';
 
 /* global BigInt */
 BigInt.prototype.toJSON = function () {
@@ -34,6 +42,8 @@ const styles = {
   backgroundSize: 'cover',
   backgroundImage: `url(${metaverse})`,
 };
+
+const router = createRouter();
 
 export default function App() {
   const { authOptions, userSession } = useConnect();
@@ -83,71 +93,109 @@ export default function App() {
         </div>
       </nav>
 
-      <Content />
+      <RouterProvider router={router} />
     </Connect>
   );
 }
 
-function AppBody(props: { path: string; children: React.ReactNode }) {
-  return <div>{props.children}</div>;
-}
-function Content() {
+function RequireAuth({ children }: { children: JSX.Element | JSX.Element[] }) {
   const { ownerStxAddress } = useStxAddresses();
-  const { wcSession } = useWalletConnect();
-  const { client, isWcReady } = useWcConnect();
-  const { userSession } = useConnect();
+  let location = useLocation();
 
-  console.log({ ownerStxAddress, wcSession, client, wcReady: isWcReady() });
+  if (!ownerStxAddress) {
+    // Redirect them to the /login page, but save the current location they were
+    // trying to go to when they were redirected. This allows us to send them
+    // along to that page after they login, which is a nicer user experience
+    // than dropping them off on the home page.
+    return <Landing />;
+  }
+
+  return children;
+}
+function AppBody(props: React.PropsWithChildren) {
   return (
-    <>
-      <Router>
-        <AppBody path="/">
-          <SendManyCyclePayout path="/cycle/:cycleId" userSession={userSession} />
-          <SendManyAdvocates path="/advocates/:payoutId" userSession={userSession} />
-          <SendManyDetails path="/txid/:txId" userSession={userSession} />
-          <SendManyTransferDetails path="/txid/:txId/:eventIndex" userSession={userSession} />
-          {!ownerStxAddress && (
-            <>
-              <Landing path="/:asset" />
-              <Landing path="/" default />
-            </>
-          )}
-          {ownerStxAddress && (
-            <>
+    <div>
+      <Outlet />
+    </div>
+  );
+}
+function createRouter() {
+  // const { ownerStxAddress } = useStxAddresses();
+  // const { wcSession } = useWalletConnect();
+  // const { client, isWcReady } = useWcConnect();
+  // const { userSession } = useConnect();
+
+  // console.log({ ownerStxAddress, wcSession, client, wcReady: isWcReady() });
+  return createBrowserRouter(
+    createRoutesFromElements(
+      <Route path="/" element={<AppBody />}>
+        <Route
+          path="/xbtc"
+          element={
+            <RequireAuth>
               <SendMany
-                path="/xbtc"
                 asset="xbtc"
                 sendManyContract={
                   XBTC_SEND_MANY_CONTRACT.address + '.' + XBTC_SEND_MANY_CONTRACT.name
                 }
               />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/wmno"
+          element={
+            <RequireAuth>
               <SendMany
-                path="/wmno"
                 asset="wmno"
                 sendManyContract={WMNO_CONTRACT.address + '.' + WMNO_CONTRACT.name}
               />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/not"
+          element={
+            <RequireAuth>
               <SendMany
-                path="/not"
                 asset="not"
                 sendManyContract={NOT_CONTRACT.address + '.' + NOT_CONTRACT.name}
               />
-              <SendMany
-                path="/sbtc/:assetContract/:sendManyContract"
-                asset="sbtc"
-                sendManyContract={SBTC_CONTRACT}
-              />
-              <SendManyCyclePayout path="/cycle/:cycleId" userSession={userSession} />
-              <SendMany
-                path="/"
-                default
-                asset="stx"
-                sendManyContract={`${CONTRACT_ADDRESS}.send-many-memo`}
-              />
-              <FulfillmentSBtc path="/sbtc-bridge/:assetContract/:sendManyContract" />
-            </>
-          )}
-        </AppBody>
-      </Router>
-    </>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/sbtc/:assetContract/:sendManyContract"
+          element={
+            <RequireAuth>
+              <SendMany asset="sbtc" sendManyContract={SBTC_CONTRACT} />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <RequireAuth>
+              <SendMany asset="stx" sendManyContract={`${CONTRACT_ADDRESS}.send-many-memo`} />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/sbtc-bridge/:assetContract/:sendManyContract"
+          element={
+            <RequireAuth>
+              <FulfillmentSBtc />
+            </RequireAuth>
+          }
+        />
+
+        <Route path="/landing/:asset?" element={<Landing />} />
+
+        <Route path="/cycle/:cycleId" element={<SendManyCyclePayout />} />
+        <Route path="/advocates/:payoutId" element={<SendManyAdvocates />} />
+        <Route path="/txid/:txId" element={<SendManyDetails />} />
+        <Route path="/txid/:txId/:eventIndex" element={<SendManyTransferDetails />} />
+      </Route>
+    )
   );
 }
