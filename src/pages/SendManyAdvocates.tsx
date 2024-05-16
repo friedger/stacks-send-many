@@ -3,7 +3,7 @@ import { SendManyGroupTxs } from '../components/SendManyGroupTxs';
 import { chainSuffix } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
-import { useConnect } from '@stacks/connect-react';
+import { useConnect } from '../lib/auth';
 import { Link } from 'react-router-dom';
 
 const payouts = {

@@ -2,7 +2,7 @@ import React from 'react';
 import { SendManyTx } from '../components/SendManyTx';
 import { useStxAddresses } from '../lib/hooks';
 
-import { useConnect } from '@stacks/connect-react';
+import { useConnect } from '../lib/auth';
 
 export default function SendManyDetails({ txId }: { txId?: string }) {
   const { ownerStxAddress } = useStxAddresses();

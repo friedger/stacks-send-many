@@ -9,11 +9,7 @@ import React, {
 } from 'react';
 
 import { StoredTx, getTxs, getTxsAsCSV, getTxsAsJSON, jsonStringify } from '../lib/transactions';
-import {
-  Transaction,
-  TransactionEventStxAsset,
-  type TokenTransferTransaction,
-} from '@stacks/stacks-blockchain-api-types';
+import { Transaction, TransactionEventStxAsset } from '@stacks/stacks-blockchain-api-types';
 import DownloadLinkDef from 'react-download-link';
 import _groupBy from 'lodash.groupby';
 import { Tx } from './Tx';

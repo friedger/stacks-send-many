@@ -1,7 +1,7 @@
 import React from 'react';
 import { SendManyTransfer } from '../components/SendManyTransfer';
 
-import { useConnect } from '@stacks/connect-react';
+import { useConnect } from '../lib/auth';
 
 export default function SendManyTransferDetails({
   txId,
