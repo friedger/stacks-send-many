@@ -1,21 +1,13 @@
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  Fragment,
-  useCallback,
-  Component,
-  CSSProperties,
-} from 'react';
+import React, { CSSProperties, Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
-import { StoredTx, getTxs, getTxsAsCSV, getTxsAsJSON, jsonStringify } from '../lib/transactions';
 import { Transaction, TransactionEventStxAsset } from '@stacks/stacks-blockchain-api-types';
-import DownloadLinkDef from 'react-download-link';
 import _groupBy from 'lodash.groupby';
-import { Tx } from './Tx';
-import { chainSuffix } from '../lib/constants';
-import { useConnect } from '../lib/auth';
+import DownloadLinkDef from 'react-download-link';
 import { Link } from 'react-router-dom';
+import { useConnect } from '../lib/auth';
+import { chainSuffix } from '../lib/constants';
+import { StoredTx, getTxs, getTxsAsCSV, getTxsAsJSON, jsonStringify } from '../lib/transactions';
+import { Tx } from './Tx';
 // FIXME: DownloadLink type definitions are wrong
 // className somehow is passed but the types are out of date
 const DownloadLink = DownloadLinkDef as unknown as React.FC<{
