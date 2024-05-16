@@ -1,17 +1,17 @@
-import { ClarityValue, serializeCV, hexToCV as stacksHexToCV } from '@stacks/transactions';
 import { connectWebSocketClient } from '@stacks/blockchain-api-client';
-import React, { useState, useEffect } from 'react';
+import { FinishedTxData, UserSession } from '@stacks/connect';
+import { Storage } from '@stacks/storage';
+import { hexToCV as stacksHexToCV } from '@stacks/transactions';
+import { useEffect, useState } from 'react';
 import {
+  STACKS_API_WS_URL,
+  STACK_API_URL,
   chainSuffix,
   mainnet,
   mocknet,
-  STACKS_API_WS_URL,
-  STACK_API_URL,
   testnet,
   transactionsApi,
 } from './constants';
-import { Storage } from '@stacks/storage';
-import { FinishedTxData, UserSession } from '@stacks/connect';
 
 import {
   ContractCallTransaction,
@@ -19,9 +19,7 @@ import {
   MempoolTransaction,
   MempoolTransactionStatus,
   TransactionEvent,
-  TransactionStatus,
   type Transaction,
-  type TransactionEventFungibleAsset,
   type TransactionEventStxAsset,
 } from '@stacks/stacks-blockchain-api-types';
 interface Subscription {

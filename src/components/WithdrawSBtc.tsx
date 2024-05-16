@@ -1,4 +1,5 @@
 import * as btc from '@scure/btc-signer';
+import { P2TROut } from '@scure/btc-signer/lib/payment';
 import { bytesToHex, hexToBytes } from '@stacks/common';
 import { openSignatureRequestPopup } from '@stacks/connect';
 import React, { useRef, useState } from 'react';
@@ -13,7 +14,6 @@ import {
 import { useConnect } from '../lib/auth';
 import { NETWORK, mocknet } from '../lib/constants';
 import { getSbtcWalletAddress } from '../lib/sbtc';
-import { P2TROut } from '@scure/btc-signer/lib/payment';
 
 export function WithdrawSBtc({ assetContract }: { assetContract: string }) {
   const spinner = useRef<HTMLDivElement>(null);

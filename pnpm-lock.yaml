@@ -9,16 +9,16 @@ importers:
   .:
     dependencies:
       '@scure/bip32':
-        specifier: ^1.3.2
+        specifier: ^1.4.0
         version: 1.4.0
       '@scure/btc-signer':
-        specifier: ^1.2.1
+        specifier: ^1.3.1
         version: 1.3.1
       '@stacks/auth':
         specifier: ^6.15.0
         version: 6.15.0
       '@stacks/blockchain-api-client':
-        specifier: ^7.8.2
+        specifier: ^7.10.0
         version: 7.10.0
       '@stacks/common':
         specifier: ^6.13.0
@@ -33,23 +33,23 @@ importers:
         specifier: ^6.13.0
         version: 6.13.0
       '@stacks/profile':
-        specifier: ^6.12.0
+        specifier: ^6.15.0
         version: 6.15.0
       '@stacks/stacks-blockchain-api-types':
         specifier: ^7.10.0
         version: 7.10.0
       '@stacks/storage':
-        specifier: ^6.12.0
+        specifier: ^6.15.0
         version: 6.15.0
       '@stacks/transactions':
-        specifier: ^6.12.0
+        specifier: ^6.15.0
         version: 6.15.0
       '@types/lodash.groupby':
         specifier: ^4.6.9
         version: 4.6.9
       '@types/react':
-        specifier: ^18.3.1
-        version: 18.3.1
+        specifier: ^18.3.2
+        version: 18.3.2
       '@types/react-dom':
         specifier: ^18.3.0
         version: 18.3.0
@@ -63,14 +63,14 @@ importers:
         specifier: ^1.8.0
         version: 1.8.0
       '@walletconnect/sign-client':
-        specifier: ^2.10.1
-        version: 2.12.2(@netlify/blobs@7.3.0)
+        specifier: ^2.13.0
+        version: 2.13.0(@netlify/blobs@7.3.0)
       '@walletconnect/types':
-        specifier: ^2.10.1
-        version: 2.12.2(@netlify/blobs@7.3.0)
+        specifier: ^2.13.0
+        version: 2.13.0(@netlify/blobs@7.3.0)
       '@walletconnect/utils':
-        specifier: ^2.10.1
-        version: 2.12.2(@netlify/blobs@7.3.0)
+        specifier: ^2.13.0
+        version: 2.13.0(@netlify/blobs@7.3.0)
       c32check:
         specifier: ^2.0.0
         version: 2.0.0
@@ -78,11 +78,11 @@ importers:
         specifier: ^4.4.0
         version: 4.4.0
       jdenticon:
-        specifier: ^3.2.0
-        version: 3.2.0
+        specifier: ^3.3.0
+        version: 3.3.0
       jotai:
-        specifier: ^2.4.3
-        version: 2.8.0(@types/react@18.3.1)(react@18.3.1)
+        specifier: ^2.8.0
+        version: 2.8.0(@types/react@18.3.2)(react@18.3.1)
       lodash.groupby:
         specifier: ^4.6.0
         version: 4.6.0
@@ -90,10 +90,10 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       react:
-        specifier: ^18.2.0
+        specifier: ^18.3.1
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-download-link:
         specifier: ^2.3.0
@@ -108,10 +108,10 @@ importers:
         specifier: ^6.23.1
         version: 6.23.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       sbtc:
-        specifier: ^0.1.8
+        specifier: ^0.1.9
         version: 0.1.9
       serve:
-        specifier: ^14.2.1
+        specifier: ^14.2.3
         version: 14.2.3
       vite:
         specifier: ^5.2.11
@@ -127,16 +127,16 @@ importers:
         specifier: 0.0.10
         version: 0.0.10
       bootstrap:
-        specifier: ^5.3.2
+        specifier: ^5.3.3
         version: 5.3.3(@popperjs/core@2.11.8)
       netlify-cli:
         specifier: ^17.16.2
-        version: 17.23.1(@swc/core@1.4.17)(@types/express@4.17.21)(@types/node@20.12.8)(idb-keyval@6.2.1)(picomatch@2.3.1)
+        version: 17.23.1(@swc/core@1.4.17)(@types/express@4.17.21)(@types/node@20.12.8)(idb-keyval@6.2.1)
       prettier:
-        specifier: ^ 3.0.3
+        specifier: ^3.2.5
         version: 3.2.5
       react-test-renderer:
-        specifier: ^18.2.0
+        specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       typescript:
         specifier: ^5.4.5
@@ -1538,8 +1538,8 @@ packages:
   '@types/react-dom@18.3.0':
     resolution: {integrity: sha512-EhwApuTmMBmXuFOikhQLIBUn6uFg81SwLMOAUgodJF14SOBOCMdU04gDoYi0WOJJHD144TL32z4yDqCW3dnkQg==}
 
-  '@types/react@18.3.1':
-    resolution: {integrity: sha512-V0kuGBX3+prX+DQ/7r2qsv1NsdfnCLnTgnRJ1pYnxykBhGMz+qj+box5lq7XsO5mtZsBqpjwwTu/7wszPfMBcw==}
+  '@types/react@18.3.2':
+    resolution: {integrity: sha512-Btgg89dAnqD4vV7R3hlwOxgqobUQKgx3MmrQRi0yYbs/P0ym8XozIAlkqVilPqHQwXs4e9Tf63rrCgl58BcO4w==}
 
   '@types/retry@0.12.1':
     resolution: {integrity: sha512-xoDlM2S4ortawSWORYqsdU+2rxdh4LRW9ytc3zmT37RIKQh6IHyKwwtKhKis9ah8ol07DCkZxPt8BBvPjC6v4g==}
@@ -1600,8 +1600,8 @@ packages:
   '@walletconnect/browser-utils@1.8.0':
     resolution: {integrity: sha512-Wcqqx+wjxIo9fv6eBUFHPsW1y/bGWWRboni5dfD8PtOmrihrEpOCmvRJe4rfl7xgJW8Ea9UqKEaq0bIRLHlK4A==}
 
-  '@walletconnect/core@2.12.2':
-    resolution: {integrity: sha512-7Adv/b3pp9F42BkvReaaM4KS8NEvlkS7AMtwO3uF/o6aRMKtcfTJq9/jgWdKJh4RP8pPRTRFjCw6XQ/RZtT4aQ==}
+  '@walletconnect/core@2.13.0':
+    resolution: {integrity: sha512-blDuZxQenjeXcVJvHxPznTNl6c/2DO4VNrFnus+qHmO6OtT5lZRowdMtlCaCNb1q0OxzgrmBDcTOCbFcCpio/g==}
 
   '@walletconnect/encoding@1.0.2':
     resolution: {integrity: sha512-CrwSBrjqJ7rpGQcTL3kU+Ief+Bcuu9PH6JLOb+wM6NITX1GTxR/MfNwnQfhLKK6xpRAyj2/nM04OOH6wS8Imag==}
@@ -1612,14 +1612,17 @@ packages:
   '@walletconnect/events@1.0.1':
     resolution: {integrity: sha512-NPTqaoi0oPBVNuLv7qPaJazmGHs5JGyO8eEAk5VGKmJzDR7AHzD4k6ilox5kxk1iwiOnFopBOOMLs86Oa76HpQ==}
 
-  '@walletconnect/heartbeat@1.2.1':
-    resolution: {integrity: sha512-yVzws616xsDLJxuG/28FqtZ5rzrTA4gUjdEMTbWB5Y8V1XHRmqq4efAxCw5ie7WjbXFSUyBHaWlMR+2/CpQC5Q==}
+  '@walletconnect/heartbeat@1.2.2':
+    resolution: {integrity: sha512-uASiRmC5MwhuRuf05vq4AT48Pq8RMi876zV8rr8cV969uTOzWdB/k+Lj5yI2PBtB1bGQisGen7MM1GcZlQTBXw==}
 
-  '@walletconnect/jsonrpc-provider@1.0.13':
-    resolution: {integrity: sha512-K73EpThqHnSR26gOyNEL+acEex3P7VWZe6KE12ZwKzAt2H4e5gldZHbjsu2QR9cLeJ8AXuO7kEMOIcRv1QEc7g==}
+  '@walletconnect/jsonrpc-provider@1.0.14':
+    resolution: {integrity: sha512-rtsNY1XqHvWj0EtITNeuf8PHMvlCLiS3EjQL+WOkxEOA4KPxsohFnBDeyPYiNm4ZvkQdLnece36opYidmtbmow==}
 
   '@walletconnect/jsonrpc-types@1.0.3':
     resolution: {integrity: sha512-iIQ8hboBl3o5ufmJ8cuduGad0CQm3ZlsHtujv9Eu16xq89q+BG7Nh5VLxxUgmtpnrePgFkTwXirCTkwJH1v+Yw==}
+
+  '@walletconnect/jsonrpc-types@1.0.4':
+    resolution: {integrity: sha512-P6679fG/M+wuWg9TY8mh6xFSdYnFyFjwFelxyISxMDrlbXokorEVXYOxiqEbrU3x1BmBoCAJJ+vtEaEoMlpCBQ==}
 
   '@walletconnect/jsonrpc-utils@1.0.8':
     resolution: {integrity: sha512-vdeb03bD8VzJUL6ZtzRYsFMq1eZQcM3EAzT0a3st59dyLfJ0wq+tKMpmGH7HlB7waD858UWgfIcudbPFsbzVdw==}
@@ -1658,8 +1661,8 @@ packages:
   '@walletconnect/safe-json@1.0.2':
     resolution: {integrity: sha512-Ogb7I27kZ3LPC3ibn8ldyUr5544t3/STow9+lzz7Sfo808YD7SBWk7SAsdBFlYgP2zDRy2hS3sKRcuSRM0OTmA==}
 
-  '@walletconnect/sign-client@2.12.2':
-    resolution: {integrity: sha512-cM0ualXj6nVvLqS4BDNRk+ZWR+lubcsz/IHreH+3wYrQ2sV+C0fN6ctrd7MMGZss0C0qacWCx0pm62ZBuoKvqA==}
+  '@walletconnect/sign-client@2.13.0':
+    resolution: {integrity: sha512-En7KSvNUlQFx20IsYGsFgkNJ2lpvDvRsSFOT5PTdGskwCkUfOpB33SQJ6nCrN19gyoKPNvWg80Cy6MJI0TjNYA==}
 
   '@walletconnect/time@1.0.2':
     resolution: {integrity: sha512-uzdd9woDcJ1AaBZRhqy5rNC9laqWGErfc4dxA9a87mPdKOgWMD85mcFo9dIYIts/Jwocfwn07EC6EzclKubk/g==}
@@ -1668,11 +1671,11 @@ packages:
     resolution: {integrity: sha512-Cn+3I0V0vT9ghMuzh1KzZvCkiAxTq+1TR2eSqw5E5AVWfmCtECFkVZBP6uUJZ8YjwLqXheI+rnjqPy7sVM4Fyg==}
     deprecated: 'WalletConnect''s v1 SDKs are now deprecated. Please upgrade to a v2 SDK. For details see: https://docs.walletconnect.com/'
 
-  '@walletconnect/types@2.12.2':
-    resolution: {integrity: sha512-9CmwTlPbrFTzayTL9q7xM7s3KTJkS6kYFtH2m1/fHFgALs6pIUjf1qAx1TF2E4tv7SEzLAIzU4NqgYUt2vWXTg==}
+  '@walletconnect/types@2.13.0':
+    resolution: {integrity: sha512-MWaVT0FkZwzYbD3tvk8F+2qpPlz1LUSWHuqbINUtMXnSzJtXN49Y99fR7FuBhNFtDalfuWsEK17GrNA+KnAsPQ==}
 
-  '@walletconnect/utils@2.12.2':
-    resolution: {integrity: sha512-zf50HeS3SfoLv1N9GPl2IXTZ9TsXfet4usVAsZmX9P6/Xzq7d/7QakjVQCHH/Wk1O9XkcsfeoZoUhRxoMJ5uJw==}
+  '@walletconnect/utils@2.13.0':
+    resolution: {integrity: sha512-q1eDCsRHj5iLe7fF8RroGoPZpdo2CYMZzQSrw1iqL+2+GOeqapxxuJ1vaJkmDUkwgklfB22ufqG6KQnz78sD4w==}
 
   '@walletconnect/window-getters@1.0.0':
     resolution: {integrity: sha512-xB0SQsLaleIYIkSsl43vm8EwETpBzJ2gnzk7e0wMF3ktqiTGS6TFHxcprMl5R44KKh4tCcHCJwolMCaDSwtAaA==}
@@ -3651,8 +3654,8 @@ packages:
   isomorphic-unfetch@3.1.0:
     resolution: {integrity: sha512-geDJjpoZ8N0kWexiwkX8F9NkTsXhetLPVbZFQ+JTW239QNOwvB0gniuR1Wc6f0AMTn7/mFGyXvHTifrCp/GH8Q==}
 
-  jdenticon@3.2.0:
-    resolution: {integrity: sha512-z6Iq3fTODUMSOiR2nNYrqigS6Y0GvdXfyQWrUby7htDHvX7GNEwaWR4hcaL+FmhEgBe08Xkup/BKxXQhDJByPA==}
+  jdenticon@3.3.0:
+    resolution: {integrity: sha512-DhuBRNRIybGPeAjMjdHbkIfiwZCCmf8ggu7C49jhp6aJ7DYsZfudnvnTY5/1vgUhrGA7JaDAx1WevnpjCPvaGg==}
     engines: {node: '>=6.4.0'}
     hasBin: true
 
@@ -5517,6 +5520,9 @@ packages:
     resolution: {integrity: sha512-KPHm4VL5dDXKz01UuEd88Df+KzynaohSL9fBh096KWAxSKZQDI2uBrVqtvRM4rwrIrRRKsdLNML/lnaaVSRioA==}
     engines: {node: '>= 0.8'}
 
+  uint8arrays@3.1.0:
+    resolution: {integrity: sha512-ei5rfKtoRO8OyOIor2Rz5fhzjThwIHJZ3uyDPnDHTXbP0aMQ1RN/6AI5B5d9dBxJOU+BvOAk7ZQ1xphsX8Lrog==}
+
   uint8arrays@3.1.1:
     resolution: {integrity: sha512-+QJa8QRnbdXVpHYjLoTpJIdCTiw9Ir62nocClWuXIq2JIh4Uta0cQsTSpFL678p2CN8B+XSApwcU+pQEqVpKWg==}
 
@@ -6416,7 +6422,7 @@ snapshots:
       yaml: 2.4.2
       yargs: 17.7.2
 
-  '@netlify/build@29.41.2(@opentelemetry/api@1.8.0)(@swc/core@1.4.17)(@types/node@20.12.8)(picomatch@2.3.1)':
+  '@netlify/build@29.41.2(@opentelemetry/api@1.8.0)(@swc/core@1.4.17)(@types/node@20.12.8)':
     dependencies:
       '@bugsnag/js': 7.22.7
       '@netlify/blobs': 7.3.0
@@ -6436,7 +6442,7 @@ snapshots:
       chalk: 5.2.0
       clean-stack: 4.2.0
       execa: 6.1.0
-      fdir: 6.1.1(picomatch@2.3.1)
+      fdir: 6.1.1
       figures: 5.0.0
       filter-obj: 5.1.0
       got: 12.6.1
@@ -7473,9 +7479,9 @@ snapshots:
 
   '@types/react-dom@18.3.0':
     dependencies:
-      '@types/react': 18.3.1
+      '@types/react': 18.3.2
 
-  '@types/react@18.3.1':
+  '@types/react@18.3.2':
     dependencies:
       '@types/prop-types': 15.7.12
       csstype: 3.1.3
@@ -7583,11 +7589,11 @@ snapshots:
       '@walletconnect/window-metadata': 1.0.0
       detect-browser: 5.2.0
 
-  '@walletconnect/core@2.12.2(@netlify/blobs@7.3.0)':
+  '@walletconnect/core@2.13.0(@netlify/blobs@7.3.0)':
     dependencies:
-      '@walletconnect/heartbeat': 1.2.1
-      '@walletconnect/jsonrpc-provider': 1.0.13
-      '@walletconnect/jsonrpc-types': 1.0.3
+      '@walletconnect/heartbeat': 1.2.2
+      '@walletconnect/jsonrpc-provider': 1.0.14
+      '@walletconnect/jsonrpc-types': 1.0.4
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/jsonrpc-ws-connection': 1.0.14
       '@walletconnect/keyvaluestorage': 1.1.1(@netlify/blobs@7.3.0)
@@ -7596,12 +7602,12 @@ snapshots:
       '@walletconnect/relay-auth': 1.0.4
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.12.2(@netlify/blobs@7.3.0)
-      '@walletconnect/utils': 2.12.2(@netlify/blobs@7.3.0)
+      '@walletconnect/types': 2.13.0(@netlify/blobs@7.3.0)
+      '@walletconnect/utils': 2.13.0(@netlify/blobs@7.3.0)
       events: 3.3.0
       isomorphic-unfetch: 3.1.0
       lodash.isequal: 4.5.0
-      uint8arrays: 3.1.1
+      uint8arrays: 3.1.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -7636,22 +7642,27 @@ snapshots:
       keyvaluestorage-interface: 1.0.0
       tslib: 1.14.1
 
-  '@walletconnect/heartbeat@1.2.1':
+  '@walletconnect/heartbeat@1.2.2':
     dependencies:
       '@walletconnect/events': 1.0.1
       '@walletconnect/time': 1.0.2
-      tslib: 1.14.1
+      events: 3.3.0
 
-  '@walletconnect/jsonrpc-provider@1.0.13':
+  '@walletconnect/jsonrpc-provider@1.0.14':
     dependencies:
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/safe-json': 1.0.2
-      tslib: 1.14.1
+      events: 3.3.0
 
   '@walletconnect/jsonrpc-types@1.0.3':
     dependencies:
       keyvaluestorage-interface: 1.0.0
       tslib: 1.14.1
+
+  '@walletconnect/jsonrpc-types@1.0.4':
+    dependencies:
+      events: 3.3.0
+      keyvaluestorage-interface: 1.0.0
 
   '@walletconnect/jsonrpc-utils@1.0.8':
     dependencies:
@@ -7724,16 +7735,16 @@ snapshots:
     dependencies:
       tslib: 1.14.1
 
-  '@walletconnect/sign-client@2.12.2(@netlify/blobs@7.3.0)':
+  '@walletconnect/sign-client@2.13.0(@netlify/blobs@7.3.0)':
     dependencies:
-      '@walletconnect/core': 2.12.2(@netlify/blobs@7.3.0)
+      '@walletconnect/core': 2.13.0(@netlify/blobs@7.3.0)
       '@walletconnect/events': 1.0.1
-      '@walletconnect/heartbeat': 1.2.1
+      '@walletconnect/heartbeat': 1.2.2
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 2.1.2
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.12.2(@netlify/blobs@7.3.0)
-      '@walletconnect/utils': 2.12.2(@netlify/blobs@7.3.0)
+      '@walletconnect/types': 2.13.0(@netlify/blobs@7.3.0)
+      '@walletconnect/utils': 2.13.0(@netlify/blobs@7.3.0)
       events: 3.3.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -7760,11 +7771,11 @@ snapshots:
 
   '@walletconnect/types@1.8.0': {}
 
-  '@walletconnect/types@2.12.2(@netlify/blobs@7.3.0)':
+  '@walletconnect/types@2.13.0(@netlify/blobs@7.3.0)':
     dependencies:
       '@walletconnect/events': 1.0.1
-      '@walletconnect/heartbeat': 1.2.1
-      '@walletconnect/jsonrpc-types': 1.0.3
+      '@walletconnect/heartbeat': 1.2.2
+      '@walletconnect/jsonrpc-types': 1.0.4
       '@walletconnect/keyvaluestorage': 1.1.1(@netlify/blobs@7.3.0)
       '@walletconnect/logger': 2.1.2
       events: 3.3.0
@@ -7784,7 +7795,7 @@ snapshots:
       - ioredis
       - uWebSockets.js
 
-  '@walletconnect/utils@2.12.2(@netlify/blobs@7.3.0)':
+  '@walletconnect/utils@2.13.0(@netlify/blobs@7.3.0)':
     dependencies:
       '@stablelib/chacha20poly1305': 1.0.1
       '@stablelib/hkdf': 1.0.1
@@ -7794,12 +7805,12 @@ snapshots:
       '@walletconnect/relay-api': 1.0.10
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.12.2(@netlify/blobs@7.3.0)
+      '@walletconnect/types': 2.13.0(@netlify/blobs@7.3.0)
       '@walletconnect/window-getters': 1.0.1
       '@walletconnect/window-metadata': 1.0.1
       detect-browser: 5.3.0
       query-string: 7.1.3
-      uint8arrays: 3.1.1
+      uint8arrays: 3.1.0
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -8215,7 +8226,7 @@ snapshots:
     dependencies:
       ansi-align: 3.0.1
       camelcase: 7.0.1
-      chalk: 5.0.1
+      chalk: 5.2.0
       cli-boxes: 3.0.0
       string-width: 5.1.2
       type-fest: 2.19.0
@@ -9311,9 +9322,7 @@ snapshots:
     dependencies:
       pend: 1.2.0
 
-  fdir@6.1.1(picomatch@2.3.1):
-    optionalDependencies:
-      picomatch: 2.3.1
+  fdir@6.1.1: {}
 
   fecha@4.2.3: {}
 
@@ -10009,7 +10018,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  jdenticon@3.2.0:
+  jdenticon@3.3.0:
     dependencies:
       canvas-renderer: 2.2.1
 
@@ -10026,9 +10035,9 @@ snapshots:
 
   jiti@1.21.0: {}
 
-  jotai@2.8.0(@types/react@18.3.1)(react@18.3.1):
+  jotai@2.8.0(@types/react@18.3.2)(react@18.3.1):
     optionalDependencies:
-      '@types/react': 18.3.1
+      '@types/react': 18.3.2
       react: 18.3.1
 
   js-string-escape@1.0.1: {}
@@ -10486,12 +10495,12 @@ snapshots:
 
   nested-error-stacks@2.1.1: {}
 
-  netlify-cli@17.23.1(@swc/core@1.4.17)(@types/express@4.17.21)(@types/node@20.12.8)(idb-keyval@6.2.1)(picomatch@2.3.1):
+  netlify-cli@17.23.1(@swc/core@1.4.17)(@types/express@4.17.21)(@types/node@20.12.8)(idb-keyval@6.2.1):
     dependencies:
       '@bugsnag/js': 7.22.7
       '@fastify/static': 6.12.0
       '@netlify/blobs': 7.3.0
-      '@netlify/build': 29.41.2(@opentelemetry/api@1.8.0)(@swc/core@1.4.17)(@types/node@20.12.8)(picomatch@2.3.1)
+      '@netlify/build': 29.41.2(@opentelemetry/api@1.8.0)(@swc/core@1.4.17)(@types/node@20.12.8)
       '@netlify/build-info': 7.13.2
       '@netlify/config': 20.12.3
       '@netlify/edge-bundler': 12.0.0(supports-color@9.4.0)
@@ -11244,7 +11253,7 @@ snapshots:
 
   react-jdenticon@1.1.0(react@18.3.1):
     dependencies:
-      jdenticon: 3.2.0
+      jdenticon: 3.3.0
       prop-types: 15.8.1
       react: 18.3.1
 
@@ -12110,6 +12119,10 @@ snapshots:
   uid-safe@2.1.5:
     dependencies:
       random-bytes: 1.0.0
+
+  uint8arrays@3.1.0:
+    dependencies:
+      multiformats: 9.9.0
 
   uint8arrays@3.1.1:
     dependencies:

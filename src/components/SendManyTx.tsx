@@ -1,5 +1,5 @@
 import { BufferCV, hexToCV } from '@stacks/transactions';
-import React, { useRef, useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CONTRACT_ADDRESS } from '../lib/constants';
 
 import { StoredTx, getTx } from '../lib/transactions';
@@ -8,7 +8,6 @@ import { Tx } from './Tx';
 
 import { UserSession } from '@stacks/connect';
 import {
-  Transaction,
   TransactionEventFungibleAsset,
   TransactionEventSmartContractLog,
 } from '@stacks/stacks-blockchain-api-types';

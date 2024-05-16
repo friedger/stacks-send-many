@@ -1,12 +1,11 @@
 import {
-  TransactionEvent,
   TransactionEventFungibleAsset,
   TransactionEventStxAsset,
 } from '@stacks/stacks-blockchain-api-types';
+import { StoredTx } from '../lib/transactions';
 import { Address } from './Address';
 import { AmountFiat } from './AmountFiat';
 import { AmountStx } from './AmountStx';
-import { StoredTx } from '../lib/transactions';
 
 export function TxEvent({
   event,
