@@ -11,6 +11,8 @@ const params = new URLSearchParams([
   ['recipient', 'SP1...MZ,1000,"thanks, love you"'],
   ['recipient', 'hz.btc,1000,"shokran"'],
   ['recipient', 'friedger.btc,1000,"danke"'],
+  // you can always omit the memo and it will work as well
+  ['recipient', 'nothing.btc,1000'],
 ]);
 
 const sendSTXURL = `https://sendstx.com/not?${params.toString()}`;
