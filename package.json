@@ -52,8 +52,7 @@
   "scripts": {
     "start": "vite",
     "build": "CI= tsc && vite build",
-    "serve": "vite preview",
-    "dev": "netlify dev --target-port 4173"
+    "serve": "vite preview"
   },
   "eslintConfig": {
     "extends": "react-app"
