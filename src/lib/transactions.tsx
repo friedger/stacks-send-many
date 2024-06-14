@@ -1,12 +1,8 @@
-import {
-  GetFilteredEventsTypeEnum,
-  TransactionEventsResponse,
-  connectWebSocketClient,
-} from '@stacks/blockchain-api-client';
+import { TransactionEventsResponse, connectWebSocketClient } from '@stacks/blockchain-api-client';
 import { FinishedTxData, UserSession } from '@stacks/connect';
 import { Storage } from '@stacks/storage';
 import { hexToCV as stacksHexToCV } from '@stacks/transactions';
-import { TransitionEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   STACKS_API_WS_URL,
   STACK_API_URL,
@@ -250,7 +246,7 @@ async function createTxWithApiData(
   let eventOffset = 0;
   const eventLimit = 20;
   let events: TransactionEvent[] = [];
-  let apiData: ContractCallTransaction;
+  let apiData: ContractCallTransaction | MempoolContractCallTransaction;
   let moreEvents = true;
   let lastEventsLength = 0;
 
@@ -258,7 +254,8 @@ async function createTxWithApiData(
     txId,
     eventOffset,
     eventLimit,
-  })) as ContractCallTransaction;
+    unanchored: true,
+  })) as ContractCallTransaction | MempoolContractCallTransaction;
 
   const isOutOfMempool = mempoolStatuses.includes(apiData?.tx_status as MempoolTransactionStatus);
   if (!isOutOfMempool && apiData.tx_status === 'success') {
