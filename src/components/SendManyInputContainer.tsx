@@ -15,6 +15,7 @@ import {
   standardPrincipalCV,
   trueCV,
   tupleCV,
+  TxBroadcastResult,
   uintCV,
 } from '@stacks/transactions';
 import React, { useEffect, useRef, useState } from 'react';
@@ -241,17 +242,7 @@ export function SendManyInputContainer({
   };
 
   const sendAsset = async (options: ContractCallOptions) => {
-    const handleSendResult = (data: Pick<FinishedTxData, 'txId'> & Partial<FinishedTxData>) => {
-      console.log({ data });
-      if (data.stacksTransaction?.auth.authType === AuthType.Sponsored) {
-        fetch('https://sponsoring.friedger.workers.dev/not', {
-          method: 'POST',
-          body: JSON.stringify({ txHex: data.txRaw, feesInNot: TX_FEE_IN_NOT, network: 'mainnet' }),
-          headers: { 'Content-Type': 'text/plain' },
-        })
-          .then(r => console.log({ r }))
-          .catch(e => console.log(e));
-      }
+    const handleSave = (data: Pick<FinishedTxData, 'txId'> & Partial<FinishedTxData>) => {
       setStatus('Saving transaction to your storage');
       setTxId(data.txId);
       if (userSession) {
@@ -267,6 +258,50 @@ export function SendManyInputContainer({
             setLoading(false);
             setStatus("Couldn't save the transaction");
           });
+      }
+    };
+    const handleSendResult = (data: Pick<FinishedTxData, 'txId'> & Partial<FinishedTxData>) => {
+      console.log({ data });
+      if (data.stacksTransaction?.auth.authType === AuthType.Sponsored) {
+        setStatus('Sending tx to sponsor');
+        fetch('https://sponsoring.friedger.workers.dev/not', {
+          method: 'POST',
+          body: JSON.stringify({ txHex: data.txRaw, feesInNot: TX_FEE_IN_NOT, network: 'mainnet' }),
+          headers: { 'Content-Type': 'text/plain' },
+        })
+          .then(response => {
+            if (!response.ok) {
+              response.json().then(({ error }: { error: string }) => {
+                setStatus(error);
+              });
+            } else {
+              response
+                .json()
+                .then(
+                  ({
+                    feeEstimate,
+                    result,
+                    txRaw,
+                  }: {
+                    feeEstimate: number;
+                    result: TxBroadcastResult;
+                    txRaw: string;
+                  }) => {
+                    console.log({ feeEstimate, result, txRaw });
+                    handleSave({
+                      txId: result.txid,
+                      txRaw,
+                    });
+                  }
+                );
+            }
+          })
+          .catch(e => {
+            setStatus(e);
+            console.log(e);
+          });
+      } else {
+        handleSave(data);
       }
     };
 
