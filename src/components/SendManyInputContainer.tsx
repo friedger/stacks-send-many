@@ -1,4 +1,5 @@
 import {
+  AuthType,
   bufferCVFromString,
   contractPrincipalCV,
   createAssetInfo,
@@ -44,6 +45,7 @@ import { saveTxData, TxStatus } from '../lib/transactions';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { SendManyInput } from './SendManyInput';
+import { Network } from './Network';
 export type Row = {
   to: string;
   stx: string;
@@ -241,6 +243,16 @@ export function SendManyInputContainer({
 
   const sendAsset = async (options: ContractCallOptions) => {
     const handleSendResult = (data: Pick<FinishedTxData, 'txId'> & Partial<FinishedTxData>) => {
+      console.log({ data });
+      if (data.stacksTransaction?.auth.authType === AuthType.Sponsored) {
+        fetch('https://sponsoring.friedger.workers.dev/not', {
+          method: 'POST',
+          body: JSON.stringify({ txHex: data.txRaw, feesInNot: TX_FEE_IN_NOT, network: 'mainnet' }),
+          headers: { 'Content-Type': 'text/plain' },
+        })
+          .then(r => console.log({ r }))
+          .catch(e => console.log(e));
+      }
       setStatus('Saving transaction to your storage');
       setTxId(data.txId);
       if (userSession) {
@@ -491,8 +503,8 @@ export function SendManyInputContainer({
     return newRows;
   };
 
-  const NOT_SPONSOR = 'SP1K1A1PMGW2ZJCNF46NWZWHG8TS1D23EGH1KNK60';
-  const txFeeInNot = '10000';
+  const NOT_SPONSOR = 'SPM1NE6JPN9V1019930579E7EZ58FYKMD17J7RS';
+  const TX_FEE_IN_NOT = '100000';
 
   const cloneAndAddFees = (rows: Row[]) => {
     const newRows = new Array(...rows);
@@ -502,7 +514,7 @@ export function SendManyInputContainer({
 
   const feesRow = (asset: string): Row => {
     if (asset === 'not') {
-      return { to: NOT_SPONSOR, stx: txFeeInNot, memo: 'fees' };
+      return { to: NOT_SPONSOR, stx: TX_FEE_IN_NOT, memo: 'fees' };
     } else {
       throw new Error(`unsupported asset ${asset}`);
     }
