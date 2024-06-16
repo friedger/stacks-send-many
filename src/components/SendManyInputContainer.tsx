@@ -271,9 +271,28 @@ export function SendManyInputContainer({
         })
           .then(response => {
             if (!response.ok) {
-              response.json().then(({ error }: { error: string }) => {
-                setStatus(error);
-              });
+              response
+                .json()
+                .then((error: { error: string }) => {
+                  console.log(error);
+                  setStatus(error.error);
+                  setLoading(false);
+                })
+                .catch(e => {
+                  console.log(e);
+                  response
+                    .text()
+                    .then(t => {
+                      console.log(t, response);
+                      setStatus(`Response status: ${response.status}  ${t}`);
+                      setLoading(false);
+                    })
+                    .catch(e => {
+                      console.log(e);
+                      setStatus(`Response status: ${response.status}`);
+                      setLoading(false);
+                    });
+                });
             } else {
               response
                 .json()
@@ -297,8 +316,11 @@ export function SendManyInputContainer({
             }
           })
           .catch(e => {
-            setStatus(e);
             console.log(e);
+            setStatus(
+              'Failed to pay fees in NOT and broadcast the tx, please contact web administrator.'
+            );
+            setLoading(false);
           });
       } else {
         handleSave(data);
