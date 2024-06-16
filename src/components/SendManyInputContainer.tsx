@@ -45,7 +45,6 @@ import { saveTxData, TxStatus } from '../lib/transactions';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { SendManyInput } from './SendManyInput';
-import { Network } from './Network';
 export type Row = {
   to: string;
   stx: string;
