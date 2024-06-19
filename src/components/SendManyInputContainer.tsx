@@ -1,23 +1,36 @@
-import React, { useRef, useState, useEffect } from 'react';
 import {
-  listCV,
-  tupleCV,
-  standardPrincipalCV,
-  contractPrincipalCV,
-  uintCV,
-  PostConditionMode,
-  makeStandardSTXPostCondition,
-  FungibleConditionCode,
+  AuthType,
   bufferCVFromString,
-  cvToString,
-  makeStandardFungiblePostCondition,
+  contractPrincipalCV,
   createAssetInfo,
-  trueCV,
+  cvToString,
+  FungibleConditionCode,
+  listCV,
+  makeStandardFungiblePostCondition,
+  makeStandardSTXPostCondition,
   noneCV,
-  someCV,
+  PostConditionMode,
   PrincipalCV,
+  someCV,
+  standardPrincipalCV,
+  trueCV,
+  tupleCV,
+  TxBroadcastResult,
+  uintCV,
 } from '@stacks/transactions';
+import React, { useEffect, useRef, useState } from 'react';
 
+import {
+  ContractCallOptions,
+  FinishedTxData,
+  useConnect as useStacksConnect,
+} from '@stacks/connect-react';
+import { AddressBalanceResponse } from '@stacks/stacks-blockchain-api-types';
+import { c32addressDecode } from 'c32check';
+import toAscii from 'punycode2/to-ascii';
+import { useSearchParams } from 'react-router-dom';
+import { fetchAccount } from '../lib/account';
+import { useConnect } from '../lib/auth';
 import {
   chains,
   CONTRACT_ADDRESS,
@@ -28,22 +41,11 @@ import {
   WRAPPED_BITCOIN_CONTRACT,
   XBTC_SEND_MANY_CONTRACT,
 } from '../lib/constants';
-import { fetchAccount } from '../lib/account';
-import { useConnect } from '../lib/auth';
 import { useWalletConnect } from '../lib/hooks';
-import {
-  ContractCallOptions,
-  FinishedTxData,
-  useConnect as useStacksConnect,
-} from '@stacks/connect-react';
 import { saveTxData, TxStatus } from '../lib/transactions';
-import { c32addressDecode } from 'c32check';
-import { SendManyInput } from './SendManyInput';
 import { Address } from './Address';
 import { Amount } from './Amount';
-import toAscii from 'punycode2/to-ascii';
-import { AddressBalanceResponse } from '@stacks/stacks-blockchain-api-types';
-import { useSearchParams } from 'react-router-dom';
+import { SendManyInput } from './SendManyInput';
 export type Row = {
   to: string;
   stx: string;
@@ -111,6 +113,7 @@ export function SendManyInputContainer({
   const [loading, setLoading] = useState(false);
   const [namesResolved, setNamesResolved] = useState(true);
   const [firstMemoForAll, setFirstMemoForAll] = useState(false);
+  const [useAssetForFees, setUseAssetsForFees] = useState(false);
   const [uriSearchParams, setUriSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -118,7 +121,7 @@ export function SendManyInputContainer({
     if (!params.length) {
       return;
     }
-    const rows = params.map(item => {
+    const rows = params.map((item: string) => {
       const { amount, recipient, memo } =
         /(?<recipient>[^,]+),(?<amount>[0-9]+),?(?<memo>".*")?/.exec(item)?.groups as {
           recipient: string;
@@ -239,7 +242,7 @@ export function SendManyInputContainer({
   };
 
   const sendAsset = async (options: ContractCallOptions) => {
-    const handleSendResult = (data: Pick<FinishedTxData, 'txId'> & Partial<FinishedTxData>) => {
+    const handleSave = (data: Pick<FinishedTxData, 'txId'> & Partial<FinishedTxData>) => {
       setStatus('Saving transaction to your storage');
       setTxId(data.txId);
       if (userSession) {
@@ -255,6 +258,72 @@ export function SendManyInputContainer({
             setLoading(false);
             setStatus("Couldn't save the transaction");
           });
+      }
+    };
+    const handleSendResult = (data: Pick<FinishedTxData, 'txId'> & Partial<FinishedTxData>) => {
+      console.log({ data });
+      if (data.stacksTransaction?.auth.authType === AuthType.Sponsored) {
+        setStatus('Sending tx to sponsor');
+        fetch('https://sponsoring.friedger.workers.dev/not', {
+          method: 'POST',
+          body: JSON.stringify({ txHex: data.txRaw, feesInNot: TX_FEE_IN_NOT, network: 'mainnet' }),
+          headers: { 'Content-Type': 'text/plain' },
+        })
+          .then(response => {
+            if (!response.ok) {
+              response
+                .json()
+                .then((error: { error: string }) => {
+                  console.log(error);
+                  setStatus(error.error);
+                  setLoading(false);
+                })
+                .catch(e => {
+                  console.log(e);
+                  response
+                    .text()
+                    .then(t => {
+                      console.log(t, response);
+                      setStatus(`Response status: ${response.status}  ${t}`);
+                      setLoading(false);
+                    })
+                    .catch(e => {
+                      console.log(e);
+                      setStatus(`Response status: ${response.status}`);
+                      setLoading(false);
+                    });
+                });
+            } else {
+              response
+                .json()
+                .then(
+                  ({
+                    feeEstimate,
+                    result,
+                    txRaw,
+                  }: {
+                    feeEstimate: number;
+                    result: TxBroadcastResult;
+                    txRaw: string;
+                  }) => {
+                    console.log({ feeEstimate, result, txRaw });
+                    handleSave({
+                      txId: result.txid,
+                      txRaw,
+                    });
+                  }
+                );
+            }
+          })
+          .catch(e => {
+            console.log(e);
+            setStatus(
+              'Failed to pay fees in NOT and broadcast the tx, please contact web administrator.'
+            );
+            setLoading(false);
+          });
+      } else {
+        handleSave(data);
       }
     };
 
@@ -293,6 +362,7 @@ export function SendManyInputContainer({
         console.log('result', { result });
         handleSendResult({ txId: result as string });
       } else {
+        console.log({ sponsored: options.sponsored });
         await doContractCall(options);
       }
     } catch (e) {
@@ -305,7 +375,10 @@ export function SendManyInputContainer({
   const sendAction = async () => {
     setLoading(true);
     setStatus(undefined);
-    const { parts, total, hasMemos } = getPartsFromRows(rows);
+
+    let { parts, total, hasMemos } = getPartsFromRows(
+      useAssetForFees ? cloneAndAddFees(rows) : rows
+    );
     const updatedParts = await addToCVValues(parts);
     let invalidNames = updatedParts.filter(r => !!r.error);
     if (invalidNames.length > 0) {
@@ -324,7 +397,7 @@ export function SendManyInputContainer({
     console.log(nonEmptyParts[0]);
     const firstMemo =
       nonEmptyParts.length > 0 && nonEmptyParts[0].memo ? nonEmptyParts[0].memo.trim() : '';
-    let options;
+    let options: ContractCallOptions;
     let contractAddress, contractName;
     switch (asset) {
       case 'stx':
@@ -465,6 +538,11 @@ export function SendManyInputContainer({
         break;
     }
 
+    if (useAssetForFees) {
+      (options as any).sponsored = true;
+      options.fee = 0;
+    }
+
     sendAsset(options);
   };
 
@@ -481,9 +559,28 @@ export function SendManyInputContainer({
     return newRows;
   };
 
-  const updateModel = (index: number) => {
+  const NOT_SPONSOR = 'SPM1NE6JPN9V1019930579E7EZ58FYKMD17J7RS';
+  const TX_FEE_IN_NOT = '100000';
+
+  const cloneAndAddFees = (rows: Row[]) => {
+    const newRows = new Array(...rows);
+    newRows.push(feesRow(asset));
+    return newRows;
+  };
+
+  const feesRow = (asset: string): Row => {
+    if (asset === 'not') {
+      return { to: NOT_SPONSOR, stx: TX_FEE_IN_NOT, memo: 'fees' };
+    } else {
+      throw new Error(`unsupported asset ${asset}`);
+    }
+  };
+  const updateModel = (index: number, useAssetForFees: boolean) => {
     return (row: Row) => {
-      const rows = updateRow(row, index);
+      let rows = updateRow(row, index);
+      if (useAssetForFees) {
+        rows = cloneAndAddFees(rows);
+      }
       updatePreview(getPartsFromRows(rows));
     };
   };
@@ -522,7 +619,7 @@ export function SendManyInputContainer({
               key={index}
               row={row}
               index={index}
-              updateModel={updateModel(index)}
+              updateModel={updateModel(index, useAssetForFees)}
               maybeAddNewRow={maybeAddNewRow(index)}
               lastRow={index === rows.length - 1}
             />
@@ -564,8 +661,32 @@ export function SendManyInputContainer({
             </label>
           </div>
         </div>
+        {asset === 'not' && (
+          <div className="row">
+            <div className="col-md-12 col-xs-12 col-lg-12 text-right pb-2">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                onChange={e => {
+                  setUseAssetsForFees(e.target.checked);
+                  updateModel(0, e.target.checked)(rows[0]);
+                }}
+                id="useAssetForFees"
+                checked={useAssetForFees}
+              />
+              <label className="form-check-label" htmlFor="useAssetForFees">
+                Pay fees in NOT
+              </label>
+            </div>
+          </div>
+        )}
 
         <div>{preview}</div>
+        {useAssetForFees && (
+          <div>
+            <small>The transaction fees are sponsored by {NOT_SPONSOR}</small>
+          </div>
+        )}
         <div className="input-group mt-2">
           <button className="btn btn-block btn-primary" type="button" onClick={sendAction}>
             <div

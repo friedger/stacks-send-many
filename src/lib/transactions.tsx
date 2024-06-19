@@ -1,4 +1,4 @@
-import { connectWebSocketClient } from '@stacks/blockchain-api-client';
+import { TransactionEventsResponse, connectWebSocketClient } from '@stacks/blockchain-api-client';
 import { FinishedTxData, UserSession } from '@stacks/connect';
 import { Storage } from '@stacks/storage';
 import { hexToCV as stacksHexToCV } from '@stacks/transactions';
@@ -211,6 +211,15 @@ async function getTxWithoutStorage(txId: string) {
   return createTxWithApiData(txId, { data: { txId } });
 }
 
+const mempoolStatuses: MempoolTransactionStatus[] = [
+  'dropped_problematic',
+  'dropped_replace_across_fork',
+  'dropped_replace_by_fee',
+  'dropped_stale_garbage_collect',
+  'dropped_too_expensive',
+  'pending',
+];
+
 export async function getTx(txId: string, userSession: UserSession) {
   if (userSession && userSession.isUserSignedIn()) {
     const storage = new Storage({ userSession });
@@ -220,42 +229,71 @@ export async function getTx(txId: string, userSession: UserSession) {
   }
 }
 
+function joinEvents(allEvents: TransactionEvent[], newEvents: TransactionEvent[]) {
+  newEvents.forEach(event => {
+    const pos = allEvents.findIndex(e => event.event_index === e.event_index);
+    if (pos < 0) {
+      allEvents.push(event);
+    }
+  });
+  return allEvents;
+}
 async function createTxWithApiData(
   txId: string,
   tx: { data: { txId: string } },
   storage?: Storage
 ) {
   let eventOffset = 0;
-  const eventLimit = 400;
+  const eventLimit = 20;
   let events: TransactionEvent[] = [];
-  let apiData: Transaction | MempoolTransaction | null = null;
+  let apiData: ContractCallTransaction | MempoolContractCallTransaction;
   let moreEvents = true;
-  while (moreEvents) {
-    eventOffset = events.length;
-    // FIXME: what if a transaction doesn't exist?
-    apiData = (await transactionsApi.getTransactionById({
-      txId,
-      eventOffset,
-      eventLimit,
-    })) as ContractCallTransaction | MempoolContractCallTransaction;
+  let lastEventsLength = 0;
 
-    const mempoolStatuses: MempoolTransactionStatus[] = [
-      'dropped_problematic',
-      'dropped_replace_across_fork',
-      'dropped_replace_by_fee',
-      'dropped_stale_garbage_collect',
-      'dropped_too_expensive',
-      'pending',
-    ];
-    const isOutOfMempool = mempoolStatuses.includes(apiData?.tx_status as MempoolTransactionStatus);
+  apiData = (await transactionsApi.getTransactionById({
+    txId,
+    eventOffset,
+    eventLimit,
+    unanchored: true,
+  })) as ContractCallTransaction | MempoolContractCallTransaction;
 
-    if (isOutOfMempool) {
-      const data = apiData as ContractCallTransaction;
-      console.log(eventOffset, data.events.length, data.event_count);
-      events = events.concat(data.events);
-      console.log(data.event_count);
+  const isOutOfMempool = mempoolStatuses.includes(apiData?.tx_status as MempoolTransactionStatus);
+  if (!isOutOfMempool && apiData.tx_status === 'success') {
+    console.log(apiData.events.length, apiData.event_count);
+    moreEvents = apiData.events.length < apiData.event_count;
+
+    let eventsResponse: TransactionEventsResponse | undefined;
+    while (moreEvents) {
+      /*
+      eventsResponse = await transactionsApi.getFilteredEvents({
+        txId: '76bfd6994e7d1aa74693fca166f5f0299485f4ba918c30e7260a8c073296f36b',
+        type: [
+          GetFilteredEventsTypeEnum.fungible_token_asset,
+          GetFilteredEventsTypeEnum.non_fungible_token_asset,
+          GetFilteredEventsTypeEnum.smart_contract_log,
+          GetFilteredEventsTypeEnum.stx_asset,
+          GetFilteredEventsTypeEnum.stx_lock,
+        ],
+        offset: eventOffset,
+        limit: eventLimit,
+      });
+      */
+      apiData = (await transactionsApi.getTransactionById({
+        txId,
+        eventOffset,
+        eventLimit,
+      })) as ContractCallTransaction;
+
+      console.log({ eventsResponse });
+
+      const data = apiData;
+      console.log(eventOffset, data.events.length, apiData.event_count);
+      events = joinEvents(events, data.events);
+      moreEvents = events.length > lastEventsLength;
+      lastEventsLength = events.length;
+      eventOffset = lastEventsLength;
+      console.log(isOutOfMempool, events.length, apiData.event_count, lastEventsLength);
     }
-    moreEvents = apiData.tx_status === 'success' && events.length !== apiData.event_count;
   }
   const txWithApiData: StoredTx = {
     ...tx,

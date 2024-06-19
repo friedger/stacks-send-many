@@ -37,7 +37,7 @@ export default function Landing({
                 <>
                   A UI to interact with the smart contracts
                   <br />
-                  "send-many", "send-many-memo", "nothing" and "xbtc-send-many-v1".
+                  "send-many", "send-many-memo", "nope" and "xbtc-send-many-v1".
                 </>
               )}
             </p>
@@ -51,12 +51,12 @@ export default function Landing({
                 open source
               </a>{' '}
               web app with the purpose of{' '}
-              <strong>helping everybody to send and view bulk STX/xBTC/WMNO transfers.</strong>
+              <strong>helping everybody to send and view bulk STX/xBTC/NOT transfers.</strong>
             </p>
 
             <div className="card mt-4 border-info">
               <div className="card-header">
-                <h5 className="card-title">Efficient STX/xBTC/WMNO transfers</h5>
+                <h5 className="card-title">Efficient STX/xBTC/NOT transfers</h5>
               </div>
               <div className="card-body">
                 <p className="card-text mb-3">
@@ -91,7 +91,7 @@ export default function Landing({
               </p>
 
               <div className="card-footer text-info">
-                <strong>With additional features for Wrapped Nothing</strong>
+                <strong>With additional features for Nothing</strong>
               </div>
             </div>
           </div>
