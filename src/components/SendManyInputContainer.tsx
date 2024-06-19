@@ -682,6 +682,11 @@ export function SendManyInputContainer({
         )}
 
         <div>{preview}</div>
+        {useAssetForFees && (
+          <div>
+            <small>The transaction fees are sponsored by {NOT_SPONSOR}</small>
+          </div>
+        )}
         <div className="input-group mt-2">
           <button className="btn btn-block btn-primary" type="button" onClick={sendAction}>
             <div
