@@ -8,8 +8,8 @@ import { Tx } from './Tx';
 
 import { UserSession } from '@stacks/connect';
 import {
-  TransactionEventFungibleAsset,
   TransactionEventSmartContractLog,
+  TransactionEventStxAsset,
 } from '@stacks/stacks-blockchain-api-types';
 import { dateOfTx } from './SendManyTxList';
 
@@ -49,7 +49,7 @@ export function SendManyTx({
       return event.event_type === 'stx_asset';
     });
   txEvents &&
-    (txEvents as TransactionEventFungibleAsset[]).sort((e1, e2) => {
+    (txEvents as TransactionEventStxAsset[]).sort((e1, e2) => {
       if (e1.asset.recipient === ownerStxAddress && e2.asset.recipient !== ownerStxAddress)
         return -1;
       if (e1.asset.recipient !== ownerStxAddress && e2.asset.recipient === ownerStxAddress)
