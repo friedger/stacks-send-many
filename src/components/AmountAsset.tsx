@@ -14,7 +14,7 @@ export function AmountAsset({
   }
   return (
     <span className={className}>
-      {(amount / assetInfo.decimals).toLocaleString(undefined, {
+      {(amount / Math.pow(10, assetInfo.decimals)).toLocaleString(undefined, {
         style: 'decimal',
         minimumFractionDigits: assetInfo.decimals,
         maximumFractionDigits: assetInfo.decimals,

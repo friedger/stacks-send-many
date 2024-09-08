@@ -50,7 +50,9 @@ export default function SendMany({
                     <Profile stxAddress={ownerStxAddress} asset={asset} assetId={assetId} />
                   )}
                 </div>
-                <div className="p-4 m-4 mx-auto bg-light">{isSupported && <Instructions />}</div>
+                <div className="p-4 m-4 mx-auto bg-light">
+                  {isSupported && <Instructions asset={asset} network={network} />}
+                </div>
               </div>
 
               <div className="col-sm-12 col-md-8 p-4 container">

@@ -76,11 +76,11 @@ export type SupportedSymbols =
   | 'xbtc'
   | 'not'
   | 'stx'
-  // | 'roo'
-  // | 'leo'
-  // | 'diko'
-  | 'welsh';
-// | 'mega'
+  | 'roo'
+  | 'leo'
+  | 'diko'
+  | 'welsh'
+  | 'mega';
 // | 'usda'
 // | 'ststx'
 // | 'aeusd'
@@ -91,11 +91,11 @@ export const SUPPORTED_SYMBOLS: SupportedSymbols[] = [
   'xbtc',
   'not',
   'stx',
-  // 'roo',
-  // 'leo',
-  // 'diko',
+  'roo',
+  'leo',
+  'diko',
   'welsh',
-  // 'mega',
+  'mega',
   // 'usda',
   // 'ststx',
   // 'aeusd',
@@ -146,19 +146,21 @@ export const SUPPORTED_ASSETS: {
       },
     },
   },
-  /* roo: {
+  roo: {
     name: 'Kangoroo (ROO)',
     shortName: '$ROO',
-    decimals: 0,
+    decimals: 6,
     assets: {
       mainnet: {
         asset: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo::kangaroo',
-        sendManyContract: { address: '', name: '' }, // TODO
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'roo-send-many-v1',
+        },
       },
     },
   },
-  */
-  /*   leo: {
+  leo: {
     name: 'Leo (LEO)',
     shortName: '$LEO',
     decimals: 6,
@@ -168,17 +170,20 @@ export const SUPPORTED_ASSETS: {
       },
     },
   },
- */ /* diko: {
+  diko: {
     name: 'Arkadiko Token',
     shortName: '$DIKO',
     decimals: 6,
     assets: {
       mainnet: {
         asset: 'SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-token::diko',
-        sendManyContract: { address: '', name: '' }, // TODO
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'diko-send-many-v1',
+        },
       },
     },
-  }, */
+  },
   welsh: {
     name: 'Welshcorgicoin',
     shortName: '$WELSH',
@@ -189,17 +194,20 @@ export const SUPPORTED_ASSETS: {
       },
     },
   },
-  /* mega: {
+  mega: {
     name: 'Mega',
     shortName: '$MEGA',
     decimals: 2,
     assets: {
       mainnet: {
         asset: 'SP3D6PV2ACBPEKYJTCMH7HEN02KP87QSP8KTEH335.mega::mega',
-        sendManyContract: { address: '', name: '' }, // TODO
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'mega-send-many-v1',
+        },
       },
     },
-  }, */
+  },
   /*  usda: {
     name: 'USDA',
     shortName: '$USDA',
