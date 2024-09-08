@@ -25,6 +25,7 @@ import {
   FinishedTxData,
   useConnect as useStacksConnect,
 } from '@stacks/connect-react';
+import { StacksNetworkName } from '@stacks/network';
 import { AddressBalanceResponse } from '@stacks/stacks-blockchain-api-types';
 import { c32addressDecode } from 'c32check';
 import toAscii from 'punycode2/to-ascii';
@@ -33,13 +34,11 @@ import { fetchAccount } from '../lib/account';
 import { useConnect } from '../lib/auth';
 import {
   chains,
-  CONTRACT_ADDRESS,
+  Contract,
   namesApi,
   NETWORK,
-  NOT_CONTRACT,
-  WMNO_CONTRACT,
-  WRAPPED_BITCOIN_CONTRACT,
-  XBTC_SEND_MANY_CONTRACT,
+  SUPPORTED_ASSETS,
+  SupportedSymbols,
 } from '../lib/constants';
 import { useWalletConnect } from '../lib/hooks';
 import { saveTxData, TxStatus } from '../lib/transactions';
@@ -95,11 +94,13 @@ export function SendManyInputContainer({
   ownerStxAddress,
   assetId,
   sendManyContract,
+  network,
 }: {
-  asset: string;
+  asset: SupportedSymbols;
   ownerStxAddress: string;
   assetId?: string;
-  sendManyContract: string;
+  sendManyContract?: Contract;
+  network: StacksNetworkName;
 }) {
   const { userSession } = useConnect();
   const { doContractCall } = useStacksConnect();
@@ -217,10 +218,7 @@ export function SendManyInputContainer({
     const parts = currentRows.map(r => {
       return {
         ...r,
-        ustx: Math.floor(
-          parseFloat(r.stx) *
-            (asset === 'stx' ? 1_000_000 : asset === 'wmno' || asset === 'not' ? 1 : 100_000_000)
-        ),
+        ustx: Math.floor(parseFloat(r.stx) * Math.pow(10, SUPPORTED_ASSETS[asset].decimals)),
       };
     });
 
@@ -397,153 +395,152 @@ export function SendManyInputContainer({
     console.log(nonEmptyParts[0]);
     const firstMemo =
       nonEmptyParts.length > 0 && nonEmptyParts[0].memo ? nonEmptyParts[0].memo.trim() : '';
-    let options: ContractCallOptions;
-    let contractAddress, contractName;
+    let options: ContractCallOptions | undefined = undefined;
+    let contractAddress = undefined;
+    let contractName = undefined;
+    let assetInfo = undefined;
+    console.log({ asset });
     switch (asset) {
       case 'stx':
-        options = {
-          contractAddress: CONTRACT_ADDRESS,
-          contractName: hasMemos ? 'send-many-memo' : 'send-many',
-          functionName: 'send-many',
-          functionArgs: [
-            listCV(
-              nonEmptyParts.map(p => {
-                return hasMemos
-                  ? tupleCV({
-                      to: p.toCV!,
-                      ustx: uintCV(p.ustx),
-                      memo: bufferCVFromString(
-                        firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : ''
-                      ),
-                    })
-                  : tupleCV({ to: p.toCV!, ustx: uintCV(p.ustx) });
-              })
-            ),
-          ],
-          postConditions: [
-            makeStandardSTXPostCondition(ownerStxAddress, FungibleConditionCode.Equal, total),
-          ],
-        };
+        contractAddress = SUPPORTED_ASSETS.stx.sendManyContractsAddress?.[network];
+        if (contractAddress) {
+          options = {
+            contractAddress: contractAddress,
+            contractName: hasMemos ? 'send-many-memo' : 'send-many',
+            functionName: 'send-many',
+            functionArgs: [
+              listCV(
+                nonEmptyParts.map(p => {
+                  return hasMemos
+                    ? tupleCV({
+                        to: p.toCV!,
+                        ustx: uintCV(p.ustx),
+                        memo: bufferCVFromString(
+                          firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : ''
+                        ),
+                      })
+                    : tupleCV({ to: p.toCV!, ustx: uintCV(p.ustx) });
+                })
+              ),
+            ],
+            postConditions: [
+              makeStandardSTXPostCondition(ownerStxAddress, FungibleConditionCode.Equal, total),
+            ],
+          };
+        }
         break;
       case 'sbtc':
-        [contractAddress, contractName] = sendManyContract.split('.');
-        options = {
-          contractAddress,
-          contractName,
-          functionName: 'request-send-sbtc-many',
-          functionArgs: [
-            listCV(
+        if (sendManyContract) {
+          options = {
+            contractAddress: sendManyContract.address,
+            contractName: sendManyContract.name,
+            functionName: 'request-send-sbtc-many',
+            functionArgs: [
+              listCV(
+                nonEmptyParts.map(p => {
+                  return tupleCV({
+                    to: p.toCV!,
+                    'sbtc-in-sats': uintCV(p.ustx),
+                    memo: bufferCVFromString(
+                      hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
+                    ),
+                  });
+                })
+              ),
+            ],
+            postConditions: [],
+          };
+        }
+        break;
+
+      case 'xbtc':
+        assetInfo = SUPPORTED_ASSETS.xbtc.assets?.[network];
+        if (assetInfo?.sendManyContract) {
+          const [contractId, asset] = assetInfo.asset.split('::');
+          const [contractAddress, contractName] = contractId.split('.');
+          options = {
+            contractAddress: assetInfo.sendManyContract.address,
+            contractName: assetInfo.sendManyContract.name,
+            functionName: 'send-xbtc',
+            functionArgs: [
               nonEmptyParts.map(p => {
                 return tupleCV({
                   to: p.toCV!,
-                  'sbtc-in-sats': uintCV(p.ustx),
+                  'xbtc-in-sats': uintCV(p.ustx),
                   memo: bufferCVFromString(
                     hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
                   ),
+                  'swap-to-ustx': trueCV(),
+                  'min-dy': noneCV(),
                 });
-              })
-            ),
-          ],
-          postConditions: [],
-        };
-        break;
-      case 'wmno':
-        options = {
-          contractAddress: WMNO_CONTRACT.address,
-          contractName: WMNO_CONTRACT.name,
-          functionName: 'send-many',
-          functionArgs: [
-            listCV(
-              nonEmptyParts.map(p => {
-                return tupleCV({
-                  to: p.toCV!,
-                  amount: uintCV(p.ustx),
-                });
-              })
-            ),
-          ],
-          postConditions: [
-            makeStandardFungiblePostCondition(
-              ownerStxAddress,
-              FungibleConditionCode.Equal,
-              total,
-              createAssetInfo(WMNO_CONTRACT.address, WMNO_CONTRACT.name, WMNO_CONTRACT.asset)
-            ),
-          ],
-        };
-        break;
-      case 'not':
-        options = {
-          contractAddress: NOT_CONTRACT.address,
-          contractName: NOT_CONTRACT.name,
-          functionName: 'send-many',
-          functionArgs: [
-            listCV(
-              nonEmptyParts.map(p => {
-                return tupleCV({
-                  to: p.toCV!,
-                  amount: uintCV(p.ustx),
-                  memo: hasMemos
-                    ? firstMemoForAll
-                      ? someCV(bufferCVFromString(firstMemo))
-                      : p.memo
-                        ? someCV(bufferCVFromString(p.memo.trim()))
-                        : noneCV()
-                    : noneCV(),
-                });
-              })
-            ),
-          ],
-          postConditions: [
-            makeStandardFungiblePostCondition(
-              ownerStxAddress,
-              FungibleConditionCode.Equal,
-              total,
-              createAssetInfo(NOT_CONTRACT.address, NOT_CONTRACT.name, NOT_CONTRACT.asset)
-            ),
-          ],
-        };
+              })[0],
+            ],
+            postConditions: [
+              makeStandardFungiblePostCondition(
+                ownerStxAddress,
+                FungibleConditionCode.Equal,
+                total,
+                createAssetInfo(contractAddress, contractName, asset)
+              ),
+            ],
+          };
+        }
         break;
       default:
-        options = {
-          contractAddress: XBTC_SEND_MANY_CONTRACT.address,
-          contractName: XBTC_SEND_MANY_CONTRACT.name,
-          functionName: 'send-xbtc',
-          functionArgs: [
-            nonEmptyParts.map(p => {
-              return tupleCV({
-                to: p.toCV!,
-                'xbtc-in-sats': uintCV(p.ustx),
-                memo: bufferCVFromString(
-                  hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
-                ),
-                'swap-to-ustx': trueCV(),
-                'min-dy': noneCV(),
-              });
-            })[0],
-          ],
-          postConditions: [
-            makeStandardFungiblePostCondition(
-              ownerStxAddress,
-              FungibleConditionCode.Equal,
-              total,
-              createAssetInfo(
-                WRAPPED_BITCOIN_CONTRACT.address,
-                WRAPPED_BITCOIN_CONTRACT.name,
-                WRAPPED_BITCOIN_CONTRACT.asset
-              )
-            ),
-          ],
-        };
+        assetInfo = SUPPORTED_ASSETS[asset].assets?.[network];
+        if (assetInfo) {
+          const [contractId, asset] = assetInfo.asset.split('::');
+          const [address, name] = contractId.split('.');
+          if (assetInfo.sendManyContract) {
+            // use send-many contract
+            ({ address: contractAddress, name: contractName } = assetInfo.sendManyContract);
+          } else {
+            // use native function
+            ({ address: contractAddress, name: contractName } = { address, name });
+          }
+          options = {
+            contractAddress: contractAddress,
+            contractName: contractName,
+            functionName: 'send-many',
+            functionArgs: [
+              listCV(
+                nonEmptyParts.map(p => {
+                  return tupleCV({
+                    to: p.toCV!,
+                    amount: uintCV(p.ustx),
+                    memo: hasMemos
+                      ? firstMemoForAll
+                        ? someCV(bufferCVFromString(firstMemo))
+                        : p.memo
+                          ? someCV(bufferCVFromString(p.memo.trim()))
+                          : noneCV()
+                      : noneCV(),
+                  });
+                })
+              ),
+            ],
+            postConditions: [
+              makeStandardFungiblePostCondition(
+                ownerStxAddress,
+                FungibleConditionCode.Equal,
+                total,
+                createAssetInfo(address, name, asset)
+              ),
+            ],
+          };
+        }
         break;
     }
 
-    if (useAssetForFees) {
-      (options as any).sponsored = true;
-      options.fee = 0;
+    if (options) {
+      if (useAssetForFees) {
+        (options as any).sponsored = true;
+        options.fee = 0;
+      }
+      sendAsset(options);
+    } else {
+      setStatus(`Send Many not supported for ${SUPPORTED_ASSETS[asset].shortName} on ${network}.`);
     }
-
-    sendAsset(options);
   };
 
   const addNewRow = () => {

@@ -1,5 +1,5 @@
-import React from 'react';
 import { useConnect, useWcConnect } from '../lib/auth';
+import { SupportedSymbols } from '../lib/constants';
 
 // Landing page demonstrating Blockstack connect for registration
 
@@ -7,7 +7,7 @@ export default function Landing({
   asset,
 }: {
   // asset: 'walletConnect' | 'blockstack' | 'not' | 'wmno';
-  asset?: string;
+  asset?: SupportedSymbols;
 }) {
   const { handleOpenAuth } = useConnect();
   const { handleWcOpenAuth, isWcReady } = useWcConnect();
@@ -22,14 +22,6 @@ export default function Landing({
                   A UI to interact with
                   <br />
                   NOT-hing
-                  <br />
-                  and other send-many contracts.
-                </>
-              ) : asset === 'wmno' ? (
-                <>
-                  A UI to interact with
-                  <br />
-                  Wrapped Nothing smart contracts "wrapped-nothing-v8"
                   <br />
                   and other send-many contracts.
                 </>

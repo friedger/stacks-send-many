@@ -19,10 +19,9 @@ export default function FulfillmentSBtc({
     return <div>Loading</div>;
   }
 
-  const [assetContractAddress] = assetContract
-    ? assetContract.split('.')
-    : SBTC_CONTRACT.split('.');
-  const assetId = `${assetContract || SBTC_CONTRACT}::sbtc`;
+  const [assetContractAddress] = assetContract ? assetContract.split('.') : SBTC_CONTRACT.address;
+  const defaultAssetContract = `${SBTC_CONTRACT.address}.${SBTC_CONTRACT.name}`;
+  const assetId = `${assetContract || defaultAssetContract}::sbtc`;
   const defaultSendManyContract = `${assetContractAddress}.sbtc-send-many`;
 
   return (
@@ -46,7 +45,7 @@ export default function FulfillmentSBtc({
                     Deposit {testnet || mocknet ? 'Test' : ''} BTC
                   </h3>
                   <DepositBtc
-                    assetContract={assetContract || SBTC_CONTRACT}
+                    assetContract={assetContract || defaultAssetContract}
                     ownerStxAddress={ownerStxAddress}
                     sendManyContract={sendManyContract || defaultSendManyContract}
                   />
@@ -56,7 +55,7 @@ export default function FulfillmentSBtc({
                     Fulfill request using {testnet || mocknet ? 'Test' : ''} sBTC
                   </h3>
                   <FulfillRequestSBtc
-                    assetContract={assetContract || SBTC_CONTRACT}
+                    assetContract={assetContract || defaultAssetContract}
                     ownerStxAddress={ownerStxAddress}
                     sendManyContract={sendManyContract || defaultSendManyContract}
                   />
@@ -65,7 +64,7 @@ export default function FulfillmentSBtc({
                   <h3 className="font-weight-bold mb-4">
                     Withdraw {testnet || mocknet ? 'Test' : ''} sBTC
                   </h3>
-                  <WithdrawSBtc assetContract={assetContract || SBTC_CONTRACT} />
+                  <WithdrawSBtc assetContract={assetContract || defaultAssetContract} />
                 </div>
               </div>
             </div>

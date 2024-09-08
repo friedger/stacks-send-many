@@ -1,12 +1,12 @@
 import {
-  TransactionsApi,
-  SmartContractsApi,
   AccountsApi,
   Configuration,
   InfoApi,
   NamesApi,
+  SmartContractsApi,
+  TransactionsApi,
 } from '@stacks/blockchain-api-client';
-import { StacksTestnet, StacksMainnet, StacksDevnet } from '@stacks/network';
+import { StacksDevnet, StacksMainnet, StacksNetworkName, StacksTestnet } from '@stacks/network';
 
 export const testnet = window.location.search.includes('chain=testnet');
 export const localMocknet = !testnet && window.location.search.includes('mocknet=local');
@@ -39,7 +39,223 @@ export const GENESIS_CONTRACT_ADDRESS = mocknet
     : 'SP000000000000000000002Q6VF78';
 export const BNS_CONTRACT_NAME = 'bns';
 
-export const SBTC_CONTRACT = 'ST3VA3Y7A2YQ8GW69T0N1ERPAD784R1Y2YHCSNJHH.asset';
+export const SBTC_CONTRACT = {
+  address: 'ST3VA3Y7A2YQ8GW69T0N1ERPAD784R1Y2YHCSNJHH',
+  name: 'asset',
+};
+
+export type Contract = { address: string; name: string };
+
+export type AssetContractInfo = {
+  asset: string;
+  /**
+   * This contract must have function 'send-many' with
+   * parameters to: principal, amount: uint, memo: optional(buff)
+   * This must be provided for tokens that do not implement a send-many function with the above parameters
+   */
+  sendManyContract?: Contract;
+};
+
+export type AssetInfo = {
+  name: string;
+  shortName: string;
+  symbol?: string;
+  assets?: { [key in StacksNetworkName]?: AssetContractInfo };
+  decimals: number;
+  /**
+   * sendManyContractsAddress is only used for stx and must have deployed
+   * two contracts 'send-many-memo' and 'send-many'.
+   * These contracts must have a function 'send-many' with parameters
+   * for stx: to: principal, ustx: uint and memo: buff, resp. to: principal, ustx: uint
+   */
+  sendManyContractsAddress?: { [key in StacksNetworkName]?: string };
+};
+
+export type SupportedSymbols =
+  | 'sbtc'
+  | 'xbtc'
+  | 'not'
+  | 'stx'
+  // | 'roo'
+  // | 'leo'
+  // | 'diko'
+  | 'welsh';
+// | 'mega'
+// | 'usda'
+// | 'ststx'
+// | 'aeusd'
+// | 'listx'
+// | 'lialex';
+export const SUPPORTED_SYMBOLS: SupportedSymbols[] = [
+  'sbtc',
+  'xbtc',
+  'not',
+  'stx',
+  // 'roo',
+  // 'leo',
+  // 'diko',
+  'welsh',
+  // 'mega',
+  // 'usda',
+  // 'ststx',
+  // 'aeusd',
+  // 'listx',
+  // 'lialex',
+];
+
+export const SUPPORTED_ASSETS: {
+  [key in SupportedSymbols]: AssetInfo;
+} = {
+  stx: {
+    name: 'Stacks (STX)',
+    shortName: '$STX',
+    symbol: 'Ӿ',
+    decimals: 6,
+    sendManyContractsAddress: {
+      mainnet: 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE',
+      testnet: 'ST3FFRX7C911PZP5RHE148YDVDD9JWVS6FZRA60VS',
+      mocknet:
+        //ADDR1 from Stacks.toml
+        'STB44HYPYAT2BB2QE513NSP81HTMYWBJP02HPGK6',
+    },
+  },
+  sbtc: { name: 'Wrapped BTC (sBTC)', shortName: '$SBTC', symbol: '₿', decimals: 8 },
+  xbtc: {
+    name: 'Wrapped BTC (xBTC)',
+    shortName: '$XBTC',
+    symbol: '₿',
+    decimals: 8,
+    assets: {
+      mainnet: {
+        asset: 'SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin',
+
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'xbtc-send-many-v1',
+        },
+      },
+    },
+  },
+  not: {
+    name: 'Nothing (NOT)',
+    shortName: '$NOT',
+    decimals: 6,
+    assets: {
+      mainnet: {
+        asset: 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope::NOT',
+      },
+    },
+  },
+  /* roo: {
+    name: 'Kangoroo (ROO)',
+    shortName: '$ROO',
+    decimals: 0,
+    assets: {
+      mainnet: {
+        asset: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo::kangaroo',
+        sendManyContract: { address: '', name: '' }, // TODO
+      },
+    },
+  },
+  */
+  /*   leo: {
+    name: 'Leo (LEO)',
+    shortName: '$LEO',
+    decimals: 6,
+    assets: {
+      mainnet: {
+        asset: 'SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo',
+      },
+    },
+  },
+ */ /* diko: {
+    name: 'Arkadiko Token',
+    shortName: '$DIKO',
+    decimals: 6,
+    assets: {
+      mainnet: {
+        asset: 'SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-token::diko',
+        sendManyContract: { address: '', name: '' }, // TODO
+      },
+    },
+  }, */
+  welsh: {
+    name: 'Welshcorgicoin',
+    shortName: '$WELSH',
+    decimals: 6,
+    assets: {
+      mainnet: {
+        asset: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin',
+      },
+    },
+  },
+  /* mega: {
+    name: 'Mega',
+    shortName: '$MEGA',
+    decimals: 2,
+    assets: {
+      mainnet: {
+        asset: 'SP3D6PV2ACBPEKYJTCMH7HEN02KP87QSP8KTEH335.mega::mega',
+        sendManyContract: { address: '', name: '' }, // TODO
+      },
+    },
+  }, */
+  /*  usda: {
+    name: 'USDA',
+    shortName: '$USDA',
+    decimals: 6,
+    assets: {
+      mainnet: {
+        asset: 'SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.usda-token::usda',
+        sendManyContract: { address: '', name: '' }, // TODO
+      },
+    },
+  }, */
+  /* aeusd: {
+    name: 'aeUSDC',
+    shortName: '$aeUSDC',
+    decimals: 6,
+    assets: {
+      mainnet: {
+        asset: 'SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc::aeUSDC',
+        sendManyContract: { address: '', name: '' }, // TODO
+      },
+    },
+  }, */
+  /* ststx: {
+    name: 'Stacked STX Token',
+    shortName: '$stSTX',
+    decimals: 6,
+    assets: {
+      mainnet: {
+        asset: 'SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx-token::ststx',
+        sendManyContract: { address: '', name: '' }, // TODO
+      },
+    },
+  }, */
+  /* listx: {
+    name: 'Liquid STX',
+    shortName: '$liSTX',
+    decimals: 6,
+    assets: {
+      mainnet: {
+        asset: 'SM26NBC8SFHNW4P1Y4DFH27974P56WN86C92HPEHH.token-lqstx::lqstx',
+        sendManyContract: { address: '', name: '' }, // TODO
+      },
+    },
+  }, */
+  /* lialex: {
+    name: 'Liquid Alex',
+    shortName: '$liALEX',
+    decimals: 8,
+    assets: {
+      mainnet: {
+        asset: 'SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.auto-alex-v3::auto-alex-v3',
+        sendManyContract: { address: '', name: '' }, // TODO
+      },
+    },
+  }, */
+};
 
 export const WRAPPED_BITCOIN_ASSET =
   'SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin';
@@ -70,13 +286,13 @@ export const XBTC_SEND_MANY_CONTRACT = {
 };
 
 export const STACK_API_URL = localNode
-  ? 'http://localhost:3999'
+  ? 'http://192.168.0.208:3999'
   : mainnet
     ? 'https://api.hiro.so'
     : 'https://api.testnet.hiro.so';
 
 export const STACKS_API_WS_URL = localNode
-  ? 'ws:localhost:3999/'
+  ? 'ws:192.168.0.208:3999/'
   : mainnet
     ? 'wss://api.hiro.so/'
     : 'wss://api.testnet.hiro.so/';

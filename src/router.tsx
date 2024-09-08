@@ -1,4 +1,6 @@
 import React from 'react';
+import { Outlet, Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
+import { SBTC_CONTRACT, SUPPORTED_SYMBOLS } from './lib/constants';
 import { useStxAddresses } from './lib/hooks';
 import FulfillmentSBtc from './pages/FulfillmentSBtc';
 import Landing from './pages/Landing';
@@ -6,15 +8,8 @@ import SendMany from './pages/SendMany';
 import SendManyAdvocates from './pages/SendManyAdvocates';
 import SendManyCyclePayout from './pages/SendManyCyclePayout';
 import SendManyDetails from './pages/SendManyDetails';
+import SendManyLisaVault from './pages/SendManyLisaVault';
 import SendManyTransferDetails from './pages/SendManyTransferDetails';
-import {
-  CONTRACT_ADDRESS,
-  NOT_CONTRACT,
-  SBTC_CONTRACT,
-  WMNO_CONTRACT,
-  XBTC_SEND_MANY_CONTRACT,
-} from './lib/constants';
-import { Outlet, Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
 function RequireAuth({ children }: { children: JSX.Element | JSX.Element[] }) {
   const { ownerStxAddress } = useStxAddresses();
 
@@ -45,41 +40,19 @@ function createRouter() {
   return createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<AppBody />}>
-        <Route
-          path="/xbtc"
-          element={
-            <RequireAuth>
-              <SendMany
-                asset="xbtc"
-                sendManyContract={
-                  XBTC_SEND_MANY_CONTRACT.address + '.' + XBTC_SEND_MANY_CONTRACT.name
-                }
-              />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/wmno"
-          element={
-            <RequireAuth>
-              <SendMany
-                asset="wmno"
-                sendManyContract={WMNO_CONTRACT.address + '.' + WMNO_CONTRACT.name}
-              />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/not"
-          element={
-            <RequireAuth>
-              <SendMany
-                asset="not"
-                sendManyContract={NOT_CONTRACT.address + '.' + NOT_CONTRACT.name}
-              />
-            </RequireAuth>
-          }
-        />
+        {SUPPORTED_SYMBOLS.map(asset => {
+          return (
+            <Route
+              path={asset === 'stx' ? '/' : `/${asset}`}
+              element={
+                <RequireAuth>
+                  <SendMany asset={asset} />
+                </RequireAuth>
+              }
+            />
+          );
+        })}
+
         <Route
           path="/sbtc/:assetContract/:sendManyContract"
           element={
@@ -88,14 +61,7 @@ function createRouter() {
             </RequireAuth>
           }
         />
-        <Route
-          path="/"
-          element={
-            <RequireAuth>
-              <SendMany asset="stx" sendManyContract={`${CONTRACT_ADDRESS}.send-many-memo`} />
-            </RequireAuth>
-          }
-        />
+
         <Route
           path="/sbtc-bridge/:assetContract/:sendManyContract"
           element={
@@ -104,9 +70,8 @@ function createRouter() {
             </RequireAuth>
           }
         />
-
         <Route path="/landing/:asset?" element={<Landing />} />
-
+        <Route path="/lisa-vault" element={<SendManyLisaVault />} />
         <Route path="/cycle/:cycleId" element={<SendManyCyclePayout />} />
         <Route path="/advocates/:payoutId" element={<SendManyAdvocates />} />
         <Route path="/txid/:txId" element={<SendManyDetails />} />

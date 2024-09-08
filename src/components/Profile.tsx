@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { AddressBalanceResponse } from '@stacks/stacks-blockchain-api-types';
+import * as jdenticon from 'jdenticon';
+import { useEffect, useRef, useState } from 'react';
 import { fetchAccount } from '../lib/account';
+import { SupportedSymbols } from '../lib/constants';
 import { Address } from './Address';
 import { Amount } from './Amount';
-import * as jdenticon from 'jdenticon';
-import { AddressBalanceResponse } from '@stacks/stacks-blockchain-api-types';
 
 function Jdenticon({ value, size }: { value: string; size: number }) {
   const icon = useRef<SVGSVGElement>(null);
@@ -21,7 +22,7 @@ export function Profile({
   assetId,
 }: {
   stxAddress: string;
-  asset: string;
+  asset: SupportedSymbols;
   assetId?: string;
 }) {
   const [profileState, setProfileState] = useState<{

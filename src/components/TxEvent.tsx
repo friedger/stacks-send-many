@@ -2,10 +2,11 @@ import {
   TransactionEventFungibleAsset,
   TransactionEventStxAsset,
 } from '@stacks/stacks-blockchain-api-types';
+import { SUPPORTED_ASSETS } from '../lib/constants';
 import { StoredTx } from '../lib/transactions';
 import { Address } from './Address';
+import { AmountAsset } from './AmountAsset';
 import { AmountFiat } from './AmountFiat';
-import { AmountStx } from './AmountStx';
 
 export function TxEvent({
   event,
@@ -28,7 +29,7 @@ export function TxEvent({
         <Address addr={event.asset.recipient!} />
       </div>
       <div className="col-4 text-right small">
-        <AmountStx ustx={+event.asset.amount!} />
+        <AmountAsset amount={+event.asset.amount!} assetInfo={SUPPORTED_ASSETS['stx']} />
         <br />
         (<AmountFiat ustx={+event.asset.amount!} />)
       </div>

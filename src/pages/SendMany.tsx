@@ -1,27 +1,29 @@
-import React from 'react';
+import { StacksNetworkName } from '@stacks/network';
+import { Link } from 'react-router-dom';
 import { Instructions } from '../components/Instructions';
 import { Profile } from '../components/Profile';
 import { SendManyInputContainer } from '../components/SendManyInputContainer';
 import { SendManyTxList } from '../components/SendManyTxList';
 import {
-  NOT_ASSET,
+  Contract,
   SBTC_CONTRACT,
-  WMNO_ASSET,
-  WRAPPED_BITCOIN_ASSET,
+  SUPPORTED_ASSETS,
+  SUPPORTED_SYMBOLS,
+  SupportedSymbols,
+  mainnet,
   mocknet,
   testnet,
 } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
-import { Link } from 'react-router-dom';
 
 export default function SendMany({
   asset,
   assetContract,
   sendManyContract,
 }: {
-  asset: string;
+  asset: SupportedSymbols;
   assetContract?: string;
-  sendManyContract: string;
+  sendManyContract?: Contract;
 }) {
   const { ownerStxAddress } = useStxAddresses();
   console.log({ assetContract });
@@ -29,19 +31,12 @@ export default function SendMany({
     return <div>Loading</div>;
   }
 
-  let assetId;
-  if (asset === 'xbtc') {
-    assetId = WRAPPED_BITCOIN_ASSET;
-  } else if (asset === 'sbtc') {
-    assetId = `${assetContract || SBTC_CONTRACT}::sbtc`;
-  } else if (asset === 'wmno') {
-    assetId = WMNO_ASSET;
-  } else if (asset === 'not') {
-    assetId = NOT_ASSET;
-  } else {
-    // for stx, assetId is ignored
-    assetId = undefined;
-  }
+  const network: StacksNetworkName = mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet';
+  const assetInfo = SUPPORTED_ASSETS[asset].assets?.[network];
+  const isSupported = asset === 'stx' || assetInfo;
+
+  // for stx assetId is undefined
+  const assetId = assetInfo?.asset || assetContract;
 
   return (
     <main className="panel-welcome mt-2 container">
@@ -51,71 +46,79 @@ export default function SendMany({
             <div className="row">
               <div className="col-sm-12 col-md-4 ">
                 <div className="p-4 m-4 mx-auto bg-light">
-                  <Profile stxAddress={ownerStxAddress} asset={asset} assetId={assetId} />
+                  {isSupported && (
+                    <Profile stxAddress={ownerStxAddress} asset={asset} assetId={assetId} />
+                  )}
                 </div>
-                <div className="p-4 m-4 mx-auto bg-light">
-                  <Instructions />
-                </div>
+                <div className="p-4 m-4 mx-auto bg-light">{isSupported && <Instructions />}</div>
               </div>
 
               <div className="col-sm-12 col-md-8 p-4 container">
                 <div className="col-xs-10 col-md-12 bg-light p-4">
                   <div className="text-right">
-                    {asset !== 'stx' && (
-                      <Link to="/" className="small">
-                        Send {testnet || mocknet ? 'Test' : ''} STX <div></div>
-                      </Link>
-                    )}
-                    {asset !== 'sbtc' && (
-                      <Link to="/sbtc" className="small">
-                        Send {testnet || mocknet ? 'Test' : ''} sBTC <div></div>
-                      </Link>
-                    )}
-                    {asset !== 'xbtc' && (
-                      <Link to="/xbtc" className="small">
-                        Send {testnet || mocknet ? 'Test' : ''} xBTC <div></div>
-                      </Link>
-                    )}
-                    {asset !== 'not' && (
-                      <Link to="/not" className="small">
-                        Send {testnet || mocknet ? 'Test' : ''} $NOT{' '}
-                      </Link>
-                    )}
+                    {SUPPORTED_SYMBOLS.filter(a => a !== asset).map(a => {
+                      return (
+                        <Link
+                          to={
+                            network === 'mainnet'
+                              ? a === 'stx'
+                                ? '/'
+                                : `/${a}`
+                              : network === 'testnet'
+                                ? a === 'stx'
+                                  ? '/?chain=testnet'
+                                  : `/${a}?chain=testnet`
+                                : a === 'stx'
+                                  ? '/?chain=mocknet'
+                                  : `/${a}?chain=mocknet`
+                          }
+                          className="small"
+                        >
+                          Send {testnet || mocknet ? 'Test' : ''} {SUPPORTED_ASSETS[a].shortName}{' '}
+                          <div></div>
+                        </Link>
+                      );
+                    })}
                   </div>
                   <h3 className="font-weight-bold mb-4">
-                    Send {testnet || mocknet ? 'Test' : ''} {asset === 'stx' && 'Stacks (STX)'}
-                    {asset === 'sbtc' && 'Wrapped Bitcoin (sBTC DR 0.1)'}
-                    {asset === 'xbtc' && 'Wrapped Bitcoin (xBTC)'}
-                    {asset === 'wmno' && 'Wrapped Nothing (WMNO)'}
-                    {asset === 'not' && 'Nothing (NOT)'}
+                    Send {testnet || mocknet ? 'Test' : ''} {SUPPORTED_ASSETS[asset].name}
                   </h3>
-                  {asset === 'sbtc' && (
+                  {isSupported ? (
                     <>
-                      <p>
-                        <b>
-                          SBTC Send Many Contract is only experimental on testnet and not safe to
-                          use. You are sharing the escrow contract with other users.
-                        </b>
-                      </p>
-                      <p>
-                        Using asset{' '}
-                        <a
-                          href={`https://explorer.hiro.so/address/${
-                            assetContract || SBTC_CONTRACT
-                          }?chain=testnet`}
-                        >
-                          {assetId}
-                        </a>
-                        .
-                      </p>
+                      {asset === 'sbtc' && (
+                        <>
+                          <p>
+                            <b>
+                              SBTC Send Many Contract is only experimental on testnet and not safe
+                              to use. You are sharing the escrow contract with other users.
+                            </b>
+                          </p>
+                          <p>
+                            Using asset{' '}
+                            <a
+                              href={`https://explorer.hiro.so/address/${
+                                assetContract || `${SBTC_CONTRACT.address}.${SBTC_CONTRACT.name}`
+                              }?chain=testnet`}
+                            >
+                              {assetId}
+                            </a>
+                            .
+                          </p>
+                        </>
+                      )}
+                      <SendManyInputContainer
+                        ownerStxAddress={ownerStxAddress}
+                        asset={asset}
+                        assetId={assetId}
+                        sendManyContract={sendManyContract}
+                        network={network}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      {`Send Many not supported for ${SUPPORTED_ASSETS[asset].shortName} on ${network}.`}
                     </>
                   )}
-                  <SendManyInputContainer
-                    ownerStxAddress={ownerStxAddress}
-                    asset={asset}
-                    assetId={assetId}
-                    sendManyContract={sendManyContract}
-                  />
                 </div>
                 {asset === 'stx' && (
                   <div className="col-xs-10 col-md-12 mx-auto my-4 py-4 bg-light">
