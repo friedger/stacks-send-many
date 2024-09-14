@@ -58,27 +58,30 @@ export default function SendMany({
               <div className="col-sm-12 col-md-8 p-4 container">
                 <div className="col-xs-10 col-md-12 bg-light p-4">
                   <div className="text-right">
+                    Send{' '}
                     {SUPPORTED_SYMBOLS.filter(a => a !== asset).map(a => {
                       return (
-                        <Link
-                          to={
-                            network === 'mainnet'
-                              ? a === 'stx'
-                                ? '/'
-                                : `/${a}`
-                              : network === 'testnet'
+                        <>
+                          <Link
+                            to={
+                              network === 'mainnet'
                                 ? a === 'stx'
-                                  ? '/?chain=testnet'
-                                  : `/${a}?chain=testnet`
-                                : a === 'stx'
-                                  ? '/?chain=mocknet'
-                                  : `/${a}?chain=mocknet`
-                          }
-                          className="small"
-                        >
-                          Send {testnet || mocknet ? 'Test' : ''} {SUPPORTED_ASSETS[a].shortName}{' '}
-                          <div></div>
-                        </Link>
+                                  ? '/'
+                                  : `/${a}`
+                                : network === 'testnet'
+                                  ? a === 'stx'
+                                    ? '/?chain=testnet'
+                                    : `/${a}?chain=testnet`
+                                  : a === 'stx'
+                                    ? '/?chain=mocknet'
+                                    : `/${a}?chain=mocknet`
+                            }
+                            className="small"
+                          >
+                            {testnet || mocknet ? 'Test' : ''} {SUPPORTED_ASSETS[a].shortName}{' '}
+                          </Link>
+                          {' - '}
+                        </>
                       );
                     })}
                   </div>

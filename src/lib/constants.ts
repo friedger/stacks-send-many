@@ -80,12 +80,13 @@ export type SupportedSymbols =
   | 'leo'
   | 'diko'
   | 'welsh'
-  | 'mega';
-// | 'usda'
-// | 'ststx'
-// | 'aeusd'
-// | 'listx'
-// | 'lialex';
+  | 'mega'
+  | 'usda'
+  | 'ststx'
+  | 'aeusd'
+  | 'listx'
+  | 'lialex';
+
 export const SUPPORTED_SYMBOLS: SupportedSymbols[] = [
   'sbtc',
   'xbtc',
@@ -96,11 +97,11 @@ export const SUPPORTED_SYMBOLS: SupportedSymbols[] = [
   'diko',
   'welsh',
   'mega',
-  // 'usda',
-  // 'ststx',
-  // 'aeusd',
-  // 'listx',
-  // 'lialex',
+  'usda',
+  'ststx',
+  'aeusd',
+  'listx',
+  'lialex',
 ];
 
 export const SUPPORTED_ASSETS: {
@@ -208,61 +209,76 @@ export const SUPPORTED_ASSETS: {
       },
     },
   },
-  /*  usda: {
+  usda: {
     name: 'USDA',
     shortName: '$USDA',
     decimals: 6,
     assets: {
       mainnet: {
         asset: 'SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.usda-token::usda',
-        sendManyContract: { address: '', name: '' }, // TODO
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'usda-send-many-v1',
+        },
       },
     },
-  }, */
-  /* aeusd: {
-    name: 'aeUSDC',
+  },
+  aeusd: {
+    name: 'Ethereum USDC via Allbridge',
     shortName: '$aeUSDC',
     decimals: 6,
     assets: {
       mainnet: {
         asset: 'SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc::aeUSDC',
-        sendManyContract: { address: '', name: '' }, // TODO
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'aeusdc-send-many-v1',
+        },
       },
     },
-  }, */
-  /* ststx: {
+  },
+  ststx: {
     name: 'Stacked STX Token',
     shortName: '$stSTX',
     decimals: 6,
     assets: {
       mainnet: {
         asset: 'SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx-token::ststx',
-        sendManyContract: { address: '', name: '' }, // TODO
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'ststx-send-many-v1',
+        },
       },
     },
-  }, */
-  /* listx: {
+  },
+  listx: {
     name: 'Liquid STX',
     shortName: '$liSTX',
     decimals: 6,
     assets: {
       mainnet: {
         asset: 'SM26NBC8SFHNW4P1Y4DFH27974P56WN86C92HPEHH.token-lqstx::lqstx',
-        sendManyContract: { address: '', name: '' }, // TODO
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'listx-send-many-v1',
+        },
       },
     },
-  }, */
-  /* lialex: {
+  },
+  lialex: {
     name: 'Liquid Alex',
     shortName: '$liALEX',
     decimals: 8,
     assets: {
       mainnet: {
         asset: 'SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.auto-alex-v3::auto-alex-v3',
-        sendManyContract: { address: '', name: '' }, // TODO
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'lialex-send-many-v1',
+        },
       },
     },
-  }, */
+  },
 };
 
 export const WRAPPED_BITCOIN_ASSET =
