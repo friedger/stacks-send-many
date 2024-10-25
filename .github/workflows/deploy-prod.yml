@@ -17,9 +17,9 @@ jobs:
         with:
           node-version: '22'
       - name: Install Dependencies
-        run: yarn install
+        run: pnpm install
       - name: Build Site
-        run: yarn run build
+        run: pnpm run build
       - name: Publish Site
         uses: cloudflare/wrangler-action@1.3.0
         env:
