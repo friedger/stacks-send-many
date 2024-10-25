@@ -1,6 +1,5 @@
 name = "stacks-send-many"
 account_id = '98288619169b23339dc74ce53fa0b5f1'
-type = 'webpack'
 workers_dev = true
 # target_type = "webpack"
 compatibility_date = "2024-10-25"
