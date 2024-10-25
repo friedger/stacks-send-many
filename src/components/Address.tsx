@@ -1,15 +1,7 @@
-import { StacksMainnet } from '@stacks/network';
-import {
-  BufferCV,
-  ClarityType,
-  ResponseErrorCV,
-  ResponseOkCV,
-  TupleCV,
-  callReadOnlyFunction,
-  principalCV,
-} from '@stacks/transactions';
+import { ClarityType } from '@stacks/transactions';
 import toUnicode from 'punycode2/to-unicode';
 import { useEffect, useMemo, useState } from 'react';
+import { getNameFromAddress } from '../lib/names';
 
 function hex_to_ascii(bytes: Uint8Array) {
   var str = '';
@@ -18,20 +10,6 @@ function hex_to_ascii(bytes: Uint8Array) {
   }
   return str;
 }
-
-const getNameFromAddress = async (addr: string) => {
-  console.log(addr);
-  let addrCV = principalCV(addr);
-  const result = (await callReadOnlyFunction({
-    contractAddress: 'SP000000000000000000002Q6VF78',
-    contractName: 'bns',
-    functionName: 'resolve-principal',
-    functionArgs: [addrCV],
-    senderAddress: addr,
-    network: new StacksMainnet(),
-  })) as ResponseOkCV<TupleCV<{ name: BufferCV; namespace: BufferCV }>> | ResponseErrorCV;
-  return result;
-};
 
 export function Address({ addr }: { addr: string }) {
   const addressShort = useMemo(

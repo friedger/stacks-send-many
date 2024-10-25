@@ -2,7 +2,6 @@ import {
   AccountsApi,
   Configuration,
   InfoApi,
-  NamesApi,
   SmartContractsApi,
   TransactionsApi,
 } from '@stacks/blockchain-api-client';
@@ -32,12 +31,8 @@ export const CONTRACT_ADDRESS = mocknet
   : testnet
     ? 'STR8P3RD1EHA8AA37ERSSSZSWKS9T2GYQFGXNA4C'
     : 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE';
-export const GENESIS_CONTRACT_ADDRESS = mocknet
-  ? 'ST000000000000000000002AMW42H'
-  : testnet
-    ? 'ST000000000000000000002AMW42H'
-    : 'SP000000000000000000002Q6VF78';
-export const BNS_CONTRACT_NAME = 'bns';
+export const BNS_CONTRACT_ADDRESS = 'SP2QEZ06AGJ3RKJPBV14SY1V5BBFNAW33D96YPGZF';
+export const BNS_CONTRACT_NAME = 'BNS-V2';
 
 export const SBTC_CONTRACT = {
   address: 'ST3VA3Y7A2YQ8GW69T0N1ERPAD784R1Y2YHCSNJHH',
@@ -85,7 +80,8 @@ export type SupportedSymbols =
   | 'ststx'
   | 'aeusd'
   | 'listx'
-  | 'lialex';
+  | 'lialex'
+  | 'velar';
 
 export const SUPPORTED_SYMBOLS: SupportedSymbols[] = [
   'sbtc',
@@ -102,6 +98,7 @@ export const SUPPORTED_SYMBOLS: SupportedSymbols[] = [
   'aeusd',
   'listx',
   'lialex',
+  'velar',
 ];
 
 export const SUPPORTED_ASSETS: {
@@ -140,7 +137,7 @@ export const SUPPORTED_ASSETS: {
   not: {
     name: 'Nothing (NOT)',
     shortName: '$NOT',
-    decimals: 6,
+    decimals: 0,
     assets: {
       mainnet: {
         asset: 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope::NOT',
@@ -279,6 +276,20 @@ export const SUPPORTED_ASSETS: {
       },
     },
   },
+  velar: {
+    name: 'Velar',
+    shortName: '$VELAR',
+    decimals: 6,
+    assets: {
+      mainnet: {
+        asset: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token::velar',
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'velar-send-many-v1',
+        },
+      },
+    },
+  },
 };
 
 export const WRAPPED_BITCOIN_ASSET =
@@ -337,4 +348,3 @@ export const accountsApi = new AccountsApi(config);
 export const smartContractsApi = new SmartContractsApi(config);
 export const transactionsApi = new TransactionsApi(config);
 export const infoApi = new InfoApi(config);
-export const namesApi = new NamesApi(config);
