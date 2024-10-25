@@ -72,6 +72,7 @@
     "node": ">=22"
   },
   "devDependencies": {
+    "@cloudflare/kv-asset-handler": "^0.3.4",
     "@stacks/prettier-config": "0.0.10",
     "bootstrap": "^5.3.3",
     "netlify-cli": "^17.16.2",

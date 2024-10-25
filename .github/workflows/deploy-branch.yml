@@ -1,7 +1,7 @@
-name: Deploy Prod
+name: Deploy Preview
 
 on:
-  push:
+  pull_request:
     branches:
       - main
   workflow_dispatch:
@@ -29,4 +29,3 @@ jobs:
           USER: root
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          environment: 'production'
