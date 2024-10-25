@@ -1,6 +1,7 @@
 import {
   AuthType,
   bufferCVFromString,
+  ClarityType,
   contractPrincipalCV,
   createAssetInfo,
   cvToString,
@@ -32,15 +33,9 @@ import toAscii from 'punycode2/to-ascii';
 import { useSearchParams } from 'react-router-dom';
 import { fetchAccount } from '../lib/account';
 import { useConnect } from '../lib/auth';
-import {
-  chains,
-  Contract,
-  namesApi,
-  NETWORK,
-  SUPPORTED_ASSETS,
-  SupportedSymbols,
-} from '../lib/constants';
+import { chains, Contract, NETWORK, SUPPORTED_ASSETS, SupportedSymbols } from '../lib/constants';
 import { useWalletConnect } from '../lib/hooks';
+import { getNameInfo } from '../lib/names';
 import { saveTxData, TxStatus } from '../lib/transactions';
 import { Address } from './Address';
 import { Amount } from './Amount';
@@ -71,9 +66,9 @@ const addToCVValues = async <T extends Row>(parts: T[]) => {
         return { ...p, toCV: addrToCV(p.to) };
       } catch (e) {
         try {
-          const nameInfo = await namesApi.getNameInfo({ name: toAscii(p.to) });
-          if (nameInfo.address) {
-            return { ...p, toCV: addrToCV(nameInfo.address) };
+          const owner = await getNameInfo(toAscii(p.to));
+          if (owner.type === ClarityType.OptionalSome) {
+            return { ...p, toCV: owner.value.data.owner };
           } else {
             return { ...p, error: `No address for ${p.to}` };
           }
@@ -557,7 +552,7 @@ export function SendManyInputContainer({
   };
 
   const NOT_SPONSOR = 'SPM1NE6JPN9V1019930579E7EZ58FYKMD17J7RS';
-  const TX_FEE_IN_NOT = '100000';
+  const TX_FEE_IN_NOT = '10000';
 
   const cloneAndAddFees = (rows: Row[]) => {
     const newRows = new Array(...rows);
