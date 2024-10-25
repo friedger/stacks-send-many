@@ -2,7 +2,6 @@ import {
   BufferCV,
   bufferCVFromString,
   callReadOnlyFunction,
-  cvToString,
   OptionalCV,
   PrincipalCV,
   principalCV,

@@ -1,16 +1,6 @@
-import { StacksMainnet } from '@stacks/network';
-import {
-  BufferCV,
-  ClarityType,
-  ResponseErrorCV,
-  ResponseOkCV,
-  TupleCV,
-  callReadOnlyFunction,
-  principalCV,
-} from '@stacks/transactions';
+import { ClarityType } from '@stacks/transactions';
 import toUnicode from 'punycode2/to-unicode';
 import { useEffect, useMemo, useState } from 'react';
-import { BNS_CONTRACT_ADDRESS, BNS_CONTRACT_NAME } from '../lib/constants';
 import { getNameFromAddress } from '../lib/names';
 
 function hex_to_ascii(bytes: Uint8Array) {
