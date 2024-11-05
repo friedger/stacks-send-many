@@ -40,6 +40,7 @@ import { saveTxData, TxStatus } from '../lib/transactions';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { SendManyInput } from './SendManyInput';
+import { getProvider } from '../lib/getProvider';
 export type Row = {
   to: string;
   stx: string;
@@ -356,7 +357,7 @@ export function SendManyInputContainer({
         handleSendResult({ txId: result as string });
       } else {
         console.log({ sponsored: options.sponsored });
-        await doContractCall(options);
+        await doContractCall(options, getProvider());
       }
     } catch (e) {
       console.log(e);
