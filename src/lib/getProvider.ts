@@ -4,7 +4,7 @@ export function getProvider() {
   const profile = getUserSession().loadUserData().profile;
   const providerKey = profile.walletProvider;
   const globalContext = window as any;
-  const provider = globalContext[providerKey];
+
   const address = profile.stxAddress.mainnet;
   if (address.startsWith('SM')) {
     return globalContext.AsignaProvider;
@@ -21,5 +21,5 @@ export function getProvider() {
     );
   }
 
-  return provider;
+  return globalContext.StacksProvider;
 }
