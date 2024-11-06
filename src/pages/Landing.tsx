@@ -70,7 +70,7 @@ export default function Landing({
 
               <p className="card-link mb-5">
                 <button className="btn btn-outline-primary" type="button" onClick={handleOpenAuth}>
-                  Start now with Leather Wallet
+                  Start now with Stacks Wallet
                 </button>
                 <button
                   className="btn btn-outline-primary"
