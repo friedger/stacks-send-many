@@ -10,7 +10,7 @@ export function getProvider() {
     return globalContext.AsignaProvider;
   }
   if (providerKey === 'leather') {
-    return globalContext.leatherProvider;
+    return globalContext.LeatherProvider;
   }
 
   if (!providerKey) {
