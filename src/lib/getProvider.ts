@@ -13,13 +13,9 @@ export function getProvider() {
     return globalContext.LeatherProvider;
   }
 
-  if (!providerKey) {
-    return (
-      globalContext.XverseProviders.StacksProvider ||
-      globalContext.XverseProvider ||
-      globalContext.StacksProvider
-    );
-  }
-
-  return globalContext.StacksProvider;
+  return (
+    globalContext.XverseProvider ||
+    globalContext.XverseProviders.StacksProvider ||
+    globalContext.StacksProvider
+  );
 }
