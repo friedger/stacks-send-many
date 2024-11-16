@@ -5,6 +5,7 @@ import {
   contractPrincipalCV,
   createAssetInfo,
   cvToString,
+  deserializeTransaction,
   FungibleConditionCode,
   listCV,
   makeStandardFungiblePostCondition,
@@ -258,9 +259,10 @@ export function SendManyInputContainer({
       console.log({ data });
       if (data.stacksTransaction?.auth.authType === AuthType.Sponsored) {
         setStatus('Sending tx to sponsor');
-        fetch('https://sponsoring.friedger.workers.dev/not', {
+        console.log({ tx: data.txRaw, feesInNot: TX_FEE_IN_NOT, network: 'mainnet' });
+        fetch('https://sponsoring.friedger.workers.dev/not/v1/sponsor', {
           method: 'POST',
-          body: JSON.stringify({ txHex: data.txRaw, feesInNot: TX_FEE_IN_NOT, network: 'mainnet' }),
+          body: JSON.stringify({ tx: data.txRaw, feesInNot: TX_FEE_IN_NOT, network: 'mainnet' }),
           headers: { 'Content-Type': 'text/plain' },
         })
           .then(response => {
@@ -269,7 +271,7 @@ export function SendManyInputContainer({
                 .json()
                 .then((error: { error: string }) => {
                   console.log(error);
-                  setStatus(error.error);
+                  setStatus(JSON.stringify(error.error));
                   setLoading(false);
                 })
                 .catch(e => {
