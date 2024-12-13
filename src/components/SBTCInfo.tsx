@@ -17,7 +17,7 @@ export function SBTCInfo({ assetId }: { assetId: string }) {
         senderAddress: contractAddress,
         network: NETWORK,
       })) as TupleCV<{ currentSigner: PrincipalCV }>;
-      setInfo(`Current signer is ${cvToString(response.data.currentSigner)}`);
+      setInfo(`Current signer info: ${cvToString(response)}`);
     };
     fn().catch(e => {
       setInfo(`Failed to load signer data. (${e.message})`);
