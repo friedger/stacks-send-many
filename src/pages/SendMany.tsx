@@ -15,6 +15,7 @@ import {
   testnet,
 } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
+import { SBTCInfo } from '../components/SBTCInfo';
 
 export default function SendMany({
   asset,
@@ -90,6 +91,7 @@ export default function SendMany({
                   </h3>
                   {isSupported ? (
                     <>
+                      {asset === 'sbtc' && assetId && <SBTCInfo assetId={assetId} />}
                       <SendManyInputContainer
                         ownerStxAddress={ownerStxAddress}
                         asset={asset}
