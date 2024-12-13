@@ -117,7 +117,17 @@ export const SUPPORTED_ASSETS: {
         'STB44HYPYAT2BB2QE513NSP81HTMYWBJP02HPGK6',
     },
   },
-  sbtc: { name: 'Wrapped BTC (sBTC)', shortName: '$SBTC', symbol: '₿', decimals: 8 },
+  sbtc: {
+    name: 'Wrapped BTC (sBTC)',
+    shortName: '$SBTC',
+    symbol: '₿',
+    decimals: 8,
+    assets: {
+      mainnet: {
+        asset: 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token::sbtc-token',
+      },
+    },
+  },
   xbtc: {
     name: 'Wrapped BTC (xBTC)',
     shortName: '$XBTC',

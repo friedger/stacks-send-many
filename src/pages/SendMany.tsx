@@ -90,27 +90,6 @@ export default function SendMany({
                   </h3>
                   {isSupported ? (
                     <>
-                      {asset === 'sbtc' && (
-                        <>
-                          <p>
-                            <b>
-                              SBTC Send Many Contract is only experimental on testnet and not safe
-                              to use. You are sharing the escrow contract with other users.
-                            </b>
-                          </p>
-                          <p>
-                            Using asset{' '}
-                            <a
-                              href={`https://explorer.hiro.so/address/${
-                                assetContract || `${SBTC_CONTRACT.address}.${SBTC_CONTRACT.name}`
-                              }?chain=testnet`}
-                            >
-                              {assetId}
-                            </a>
-                            .
-                          </p>
-                        </>
-                      )}
                       <SendManyInputContainer
                         ownerStxAddress={ownerStxAddress}
                         asset={asset}
