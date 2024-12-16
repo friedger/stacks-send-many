@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
-import { SBTC_CONTRACT, SUPPORTED_SYMBOLS } from './lib/constants';
+import { SUPPORTED_SYMBOLS } from './lib/constants';
 import { useStxAddresses } from './lib/hooks';
 import FulfillmentSBtc from './pages/FulfillmentSBtc';
 import Landing from './pages/Landing';

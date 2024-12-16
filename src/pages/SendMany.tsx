@@ -2,11 +2,11 @@ import { StacksNetworkName } from '@stacks/network';
 import { Link } from 'react-router-dom';
 import { Instructions } from '../components/Instructions';
 import { Profile } from '../components/Profile';
+import { SBTCInfo } from '../components/SBTCInfo';
 import { SendManyInputContainer } from '../components/SendManyInputContainer';
 import { SendManyTxList } from '../components/SendManyTxList';
 import {
   Contract,
-  SBTC_CONTRACT,
   SUPPORTED_ASSETS,
   SUPPORTED_SYMBOLS,
   SupportedSymbols,
@@ -15,7 +15,6 @@ import {
   testnet,
 } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
-import { SBTCInfo } from '../components/SBTCInfo';
 
 export default function SendMany({
   asset,

@@ -5,7 +5,6 @@ import {
   contractPrincipalCV,
   createAssetInfo,
   cvToString,
-  deserializeTransaction,
   FungibleConditionCode,
   listCV,
   makeStandardFungiblePostCondition,
@@ -35,13 +34,13 @@ import { useSearchParams } from 'react-router-dom';
 import { fetchAccount } from '../lib/account';
 import { useConnect } from '../lib/auth';
 import { chains, Contract, NETWORK, SUPPORTED_ASSETS, SupportedSymbols } from '../lib/constants';
+import { getProvider } from '../lib/getProvider';
 import { useWalletConnect } from '../lib/hooks';
 import { getNameInfo } from '../lib/names';
 import { saveTxData, TxStatus } from '../lib/transactions';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { SendManyInput } from './SendManyInput';
-import { getProvider } from '../lib/getProvider';
 export type Row = {
   to: string;
   stx: string;
