@@ -427,30 +427,6 @@ export function SendManyInputContainer({
           };
         }
         break;
-      case 'sbtc':
-        if (sendManyContract) {
-          options = {
-            contractAddress: sendManyContract.address,
-            contractName: sendManyContract.name,
-            functionName: 'request-send-sbtc-many',
-            functionArgs: [
-              listCV(
-                nonEmptyParts.map(p => {
-                  return tupleCV({
-                    to: p.toCV!,
-                    'sbtc-in-sats': uintCV(p.ustx),
-                    memo: bufferCVFromString(
-                      hasMemos ? (firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : '') : ''
-                    ),
-                  });
-                })
-              ),
-            ],
-            postConditions: [],
-          };
-        }
-        break;
-
       case 'xbtc':
         assetInfo = SUPPORTED_ASSETS.xbtc.assets?.[network];
         if (assetInfo?.sendManyContract) {
@@ -691,7 +667,7 @@ export function SendManyInputContainer({
                 loading ? '' : 'd-none'
               } spinner-border spinner-border-sm text-info align-text-top mr-2`}
             />
-            {namesResolved ? (asset === 'sbtc' ? 'Store request' : 'Send') : 'Preview'}
+            {namesResolved ? 'Send' : 'Preview'}
           </button>
         </div>
       </div>

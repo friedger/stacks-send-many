@@ -54,15 +54,6 @@ function createRouter() {
         })}
 
         <Route
-          path="/sbtc/:assetContract/:sendManyContract"
-          element={
-            <RequireAuth>
-              <SendMany asset="sbtc" sendManyContract={SBTC_CONTRACT} />
-            </RequireAuth>
-          }
-        />
-
-        <Route
           path="/sbtc-bridge/:assetContract/:sendManyContract"
           element={
             <RequireAuth>
