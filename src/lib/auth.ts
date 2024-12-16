@@ -17,7 +17,7 @@ export const authResponseState = atom<string | null>(null);
 const authenticatedState = atom<boolean>(false);
 
 export const appMetaData = {
-  description: 'Send STX and xBTC to many users in one transaction.',
+  description: 'Send STX and sBTC to many users in one transaction.',
   url: 'https://sendstx.com',
   appDetails: {
     name: 'Send Many',

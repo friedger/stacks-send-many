@@ -29,7 +29,7 @@ export default function Landing({
                 <>
                   A UI to interact with the smart contracts
                   <br />
-                  "send-many", "send-many-memo", "nope" and "xbtc-send-many-v1".
+                  "send-many", "send-many-memo", "nope" and with native send-many transfers.
                 </>
               )}
             </p>
@@ -43,18 +43,18 @@ export default function Landing({
                 open source
               </a>{' '}
               web app with the purpose of{' '}
-              <strong>helping everybody to send and view bulk STX/xBTC/NOT transfers.</strong>
+              <strong>helping everybody to send and view bulk STX/sBTC/NOT transfers.</strong>
             </p>
 
             <div className="card mt-4 border-info">
               <div className="card-header">
-                <h5 className="card-title">Efficient STX/xBTC/NOT transfers</h5>
+                <h5 className="card-title">Efficient STX/sBTC/NOT transfers</h5>
               </div>
               <div className="card-body">
                 <p className="card-text mb-3">
                   Stacks can be transferred to individual users one by one using the stacks transfer
                   function. However, for organisations or exchanges it can be more efficient to send
-                  stacks tokens or xBTC tokens to many users in one go. This can be done through a
+                  stacks tokens or sBTC tokens to many users in one go. This can be done through a
                   smart contract. There is one contract for transfers with a memo and one for
                   transfers without.
                 </p>
