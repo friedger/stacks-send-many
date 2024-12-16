@@ -8,16 +8,18 @@ export function SBTCInfo({ assetId }: { assetId: string }) {
   useEffect(() => {
     const fn = async () => {
       const [contractId, _] = assetId.split('::');
-      const [contractAddress, contractName] = contractId.split('.');
+      const [contractAddress] = contractId.split('.');
       const response = (await callReadOnlyFunction({
         contractAddress,
-        contractName,
+        contractName: 'sbtc-registry',
         functionName: 'get-current-signer-data',
         functionArgs: [],
         senderAddress: contractAddress,
         network: NETWORK,
-      })) as TupleCV<{ currentSigner: PrincipalCV }>;
-      setInfo(`Current signer info: ${cvToString(response)}`);
+      })) as TupleCV<{ 'current-signer-principal': PrincipalCV }>;
+      setInfo(
+        `Current sBTC signer Stacks address: ${cvToString(response.data['current-signer-principal'])}`
+      );
     };
     fn().catch(e => {
       setInfo(`Failed to load signer data. (${e.message})`);
