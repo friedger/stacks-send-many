@@ -11,6 +11,7 @@ import {
   makeStandardSTXPostCondition,
   noneCV,
   PostConditionMode,
+  principalCV,
   PrincipalCV,
   someCV,
   standardPrincipalCV,
@@ -261,7 +262,8 @@ export function SendManyInputContainer({
         const feesInTokens = asset === 'not' ? TX_FEE_IN_NOT : TX_FEE_IN_SBTC_SATS;
         const body = { tx: data.txRaw, feesInTokens, network: 'mainnet' };
         console.log(body);
-        fetch(`https://sponsoring.friedger.workers.dev/${asset}/v1/sponsor`, {
+        const host = 'https://sponsoring.friedger.workers.dev';
+        fetch(`${host}/${asset}/v1/sponsor`, {
           method: 'POST',
           body: JSON.stringify(body),
           headers: { 'Content-Type': 'text/plain' },
@@ -461,6 +463,47 @@ export function SendManyInputContainer({
           };
         }
         break;
+      case 'sbtc':
+        assetInfo = SUPPORTED_ASSETS[asset].assets?.[network];
+        if (assetInfo) {
+          const [contractId, assetName] = assetInfo.asset.split('::');
+          const [address, name] = contractId.split('.');
+          // use native function
+          ({ address: contractAddress, name: contractName } = { address, name });
+
+          options = {
+            contractAddress: contractAddress,
+            contractName: contractName,
+            functionName: 'transfer-many',
+            functionArgs: [
+              listCV(
+                nonEmptyParts.map(p => {
+                  return tupleCV({
+                    to: p.toCV!,
+                    sender: principalCV(ownerStxAddress),
+                    amount: uintCV(p.ustx),
+                    memo: hasMemos
+                      ? firstMemoForAll
+                        ? someCV(bufferCVFromString(firstMemo))
+                        : p.memo
+                          ? someCV(bufferCVFromString(p.memo.trim()))
+                          : noneCV()
+                      : noneCV(),
+                  });
+                })
+              ),
+            ],
+            postConditions: [
+              makeStandardFungiblePostCondition(
+                ownerStxAddress,
+                FungibleConditionCode.Equal,
+                total,
+                createAssetInfo(address, name, assetName)
+              ),
+            ],
+          };
+        }
+        break;
       default:
         assetInfo = SUPPORTED_ASSETS[asset].assets?.[network];
         if (assetInfo) {
@@ -476,7 +519,7 @@ export function SendManyInputContainer({
           options = {
             contractAddress: contractAddress,
             contractName: contractName,
-            functionName: asset === 'sbtc' ? 'transfer-many' : 'send-many',
+            functionName: 'send-many',
             functionArgs: [
               listCV(
                 nonEmptyParts.map(p => {
