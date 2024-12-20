@@ -119,8 +119,8 @@ export const SUPPORTED_ASSETS: {
   },
   sbtc: {
     name: 'Wrapped BTC (sBTC)',
-    shortName: '$SBTC',
-    symbol: '₿',
+    shortName: '$sBTC',
+    symbol: 's₿',
     decimals: 8,
     assets: {
       mainnet: {

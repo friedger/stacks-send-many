@@ -258,10 +258,12 @@ export function SendManyInputContainer({
       console.log({ data });
       if (data.stacksTransaction?.auth.authType === AuthType.Sponsored) {
         setStatus('Sending tx to sponsor');
-        console.log({ tx: data.txRaw, feesInNot: TX_FEE_IN_NOT, network: 'mainnet' });
-        fetch('https://sponsoring.friedger.workers.dev/not/v1/sponsor', {
+        const feesInTokens = asset === 'not' ? TX_FEE_IN_NOT : TX_FEE_IN_SBTC_SATS;
+        const body = { tx: data.txRaw, feesInTokens, network: 'mainnet' };
+        console.log(body);
+        fetch(`https://sponsoring.friedger.workers.dev/${asset}/v1/sponsor`, {
           method: 'POST',
-          body: JSON.stringify({ tx: data.txRaw, feesInNot: TX_FEE_IN_NOT, network: 'mainnet' }),
+          body: JSON.stringify(body),
           headers: { 'Content-Type': 'text/plain' },
         })
           .then(response => {
@@ -462,7 +464,7 @@ export function SendManyInputContainer({
       default:
         assetInfo = SUPPORTED_ASSETS[asset].assets?.[network];
         if (assetInfo) {
-          const [contractId, asset] = assetInfo.asset.split('::');
+          const [contractId, assetName] = assetInfo.asset.split('::');
           const [address, name] = contractId.split('.');
           if (assetInfo.sendManyContract) {
             // use send-many contract
@@ -474,7 +476,7 @@ export function SendManyInputContainer({
           options = {
             contractAddress: contractAddress,
             contractName: contractName,
-            functionName: 'send-many',
+            functionName: asset === 'sbtc' ? 'transfer-many' : 'send-many',
             functionArgs: [
               listCV(
                 nonEmptyParts.map(p => {
@@ -497,7 +499,7 @@ export function SendManyInputContainer({
                 ownerStxAddress,
                 FungibleConditionCode.Equal,
                 total,
-                createAssetInfo(address, name, asset)
+                createAssetInfo(address, name, assetName)
               ),
             ],
           };
@@ -531,6 +533,8 @@ export function SendManyInputContainer({
 
   const NOT_SPONSOR = 'SPM1NE6JPN9V1019930579E7EZ58FYKMD17J7RS';
   const TX_FEE_IN_NOT = '10000';
+  const TX_FEE_IN_SBTC = '0.000001';
+  const TX_FEE_IN_SBTC_SATS = '100';
 
   const cloneAndAddFees = (rows: Row[]) => {
     const newRows = new Array(...rows);
@@ -541,6 +545,8 @@ export function SendManyInputContainer({
   const feesRow = (asset: string): Row => {
     if (asset === 'not') {
       return { to: NOT_SPONSOR, stx: TX_FEE_IN_NOT, memo: 'fees' };
+    } else if (asset === 'sbtc') {
+      return { to: NOT_SPONSOR, stx: TX_FEE_IN_SBTC, memo: 'fees' };
     } else {
       throw new Error(`unsupported asset ${asset}`);
     }
@@ -631,7 +637,7 @@ export function SendManyInputContainer({
             </label>
           </div>
         </div>
-        {asset === 'not' && (
+        {(asset === 'not' || asset === 'sbtc') && (
           <div className="row">
             <div className="col-md-12 col-xs-12 col-lg-12 text-right pb-2">
               <input
@@ -645,7 +651,7 @@ export function SendManyInputContainer({
                 checked={useAssetForFees}
               />
               <label className="form-check-label" htmlFor="useAssetForFees">
-                Pay fees in NOT
+                Pay fees in {SUPPORTED_ASSETS[asset].shortName}?
               </label>
             </div>
           </div>
