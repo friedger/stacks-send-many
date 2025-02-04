@@ -34,7 +34,7 @@ import toAscii from 'punycode2/to-ascii';
 import { useSearchParams } from 'react-router-dom';
 import { fetchAccount } from '../lib/account';
 import { useConnect } from '../lib/auth';
-import { chains, Contract, NETWORK, SUPPORTED_ASSETS, SupportedSymbols } from '../lib/constants';
+import { chains, Contract, deployer, NETWORK, SUPPORTED_ASSETS, SupportedSymbols } from '../lib/constants';
 import { getProvider } from '../lib/getProvider';
 import { useWalletConnect } from '../lib/hooks';
 import { getNameInfo } from '../lib/names';
@@ -403,7 +403,7 @@ export function SendManyInputContainer({
     console.log({ asset });
     switch (asset) {
       case 'stx':
-        contractAddress = SUPPORTED_ASSETS.stx.sendManyContractsAddress?.[network];
+        contractAddress = deployer || SUPPORTED_ASSETS.stx.sendManyContractsAddress?.[network];
         if (contractAddress) {
           options = {
             contractAddress: contractAddress,
@@ -414,12 +414,12 @@ export function SendManyInputContainer({
                 nonEmptyParts.map(p => {
                   return hasMemos
                     ? tupleCV({
-                        to: p.toCV!,
-                        ustx: uintCV(p.ustx),
-                        memo: bufferCVFromString(
-                          firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : ''
-                        ),
-                      })
+                      to: p.toCV!,
+                      ustx: uintCV(p.ustx),
+                      memo: bufferCVFromString(
+                        firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : ''
+                      ),
+                    })
                     : tupleCV({ to: p.toCV!, ustx: uintCV(p.ustx) });
                 })
               ),
@@ -711,9 +711,8 @@ export function SendManyInputContainer({
             <div
               ref={spinner}
               role="status"
-              className={`${
-                loading ? '' : 'd-none'
-              } spinner-border spinner-border-sm text-info align-text-top mr-2`}
+              className={`${loading ? '' : 'd-none'
+                } spinner-border spinner-border-sm text-info align-text-top mr-2`}
             />
             {namesResolved ? 'Send' : 'Preview'}
           </button>

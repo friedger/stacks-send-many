@@ -1,11 +1,11 @@
-import { useCallback } from 'react';
-import { AppConfig, UserSession } from '@stacks/connect-react';
 import { AuthOptions, UserData, showConnect } from '@stacks/connect';
-import { authOrigin, chains } from './constants';
-import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { AppConfig, UserSession } from '@stacks/connect-react';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import Client from '@walletconnect/sign-client';
 import { SessionTypes } from '@walletconnect/types';
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useCallback } from 'react';
+import { chains } from './constants';
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);
 export const userSessionState = atom(new UserSession({ appConfig }));
@@ -32,7 +32,6 @@ export const useConnect = () => {
   const [authenticated, setAuthenticated] = useAtom(authenticatedState);
 
   const authOptions: AuthOptions = {
-    authOrigin: authOrigin,
     onFinish: payload => {
       setAuthResponse(payload.authResponse);
       setAuthenticated(true);

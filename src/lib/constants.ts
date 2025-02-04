@@ -12,19 +12,17 @@ export const localMocknet = !testnet && window.location.search.includes('mocknet
 export const mainnet =
   (!testnet && !localMocknet) || window.location.search.includes('chain=mainnet');
 
+// get deployer parameter value from window.location.search
+const params = new URLSearchParams(window.location.search);
+export const deployer = params.get('deployer');
+
 export const chains = mainnet ? ['stacks:1'] : ['stacks:2147483648'];
 export const chainSuffix = `?chain=${mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet'}`;
-export const beta = window.location.search.includes('authorigin=beta');
 export const localNode = localMocknet;
 export const localAuth = false;
 export const mocknet = localMocknet;
 
-console.log({ localNode, localAuth, beta, mocknet, testnet, mainnet });
-export const authOrigin = localAuth
-  ? 'http://localhost:8080'
-  : beta
-    ? 'https://pr-725.app.stacks.engineering/'
-    : 'https://app.blockstack.org';
+console.log({ localNode, localAuth, mocknet, testnet, mainnet });
 
 export const CONTRACT_ADDRESS = mocknet
   ? 'STB44HYPYAT2BB2QE513NSP81HTMYWBJP02HPGK6' //ADDR1 from Stacks.toml
