@@ -12,10 +12,6 @@ export const localMocknet = !testnet && window.location.search.includes('mocknet
 export const mainnet =
   (!testnet && !localMocknet) || window.location.search.includes('chain=mainnet');
 
-// get deployer parameter value from window.location.search
-const params = new URLSearchParams(window.location.search);
-export const deployer = params.get('deployer');
-
 export const chains = mainnet ? ['stacks:1'] : ['stacks:2147483648'];
 export const chainSuffix = `?chain=${mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet'}`;
 export const localNode = localMocknet;

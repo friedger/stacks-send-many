@@ -19,6 +19,7 @@ import {
   tupleCV,
   TxBroadcastResult,
   uintCV,
+  validateStacksAddress,
 } from '@stacks/transactions';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -34,7 +35,7 @@ import toAscii from 'punycode2/to-ascii';
 import { useSearchParams } from 'react-router-dom';
 import { fetchAccount } from '../lib/account';
 import { useConnect } from '../lib/auth';
-import { chains, Contract, deployer, NETWORK, SUPPORTED_ASSETS, SupportedSymbols } from '../lib/constants';
+import { chains, Contract, NETWORK, SUPPORTED_ASSETS, SupportedSymbols } from '../lib/constants';
 import { getProvider } from '../lib/getProvider';
 import { useWalletConnect } from '../lib/hooks';
 import { getNameInfo } from '../lib/names';
@@ -113,8 +114,15 @@ export function SendManyInputContainer({
   const [firstMemoForAll, setFirstMemoForAll] = useState(false);
   const [useAssetForFees, setUseAssetsForFees] = useState(false);
   const [uriSearchParams, setUriSearchParams] = useSearchParams();
+  const [deployer, setDeployer] = useState<string | undefined>(undefined);
 
   useEffect(() => {
+    // get deployer parameter
+    const deployerString = uriSearchParams.get('deployer');
+    if (deployerString && validateStacksAddress(deployerString)) {
+      setDeployer(deployerString);
+    }
+
     const params = uriSearchParams.getAll('recipient');
     if (!params.length) {
       return;
