@@ -1,10 +1,22 @@
 # stacks-send-many
 
-UI for send-many contract
+UI for sending tokens to many recipients at the same time using the `transfer-many` of the token contract or special `send-many` contracts.
 
 ## URL format
 
-if you want to use a quick url, just add one or many recipient params like this:
+## Tokens
+
+Each token has its own path like `https://sendstx.com/not`, `https://sendstx.com/sbtc`, etc.
+
+For stx transfers use just `https://sendstx.com/`
+
+## Chains
+
+You can add `?chain=testnet` for transactions on testnet.
+
+### Recipients
+
+If you want to use a quick url, just add one or many recipient params like this:
 
 ```ts
 const params = new URLSearchParams([
@@ -19,5 +31,3 @@ const sendSTXURL = `https://sendstx.com/not?${params.toString()}`;
 // This produces
 // https://sendstx.com/not?recipient=SP1...MZ%2C1000%2C%22thanks%2C+love+you%22&recipient=hz.btc%2C1000%2C%22shokran%22&recipient=friedger.btc%2C1000%2C%22danke%22
 ```
-
-Where recipient
