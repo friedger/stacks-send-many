@@ -1,14 +1,13 @@
-import { Connect } from '@stacks/connect-react';
 import Client from '@walletconnect/sign-client';
-import { useAtom, useSetAtom } from 'jotai';
-import React, { useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { useEffect } from 'react';
+import { RouterProvider } from 'react-router-dom';
 import Auth from './components/Auth';
 import { Network } from './components/Network';
 import { Rate } from './components/Rate';
-import { appMetaData, useConnect, userDataState, wcClientState } from './lib/auth';
-import metaverse from './styles/metaverse.png';
-import { RouterProvider } from 'react-router-dom';
+import { appMetaData, wcClientState } from './lib/auth';
 import { router } from './router';
+import metaverse from './styles/metaverse.png';
 
 /* global BigInt */
 BigInt.prototype.toJSON = function () {
@@ -22,16 +21,7 @@ const styles = {
 };
 
 export default function App() {
-  const { authOptions, userSession } = useConnect();
-  const setUserData = useSetAtom(userDataState);
   const [wcClient, setWcClient] = useAtom(wcClientState);
-  useEffect(() => {
-    if (userSession?.isUserSignedIn()) {
-      setUserData(userSession.loadUserData());
-    } else if (userSession.isSignInPending()) {
-      userSession.handlePendingSignIn();
-    }
-  }, [userSession, setUserData]);
 
   useEffect(() => {
     const f = async () => {
@@ -56,7 +46,7 @@ export default function App() {
   }, [wcClient, setWcClient]);
 
   return (
-    <Connect authOptions={authOptions}>
+    <>
       <nav className="navbar sticky-top navbar-dark text-light p-2" style={styles}>
         <a className="navbar-brand" href="/">
           <img src="/stacks.png" width="100" alt="Logo" />
@@ -70,6 +60,6 @@ export default function App() {
       </nav>
 
       <RouterProvider router={router} />
-    </Connect>
+    </>
   );
 }

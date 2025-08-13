@@ -1,10 +1,10 @@
-import { AddressBalanceResponse } from '@stacks/stacks-blockchain-api-types';
 import * as jdenticon from 'jdenticon';
 import { useEffect, useRef, useState } from 'react';
 import { fetchAccount } from '../lib/account';
 import { SupportedSymbols } from '../lib/constants';
 import { Address } from './Address';
 import { Amount } from './Amount';
+import { AccountBalanceResponse } from '../lib/types';
 
 function Jdenticon({ value, size }: { value: string; size: number }) {
   const icon = useRef<SVGSVGElement>(null);
@@ -26,7 +26,7 @@ export function Profile({
   assetId?: string;
 }) {
   const [profileState, setProfileState] = useState<{
-    account?: AddressBalanceResponse;
+    account?: AccountBalanceResponse;
   }>({
     account: undefined,
   });
@@ -61,15 +61,12 @@ export function Profile({
                 className="font-weight-bold balance"
                 asset="stx"
                 amount={+profileState.account.stx.balance}
-                // ustx={+profileState.account.stx.balance}
               />
               <br />
               <Amount
                 className="font-weight-light balance"
                 amount={+profileState.account.stx.locked}
                 asset="stx"
-
-                // ustx={profileState.account.stx.locked}
               />{' '}
               (locked)
             </>

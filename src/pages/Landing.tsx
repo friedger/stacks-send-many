@@ -1,5 +1,7 @@
-import { useConnect, useWcConnect } from '../lib/auth';
-import { SupportedSymbols } from '../lib/constants';
+import { useWcConnect } from '../lib/auth';
+import { useStacksConnection } from '../lib/hooks';
+import { FALLBACK_ROUTE, SupportedSymbols } from '../lib/constants';
+import { useNavigate } from 'react-router-dom';
 
 // Landing page demonstrating Blockstack connect for registration
 
@@ -9,8 +11,9 @@ export default function Landing({
   // asset: 'walletConnect' | 'blockstack' | 'not' | 'wmno';
   asset?: SupportedSymbols;
 }) {
-  const { handleOpenAuth } = useConnect();
   const { handleWcOpenAuth, isWcReady } = useWcConnect();
+  const { connectWallet } = useStacksConnection();
+  const navigate = useNavigate();
   return (
     <div className="Landing">
       <div className="jumbotron jumbotron-fluid pt-3 mb-0">
@@ -69,7 +72,11 @@ export default function Landing({
               </div>
 
               <p className="card-link mb-5">
-                <button className="btn btn-outline-primary" type="button" onClick={handleOpenAuth}>
+                <button className="btn btn-outline-primary" type="button" onClick={() =>
+                  connectWallet().then(() => {
+                    console.log("connected", asset);
+                    navigate(asset ? `/${asset}` : FALLBACK_ROUTE)
+                  })}>
                   Start now with Stacks Wallet
                 </button>
                 <button
@@ -89,6 +96,6 @@ export default function Landing({
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

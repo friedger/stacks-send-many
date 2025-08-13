@@ -1,37 +1,29 @@
-import { AddressBalanceResponse } from '@stacks/stacks-blockchain-api-types';
-import {
-  addressFromPublicKeys,
-  AddressHashMode,
-  AddressVersion,
-  createStacksPrivateKey,
-  getPublicKey,
-} from '@stacks/transactions';
-import { accountsApi, mocknet, STACKS_API_ACCOUNTS_URL, testnet } from './constants';
-
-export function getStacksAccount(appPrivateKey: string) {
-  const privateKey = createStacksPrivateKey(appPrivateKey);
-  const publicKey = getPublicKey(privateKey);
-  const address = addressFromPublicKeys(
-    testnet || mocknet ? AddressVersion.TestnetSingleSig : AddressVersion.MainnetSingleSig,
-    AddressHashMode.SerializeP2PKH,
-    1,
-    [publicKey]
-  );
-  return { privateKey, address };
-}
+import { accountsApi, STACKS_API_ACCOUNTS_URL } from './constants';
+import { AccountBalanceResponse } from './types';
 
 /**
  * Uses the AccountsApi of the stacks blockchain api client library,
  * returns the stacks balance object with property `balance` in decimal.
  */
-export async function fetchAccount(addressAsString: string) {
+export async function fetchAccount(addressAsString: string): Promise<AccountBalanceResponse> {
   console.log(`Checking account "${addressAsString}"`);
   if (!addressAsString) {
     throw new Error('Address is undefined');
   }
-  return accountsApi.getAccountBalance({
-    principal: addressAsString,
-  }) as Promise<AddressBalanceResponse>;
+  return accountsApi
+    .GET('/extended/v1/address/{principal}/balances', {
+      params: {
+        path: {
+          principal: addressAsString,
+        },
+      },
+    })
+    .then(response => {
+      if (response.error) {
+        throw new Error(`Failed to fetch account: ${response.error}`);
+      }
+      return response.data!;
+    });
 }
 
 /**

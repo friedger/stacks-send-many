@@ -33,6 +33,7 @@ export function SendManyInput({
           <div className="form-label-group">
             <input
               ref={to}
+              id={`wallet-address-${index}`}
               value={row.to}
               onChange={e => updateModel(getRow())}
               placeholder={``}
@@ -41,13 +42,14 @@ export function SendManyInput({
               required
               autoFocus={lastRow}
             />
-            <label>Wallet Address #{index + 1}</label>
+            <label htmlFor={`wallet-address-${index}`}>Wallet Address #{index + 1}</label>
           </div>
         </div>
         <div className="col-md-4 col-xs-4 col-lg-4">
           <div className="form-label-group">
             <input
               ref={stxValue}
+              id={`amount-${index}`}
               value={row.stx}
               onChange={e => updateModel(getRow())}
               placeholder={``}
@@ -55,13 +57,14 @@ export function SendManyInput({
               className="form-control"
               required
             />
-            <label>Amount #{index + 1}</label>
+            <label htmlFor={`amount-${index}`}>Amount #{index + 1}</label>
           </div>
         </div>
         <div className="col-md-3 col-xs-3 col-lg-3">
           <div className="form-label-group">
             <input
               ref={memo}
+              id={`memo-${index}`}
               value={row.memo}
               onChange={e => updateModel(getRow())}
               placeholder={``}
@@ -73,7 +76,7 @@ export function SendManyInput({
                 if (e.key === 'Enter') maybeAddNewRow();
               }}
             />
-            <label>Memo #{index + 1}</label>
+            <label htmlFor={`memo-${index}`}>Memo #{index + 1}</label>
           </div>
         </div>
       </div>

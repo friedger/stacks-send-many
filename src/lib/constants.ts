@@ -1,11 +1,5 @@
-import {
-  AccountsApi,
-  Configuration,
-  InfoApi,
-  SmartContractsApi,
-  TransactionsApi,
-} from '@stacks/blockchain-api-client';
-import { StacksDevnet, StacksMainnet, StacksNetworkName, StacksTestnet } from '@stacks/network';
+import { createClient } from '@stacks/blockchain-api-client';
+import { StacksNetworkName } from '@stacks/network';
 
 export const testnet = window.location.search.includes('chain=testnet');
 export const localMocknet = !testnet && window.location.search.includes('mocknet=local');
@@ -32,6 +26,8 @@ export const SBTC_CONTRACT = {
   address: 'ST3VA3Y7A2YQ8GW69T0N1ERPAD784R1Y2YHCSNJHH',
   name: 'asset',
 };
+
+export const FALLBACK_ROUTE = '/sbtc';
 
 export type Contract = { address: string; name: string };
 
@@ -337,18 +333,14 @@ export const STACKS_API_WS_URL = localNode
     : 'wss://api.testnet.hiro.so/';
 export const STACKS_API_ACCOUNTS_URL = `${STACK_API_URL}/v2/accounts`;
 
-export const NETWORK = localNode
-  ? new StacksDevnet()
-  : mainnet
-    ? new StacksMainnet()
-    : new StacksTestnet();
+export const NETWORK: StacksNetworkName = localNode ? 'devnet' : mainnet ? 'mainnet' : 'testnet';
 
 // mainnet ? new StacksMainnet() : new StacksTestnet();
 // NETWORK.coreApiUrl = STACK_API_URL;
 
 const basePath = STACK_API_URL;
-const config = new Configuration({ basePath });
-export const accountsApi = new AccountsApi(config);
-export const smartContractsApi = new SmartContractsApi(config);
-export const transactionsApi = new TransactionsApi(config);
-export const infoApi = new InfoApi(config);
+const client = createClient({ baseUrl: basePath });
+export const accountsApi = client;
+export const smartContractsApi = client;
+export const transactionsApi = client;
+export const infoApi = client;

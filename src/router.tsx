@@ -1,27 +1,21 @@
+import { isConnected } from '@stacks/connect';
 import React from 'react';
-import { Outlet, Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
+import { Navigate, Outlet, Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
 import { SUPPORTED_SYMBOLS } from './lib/constants';
-import { useStxAddresses } from './lib/hooks';
-import FulfillmentSBtc from './pages/FulfillmentSBtc';
 import Landing from './pages/Landing';
 import SendMany from './pages/SendMany';
-import SendManyAdvocates from './pages/SendManyAdvocates';
 import SendManyCyclePayout from './pages/SendManyCyclePayout';
 import SendManyDetails from './pages/SendManyDetails';
 import SendManyLisaVault from './pages/SendManyLisaVault';
 import SendManyTransferDetails from './pages/SendManyTransferDetails';
-function RequireAuth({ children }: { children: JSX.Element | JSX.Element[] }) {
-  const { ownerStxAddress } = useStxAddresses();
 
-  if (!ownerStxAddress) {
-    // Redirect them to the /login page, but save the current location they were
-    // trying to go to when they were redirected. This allows us to send them
-    // along to that page after they login, which is a nicer user experience
-    // than dropping them off on the home page.
-    return <Landing />;
+function RequireAuth({ children }: { children: JSX.Element | JSX.Element[] }) {
+  if (!isConnected()) {
+    // Redirect to landing page when not authenticated
+    return <Navigate to="/landing" replace />;
   }
 
-  return children;
+  return <>{children}</>;
 }
 function AppBody(props: React.PropsWithChildren) {
   return (
@@ -31,19 +25,19 @@ function AppBody(props: React.PropsWithChildren) {
   );
 }
 function createRouter() {
-  // const { ownerStxAddress } = useStxAddresses();
-  // const { wcSession } = useWalletConnect();
-  // const { client, isWcReady } = useWcConnect();
-  // const { userSession } = useConnect();
-
-  // console.log({ ownerStxAddress, wcSession, client, wcReady: isWcReady() });
   return createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<AppBody />}>
-        {SUPPORTED_SYMBOLS.map(asset => {
+        {/* Landing page routes */}
+        <Route path="/landing/:asset?" element={<Landing />} />
+        <Route path="/landing" element={<Landing />} />
+
+        {/* Protected routes */}
+        {SUPPORTED_SYMBOLS.map((asset, index) => {
           return (
             <Route
               path={asset === 'stx' ? '/' : `/${asset}`}
+              key={index}
               element={
                 <RequireAuth>
                   <SendMany asset={asset} />
@@ -54,19 +48,37 @@ function createRouter() {
         })}
 
         <Route
-          path="/sbtc-bridge/:assetContract/:sendManyContract"
+          path="/lisa-vault"
           element={
             <RequireAuth>
-              <FulfillmentSBtc />
+              <SendManyLisaVault />
             </RequireAuth>
           }
         />
-        <Route path="/landing/:asset?" element={<Landing />} />
-        <Route path="/lisa-vault" element={<SendManyLisaVault />} />
-        <Route path="/cycle/:cycleId" element={<SendManyCyclePayout />} />
-        <Route path="/advocates/:payoutId" element={<SendManyAdvocates />} />
-        <Route path="/txid/:txId" element={<SendManyDetails />} />
-        <Route path="/txid/:txId/:eventIndex" element={<SendManyTransferDetails />} />
+        <Route
+          path="/cycle/:cycleId"
+          element={
+            <RequireAuth>
+              <SendManyCyclePayout />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/txid/:txId"
+          element={
+            <RequireAuth>
+              <SendManyDetails />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/txid/:txId/:eventIndex"
+          element={
+            <RequireAuth>
+              <SendManyTransferDetails />
+            </RequireAuth>
+          }
+        />
       </Route>
     )
   );

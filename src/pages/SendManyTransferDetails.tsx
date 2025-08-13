@@ -1,7 +1,6 @@
 import React from 'react';
 import { SendManyTransfer } from '../components/SendManyTransfer';
 
-import { useConnect } from '../lib/auth';
 
 export default function SendManyTransferDetails({
   txId,
@@ -10,7 +9,6 @@ export default function SendManyTransferDetails({
   txId?: string;
   eventIndex?: number;
 }) {
-  const { userSession } = useConnect();
 
   return (
     <main className="panel-welcome mt-5 container">
@@ -22,8 +20,7 @@ export default function SendManyTransferDetails({
           <SendManyTransfer
             txId={txId!}
             eventIndex={eventIndex!}
-            // ownerStxAddress={ownerStxAddress}
-            userSession={userSession}
+          // ownerStxAddress={ownerStxAddress}
           />
         </div>
       </div>

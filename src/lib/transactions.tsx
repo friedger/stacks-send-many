@@ -1,6 +1,6 @@
-import { TransactionEventsResponse, connectWebSocketClient } from '@stacks/blockchain-api-client';
-import { FinishedTxData, UserSession } from '@stacks/connect';
-import { Storage } from '@stacks/storage';
+
+import { connectWebSocketClient, OperationResponse } from '@stacks/blockchain-api-client';
+import { FinishedTxData } from '@stacks/connect';
 import { hexToCV as stacksHexToCV } from '@stacks/transactions';
 import { useEffect, useState } from 'react';
 import {
@@ -12,24 +12,71 @@ import {
   testnet,
   transactionsApi,
 } from './constants';
+import { ConfirmedTransactionStatus, MempoolTransactionStatus, Transaction, TransactionEvent, TransactionEventStxAsset, TransactionStatus, TransactionWithEvents } from './types';
 
-import {
-  ContractCallTransaction,
-  MempoolContractCallTransaction,
-  MempoolTransaction,
-  MempoolTransactionStatus,
-  TransactionEvent,
-  type Transaction,
-  type TransactionEventStxAsset,
-} from '@stacks/stacks-blockchain-api-types';
+
+// Create runtime array from the derived type using a type-safe approach
+const confirmedStatuses: readonly ConfirmedTransactionStatus[] = [
+  'success',
+  'abort_by_response',
+  'abort_by_post_condition'
+] as const;
+
+// Function to get mempool statuses dynamically (for runtime iteration)
+function getMempoolStatuses(): MempoolTransactionStatus[] {
+  // This ensures if new statuses are added to the library, they will be included
+  const allPossibleStatuses: TransactionStatus[] = [
+    'success',
+    'abort_by_response',
+    'abort_by_post_condition',
+    'pending',
+    'dropped_replace_by_fee',
+    'dropped_replace_across_fork',
+    'dropped_too_expensive',
+    'dropped_stale_garbage_collect',
+    'dropped_problematic'
+  ];
+
+  return allPossibleStatuses.filter(
+    (status): status is MempoolTransactionStatus =>
+      !confirmedStatuses.includes(status as ConfirmedTransactionStatus)
+  );
+}
+
+// Use the derived statuses for runtime checks
+const mempoolStatuses = getMempoolStatuses();
+
+// Local storage helper functions to replace Stacks Storage
+const getLocalStorageKey = (stxAddress: string, filename: string) => {
+  return `stacks-send-many-${stxAddress}-${filename}`;
+};
+
+const getFromLocalStorage = (key: string): string | null => {
+  try {
+    return localStorage.getItem(key);
+  } catch (e) {
+    console.log('Error reading from localStorage:', e);
+    return null;
+  }
+};
+
+const setInLocalStorage = (key: string, value: string): void => {
+  try {
+    localStorage.setItem(key, value);
+  } catch (e) {
+    console.log('Error writing to localStorage:', e);
+  }
+};
+
 interface Subscription {
   unsubscribe(): Promise<void>;
 }
+
 export type StoredTx = {
   data: {
     txId: string;
   };
-  apiData?: Transaction | (MempoolTransaction & { events: TransactionEvent[] });
+  apiData?: Transaction | TransactionWithEvents;
 };
 // export function resultToStatus(result) {
 //   if (result && !result.error && result.startsWith('"') && result.length === 66) {
@@ -78,13 +125,15 @@ const indexFileName = mainnet
 
 export async function saveTxData(
   data: Pick<FinishedTxData, 'txId'> & Partial<FinishedTxData>,
-  userSession: UserSession
+  stxAddress: string
 ) {
   console.log(jsonStringify(data));
-  const storage = new Storage({ userSession });
+  const indexKey = getLocalStorageKey(stxAddress, indexFileName);
+  const txKey = getLocalStorageKey(stxAddress, `txs/${data.txId}.json`);
+
   let indexArray;
   try {
-    const indexFile = await storage.getFile(indexFileName);
+    const indexFile = getFromLocalStorage(indexKey);
     if (typeof indexFile === 'string') {
       indexArray = JSON.parse(indexFile);
     }
@@ -93,21 +142,22 @@ export async function saveTxData(
     indexArray = [];
   }
   indexArray.push(data.txId);
-  await storage.putFile(indexFileName, jsonStringify(indexArray));
-  await storage.putFile(`txs/${data.txId}.json`, jsonStringify({ data }));
+  setInLocalStorage(indexKey, jsonStringify(indexArray));
+  setInLocalStorage(txKey, jsonStringify({ data }));
 }
 
-export async function getTxs(userSession: UserSession) {
-  const storage = new Storage({ userSession });
+export async function getTxs(stxAddress: string) {
+  const indexKey = getLocalStorageKey(stxAddress, indexFileName);
 
   let indexArray;
   const txs: StoredTx[] = [];
   try {
     let indexFile;
-    indexFile = await storage.getFile(indexFileName);
+    indexFile = getFromLocalStorage(indexKey);
+    console.log({ indexFile });
     indexArray = JSON.parse(indexFile as string);
     for (let txId of indexArray) {
-      const tx = await getTxWithStorage(txId, storage);
+      const tx = await getTxWithLocalStorage(txId, stxAddress);
       if (tx) {
         txs.push(tx);
       }
@@ -119,15 +169,15 @@ export async function getTxs(userSession: UserSession) {
   }
 }
 type TxFilter = (value: StoredTx) => boolean;
-export async function getTxsAsCSV(userSession: UserSession, filter: TxFilter) {
-  const txs = await getTxs(userSession);
+export async function getTxsAsCSV(stxAddress: string, filter: TxFilter) {
+  const txs = await getTxs(stxAddress);
   const txsAsCSV = txs
     .filter(tx => tx.apiData && tx.apiData.tx_status === 'success')
     .filter(filter)
     .reduce((result, tx) => {
       // casting to confirmed since it's checked anyway ⬆️
-      const txData = tx.apiData as Transaction;
-      const stxEvents = txData.events.filter(
+      const txData = tx.apiData as TransactionWithEvents;
+      const stxEvents = (txData.events || []).filter(
         e => e.event_type === 'stx_asset'
       ) as TransactionEventStxAsset[];
 
@@ -138,10 +188,8 @@ export async function getTxsAsCSV(userSession: UserSession, filter: TxFilter) {
           .reduce((eventResult, e) => {
             return (
               eventResult +
-              `${e.asset.recipient}, ${Number(e.asset.amount || 0) / 1000000}, ${
-                txData.burn_block_time_iso
-              }, https://explorer.hiro.so/txid/${
-                txData.tx_id
+              `${e.asset.recipient}, ${Number(e.asset.amount || 0) / 1000000}, ${txData.burn_block_time_iso
+              }, https://explorer.hiro.so/txid/${txData.tx_id
               }, https://stacks-send-many.pages.dev/txid/${txData.tx_id}${chainSuffix}\n`
             );
           }, '')
@@ -150,7 +198,7 @@ export async function getTxsAsCSV(userSession: UserSession, filter: TxFilter) {
   return txsAsCSV;
 }
 
-export async function getTxsAsJSON(userSession: UserSession, filter: TxFilter) {
+export async function getTxsAsJSON(stxAddress: string, filter: TxFilter) {
   type jsonTx = {
     recipient: string;
     amount: number;
@@ -158,12 +206,12 @@ export async function getTxsAsJSON(userSession: UserSession, filter: TxFilter) {
     explorer_url: string;
     send_many_url: string;
   };
-  const txs = await getTxs(userSession);
+  const txs = await getTxs(stxAddress);
   const txsAsJSON = txs
     .filter(tx => tx.apiData && tx.apiData.tx_status === 'success')
     .filter(filter)
     .reduce((result, tx) => {
-      const txData = tx.apiData as Transaction;
+      const txData = tx.apiData as TransactionWithEvents;
       const stxEvents = txData.events.filter(
         e => e.event_type === 'stx_asset'
       ) as TransactionEventStxAsset[];
@@ -184,9 +232,33 @@ export async function getTxsAsJSON(userSession: UserSession, filter: TxFilter) {
   return txsAsJSON;
 }
 
-async function getTxWithStorage(txId: string, storage: Storage) {
+async function getTxWithLocalStorage(txId: string, stxAddress: string): Promise<StoredTx> {
   try {
-    const txFile = await storage.getFile(`txs/${txId}.json`);
+    const txKey = getLocalStorageKey(stxAddress, `txs/${txId}.json`);
+    const txFile = getFromLocalStorage(txKey);
+    let tx: StoredTx;
+    if (!txFile) {
+      throw new Error(`No transaction file for ${txId}.`);
+    }
+
+    tx = JSON.parse(txFile as string);
+    if (!txFile || !tx.data) {
+      tx = { data: { txId } };
+    }
+    if (!tx.apiData || (tx.apiData as any).tx_status === 'pending') {
+      tx = await createTxWithApiData(txId, tx);
+    }
+    return tx;
+  } catch (e) {
+    console.log(e);
+
+    return createTxWithApiData(txId, { data: { txId } });
+  }
+}
+
+async function getTxWithStorage(txId: string) {
+  try {
+    const txFile = getFromLocalStorage(`txs/${txId}.json`);
     let tx: StoredTx;
     if (!txFile) {
       throw new Error(`No transaction file for ${txId}.`);
@@ -197,13 +269,13 @@ async function getTxWithStorage(txId: string, storage: Storage) {
       tx = { data: { txId } };
     }
     if (!tx.apiData || tx.apiData.tx_status === 'pending') {
-      tx = await createTxWithApiData(txId, tx, storage);
+      tx = await createTxWithApiData(txId, tx);
     }
     return tx;
   } catch (e) {
     console.log(e);
 
-    return createTxWithApiData(txId, { data: { txId } }, storage);
+    return createTxWithApiData(txId, { data: { txId } });
   }
 }
 
@@ -211,25 +283,15 @@ async function getTxWithoutStorage(txId: string) {
   return createTxWithApiData(txId, { data: { txId } });
 }
 
-const mempoolStatuses: MempoolTransactionStatus[] = [
-  'dropped_problematic',
-  'dropped_replace_across_fork',
-  'dropped_replace_by_fee',
-  'dropped_stale_garbage_collect',
-  'dropped_too_expensive',
-  'pending',
-];
-
-export async function getTx(txId: string, userSession: UserSession) {
-  if (userSession && userSession.isUserSignedIn()) {
-    const storage = new Storage({ userSession });
-    return getTxWithStorage(txId, storage);
+export async function getTx(txId: string, useCache: boolean = true) {
+  if (useCache) {
+    return getTxWithStorage(txId);
   } else {
     return getTxWithoutStorage(txId);
   }
 }
 
-function joinEvents(allEvents: TransactionEvent[], newEvents: TransactionEvent[]) {
+function joinEvents(allEvents: TransactionEvent[], newEvents: TransactionEvent[]): TransactionEvent[] {
   newEvents.forEach(event => {
     const pos = allEvents.findIndex(e => event.event_index === e.event_index);
     if (pos < 0) {
@@ -238,53 +300,61 @@ function joinEvents(allEvents: TransactionEvent[], newEvents: TransactionEvent[]
   });
   return allEvents;
 }
+
 async function createTxWithApiData(
   txId: string,
   tx: { data: { txId: string } },
-  storage?: Storage
-) {
+): Promise<StoredTx> {
+
   let eventOffset = 0;
   const eventLimit = 20;
   let events: TransactionEvent[] = [];
-  let apiData: ContractCallTransaction | MempoolContractCallTransaction;
+
+  let apiData: OperationResponse["/extended/v1/tx/{tx_id}"];
   let moreEvents = true;
   let lastEventsLength = 0;
 
-  apiData = (await transactionsApi.getTransactionById({
-    txId,
-    eventOffset,
-    eventLimit,
-    unanchored: true,
-  })) as ContractCallTransaction | MempoolContractCallTransaction;
+  let response = await transactionsApi.GET("/extended/v1/tx/{tx_id}", {
+    params: {
+      path: {
+        tx_id: txId,
+      },
+      query: {
+        unanchored: true,
+        event_limit: eventLimit,
+        event_offset: eventOffset,
+      },
+    }
+  });
+  if (!response || !response.data) {
+    return Promise.reject(new Error(`No transaction data for ${txId}.`, { cause: response.error }));
+  }
+
+  apiData = response.data as Transaction;
 
   const isOutOfMempool = mempoolStatuses.includes(apiData?.tx_status as MempoolTransactionStatus);
   if (!isOutOfMempool && apiData.tx_status === 'success') {
     console.log(apiData.events.length, apiData.event_count);
     moreEvents = apiData.events.length < apiData.event_count;
 
-    let eventsResponse: TransactionEventsResponse | undefined;
     while (moreEvents) {
-      /*
-      eventsResponse = await transactionsApi.getFilteredEvents({
-        txId: '76bfd6994e7d1aa74693fca166f5f0299485f4ba918c30e7260a8c073296f36b',
-        type: [
-          GetFilteredEventsTypeEnum.fungible_token_asset,
-          GetFilteredEventsTypeEnum.non_fungible_token_asset,
-          GetFilteredEventsTypeEnum.smart_contract_log,
-          GetFilteredEventsTypeEnum.stx_asset,
-          GetFilteredEventsTypeEnum.stx_lock,
-        ],
-        offset: eventOffset,
-        limit: eventLimit,
+      response = await transactionsApi.GET("/extended/v1/tx/{tx_id}", {
+        params: {
+          path: {
+            tx_id: txId,
+          },
+          query: {
+            unanchored: true,
+            event_limit: eventLimit,
+            event_offset: eventOffset,
+          },
+        }
       });
-      */
-      apiData = (await transactionsApi.getTransactionById({
-        txId,
-        eventOffset,
-        eventLimit,
-      })) as ContractCallTransaction;
 
-      console.log({ eventsResponse });
+      if (!response || !response.data) {
+        break;
+      }
+      apiData = response.data as TransactionWithEvents;
 
       const data = apiData;
       console.log(eventOffset, data.events.length, apiData.event_count);
@@ -295,13 +365,16 @@ async function createTxWithApiData(
       console.log(isOutOfMempool, events.length, apiData.event_count, lastEventsLength);
     }
   }
+
+  (apiData as TransactionWithEvents).events = events;
   const txWithApiData: StoredTx = {
     ...tx,
-    apiData: { ...(apiData as Transaction | MempoolTransaction), events },
+    apiData,
   };
 
-  if (storage && apiData?.tx_status !== 'pending') {
-    await storage.putFile(`txs/${txId}.json`, jsonStringify(txWithApiData));
+  if (apiData?.tx_status !== 'pending') {
+    // await storage.putFile(`txs/${txId}.json`, jsonStringify(txWithApiData));
+    setInLocalStorage(`txs/${txId}.json`, jsonStringify(txWithApiData));
   }
   return txWithApiData;
 }
@@ -309,7 +382,7 @@ async function createTxWithApiData(
 export function TxStatus({ txId, resultPrefix }: { txId?: string; resultPrefix?: string }) {
   const [processingResult, setProcessingResult] = useState<{
     loading: boolean;
-    result?: Transaction['tx_result'];
+    result?: { repr: string; hex: string } | undefined;
   }>({ loading: false });
 
   useEffect(() => {
@@ -322,7 +395,7 @@ export function TxStatus({ txId, resultPrefix }: { txId?: string; resultPrefix?:
     let sub: Subscription;
     const subscribe = async (
       txId: string,
-      update: (event: Transaction | MempoolTransaction) => void
+      update: (event: Transaction) => void
     ) => {
       try {
         const client = await connectWebSocketClient(STACKS_API_WS_URL);
@@ -339,13 +412,20 @@ export function TxStatus({ txId, resultPrefix }: { txId?: string; resultPrefix?:
 
     subscribe(txId, async event => {
       console.log(event);
-      let result;
+      let result: { repr: string; hex: string } | undefined = undefined;
       if (event.tx_status === 'pending') {
         return;
       } else if (event.tx_status === 'success') {
-        const tx = (await transactionsApi.getTransactionById({ txId })) as Transaction;
+        const tx = (await transactionsApi.GET("/extended/v1/tx/{tx_id}",
+          {
+            params: {
+              path: {
+                tx_id: txId,
+              },
+            }
+          }));
         console.log(tx);
-        result = tx.tx_result;
+        result = (tx.data as TransactionWithEvents).tx_result;
       } else if (event.tx_status.startsWith('abort')) {
         result = undefined;
       }
@@ -365,7 +445,7 @@ export function TxStatus({ txId, resultPrefix }: { txId?: string; resultPrefix?:
         <>
           Checking transaction status:{' '}
           <a href={`https://explorer.hiro.so/txid/${normalizedTxId}${chainSuffix}`}>
-            {normalizedTxId.substr(0, 10)}...
+            {normalizedTxId.substring(0, 10)}...
           </a>
         </>
       )}
@@ -377,9 +457,8 @@ export function TxStatus({ txId, resultPrefix }: { txId?: string; resultPrefix?:
       )}{' '}
       <div
         role="status"
-        className={`${
-          processingResult?.loading ? '' : 'd-none'
-        } spinner-border spinner-border-sm text-info align-text-top mr-2`}
+        className={`${processingResult?.loading ? '' : 'd-none'
+          } spinner-border spinner-border-sm text-info align-text-top mr-2`}
       />
     </>
   );

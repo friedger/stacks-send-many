@@ -1,9 +1,8 @@
-import React from 'react';
 import { chainSuffix } from '../lib/constants';
+import { StoredTx } from '../lib/transactions';
+import { TransactionEventStxAsset } from '../lib/types';
 import { Amount } from './Amount';
 import { TxEvent } from './TxEvent';
-import { StoredTx } from '../lib/transactions';
-import { TransactionEventStxAsset } from '@stacks/stacks-blockchain-api-types';
 export function Tx({
   tx,
   onDetailsPage,
@@ -27,9 +26,9 @@ export function Tx({
     window.location.href = `/txid/${txId}`;
   };
 
-  const txEvents = apiData?.events.filter(event => {
+  const txEvents = apiData?.tx_status === "success" ? apiData.events.filter(event => {
     return event.event_type === 'stx_asset';
-  }) as TransactionEventStxAsset[] | undefined;
+  }) as TransactionEventStxAsset[] : undefined;
   const total = txEvents?.reduce((sum, e) => sum + parseInt(e.asset.amount!), 0) || 0;
   return (
     <div className="small container">

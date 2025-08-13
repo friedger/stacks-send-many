@@ -1,15 +1,8 @@
 import { ClarityType } from '@stacks/transactions';
 import toUnicode from 'punycode2/to-unicode';
 import { useEffect, useMemo, useState } from 'react';
+import { hex_to_ascii } from '../lib/string-utils';
 import { getNameFromAddress } from '../lib/names';
-
-function hex_to_ascii(bytes: Uint8Array) {
-  var str = '';
-  for (var n = 0; n < bytes.length; n += 1) {
-    str += String.fromCharCode(bytes[n]);
-  }
-  return str;
-}
 
 export function Address({ addr }: { addr: string }) {
   const addressShort = useMemo(
@@ -23,12 +16,12 @@ export function Address({ addr }: { addr: string }) {
 
   useEffect(() => {
     getNameFromAddress(addr).then(data => {
-      if (data.type === ClarityType.ResponseOk && data.value.type === ClarityType.Tuple) {
-        const { name, namespace } = data.value.data;
+      if (data.type === ClarityType.ResponseOk && data.value.type === ClarityType.OptionalSome) {
+        const { name, namespace } = data.value.value.value;
 
-        const nameStr = hex_to_ascii(name.buffer);
+        const nameStr = hex_to_ascii(name.value);
         const namePunycodeStr = toUnicode(nameStr);
-        const namespaceStr = hex_to_ascii(namespace.buffer);
+        const namespaceStr = hex_to_ascii(namespace.value);
         setNameAscii(nameStr === namePunycodeStr ? undefined : `${nameStr}.${namespaceStr}`);
         setNameOrAddress(`${namePunycodeStr}.${namespaceStr}`);
       }

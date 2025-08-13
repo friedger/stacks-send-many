@@ -6,20 +6,14 @@ import { StoredTx, getTx } from '../lib/transactions';
 import { Address } from './Address';
 import { Tx } from './Tx';
 
-import { UserSession } from '@stacks/connect';
-import {
-  TransactionEventSmartContractLog,
-  TransactionEventStxAsset,
-} from '@stacks/stacks-blockchain-api-types';
 import { dateOfTx } from './SendManyTxList';
+import { TransactionEventSmartContractLog, TransactionEventStxAsset, TransactionWithEvents } from '../lib/types';
 
 export function SendManyTx({
   ownerStxAddress,
-  userSession,
   txId,
 }: {
   ownerStxAddress?: string;
-  userSession: UserSession;
   txId: string;
 }) {
   const spinner = useRef<HTMLDivElement>(null);
@@ -29,7 +23,7 @@ export function SendManyTx({
 
   useEffect(() => {
     setLoading(true);
-    getTx(txId, userSession)
+    getTx(txId)
       .then(async transaction => {
         setStatus(undefined);
         setTx(transaction);
@@ -40,11 +34,11 @@ export function SendManyTx({
         console.log(e);
         setLoading(false);
       });
-  }, [txId, userSession]);
+  }, [txId]);
 
   const txEvents =
     tx &&
-    tx.apiData &&
+    tx.apiData && tx.apiData.tx_status === 'success' &&
     tx.apiData.events.filter(event => {
       return event.event_type === 'stx_asset';
     });
@@ -64,12 +58,12 @@ export function SendManyTx({
     tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
   const memos = showMemo
     ? new Array(
-        ...new Set(
-          tx.apiData?.events
-            .filter((_, index) => index % 2 === 1)
-            .map(e => (e as TransactionEventSmartContractLog).contract_log.value.hex)
-        )
+      ...new Set(
+        (tx.apiData as TransactionWithEvents).events
+          .filter((_, index) => index % 2 === 1)
+          .map(e => (e as TransactionEventSmartContractLog).contract_log.value.hex)
       )
+    )
     : [];
   const showMemoPerRecipient = showMemo && memos.length > 1;
   return (
@@ -77,9 +71,8 @@ export function SendManyTx({
       <div
         ref={spinner}
         role="status"
-        className={`${
-          loading ? '' : 'd-none'
-        } spinner-border spinner-border-sm text-info align-text-top mr-2`}
+        className={`${loading ? '' : 'd-none'
+          } spinner-border spinner-border-sm text-info align-text-top mr-2`}
       />
       {tx && tx.apiData && (
         <div className="p-2 mx-n4 mt-2 mb-2 bg-light">
@@ -93,7 +86,7 @@ export function SendManyTx({
           </span>
           <br />
           {showMemo && !showMemoPerRecipient && (
-            <b>"{(hexToCV(memos[0]) as BufferCV).buffer.toString()}"</b>
+            <b>"{(hexToCV(memos[0]) as BufferCV).value}"</b>
           )}
           <div className="list-group m-2">
             <div className="list-group-item">
