@@ -1,14 +1,13 @@
+import { isConnected } from '@stacks/connect';
 import React from 'react';
 import { Navigate, Outlet, Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
 import { SUPPORTED_SYMBOLS } from './lib/constants';
-import { useStacksConnection, useStxAddresses } from './lib/hooks';
 import Landing from './pages/Landing';
 import SendMany from './pages/SendMany';
 import SendManyCyclePayout from './pages/SendManyCyclePayout';
 import SendManyDetails from './pages/SendManyDetails';
 import SendManyLisaVault from './pages/SendManyLisaVault';
 import SendManyTransferDetails from './pages/SendManyTransferDetails';
-import { isConnected } from '@stacks/connect';
 
 function RequireAuth({ children }: { children: JSX.Element | JSX.Element[] }) {
   if (!isConnected()) {
