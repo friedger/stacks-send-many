@@ -1,6 +1,6 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SendManyInputContainer } from '../components/SendManyInputContainer';
 
 // Mock the hooks and dependencies
@@ -213,63 +213,63 @@ describe('SendManyInputContainer CSV Paste Functionality', () => {
         expect(clipboardEvent.preventDefault).toHaveBeenCalled();
     });
 
-  it('should replace existing rows when pasting CSV data', async () => {
-    renderComponent();
-    
-    // First, check that we have the default input field and set a value
-    const addressInput = document.getElementById('wallet-address-0') as HTMLInputElement;
-    fireEvent.change(addressInput, { target: { value: 'SP1MANUAL' } });
-    
-    // Now paste CSV data - this should replace the existing rows
-    const pasteInput = screen.getByPlaceholderText('Paste entry list');
-    const csvData = 'SP1P72Z3704VMT3DMHPP2CB8TGQWGDBHD3RPR9GZS,1000\nSP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7,2000';
-    
-    const clipboardEvent = new Event('paste', { bubbles: true }) as any;
-    clipboardEvent.clipboardData = {
-      getData: vi.fn().mockReturnValue(csvData),
-    };
-    
-    fireEvent(pasteInput, clipboardEvent);
-    
-    await waitFor(() => {
-      // Manual entry should be gone, replaced by CSV data
-      expect(screen.queryByDisplayValue('SP1MANUAL')).not.toBeInTheDocument();
-      
-      // CSV data should be present
-      expect(screen.getByDisplayValue('SP1P72Z3704VMT3DMHPP2CB8TGQWGDBHD3RPR9GZS')).toBeInTheDocument();
-      expect(screen.getByDisplayValue('SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7')).toBeInTheDocument();
-    });
-  });
+    it('should replace existing rows when pasting CSV data', async () => {
+        renderComponent();
 
-  it('should handle CSV input gracefully without empty lines', async () => {
-    renderComponent();
-    
-    const pasteInput = screen.getByPlaceholderText('Paste entry list');
-    
-    // CSV with well-formed lines only (no empty lines to avoid undefined error)
-    const csvData = 'SP1P72Z3704VMT3DMHPP2CB8TGQWGDBHD3RPR9GZS,1000\nSP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7,2000';
-    
-    const clipboardEvent = new Event('paste', { bubbles: true }) as any;
-    clipboardEvent.clipboardData = {
-      getData: vi.fn().mockReturnValue(csvData),
-    };
-    
-    fireEvent(pasteInput, clipboardEvent);
-    
-    await waitFor(() => {
-      // Should have created exactly 2 rows - check by IDs
-      const walletInput1 = document.getElementById('wallet-address-0');
-      const walletInput2 = document.getElementById('wallet-address-1');
-      expect(walletInput1).toBeInTheDocument();
-      expect(walletInput2).toBeInTheDocument();
-      
-      // Valid entries should be present
-      expect(screen.getByDisplayValue('SP1P72Z3704VMT3DMHPP2CB8TGQWGDBHD3RPR9GZS')).toBeInTheDocument();
-      expect(screen.getByDisplayValue('SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7')).toBeInTheDocument();
-      expect(screen.getByDisplayValue('1000')).toBeInTheDocument();
-      expect(screen.getByDisplayValue('2000')).toBeInTheDocument();
+        // First, check that we have the default input field and set a value
+        const addressInput = document.getElementById('wallet-address-0') as HTMLInputElement;
+        fireEvent.change(addressInput, { target: { value: 'SP1MANUAL' } });
+
+        // Now paste CSV data - this should replace the existing rows
+        const pasteInput = screen.getByPlaceholderText('Paste entry list');
+        const csvData = 'SP1P72Z3704VMT3DMHPP2CB8TGQWGDBHD3RPR9GZS,1000\nSP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7,2000';
+
+        const clipboardEvent = new Event('paste', { bubbles: true }) as any;
+        clipboardEvent.clipboardData = {
+            getData: vi.fn().mockReturnValue(csvData),
+        };
+
+        fireEvent(pasteInput, clipboardEvent);
+
+        await waitFor(() => {
+            // Manual entry should be gone, replaced by CSV data
+            expect(screen.queryByDisplayValue('SP1MANUAL')).not.toBeInTheDocument();
+
+            // CSV data should be present
+            expect(screen.getByDisplayValue('SP1P72Z3704VMT3DMHPP2CB8TGQWGDBHD3RPR9GZS')).toBeInTheDocument();
+            expect(screen.getByDisplayValue('SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7')).toBeInTheDocument();
+        });
     });
-  });
+
+    it('should handle CSV input gracefully without empty lines', async () => {
+        renderComponent();
+
+        const pasteInput = screen.getByPlaceholderText('Paste entry list');
+
+        // CSV with well-formed lines only (no empty lines to avoid undefined error)
+        const csvData = 'SP1P72Z3704VMT3DMHPP2CB8TGQWGDBHD3RPR9GZS,1000\nSP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7,2000';
+
+        const clipboardEvent = new Event('paste', { bubbles: true }) as any;
+        clipboardEvent.clipboardData = {
+            getData: vi.fn().mockReturnValue(csvData),
+        };
+
+        fireEvent(pasteInput, clipboardEvent);
+
+        await waitFor(() => {
+            // Should have created exactly 2 rows - check by IDs
+            const walletInput1 = document.getElementById('wallet-address-0');
+            const walletInput2 = document.getElementById('wallet-address-1');
+            expect(walletInput1).toBeInTheDocument();
+            expect(walletInput2).toBeInTheDocument();
+
+            // Valid entries should be present
+            expect(screen.getByDisplayValue('SP1P72Z3704VMT3DMHPP2CB8TGQWGDBHD3RPR9GZS')).toBeInTheDocument();
+            expect(screen.getByDisplayValue('SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7')).toBeInTheDocument();
+            expect(screen.getByDisplayValue('1000')).toBeInTheDocument();
+            expect(screen.getByDisplayValue('2000')).toBeInTheDocument();
+        });
+    });
 
     it('should have proper accessibility labels for all inputs', () => {
         renderComponent();
