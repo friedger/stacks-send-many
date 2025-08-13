@@ -1,6 +1,6 @@
 import { useWcConnect } from '../lib/auth';
 import { useStacksConnection } from '../lib/hooks';
-import { SupportedSymbols } from '../lib/constants';
+import { FALLBACK_ROUTE, SupportedSymbols } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
 
 // Landing page demonstrating Blockstack connect for registration
@@ -75,7 +75,7 @@ export default function Landing({
                 <button className="btn btn-outline-primary" type="button" onClick={() =>
                   connectWallet().then(() => {
                     console.log("connected", asset);
-                    navigate(asset ? `/${asset}` : "/sbtc")
+                    navigate(asset ? `/${asset}` : FALLBACK_ROUTE)
                   })}>
                   Start now with Stacks Wallet
                 </button>

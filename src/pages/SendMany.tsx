@@ -1,5 +1,5 @@
 import { StacksNetworkName } from '@stacks/network';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Instructions } from '../components/Instructions';
 import { Profile } from '../components/Profile';
 import { SBTCInfo } from '../components/SBTCInfo';
@@ -26,9 +26,10 @@ export default function SendMany({
   sendManyContract?: Contract;
 }) {
   const { ownerStxAddress } = useStxAddresses();
+  const navigate = useNavigate();
   console.log({ assetContract });
   if (!ownerStxAddress) {
-    return <div>Loading</div>;
+    return navigate('/landing');
   }
 
   const network: StacksNetworkName = mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet';
@@ -64,7 +65,7 @@ export default function SendMany({
                         : network === 'testnet'
                           ? a === 'stx' ? '/?chain=testnet' : `/${a}?chain=testnet`
                           : a === 'stx' ? '/?chain=mocknet' : `/${a}?chain=mocknet`;
-                      
+
                       return (
                         <Link
                           key={a}

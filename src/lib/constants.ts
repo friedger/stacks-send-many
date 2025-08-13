@@ -27,6 +27,8 @@ export const SBTC_CONTRACT = {
   name: 'asset',
 };
 
+export const FALLBACK_ROUTE = '/sbtc';
+
 export type Contract = { address: string; name: string };
 
 export type AssetContractInfo = {

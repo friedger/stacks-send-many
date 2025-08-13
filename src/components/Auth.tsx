@@ -14,6 +14,7 @@ export default function Auth() {
   useEffect(() => {
     setIsAuthed(stacksConnected || !!wcSession);
   }, [stacksConnected, wcSession]);
+
   if (isAuthed) {
     return (
       <button

@@ -2,7 +2,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 import { connect, disconnect, getLocalStorage } from '@stacks/connect';
 import { useEffect, useState } from 'react';
-import { wcClientState, wcSessionState, stacksConnectedState } from './auth';
+import { stacksConnectedState, wcClientState, wcSessionState } from './auth';
 
 // Helper functions to manage connection state
 export function useStacksConnection() {

@@ -48,7 +48,9 @@
   "scripts": {
     "start": "vite",
     "build": "CI= tsc && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -70,10 +72,14 @@
   "devDependencies": {
     "@cloudflare/kv-asset-handler": "0.4.0",
     "@stacks/prettier-config": "0.0.10",
+    "@testing-library/jest-dom": "^6.7.0",
+    "@testing-library/react": "^16.3.0",
     "bootstrap": "^5.3.3",
+    "jsdom": "^25.0.1",
     "netlify-cli": "22.2.1",
     "prettier": "^3.2.5",
     "react-test-renderer": "^18.3.1",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^2.1.9"
   }
 }

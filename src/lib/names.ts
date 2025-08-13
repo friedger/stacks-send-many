@@ -17,11 +17,13 @@ export const getNameFromAddress = async (addr: string) => {
   const result = (await fetchCallReadOnlyFunction({
     contractAddress: BNS_CONTRACT_ADDRESS,
     contractName: BNS_CONTRACT_NAME,
-    functionName: 'get-primary-name',
+    functionName: 'get-primary',
     functionArgs: [addrCV],
     senderAddress: addr,
     network: NETWORK,
-  })) as ResponseOkCV<TupleCV<{ name: BufferCV; namespace: BufferCV }>> | ResponseErrorCV;
+  })) as
+    | ResponseErrorCV
+    | ResponseOkCV<OptionalCV<TupleCV<{ name: BufferCV; namespace: BufferCV }>>>;
   return result;
 };
 
