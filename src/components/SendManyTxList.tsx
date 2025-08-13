@@ -148,7 +148,7 @@ export function SendManyTxList() {
                       filename="transactions.csv"
                       exportFile={async () => {
                         if (!ownerStxAddress) {
-                          return "no stx address"
+                          return "No Stacks address available for export";
                         }
                         setExporting(true);
 
