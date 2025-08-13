@@ -3,10 +3,10 @@ import toUnicode from 'punycode2/to-unicode';
 import { useEffect, useMemo, useState } from 'react';
 import { getNameFromAddress } from '../lib/names';
 
-function hex_to_ascii(bytes: Uint8Array) {
+function hex_to_ascii(bytes: string) {
   var str = '';
   for (var n = 0; n < bytes.length; n += 1) {
-    str += String.fromCharCode(bytes[n]);
+    str += String.fromCharCode(bytes.charCodeAt(n));
   }
   return str;
 }
@@ -24,11 +24,11 @@ export function Address({ addr }: { addr: string }) {
   useEffect(() => {
     getNameFromAddress(addr).then(data => {
       if (data.type === ClarityType.ResponseOk && data.value.type === ClarityType.Tuple) {
-        const { name, namespace } = data.value.data;
+        const { name, namespace } = data.value.value;
 
-        const nameStr = hex_to_ascii(name.buffer);
+        const nameStr = hex_to_ascii(name.value);
         const namePunycodeStr = toUnicode(nameStr);
-        const namespaceStr = hex_to_ascii(namespace.buffer);
+        const namespaceStr = hex_to_ascii(namespace.value);
         setNameAscii(nameStr === namePunycodeStr ? undefined : `${nameStr}.${namespaceStr}`);
         setNameOrAddress(`${namePunycodeStr}.${namespaceStr}`);
       }

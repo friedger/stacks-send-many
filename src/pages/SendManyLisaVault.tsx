@@ -1,7 +1,6 @@
 import { useStxAddresses } from '../lib/hooks';
 
 import { SendManyLisaTxGroup } from '../components/SendManyLisaTxGroup';
-import { useConnect } from '../lib/auth';
 
 const cycles = [84, 83, 82, 81, 80];
 const txs = {
@@ -27,7 +26,6 @@ const txs = {
 type cyclesType = keyof typeof txs;
 export default function SendManyLisaVault() {
   const { ownerStxAddress } = useStxAddresses();
-  const { userSession } = useConnect();
   return (
     <main className="panel-welcome mt-5 container">
       <div className="lead row mt-5">
@@ -42,7 +40,6 @@ export default function SendManyLisaVault() {
                 cycleId={cycleId}
                 txList={txs[cycleId as cyclesType]}
                 ownerStxAddress={ownerStxAddress}
-                userSession={userSession}
               />
             );
           })}

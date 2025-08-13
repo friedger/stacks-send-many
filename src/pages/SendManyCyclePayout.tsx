@@ -3,7 +3,6 @@ import { SendManyGroupTxs } from '../components/SendManyGroupTxs';
 import { chainSuffix } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
 
-import { useConnect } from '@stacks/connect-react';
 import { Link, useParams } from 'react-router-dom';
 
 const cycles = {
@@ -132,7 +131,6 @@ const cycles = {
 type keys = keyof typeof cycles;
 export default function SendManyDetails() {
   const { cycleId } = useParams<{ cycleId: keys }>();
-  const { userSession } = useConnect();
   const { ownerStxAddress } = useStxAddresses();
   return (
     <main className="panel-welcome mt-5 container">
@@ -145,7 +143,6 @@ export default function SendManyDetails() {
             <SendManyGroupTxs
               txList={cycles[cycleId]}
               ownerStxAddress={ownerStxAddress}
-              userSession={userSession}
             />
           ) : (
             <>

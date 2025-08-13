@@ -1,4 +1,4 @@
-import { callReadOnlyFunction, cvToString, PrincipalCV, TupleCV } from '@stacks/transactions';
+import { cvToString, fetchCallReadOnlyFunction, PrincipalCV, TupleCV } from '@stacks/transactions';
 import { useEffect, useState } from 'react';
 import { NETWORK } from '../lib/constants';
 
@@ -9,7 +9,7 @@ export function SBTCInfo({ assetId }: { assetId: string }) {
     const fn = async () => {
       const [contractId, _] = assetId.split('::');
       const [contractAddress] = contractId.split('.');
-      const response = (await callReadOnlyFunction({
+      const response = (await fetchCallReadOnlyFunction({
         contractAddress,
         contractName: 'sbtc-registry',
         functionName: 'get-current-signer-data',
@@ -18,7 +18,7 @@ export function SBTCInfo({ assetId }: { assetId: string }) {
         network: NETWORK,
       })) as TupleCV<{ 'current-signer-principal': PrincipalCV }>;
       setInfo(
-        `Current sBTC signer Stacks address: ${cvToString(response.data['current-signer-principal'])}`
+        `Current sBTC signer Stacks address: ${cvToString(response.value['current-signer-principal'])}`
       );
     };
     fn().catch(e => {

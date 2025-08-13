@@ -1,7 +1,7 @@
 import {
   BufferCV,
   bufferCVFromString,
-  callReadOnlyFunction,
+  fetchCallReadOnlyFunction,
   OptionalCV,
   PrincipalCV,
   principalCV,
@@ -14,7 +14,7 @@ import { BNS_CONTRACT_ADDRESS, BNS_CONTRACT_NAME, NETWORK } from './constants';
 
 export const getNameFromAddress = async (addr: string) => {
   let addrCV = principalCV(addr);
-  const result = (await callReadOnlyFunction({
+  const result = (await fetchCallReadOnlyFunction({
     contractAddress: BNS_CONTRACT_ADDRESS,
     contractName: BNS_CONTRACT_NAME,
     functionName: 'get-primary-name',
@@ -27,7 +27,7 @@ export const getNameFromAddress = async (addr: string) => {
 
 export const getNameInfo = async (fqName: string) => {
   const [name, namespace] = fqName.split('.');
-  const result = (await callReadOnlyFunction({
+  const result = (await fetchCallReadOnlyFunction({
     contractAddress: BNS_CONTRACT_ADDRESS,
     contractName: BNS_CONTRACT_NAME,
     functionName: 'get-bns-info',

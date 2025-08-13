@@ -1,6 +1,5 @@
-import React from 'react';
 import { StoredTx } from '../lib/transactions';
-import { ContractCallTransaction } from '@stacks/stacks-blockchain-api-types';
+import { ContractCallTransaction } from '../lib/types';
 export function ContractCall({ tx }: { tx: StoredTx }) {
   return (
     <div className="small container bg-white">

@@ -1,29 +1,71 @@
-import { getUserData } from '@stacks/connect-react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
+import { connect, disconnect, getLocalStorage } from '@stacks/connect';
 import { useEffect, useState } from 'react';
-import { useConnect, userSessionState, wcClientState, wcSessionState } from './auth';
-import { mocknet, testnet } from './constants';
+import { wcClientState, wcSessionState, stacksConnectedState } from './auth';
+
+// Helper functions to manage connection state
+export function useStacksConnection() {
+  const setStacksConnected = useSetAtom(stacksConnectedState);
+
+  const connectWallet = async () => {
+    try {
+      const response = await connect();
+      setStacksConnected(true);
+      return response;
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+      setStacksConnected(false);
+      throw error;
+    }
+  };
+
+  const disconnectWallet = () => {
+    disconnect();
+    setStacksConnected(false);
+  };
+
+  return { connectWallet, disconnectWallet };
+}
 
 export function useStxAddresses() {
   const [ownerStxAddress, setOwnerStxAddress] = useState<string>();
-  const userSession = useAtomValue(userSessionState);
+  const stacksConnected = useAtomValue(stacksConnectedState);
+  const setStacksConnected = useSetAtom(stacksConnectedState);
   const wcSession = useAtomValue(wcSessionState);
-  const { authenticated } = useConnect();
 
+  // Initialize connection state on mount
   useEffect(() => {
-    if (userSession && userSession.isUserSignedIn()) {
-      getUserData(userSession).then(userData => {
-        setOwnerStxAddress(userData.profile.stxAddress[testnet || mocknet ? 'testnet' : 'mainnet']);
-      });
+    // Check if user is already connected from local storage
+    const addresses = getLocalStorage()?.addresses.stx;
+    if (addresses && addresses.length > 0) {
+      setStacksConnected(true);
+      setOwnerStxAddress(addresses[0].address);
+    }
+  }, [setStacksConnected]);
+
+  // Update address when connection status or wcSession changes
+  useEffect(() => {
+    console.log('useStxAddresses effect:', { stacksConnected, wcSession });
+
+    if (stacksConnected) {
+      // Get address from localStorage - it should be available since connect() promise resolved
+      const addresses = getLocalStorage()?.addresses.stx;
+      console.log('Addresses from local storage:', addresses);
+
+      if (addresses && addresses.length > 0) {
+        setOwnerStxAddress(addresses[0].address);
+      }
     } else if (wcSession) {
       const firstAccount = wcSession?.namespaces?.stacks?.accounts[0];
-      const [, , address] = firstAccount.split(':');
-      setOwnerStxAddress(address);
-    } else if (!userSession || !userSession.isUserSignedIn || !wcSession) {
+      if (firstAccount) {
+        const [, , address] = firstAccount.split(':');
+        setOwnerStxAddress(address);
+      }
+    } else {
       setOwnerStxAddress(undefined);
     }
-  }, [userSession, wcSession, authenticated]);
+  }, [stacksConnected, wcSession]);
 
   return { ownerStxAddress };
 }

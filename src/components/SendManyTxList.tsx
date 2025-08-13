@@ -1,11 +1,10 @@
 import React, { CSSProperties, Fragment, useCallback, useEffect, useRef, useState } from 'react';
 
-import { Transaction, TransactionEventStxAsset } from '@stacks/stacks-blockchain-api-types';
 import _groupBy from 'lodash.groupby';
 import DownloadLinkDef from 'react-download-link';
 import { Link } from 'react-router-dom';
-import { useConnect } from '../lib/auth';
 import { chainSuffix } from '../lib/constants';
+import { useStxAddresses } from '../lib/hooks';
 import { StoredTx, getTxs, getTxsAsCSV, getTxsAsJSON, jsonStringify } from '../lib/transactions';
 import { Tx } from './Tx';
 // FIXME: DownloadLink type definitions are wrong
@@ -20,8 +19,8 @@ const DownloadLink = DownloadLinkDef as unknown as React.FC<{
 }>;
 
 export function dateOfTx(tx: StoredTx) {
-  if (tx.apiData && !/^pending|dropped/.test(tx.apiData.tx_status)) {
-    return (tx.apiData as Transaction)?.burn_block_time_iso?.substring(0, 10);
+  if (tx.apiData && tx.apiData.tx_status === "success") {
+    return tx.apiData.burn_block_time_iso?.substring(0, 10);
   }
   return 'unconfirmed';
 }
@@ -36,18 +35,17 @@ function foundInTxId(tx: StoredTx, search: string) {
 
 function foundInEvents(tx: StoredTx, search: string) {
   return (
-    tx.apiData &&
+    tx.apiData && tx.apiData.tx_status === 'success' &&
     tx.apiData.events.findIndex(
       e =>
         e.event_type === 'stx_asset' &&
-        ((e as TransactionEventStxAsset).asset.recipient!.indexOf(search) >= 0 ||
+        (e.asset.recipient!.indexOf(search) >= 0 ||
           e.asset.amount!.indexOf(search) >= 0)
     ) >= 0
   );
 }
 
 export function SendManyTxList() {
-  const { userSession } = useConnect();
 
   const [status, setStatus] = useState<string>();
   const searchRef = useRef<HTMLInputElement>(null);
@@ -58,13 +56,13 @@ export function SendManyTxList() {
   const [filteredTxsByDate, setFilteredTxsByDate] = useState<{ [x: string]: StoredTx[] }>({});
   const [exportFormat, setExportFormat] = useState('csv');
   const [exporting, setExporting] = useState(false);
-
+  const { ownerStxAddress } = useStxAddresses();
   const filter = (search?: string) => (t: StoredTx) => {
     return Boolean(
       !search ||
-        foundInSenderAddress(t, search) ||
-        foundInTxId(t, search) ||
-        foundInEvents(t, search)
+      foundInSenderAddress(t, search) ||
+      foundInTxId(t, search) ||
+      foundInEvents(t, search)
     );
   };
   const filterAndGroup = useCallback(
@@ -83,7 +81,11 @@ export function SendManyTxList() {
 
   useEffect(() => {
     setStatus('Loading');
-    getTxs(userSession)
+    if (!ownerStxAddress) {
+      setStatus('No Stacks address found');
+      return;
+    }
+    getTxs(ownerStxAddress)
       .then(async transactions => {
         setStatus(undefined);
         const txsByDate = _groupBy(transactions, dateOfTx);
@@ -100,11 +102,11 @@ export function SendManyTxList() {
         setStatus('Failed to get transactions');
         console.log(e);
       });
-  }, [userSession, filterAndGroup]);
+  }, [ownerStxAddress, filterAndGroup]);
 
   const dates = filteredTxsByDate
     ? // FIXME: I'm not touching this lol I think it needs some date comparison or something tho
-      Object.keys(filteredTxsByDate).sort((a, b) => +a - +b)
+    Object.keys(filteredTxsByDate).sort((a, b) => +a - +b)
     : undefined;
   return (
     <div>
@@ -145,9 +147,13 @@ export function SendManyTxList() {
                       label="Export"
                       filename="transactions.csv"
                       exportFile={async () => {
+                        if (!ownerStxAddress) {
+                          return "no stx address"
+                        }
                         setExporting(true);
+
                         const result = await getTxsAsCSV(
-                          userSession,
+                          ownerStxAddress,
                           filter(searchRef.current?.value.trim())
                         );
                         setExporting(false);
@@ -162,9 +168,12 @@ export function SendManyTxList() {
                       label="Export"
                       filename="transactions.json"
                       exportFile={async () => {
+                        if (!ownerStxAddress) {
+                          return "no stx address"
+                        }
                         setExporting(true);
                         const txs = await getTxsAsJSON(
-                          userSession,
+                          ownerStxAddress,
                           filter(searchRef.current?.value.trim())
                         );
                         const result = jsonStringify(txs);
@@ -190,9 +199,8 @@ export function SendManyTxList() {
       </div>
       <div
         role="status"
-        className={`${
-          exporting ? '' : 'd-none'
-        } spinner-border spinner-border-sm text-info align-text-top mr-2 inline`}
+        className={`${exporting ? '' : 'd-none'
+          } spinner-border spinner-border-sm text-info align-text-top mr-2 inline`}
       />
       {dates && dates.length > 0 && (
         <>
@@ -221,9 +229,9 @@ export function SendManyTxList() {
       {!status &&
         (!dates || dates.length === 0) &&
         (searchRef.current &&
-        searchRef.current.value.trim() &&
-        searchRef.current.value.trim().startsWith('0x') &&
-        searchRef.current.value.trim().length === 66 ? (
+          searchRef.current.value.trim() &&
+          searchRef.current.value.trim().startsWith('0x') &&
+          searchRef.current.value.trim().length === 66 ? (
           <Link to={`/txid/${searchRef.current.value.trim()}${chainSuffix}`}>
             See transaction details
           </Link>

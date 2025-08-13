@@ -1,26 +1,19 @@
 import { BufferCV, hexToCV } from '@stacks/transactions';
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { chainSuffix, CONTRACT_ADDRESS } from '../lib/constants';
 
-import { StoredTx, getTx, jsonStringify } from '../lib/transactions';
+import { getTx, jsonStringify, StoredTx } from '../lib/transactions';
+import { TransactionEvent, TransactionEventSmartContractLog, TransactionEventStxAsset } from '../lib/types';
 import { Address } from './Address';
 import { Amount } from './Amount';
-import { TxEvent } from './TxEvent';
-import {
-  TransactionEvent,
-  TransactionEventSmartContractLog,
-  TransactionEventStxAsset,
-} from '@stacks/stacks-blockchain-api-types';
 import { dateOfTx } from './SendManyTxList';
-import { UserSession } from '@stacks/auth';
+import { TxEvent } from './TxEvent';
 
 export function SendManyGroupTxs({
   ownerStxAddress,
-  userSession,
   txList,
 }: {
   ownerStxAddress?: string;
-  userSession: UserSession;
   txList: string[];
 }) {
   const [status, setStatus] = useState<string>();
@@ -38,18 +31,18 @@ export function SendManyGroupTxs({
       const loadTxs = async () => {
         try {
           setProgress(100 / (txList.length + 1));
-          const firstTx = await getTx(txList[0], userSession);
+          const firstTx = await getTx(txList[0]);
           const txs = [firstTx];
-          let allEvents = firstTx.apiData?.events.map(e => {
+          let allEvents = firstTx.apiData?.tx_status === "success" ? firstTx.apiData.events.map(e => {
             return { ...e, tx: firstTx };
-          });
+          }) : [];
           for (let i = 1; i < txList.length; i++) {
             setProgress(((i + 1) * 100) / (txList.length + 1));
-            const transaction = await getTx(txList[i], userSession);
+            const transaction = await getTx(txList[i]);
             allEvents = allEvents?.concat(
-              transaction.apiData?.events.map(e => {
+              transaction.apiData?.tx_status === "success" ? transaction.apiData?.events.map(e => {
                 return { ...e, tx: transaction };
-              }) || []
+              }) : []
             );
             txs.push(transaction);
           }
@@ -63,7 +56,7 @@ export function SendManyGroupTxs({
       };
       loadTxs();
     }
-  }, [txList, userSession]);
+  }, [txList]);
 
   console.log({ a: allTxs && allTxs.allEvents });
   const txEvents =
@@ -82,19 +75,20 @@ export function SendManyGroupTxs({
     });
   const duplicateMemos = allTxs
     ? allTxs.txs.reduce((result, tx) => {
-        if (
-          tx.apiData?.tx_type === 'contract_call' &&
-          tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`
-        ) {
-          return result.concat(
-            (tx.apiData.events as TransactionEventSmartContractLog[])
-              ?.filter((_, index) => index % 2 === 1)
-              .map(e => e.contract_log.value.hex)
-          );
-        } else {
-          return result;
-        }
-      }, [] as string[])
+      if (
+        tx.apiData?.tx_type === 'contract_call' &&
+        tx.apiData.tx_status === 'success' &&
+        tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`
+      ) {
+        return result.concat(
+          (tx.apiData.events as TransactionEventSmartContractLog[])
+            ?.filter((_, index) => index % 2 === 1)
+            .map(e => e.contract_log.value.hex)
+        );
+      } else {
+        return result;
+      }
+    }, [] as string[])
     : [];
   const showMemo = duplicateMemos.length > 0;
   const memos = showMemo ? new Array(...new Set(duplicateMemos)) : [];
@@ -129,15 +123,14 @@ export function SendManyGroupTxs({
           <br />
           from{' '}
           <span
-            className={`${
-              allTxs.firstTx.apiData.sender_address === ownerStxAddress ? 'font-weight-bold' : ''
-            }`}
+            className={`${allTxs.firstTx.apiData.sender_address === ownerStxAddress ? 'font-weight-bold' : ''
+              }`}
           >
             <Address addr={allTxs.firstTx.apiData.sender_address} />
           </span>
           <br />
           {showMemo && !showMemoPerRecipient && (
-            <b>"{(hexToCV(memos[0]) as BufferCV).buffer.toString()}"</b>
+            <b>"{(hexToCV(memos[0]) as BufferCV).value.toString()}"</b>
           )}
           {total && (
             <div className="p-4">

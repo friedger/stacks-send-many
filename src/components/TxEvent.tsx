@@ -1,9 +1,7 @@
-import {
-  TransactionEventFungibleAsset,
-  TransactionEventStxAsset,
-} from '@stacks/stacks-blockchain-api-types';
+
 import { SUPPORTED_ASSETS } from '../lib/constants';
 import { StoredTx } from '../lib/transactions';
+import { TransactionEventFungibleAsset, TransactionEventStxAsset } from '../lib/types';
 import { Address } from './Address';
 import { AmountAsset } from './AmountAsset';
 import { AmountFiat } from './AmountFiat';

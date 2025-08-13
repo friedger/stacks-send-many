@@ -1,24 +1,16 @@
 import { BufferCV, hexToCV } from '@stacks/transactions';
-import React, { useRef, useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CONTRACT_ADDRESS } from '../lib/constants';
 
 import { StoredTx, getTx } from '../lib/transactions';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { Tx } from './Tx';
-import { UserSession } from '@stacks/connect';
-import {
-  Transaction,
-  TransactionEvent,
-  TransactionEventFungibleAsset,
-  TransactionEventSmartContractLog,
-} from '@stacks/stacks-blockchain-api-types';
+import { TransactionEvent, TransactionEventFungibleAsset, TransactionEventSmartContractLog, TransactionWithEvents } from '../lib/types';
 export function SendManyTransfer({
-  userSession,
   txId,
   eventIndex,
 }: {
-  userSession: UserSession;
   txId: string;
   eventIndex: number;
 }) {
@@ -29,12 +21,18 @@ export function SendManyTransfer({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+
     setLoading(true);
-    getTx(txId, userSession)
+    getTx(txId)
       .then(async transaction => {
+        if (transaction.apiData?.tx_status !== 'success') {
+          setLoading(false)
+          return;
+        }
+        const event = transaction.apiData.events[eventIndex]
         setStatus(undefined);
         setTx(transaction);
-        setEvent(transaction.apiData?.events[eventIndex]);
+        setEvent(event);
         setLoading(false);
       })
       .catch(e => {
@@ -42,7 +40,7 @@ export function SendManyTransfer({
         console.log(e);
         setLoading(false);
       });
-  }, [txId, eventIndex, userSession]);
+  }, [txId, eventIndex]);
 
   const showMemo =
     tx &&
@@ -52,32 +50,36 @@ export function SendManyTransfer({
     tx.apiData.contract_call.contract_id === `${CONTRACT_ADDRESS}.send-many-memo`;
   const memos = showMemo
     ? new Array(
-        ...new Set(
-          tx.apiData?.events
-            .filter((_, index) => index % 2 === 1)
-            .map(e => (e as TransactionEventSmartContractLog).contract_log.value.hex)
-        )
+      ...new Set(
+        (tx.apiData as TransactionWithEvents)?.events
+          .filter((_, index) => index % 2 === 1)
+          .map(e => (e as TransactionEventSmartContractLog).contract_log.value.hex)
       )
+    )
     : [];
   const showMemoPerRecipient = showMemo && memos.length > 1;
+
+  const burnBlockTimeIso = tx?.apiData && 'burn_block_time_iso' in tx.apiData
+    ? tx.apiData.burn_block_time_iso
+    : undefined;
+
   return (
     <div>
       <div
         ref={spinner}
         role="status"
-        className={`${
-          loading ? '' : 'd-none'
-        } spinner-border spinner-border-sm text-info align-text-top mr-2`}
+        className={`${loading ? '' : 'd-none'
+          } spinner-border spinner-border-sm text-info align-text-top mr-2`}
       />
-      {tx && tx.apiData && (
+      {tx && tx.apiData && burnBlockTimeIso && (
         <div className="p-2 mx-n4 mt-2 mb-2 bg-light">
-          {(tx.apiData as unknown as Transaction).burn_block_time_iso?.substring(0, 10) ||
+          {burnBlockTimeIso.substring(0, 10) ||
             'pending'}{' '}
           ({tx.apiData.tx_status})
           {showMemo && !showMemoPerRecipient && (
             <>
               <br />
-              <b>"{(hexToCV(memos[0]) as BufferCV).buffer.toString()}"</b>
+              <b>"{(hexToCV(memos[0]) as BufferCV).value}"</b>
             </>
           )}
           <div className="list-group m-4">

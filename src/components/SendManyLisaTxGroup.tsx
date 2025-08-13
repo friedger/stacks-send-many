@@ -1,25 +1,18 @@
 import { useEffect, useState } from 'react';
 import { chainSuffix } from '../lib/constants';
 
-import { UserSession } from '@stacks/auth';
-import {
-  TransactionEvent,
-  TransactionEventStxAsset,
-  TransactionEventStxLock,
-} from '@stacks/stacks-blockchain-api-types';
 import { StoredTx, getTx, jsonStringify } from '../lib/transactions';
 import { dateOfTx } from './SendManyTxList';
 import { TxEventLisaTransfer } from './TxEventLisaTransfer';
 import { TxEventStxLock } from './TxEventStxLock';
+import { TransactionEvent, TransactionEventStxAsset, TransactionEventStxLock, TransactionWithEvents } from '../lib/types';
 
 export function SendManyLisaTxGroup({
   ownerStxAddress,
-  userSession,
   txList,
   cycleId,
 }: {
   ownerStxAddress?: string;
-  userSession: UserSession;
   txList: string[];
   cycleId: number;
 }) {
@@ -38,16 +31,16 @@ export function SendManyLisaTxGroup({
       const loadTxs = async () => {
         try {
           setProgress(100 / (txList.length + 1));
-          const firstTx = await getTx(txList[0], userSession);
+          const firstTx = await getTx(txList[0]);
           const txs = [firstTx];
-          let allEvents = firstTx.apiData?.events.map(e => {
+          let allEvents = (firstTx.apiData as TransactionWithEvents).events.map(e => {
             return { ...e, tx: firstTx };
           });
           for (let i = 1; i < txList.length; i++) {
             setProgress(((i + 1) * 100) / (txList.length + 1));
-            const transaction = await getTx(txList[i], userSession);
+            const transaction = await getTx(txList[i]);
             allEvents = allEvents?.concat(
-              transaction.apiData?.events.map(e => {
+              (transaction.apiData as TransactionWithEvents).events.map(e => {
                 return { ...e, tx: transaction };
               }) || []
             );
@@ -63,7 +56,7 @@ export function SendManyLisaTxGroup({
       };
       loadTxs();
     }
-  }, [txList, userSession]);
+  }, [txList]);
 
   const txEvents =
     allTxs &&

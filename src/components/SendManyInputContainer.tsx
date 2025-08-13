@@ -3,13 +3,10 @@ import {
   bufferCVFromString,
   ClarityType,
   contractPrincipalCV,
-  createAssetInfo,
   cvToString,
-  FungibleConditionCode,
   listCV,
-  makeStandardFungiblePostCondition,
-  makeStandardSTXPostCondition,
   noneCV,
+  Pc,
   PostConditionMode,
   principalCV,
   PrincipalCV,
@@ -19,27 +16,22 @@ import {
   tupleCV,
   TxBroadcastResult,
   uintCV,
-  validateStacksAddress,
+  validateStacksAddress
 } from '@stacks/transactions';
 import React, { useEffect, useRef, useState } from 'react';
 
-import {
-  ContractCallOptions,
-  FinishedTxData,
-  useConnect as useStacksConnect,
-} from '@stacks/connect-react';
+import { FinishedTxData, request } from '@stacks/connect';
+import { CallContractParams } from '@stacks/connect/dist/types/methods';
 import { StacksNetworkName } from '@stacks/network';
-import { AddressBalanceResponse } from '@stacks/stacks-blockchain-api-types';
 import { c32addressDecode } from 'c32check';
 import toAscii from 'punycode2/to-ascii';
 import { useSearchParams } from 'react-router-dom';
 import { fetchAccount } from '../lib/account';
-import { useConnect } from '../lib/auth';
 import { chains, Contract, NETWORK, SUPPORTED_ASSETS, SupportedSymbols } from '../lib/constants';
-import { getProvider } from '../lib/getProvider';
 import { useWalletConnect } from '../lib/hooks';
 import { getNameInfo } from '../lib/names';
 import { saveTxData, TxStatus } from '../lib/transactions';
+import { AccountBalanceResponse } from '../lib/types';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { SendManyInput } from './SendManyInput';
@@ -71,7 +63,7 @@ const addToCVValues = async <T extends Row>(parts: T[]) => {
         try {
           const owner = await getNameInfo(toAscii(p.to));
           if (owner.type === ClarityType.OptionalSome) {
-            return { ...p, toCV: owner.value.data.owner };
+            return { ...p, toCV: owner.value.value.owner };
           } else {
             return { ...p, error: `No address for ${p.to}` };
           }
@@ -100,13 +92,11 @@ export function SendManyInputContainer({
   sendManyContract?: Contract;
   network: StacksNetworkName;
 }) {
-  const { userSession } = useConnect();
-  const { doContractCall } = useStacksConnect();
   const { wcClient, wcSession } = useWalletConnect();
 
   const spinner = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<string>();
-  const [account, setAccount] = useState<AddressBalanceResponse>();
+  const [account, setAccount] = useState<AccountBalanceResponse>();
   const [txId, setTxId] = useState<string>();
   const [preview, setPreview] = useState<React.ReactNode>();
   const [loading, setLoading] = useState(false);
@@ -244,12 +234,12 @@ export function SendManyInputContainer({
     return { parts, total, hasMemos };
   };
 
-  const sendAsset = async (options: ContractCallOptions) => {
+  const sendAsset = async (options: CallContractParams) => {
     const handleSave = (data: Pick<FinishedTxData, 'txId'> & Partial<FinishedTxData>) => {
       setStatus('Saving transaction to your storage');
       setTxId(data.txId);
-      if (userSession) {
-        saveTxData(data, userSession)
+      if (ownerStxAddress) {
+        saveTxData(data, ownerStxAddress)
           .then(r => {
             setRows([{ to: '', stx: '0', memo: '' }]);
             setPreview(null);
@@ -336,19 +326,15 @@ export function SendManyInputContainer({
 
     options = {
       ...options,
-      userSession,
       network: NETWORK,
-      postConditionMode: PostConditionMode.Deny,
-      onFinish: handleSendResult,
-      onCancel: () => {
-        setStatus('Transaction not sent.');
-        setLoading(false);
-      },
-    } as ContractCallOptions;
+      postConditionMode: "deny",
+    };
     try {
       setStatus(`Sending transaction`);
       if (wcSession) {
         setStatus('Waiting for confirmation on wallet');
+        const [contractAddress, contractName] = options.contract.split('.');
+
         const result = await wcClient?.request({
           chainId: chains[0],
           topic: wcSession.topic,
@@ -356,8 +342,8 @@ export function SendManyInputContainer({
             method: 'stacks_contractCall',
             params: {
               pubkey: ownerStxAddress,
-              contractAddress: options.contractAddress,
-              contractName: options.contractName,
+              contractAddress: contractAddress,
+              contractName: contractName,
               functionName: options.functionName,
               functionArgs: options.functionArgs,
               postConditions: options.postConditions,
@@ -370,7 +356,10 @@ export function SendManyInputContainer({
         handleSendResult({ txId: result as string });
       } else {
         console.log({ sponsored: options.sponsored });
-        await doContractCall(options, getProvider());
+        await request(
+          "stx_callContract",
+          options
+        );
       }
     } catch (e) {
       console.log(e);
@@ -404,7 +393,7 @@ export function SendManyInputContainer({
     console.log(nonEmptyParts[0]);
     const firstMemo =
       nonEmptyParts.length > 0 && nonEmptyParts[0].memo ? nonEmptyParts[0].memo.trim() : '';
-    let options: ContractCallOptions | undefined = undefined;
+    let options: CallContractParams | undefined = undefined;
     let contractAddress = undefined;
     let contractName = undefined;
     let assetInfo = undefined;
@@ -414,8 +403,7 @@ export function SendManyInputContainer({
         contractAddress = deployer || SUPPORTED_ASSETS.stx.sendManyContractsAddress?.[network];
         if (contractAddress) {
           options = {
-            contractAddress: contractAddress,
-            contractName: hasMemos ? 'send-many-memo' : 'send-many',
+            contract: `${contractAddress}.${hasMemos ? 'send-many-memo' : 'send-many'}`,
             functionName: 'send-many',
             functionArgs: [
               listCV(
@@ -432,8 +420,7 @@ export function SendManyInputContainer({
                 })
               ),
             ],
-            postConditions: [
-              makeStandardSTXPostCondition(ownerStxAddress, FungibleConditionCode.Equal, total),
+            postConditions: [Pc.principal(ownerStxAddress).willSendEq(total).ustx()
             ],
           };
         }
@@ -444,8 +431,7 @@ export function SendManyInputContainer({
           const [contractId, asset] = assetInfo.asset.split('::');
           const [contractAddress, contractName] = contractId.split('.');
           options = {
-            contractAddress: assetInfo.sendManyContract.address,
-            contractName: assetInfo.sendManyContract.name,
+            contract: `${assetInfo.sendManyContract.address}.${assetInfo.sendManyContract.name}`,
             functionName: 'send-xbtc',
             functionArgs: [
               nonEmptyParts.map(p => {
@@ -461,12 +447,9 @@ export function SendManyInputContainer({
               })[0],
             ],
             postConditions: [
-              makeStandardFungiblePostCondition(
-                ownerStxAddress,
-                FungibleConditionCode.Equal,
-                total,
-                createAssetInfo(contractAddress, contractName, asset)
-              ),
+              Pc.principal(ownerStxAddress).willSendEq(total).ft(
+                `${contractAddress}.${contractName}`, asset
+              )
             ],
           };
         }
@@ -480,8 +463,7 @@ export function SendManyInputContainer({
           ({ address: contractAddress, name: contractName } = { address, name });
 
           options = {
-            contractAddress: contractAddress,
-            contractName: contractName,
+            contract: `${contractAddress}.${contractName}`,
             functionName: 'transfer-many',
             functionArgs: [
               listCV(
@@ -502,11 +484,8 @@ export function SendManyInputContainer({
               ),
             ],
             postConditions: [
-              makeStandardFungiblePostCondition(
-                ownerStxAddress,
-                FungibleConditionCode.Equal,
-                total,
-                createAssetInfo(address, name, assetName)
+              Pc.principal(ownerStxAddress).willSendEq(total).ft(
+                `${address}.${name}`, assetName
               ),
             ],
           };
@@ -525,8 +504,7 @@ export function SendManyInputContainer({
             ({ address: contractAddress, name: contractName } = { address, name });
           }
           options = {
-            contractAddress: contractAddress,
-            contractName: contractName,
+            contract: `${contractAddress}.${contractName}`,
             functionName: 'send-many',
             functionArgs: [
               listCV(
@@ -546,11 +524,8 @@ export function SendManyInputContainer({
               ),
             ],
             postConditions: [
-              makeStandardFungiblePostCondition(
-                ownerStxAddress,
-                FungibleConditionCode.Equal,
-                total,
-                createAssetInfo(address, name, assetName)
+              Pc.principal(ownerStxAddress).willSendEq(total).ft(
+                `${address}.${name}`, assetName
               ),
             ],
           };
