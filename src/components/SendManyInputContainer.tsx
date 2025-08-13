@@ -641,7 +641,9 @@ export function SendManyInputContainer({
         </div>
         <div className="row">
           <div className="col-md-12 col-xs-12 col-lg-12 text-right pb-2">
+            <label htmlFor="paste-entry-list" className="form-label">Paste entry list</label>
             <input
+              id="paste-entry-list"
               onPaste={handleOnPaste}
               type="text"
               placeholder="Paste entry list"
