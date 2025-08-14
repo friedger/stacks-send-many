@@ -15,6 +15,8 @@ import {
   testnet,
 } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
+import { useAtomValue } from 'jotai';
+import { stacksConnectedState } from '../lib/auth';
 
 export default function SendMany({
   asset,
@@ -26,9 +28,14 @@ export default function SendMany({
   sendManyContract?: Contract;
 }) {
   const { ownerStxAddress } = useStxAddresses();
-  console.log({ assetContract });
-  if (!ownerStxAddress) {
+  const stacksConnected = useAtomValue(stacksConnectedState);
+
+  console.log({ ownerStxAddress, assetContract });
+  if (!stacksConnected) {
     return <Navigate to="/landing" replace />;
+  }
+  if (!ownerStxAddress) {
+    return <>Loading owner address</>;
   }
 
   const network: StacksNetworkName = mainnet ? 'mainnet' : testnet ? 'testnet' : 'mocknet';

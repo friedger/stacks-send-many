@@ -12,6 +12,7 @@ export const wcSessionState = atom<SessionTypes.Struct | null>(null);
 export const userDataState = atom<UserData | null>(null);
 export const authResponseState = atom<string | null>(null);
 export const stacksConnectedState = atom<boolean>(false);
+export const ownerStxAddressState = atom<string | undefined>(undefined);
 const authenticatedState = atom<boolean>(false);
 
 export const appMetaData = {

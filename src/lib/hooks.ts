@@ -1,8 +1,8 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 import { connect, disconnect, getLocalStorage } from '@stacks/connect';
-import { useEffect, useState } from 'react';
-import { stacksConnectedState, wcClientState, wcSessionState } from './auth';
+import { useEffect } from 'react';
+import { stacksConnectedState, wcClientState, wcSessionState, ownerStxAddressState } from './auth';
 
 // Helper functions to manage connection state
 export function useStacksConnection() {
@@ -29,7 +29,7 @@ export function useStacksConnection() {
 }
 
 export function useStxAddresses() {
-  const [ownerStxAddress, setOwnerStxAddress] = useState<string>();
+  const [ownerStxAddress, setOwnerStxAddress] = useAtom(ownerStxAddressState);
   const stacksConnected = useAtomValue(stacksConnectedState);
   const setStacksConnected = useSetAtom(stacksConnectedState);
   const wcSession = useAtomValue(wcSessionState);
