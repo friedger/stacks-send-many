@@ -600,7 +600,7 @@ export function SendManyInputContainer({
     const entries = e.clipboardData
       .getData('Text')
       .split('\n')
-      .map(entry => entry.split(','))
+      .map(entry => entry.split(/[,\t](?=(?:[^"]*"[^"]*")*[^"]*$)/))
       .map(entryParts => {
         return {
           to: entryParts[0].trim().replace(/-([^-]*)$/, '.$1'),
