@@ -60,7 +60,9 @@ export default function App() {
         </div>
       </nav>
 
-      <RouterProvider router={router} />
+      <main className="main-content">
+        <RouterProvider router={router} />
+      </main>
       <Footer />
     </>
   );

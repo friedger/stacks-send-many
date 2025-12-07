@@ -15,6 +15,12 @@
 
 html,
 body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
   background-color: #fff;
 }
 
@@ -46,6 +52,8 @@ inspect {
 
 #App {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .panel-landing {
@@ -79,7 +87,11 @@ inspect {
   background-color: #f8f9fa;
   border: 1px solid #dee2e6;
   color: #212529;
-  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
 }
 
 .asset-pill:hover {
@@ -99,4 +111,14 @@ inspect {
   background-color: #0b5ed7;
   border-color: #0a58ca;
   color: white;
+}
+
+.main-content {
+  flex: 1;
+  background-color: azure;
+  padding-bottom: 20px;
+}
+
+footer {
+  overflow: hidden;
 }

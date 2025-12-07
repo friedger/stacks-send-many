@@ -1,7 +1,4 @@
 export function Footer() {
-  const commitHash = __COMMIT_HASH__;
-  const shortHash = commitHash.substring(0, 7);
-
   return (
     <footer
       className="bg-dark text-white text-center w-80 mb-0 p-5"
@@ -27,15 +24,6 @@ export function Footer() {
           Open Source
         </a>{' '}
         available on github.{' '}
-        <span className="text-muted small mb-0">
-          <a
-            href={`https://github.com/friedger/stacks-send-many/commit/${commitHash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ({shortHash})
-          </a>
-        </span>
       </p>
     </footer>
   );

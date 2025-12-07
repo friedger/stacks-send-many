@@ -9,5 +9,3 @@ declare module 'punycode2/to-ascii' {
   toAscii: (str: string) => string;
   export default toAscii;
 }
-
-declare const __COMMIT_HASH__: string;
