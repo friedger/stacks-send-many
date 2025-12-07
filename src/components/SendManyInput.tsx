@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { Row } from './SendManyInputContainer';
 export function SendManyInput({
   index,

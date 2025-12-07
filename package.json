@@ -10,8 +10,8 @@
     "url": "git+https://github.com/friedger/stacks-send-many.git"
   },
   "dependencies": {
-    "@scure/bip32": "^1.4.0",
-    "@scure/btc-signer": "^1.3.1",
+    "@scure/bip32": "^1.7.0",
+    "@scure/btc-signer": "^1.8.1",
     "@stacks/blockchain-api-client": "^8.11.2",
     "@stacks/common": "7.0.2",
     "@stacks/connect": "^8.1.9",
@@ -19,9 +19,9 @@
     "@stacks/profile": "7.1.0",
     "@stacks/transactions": "^7.1.0",
     "@types/lodash.groupby": "^4.6.9",
-    "@types/react": "^18.3.2",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react-swc": "^3.6.0",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react-swc": "^4.2.2",
     "@walletconnect/encoding": "^1.0.2",
     "@walletconnect/qrcode-modal": "^1.8.0",
     "@walletconnect/sign-client": "^2.13.0",
@@ -33,8 +33,8 @@
     "jotai": "^2.8.0",
     "lodash.groupby": "^4.6.0",
     "punycode2": "^1.0.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "react-download-link": "^2.3.0",
     "react-jdenticon": "^1.1.0",
     "react-router-dom": "^6.23.1",
@@ -42,7 +42,7 @@
     "serve": "14.2.4",
     "vite": "7.0.0",
     "vite-plugin-svgr": "4.3.0",
-    "vite-tsconfig-paths": "^4.3.2"
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "prettier": "@stacks/prettier-config",
   "scripts": {

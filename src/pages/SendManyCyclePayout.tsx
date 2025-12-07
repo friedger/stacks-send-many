@@ -1,4 +1,3 @@
-import React from 'react';
 import { SendManyGroupTxs } from '../components/SendManyGroupTxs';
 import { chainSuffix } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';

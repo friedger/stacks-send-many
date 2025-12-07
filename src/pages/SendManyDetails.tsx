@@ -1,4 +1,3 @@
-import React from 'react';
 import { SendManyTx } from '../components/SendManyTx';
 import { useStxAddresses } from '../lib/hooks';
 

@@ -11,7 +11,7 @@ import { Tx } from './Tx';
 // className somehow is passed but the types are out of date
 const DownloadLink = DownloadLinkDef as unknown as React.FC<{
   filename?: string;
-  label?: string | number | JSX.Element;
+  label?: string | number | React.JSX.Element;
   className?: string;
   style?: CSSProperties;
   tagName?: string;

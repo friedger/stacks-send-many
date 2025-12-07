@@ -1,6 +1,11 @@
 import { isConnected } from '@stacks/connect';
-import React from 'react';
-import { Navigate, Outlet, Route, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
+import {
+  Navigate,
+  Outlet,
+  Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from 'react-router-dom';
 import { SUPPORTED_SYMBOLS } from './lib/constants';
 import Landing from './pages/Landing';
 import SendMany from './pages/SendMany';
@@ -9,7 +14,7 @@ import SendManyDetails from './pages/SendManyDetails';
 import SendManyLisaVault from './pages/SendManyLisaVault';
 import SendManyTransferDetails from './pages/SendManyTransferDetails';
 
-function RequireAuth({ children }: { children: JSX.Element | JSX.Element[] }) {
+function RequireAuth({ children }: { children: React.JSX.Element | React.JSX.Element[] }) {
   if (!isConnected()) {
     // Redirect to landing page when not authenticated
     return <Navigate to="/landing" replace />;
