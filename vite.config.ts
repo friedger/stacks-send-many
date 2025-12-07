@@ -8,4 +8,7 @@ export default defineConfig({
   build: {
     outDir: 'build',
   },
+  define: {
+    __COMMIT_HASH__: JSON.stringify(process.env.COMMIT_REF || 'dev'),
+  },
 });

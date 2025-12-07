@@ -3,6 +3,7 @@ import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import Auth from './components/Auth';
+import { Footer } from './components/Footer';
 import { Network } from './components/Network';
 import { Rate } from './components/Rate';
 import { appMetaData, wcClientState } from './lib/auth';
@@ -60,6 +61,7 @@ export default function App() {
       </nav>
 
       <RouterProvider router={router} />
+      <Footer />
     </>
   );
 }
