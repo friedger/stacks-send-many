@@ -71,7 +71,9 @@ export type SupportedSymbols =
   | 'aeusd'
   | 'listx'
   | 'lialex'
-  | 'velar';
+  | 'velar'
+  | 'usdh'
+  | 'usdc';
 
 export const SUPPORTED_SYMBOLS: SupportedSymbols[] = [
   'sbtc',
@@ -89,6 +91,8 @@ export const SUPPORTED_SYMBOLS: SupportedSymbols[] = [
   'listx',
   'lialex',
   'velar',
+  'usdh',
+  'usdc',
 ];
 
 export const SUPPORTED_ASSETS: {
@@ -290,34 +294,34 @@ export const SUPPORTED_ASSETS: {
       },
     },
   },
-};
-
-export const WRAPPED_BITCOIN_ASSET =
-  'SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin';
-export const WRAPPED_BITCOIN_CONTRACT = {
-  address: 'SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR',
-  name: 'Wrapped-Bitcoin',
-  asset: 'wrapped-bitcoin',
-};
-
-export const WMNO_ASSET =
-  'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.wrapped-nothing-v8::wrapped-nthng';
-export const WMNO_CONTRACT = {
-  address: 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ',
-  name: 'wrapped-nothing-v8',
-  asset: 'wrapped-nthng',
-};
-
-export const NOT_ASSET = 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope::NOT';
-export const NOT_CONTRACT = {
-  address: 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ',
-  name: 'nope',
-  asset: 'NOT',
-};
-
-export const XBTC_SEND_MANY_CONTRACT = {
-  address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
-  name: 'xbtc-send-many-v1',
+  usdh: {
+    name: 'Hermetica USDh',
+    shortName: 'USDh',
+    decimals: 8,
+    assets: {
+      mainnet: {
+        asset: 'SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh',
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'usdh-send-many-v1',
+        },
+      },
+    },
+  },
+  usdc: {
+    name: 'USDC via Circle xReserve',
+    shortName: 'USDCx',
+    decimals: 6,
+    assets: {
+      testnet: {
+        asset: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.usdcx::usdcx-token',
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'usdcx-send-many-v1',
+        },
+      },
+    },
+  },
 };
 
 export const STACK_API_URL = localNode

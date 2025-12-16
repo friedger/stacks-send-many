@@ -561,6 +561,7 @@ export function SendManyInputContainer({
   const TX_FEE_IN_NOT = '10000';
   const TX_FEE_IN_SBTC = '0.000001';
   const TX_FEE_IN_SBTC_SATS = '100';
+  const TX_FEE_IN_USDC = '100'
 
   const cloneAndAddFees = (rows: Row[]) => {
     const newRows = new Array(...rows);
