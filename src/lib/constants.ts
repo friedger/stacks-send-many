@@ -296,7 +296,7 @@ export const SUPPORTED_ASSETS: {
   },
   usdh: {
     name: 'Hermetica USDh',
-    shortName: 'USDh',
+    shortName: '$USDh',
     decimals: 8,
     assets: {
       mainnet: {
@@ -310,7 +310,7 @@ export const SUPPORTED_ASSETS: {
   },
   usdc: {
     name: 'USDC via Circle xReserve',
-    shortName: 'USDCx',
+    shortName: '$USDCx',
     decimals: 6,
     assets: {
       testnet: {
