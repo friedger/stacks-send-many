@@ -33,7 +33,6 @@ export function Profile({
 
   useEffect(() => {
     fetchAccount(stxAddress).then(acc => {
-      console.log({ acc });
       setProfileState({ account: acc });
     });
   }, [stxAddress]);

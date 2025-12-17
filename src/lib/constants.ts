@@ -316,7 +316,7 @@ export const SUPPORTED_ASSETS: {
       testnet: {
         asset: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.usdcx::usdcx-token',
         sendManyContract: {
-          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          address: 'ST2PABAF9FTAJYNFZH93XENAJ8FVY99RRM4DF2YCW',
           name: 'usdcx-send-many-v1',
         },
       },

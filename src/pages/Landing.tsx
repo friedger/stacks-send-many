@@ -1,7 +1,7 @@
-import { useWcConnect } from '../lib/auth';
-import { useStacksConnection } from '../lib/hooks';
-import { FALLBACK_ROUTE, TokenSymbol } from '../lib/constants';
+import { connect } from '@stacks/connect';
 import { useNavigate } from 'react-router-dom';
+import { useWcConnect } from '../lib/auth';
+import { FALLBACK_ROUTE, TokenSymbol } from '../lib/constants';
 
 // Landing page demonstrating Blockstack connect for registration
 
@@ -12,7 +12,6 @@ export default function Landing({
   asset?: TokenSymbol;
 }) {
   const { handleWcOpenAuth, isWcReady } = useWcConnect();
-  const { connectWallet } = useStacksConnection();
   const navigate = useNavigate();
   return (
     <div className="Landing">
@@ -73,7 +72,7 @@ export default function Landing({
 
               <p className="card-link mb-5">
                 <button className="btn btn-outline-primary" type="button" onClick={() =>
-                  connectWallet().then(() => {
+                  connect().then(() => {
                     console.log("connected", asset);
                     navigate(asset ? `/${asset}` : FALLBACK_ROUTE)
                   })}>

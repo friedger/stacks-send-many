@@ -17,9 +17,7 @@ Global state uses Jotai atoms in `src/lib/auth.ts`:
 
 - `wcClientState`, `wcSessionState` - WalletConnect client/session
 - `userDataState`, `authResponseState` - Stacks Connect auth
-- `stacksConnectedState` - Stacks wallet connection status
 - Use `useStxAddresses()` hook for current wallet address
-- Use `useStacksConnection()` for controlled connect/disconnect
 
 ## Essential Patterns
 

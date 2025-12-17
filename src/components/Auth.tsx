@@ -1,19 +1,16 @@
-import { useWalletConnect, useStacksConnection } from '../lib/hooks';
-import { useAtomValue } from 'jotai';
-import { stacksConnectedState } from '../lib/auth';
+import { disconnect, isConnected } from '@stacks/connect';
 import { useEffect, useState } from 'react';
+import { useWalletConnect } from '../lib/hooks';
 // Authentication button adapting to status
 
 export default function Auth() {
   const { wcClient, wcSession, setWcSession } = useWalletConnect();
-  const { disconnectWallet } = useStacksConnection();
-  const stacksConnected = useAtomValue(stacksConnectedState);
-  const [isAuthed, setIsAuthed] = useState<boolean>(stacksConnected || !!wcSession);
+  const [isAuthed, setIsAuthed] = useState<boolean>(isConnected() || !!wcSession);
 
   // Update auth state when connection status changes
   useEffect(() => {
-    setIsAuthed(stacksConnected || !!wcSession);
-  }, [stacksConnected, wcSession]);
+    setIsAuthed(isConnected() || !!wcSession);
+  }, [wcSession, isAuthed]);
 
   if (isAuthed) {
     return (
@@ -21,8 +18,8 @@ export default function Auth() {
         className="btn btn-primary btn-lg align-self-center m-1"
         onClick={() => {
           console.log('signOut');
-          if (stacksConnected) {
-            disconnectWallet();
+          if (isConnected()) {
+            disconnect();
             setIsAuthed(false);
           }
           if (wcSession) {

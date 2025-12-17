@@ -1,3 +1,4 @@
+import { isConnected } from '@stacks/connect';
 import { StacksNetworkName } from '@stacks/network';
 import { Link, Navigate } from 'react-router-dom';
 import { Instructions } from '../components/Instructions';
@@ -15,8 +16,6 @@ import {
   testnet,
 } from '../lib/constants';
 import { useStxAddresses } from '../lib/hooks';
-import { useAtomValue } from 'jotai';
-import { stacksConnectedState } from '../lib/auth';
 
 export default function SendMany({
   asset,
@@ -28,9 +27,9 @@ export default function SendMany({
   sendManyContract?: Contract;
 }) {
   const { ownerStxAddress } = useStxAddresses();
-  const stacksConnected = useAtomValue(stacksConnectedState);
+  const stacksConnected = isConnected();
 
-  console.log({ ownerStxAddress, assetContract });
+  console.log({ ownerStxAddress, assetContract, stacksConnected });
   if (!stacksConnected) {
     return <Navigate to="/landing" replace />;
   }

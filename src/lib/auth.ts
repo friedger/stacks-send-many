@@ -1,4 +1,3 @@
-import { UserData } from '@stacks/connect';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import Client from '@walletconnect/sign-client';
 import { SessionTypes } from '@walletconnect/types';
@@ -9,9 +8,7 @@ import { chains } from './constants';
 export const wcClientState = atom<Client | null>(null);
 
 export const wcSessionState = atom<SessionTypes.Struct | null>(null);
-export const userDataState = atom<UserData | null>(null);
 export const authResponseState = atom<string | null>(null);
-export const stacksConnectedState = atom<boolean>(false);
 export const ownerStxAddressState = atom<string | undefined>(undefined);
 const authenticatedState = atom<boolean>(false);
 

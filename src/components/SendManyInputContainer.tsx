@@ -144,7 +144,6 @@ export function SendManyInputContainer({
       fetchAccount(ownerStxAddress)
         .then(async acc => {
           setAccount(acc);
-          console.log({ acc });
         })
         .catch((e: Error) => {
           setStatus('Failed to access your account');
@@ -254,7 +253,6 @@ export function SendManyInputContainer({
       }
     };
     const handleSendResult = (data: Pick<FinishedTxData, 'txId'> & Partial<FinishedTxData>) => {
-      console.log({ data });
       if (data.stacksTransaction?.auth.authType === AuthType.Sponsored) {
         setStatus('Sending tx to sponsor');
         const feesInTokens = asset === 'not' ? TX_FEE_IN_NOT : TX_FEE_IN_SBTC_SATS;

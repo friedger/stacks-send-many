@@ -58,7 +58,6 @@ export function SendManyGroupTxs({
     }
   }, [txList]);
 
-  console.log({ a: allTxs && allTxs.allEvents });
   const txEvents =
     allTxs &&
     (allTxs.allEvents?.filter(event => event.event_type === 'stx_asset') as
