@@ -308,7 +308,7 @@ export const SUPPORTED_ASSETS: {
       },
     },
   },
-  usdc: {
+  usdcx: {
     name: 'USDC via Circle xReserve',
     shortName: '$USDCx',
     decimals: 6,
