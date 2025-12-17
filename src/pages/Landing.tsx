@@ -1,9 +1,13 @@
 import { connect } from '@stacks/connect';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Location } from 'react-router-dom';
 import { useWcConnect } from '../lib/auth';
 import { FALLBACK_ROUTE, TokenSymbol } from '../lib/constants';
 
 // Landing page demonstrating Blockstack connect for registration
+
+interface LocationState {
+  from?: Location;
+}
 
 export default function Landing({
   asset,
@@ -14,9 +18,10 @@ export default function Landing({
   const { handleWcOpenAuth, isWcReady } = useWcConnect();
   const navigate = useNavigate();
   const location = useLocation();
+  const state = location.state as LocationState | null;
   
   // Get the intended destination from location state, if it exists
-  const from = (location.state as any)?.from?.pathname || (asset ? `/${asset}` : FALLBACK_ROUTE);
+  const from = state?.from?.pathname || (asset ? `/${asset}` : FALLBACK_ROUTE);
   return (
     <div className="Landing">
       <div className="jumbotron jumbotron-fluid pt-3 mb-0">

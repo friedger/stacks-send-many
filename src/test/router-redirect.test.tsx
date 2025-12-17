@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import { RouterProvider, createMemoryRouter } from 'react-router-dom';
+import { RouterProvider, createMemoryRouter, Navigate, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Landing from '../pages/Landing';
 import SendMany from '../pages/SendMany';
@@ -58,7 +58,6 @@ vi.mock('../lib/transactions', () => ({
 const renderWithRouter = (initialPath: string) => {
   // Create a mock RequireAuth component that mimics the real one
   const RequireAuth = ({ children }: { children: React.JSX.Element }) => {
-    const { Navigate, useLocation } = require('react-router-dom');
     const location = useLocation();
     
     if (!mockIsConnected) {
