@@ -1,5 +1,5 @@
 import { connect } from '@stacks/connect';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useWcConnect } from '../lib/auth';
 import { FALLBACK_ROUTE, TokenSymbol } from '../lib/constants';
 
@@ -13,6 +13,10 @@ export default function Landing({
 }) {
   const { handleWcOpenAuth, isWcReady } = useWcConnect();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get the intended destination from location state, if it exists
+  const from = (location.state as any)?.from?.pathname || (asset ? `/${asset}` : FALLBACK_ROUTE);
   return (
     <div className="Landing">
       <div className="jumbotron jumbotron-fluid pt-3 mb-0">
@@ -74,7 +78,7 @@ export default function Landing({
                 <button className="btn btn-outline-primary" type="button" onClick={() =>
                   connect().then(() => {
                     console.log("connected", asset);
-                    navigate(asset ? `/${asset}` : FALLBACK_ROUTE)
+                    navigate(from)
                   })}>
                   Start now with Stacks Wallet
                 </button>
@@ -82,7 +86,7 @@ export default function Landing({
                   className="btn btn-outline-primary"
                   type="button"
                   disabled={!isWcReady()}
-                  onClick={handleWcOpenAuth}
+                  onClick={() => handleWcOpenAuth().then(() => navigate(from))}
                 >
                   Start now with Wallet Connect
                 </button>
