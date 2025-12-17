@@ -5,6 +5,7 @@ import {
   Route,
   createBrowserRouter,
   createRoutesFromElements,
+  useLocation,
 } from 'react-router-dom';
 import { SUPPORTED_SYMBOLS } from './lib/constants';
 import Landing from './pages/Landing';
@@ -15,9 +16,11 @@ import SendManyLisaVault from './pages/SendManyLisaVault';
 import SendManyTransferDetails from './pages/SendManyTransferDetails';
 
 function RequireAuth({ children }: { children: React.JSX.Element | React.JSX.Element[] }) {
+  const location = useLocation();
+  
   if (!isConnected()) {
-    // Redirect to landing page when not authenticated
-    return <Navigate to="/landing" replace />;
+    // Redirect to landing page when not authenticated, saving the intended destination
+    return <Navigate to="/landing" replace state={{ from: location }} />;
   }
 
   return <>{children}</>;
