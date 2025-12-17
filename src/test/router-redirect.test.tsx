@@ -100,7 +100,7 @@ describe('Router Redirect Flow', () => {
 
   it('should redirect unauthenticated user from /usdh to /landing and back after authentication', async () => {
     // User is not connected and tries to access /usdh
-    const { rerender } = renderWithRouter('/usdh');
+    renderWithRouter('/usdh');
 
     // Should be redirected to landing page
     await waitFor(() => {
