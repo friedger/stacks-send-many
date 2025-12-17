@@ -1,4 +1,4 @@
-import { SUPPORTED_ASSETS, SupportedSymbols } from '../lib/constants';
+import { SUPPORTED_ASSETS, TokenSymbol } from '../lib/constants';
 import { AmountAsset } from './AmountAsset';
 import { AmountFiat } from './AmountFiat';
 
@@ -8,7 +8,7 @@ export function Amount({
   className,
 }: {
   amount: number;
-  asset: SupportedSymbols;
+  asset: TokenSymbol;
   className?: string;
 }) {
   if (asset === 'stx') {

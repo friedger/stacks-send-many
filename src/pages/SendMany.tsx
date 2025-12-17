@@ -9,7 +9,7 @@ import {
   Contract,
   SUPPORTED_ASSETS,
   SUPPORTED_SYMBOLS,
-  SupportedSymbols,
+  TokenSymbol,
   mainnet,
   mocknet,
   testnet,
@@ -23,7 +23,7 @@ export default function SendMany({
   assetContract,
   sendManyContract,
 }: {
-  asset: SupportedSymbols;
+  asset: TokenSymbol;
   assetContract?: string;
   sendManyContract?: Contract;
 }) {

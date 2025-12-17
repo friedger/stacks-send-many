@@ -56,7 +56,7 @@ export type AssetInfo = {
   sendManyContractsAddress?: { [key in StacksNetworkName]?: string };
 };
 
-export type SupportedSymbols =
+export type TokenSymbol =
   | 'sbtc'
   | 'xbtc'
   | 'not'
@@ -73,9 +73,9 @@ export type SupportedSymbols =
   | 'lialex'
   | 'velar'
   | 'usdh'
-  | 'usdc';
+  | 'usdcx';
 
-export const SUPPORTED_SYMBOLS: SupportedSymbols[] = [
+export const SUPPORTED_SYMBOLS: TokenSymbol[] = [
   'sbtc',
   'xbtc',
   'not',
@@ -92,11 +92,11 @@ export const SUPPORTED_SYMBOLS: SupportedSymbols[] = [
   'lialex',
   'velar',
   'usdh',
-  'usdc',
+  'usdcx',
 ];
 
 export const SUPPORTED_ASSETS: {
-  [key in SupportedSymbols]: AssetInfo;
+  [key in TokenSymbol]: AssetInfo;
 } = {
   stx: {
     name: 'Stacks (STX)',

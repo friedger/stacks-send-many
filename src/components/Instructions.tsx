@@ -1,11 +1,11 @@
 import { StacksNetworkName } from '@stacks/network';
-import { SUPPORTED_ASSETS, SupportedSymbols } from '../lib/constants';
+import { SUPPORTED_ASSETS, TokenSymbol } from '../lib/constants';
 
 export function Instructions({
   asset,
   network,
 }: {
-  asset: SupportedSymbols;
+  asset: TokenSymbol;
   network: StacksNetworkName;
 }) {
   const usingSendManyContract = SUPPORTED_ASSETS[asset].assets?.[network]?.sendManyContract;

@@ -1,6 +1,6 @@
 import { useWcConnect } from '../lib/auth';
 import { useStacksConnection } from '../lib/hooks';
-import { FALLBACK_ROUTE, SupportedSymbols } from '../lib/constants';
+import { FALLBACK_ROUTE, TokenSymbol } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
 
 // Landing page demonstrating Blockstack connect for registration
@@ -9,7 +9,7 @@ export default function Landing({
   asset,
 }: {
   // asset: 'walletConnect' | 'blockstack' | 'not' | 'wmno';
-  asset?: SupportedSymbols;
+  asset?: TokenSymbol;
 }) {
   const { handleWcOpenAuth, isWcReady } = useWcConnect();
   const { connectWallet } = useStacksConnection();

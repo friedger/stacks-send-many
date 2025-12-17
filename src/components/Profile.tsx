@@ -1,7 +1,7 @@
 import * as jdenticon from 'jdenticon';
 import { useEffect, useRef, useState } from 'react';
 import { fetchAccount } from '../lib/account';
-import { SupportedSymbols } from '../lib/constants';
+import { TokenSymbol } from '../lib/constants';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { AccountBalanceResponse } from '../lib/types';
@@ -22,7 +22,7 @@ export function Profile({
   assetId,
 }: {
   stxAddress: string;
-  asset: SupportedSymbols;
+  asset: TokenSymbol;
   assetId?: string;
 }) {
   const [profileState, setProfileState] = useState<{

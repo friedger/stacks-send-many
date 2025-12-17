@@ -27,7 +27,7 @@ import { c32addressDecode } from 'c32check';
 import toAscii from 'punycode2/to-ascii';
 import { useSearchParams } from 'react-router-dom';
 import { fetchAccount } from '../lib/account';
-import { chains, Contract, NETWORK, SUPPORTED_ASSETS, SupportedSymbols } from '../lib/constants';
+import { chains, Contract, NETWORK, SUPPORTED_ASSETS, TokenSymbol } from '../lib/constants';
 import { useWalletConnect } from '../lib/hooks';
 import { getNameInfo } from '../lib/names';
 import { saveTxData, TxStatus } from '../lib/transactions';
@@ -86,7 +86,7 @@ export function SendManyInputContainer({
   sendManyContract,
   network,
 }: {
-  asset: SupportedSymbols;
+  asset: TokenSymbol;
   ownerStxAddress: string;
   assetId?: string;
   sendManyContract?: Contract;
