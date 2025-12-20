@@ -1,5 +1,5 @@
-import { connect, WalletConnect } from '@stacks/connect';
-import { useNavigate, useLocation, Location } from 'react-router-dom';
+import { connect } from '@stacks/connect';
+import { Location, useLocation, useNavigate } from 'react-router-dom';
 import { useWcConnect } from '../lib/auth';
 import { FALLBACK_ROUTE, TokenSymbol } from '../lib/constants';
 
