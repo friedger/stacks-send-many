@@ -1,4 +1,4 @@
-import { connect } from '@stacks/connect';
+import { connect, WalletConnect } from '@stacks/connect';
 import { useNavigate, useLocation, Location } from 'react-router-dom';
 import { useWcConnect } from '../lib/auth';
 import { FALLBACK_ROUTE, TokenSymbol } from '../lib/constants';
@@ -9,17 +9,12 @@ interface LocationState {
   from?: Location;
 }
 
-export default function Landing({
-  asset,
-}: {
-  // asset: 'walletConnect' | 'blockstack' | 'not' | 'wmno';
-  asset?: TokenSymbol;
-}) {
+export default function Landing({ asset }: { asset?: TokenSymbol }) {
   const { handleWcOpenAuth, isWcReady } = useWcConnect();
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState | null;
-  
+
   // Get the intended destination from location state, if it exists
   const from = state?.from?.pathname || (asset ? `/${asset}` : FALLBACK_ROUTE);
   return (
@@ -80,11 +75,21 @@ export default function Landing({
               </div>
 
               <p className="card-link mb-5">
-                <button className="btn btn-outline-primary" type="button" onClick={() =>
-                  connect().then(() => {
-                    console.log("connected", asset);
-                    navigate(from)
-                  })}>
+                <button
+                  className="btn btn-outline-primary"
+                  type="button"
+                  onClick={() =>
+                    connect({
+                      // walletConnect: {
+                      //   projectId: 'd0c1b8c866cfccbd943f1e06e7d088f4',
+                      //   networks: [WalletConnect.Networks.Stacks],
+                      // },
+                    }).then(() => {
+                      console.log('connected', asset);
+                      navigate(from);
+                    })
+                  }
+                >
                   Start now with Stacks Wallet
                 </button>
                 <button
@@ -104,6 +109,6 @@ export default function Landing({
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }

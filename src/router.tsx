@@ -14,10 +14,21 @@ import SendManyCyclePayout from './pages/SendManyCyclePayout';
 import SendManyDetails from './pages/SendManyDetails';
 import SendManyLisaVault from './pages/SendManyLisaVault';
 import SendManyTransferDetails from './pages/SendManyTransferDetails';
+import { Rate } from './components/Rate';
+import { Network } from './components/Network';
+import Auth from './components/Auth';
+import metaverse from './styles/metaverse.png';
+import { Fragment } from 'react/jsx-runtime';
+
+const styles = {
+  backgroundPosition: 'center',
+  backgroundSize: 'cover',
+  backgroundImage: `url(${metaverse})`,
+};
 
 function RequireAuth({ children }: { children: React.JSX.Element | React.JSX.Element[] }) {
   const location = useLocation();
-  
+
   if (!isConnected()) {
     // Redirect to landing page when not authenticated, saving the intended destination
     return <Navigate to="/landing" replace state={{ from: location }} />;
@@ -27,9 +38,24 @@ function RequireAuth({ children }: { children: React.JSX.Element | React.JSX.Ele
 }
 function AppBody(props: React.PropsWithChildren) {
   return (
-    <div>
-      <Outlet />
-    </div>
+    <>
+      <Fragment>
+        <nav className="navbar sticky-top navbar-dark text-light p-2" style={styles}>
+          <a className="navbar-brand" href="/">
+            <img src="/stacks.png" width="100" alt="Logo" />
+          </a>
+          <h1>Send Many</h1>
+          <div className="d-flex d-sm-block justify-content-xs-around">
+            <Rate />
+            <Network />
+            <Auth />
+          </div>
+        </nav>
+      </Fragment>
+      <div>
+        <Outlet />
+      </div>
+    </>
   );
 }
 function createRouter() {

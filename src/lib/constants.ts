@@ -320,6 +320,13 @@ export const SUPPORTED_ASSETS: {
           name: 'usdcx-send-many-v1',
         },
       },
+      mainnet: {
+        asset: 'SP120SBRBQJ00MCWS7TM5R8WJNTTKD5K0HFRC2CNE.usdcx::usdcx-token',
+        sendManyContract: {
+          address: 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9',
+          name: 'usdcx-send-many-v1',
+        },
+      }
     },
   },
 };

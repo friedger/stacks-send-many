@@ -16,7 +16,7 @@ import {
   tupleCV,
   TxBroadcastResult,
   uintCV,
-  validateStacksAddress
+  validateStacksAddress,
 } from '@stacks/transactions';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -35,6 +35,7 @@ import { AccountBalanceResponse } from '../lib/types';
 import { Address } from './Address';
 import { Amount } from './Amount';
 import { SendManyInput } from './SendManyInput';
+import { Fragment } from 'react/jsx-runtime';
 export type Row = {
   to: string;
   stx: string;
@@ -155,22 +156,22 @@ export function SendManyInputContainer({
   const updatePreview = async ({ parts, total, hasMemos }: ReturnType<typeof getPartsFromRows>) => {
     setPreview(
       <>
-        {parts.map(p => {
+        {parts.map((p, index) => {
           try {
             c32addressDecode(p.to);
             return (
-              <>
+              <Fragment key={index}>
                 <Address addr={p.to} />: <Amount amount={p.ustx} asset={asset} /> <br />
-              </>
+              </Fragment>
             );
           } catch (e) {
             setNamesResolved(!!p.toCV);
             return (
-              <>
+              <Fragment key={index}>
                 {p.error || (p.toCV ? <Address addr={cvToString(p.toCV)} /> : '...')}:{' '}
                 <Amount amount={p.ustx} asset={asset} /> <br />
                 <br />
-              </>
+              </Fragment>
             );
           }
         })}{' '}
@@ -325,7 +326,7 @@ export function SendManyInputContainer({
     options = {
       ...options,
       network: NETWORK,
-      postConditionMode: "deny",
+      postConditionMode: 'deny',
     };
     try {
       setStatus(`Sending transaction`);
@@ -354,10 +355,7 @@ export function SendManyInputContainer({
         handleSendResult({ txId: result as string });
       } else {
         console.log({ sponsored: options.sponsored });
-        await request(
-          "stx_callContract",
-          options
-        );
+        await request('stx_callContract', options);
       }
     } catch (e) {
       console.log(e);
@@ -408,18 +406,17 @@ export function SendManyInputContainer({
                 nonEmptyParts.map(p => {
                   return hasMemos
                     ? tupleCV({
-                      to: p.toCV!,
-                      ustx: uintCV(p.ustx),
-                      memo: bufferCVFromString(
-                        firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : ''
-                      ),
-                    })
+                        to: p.toCV!,
+                        ustx: uintCV(p.ustx),
+                        memo: bufferCVFromString(
+                          firstMemoForAll ? firstMemo : p.memo ? p.memo.trim() : ''
+                        ),
+                      })
                     : tupleCV({ to: p.toCV!, ustx: uintCV(p.ustx) });
                 })
               ),
             ],
-            postConditions: [Pc.principal(ownerStxAddress).willSendEq(total).ustx()
-            ],
+            postConditions: [Pc.principal(ownerStxAddress).willSendEq(total).ustx()],
           };
         }
         break;
@@ -445,9 +442,9 @@ export function SendManyInputContainer({
               })[0],
             ],
             postConditions: [
-              Pc.principal(ownerStxAddress).willSendEq(total).ft(
-                `${contractAddress}.${contractName}`, asset
-              )
+              Pc.principal(ownerStxAddress)
+                .willSendEq(total)
+                .ft(`${contractAddress}.${contractName}`, asset),
             ],
           };
         }
@@ -482,9 +479,7 @@ export function SendManyInputContainer({
               ),
             ],
             postConditions: [
-              Pc.principal(ownerStxAddress).willSendEq(total).ft(
-                `${address}.${name}`, assetName
-              ),
+              Pc.principal(ownerStxAddress).willSendEq(total).ft(`${address}.${name}`, assetName),
             ],
           };
         }
@@ -522,9 +517,7 @@ export function SendManyInputContainer({
               ),
             ],
             postConditions: [
-              Pc.principal(ownerStxAddress).willSendEq(total).ft(
-                `${address}.${name}`, assetName
-              ),
+              Pc.principal(ownerStxAddress).willSendEq(total).ft(`${address}.${name}`, assetName),
             ],
           };
         }
@@ -639,7 +632,9 @@ export function SendManyInputContainer({
         </div>
         <div className="row">
           <div className="col-md-12 col-xs-12 col-lg-12 text-right pb-2">
-            <label htmlFor="paste-entry-list" className="form-label">Paste entry list</label>
+            <label htmlFor="paste-entry-list" className="form-label">
+              Paste entry list
+            </label>
             <input
               id="paste-entry-list"
               onPaste={handleOnPaste}
@@ -694,8 +689,9 @@ export function SendManyInputContainer({
             <div
               ref={spinner}
               role="status"
-              className={`${loading ? '' : 'd-none'
-                } spinner-border spinner-border-sm text-info align-text-top mr-2`}
+              className={`${
+                loading ? '' : 'd-none'
+              } spinner-border spinner-border-sm text-info align-text-top mr-2`}
             />
             {namesResolved ? 'Send' : 'Preview'}
           </button>
