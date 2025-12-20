@@ -1,18 +1,22 @@
-import { connect } from '@stacks/connect';
-import { useNavigate } from 'react-router-dom';
+import { connect, WalletConnect } from '@stacks/connect';
+import { useNavigate, useLocation, Location } from 'react-router-dom';
 import { useWcConnect } from '../lib/auth';
 import { FALLBACK_ROUTE, TokenSymbol } from '../lib/constants';
 
 // Landing page demonstrating Blockstack connect for registration
 
-export default function Landing({
-  asset,
-}: {
-  // asset: 'walletConnect' | 'blockstack' | 'not' | 'wmno';
-  asset?: TokenSymbol;
-}) {
+interface LocationState {
+  from?: Location;
+}
+
+export default function Landing({ asset }: { asset?: TokenSymbol }) {
   const { handleWcOpenAuth, isWcReady } = useWcConnect();
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as LocationState | null;
+
+  // Get the intended destination from location state, if it exists
+  const from = state?.from?.pathname || (asset ? `/${asset}` : FALLBACK_ROUTE);
   return (
     <div className="Landing">
       <div className="jumbotron jumbotron-fluid pt-3 mb-0">
@@ -71,18 +75,28 @@ export default function Landing({
               </div>
 
               <p className="card-link mb-5">
-                <button className="btn btn-outline-primary" type="button" onClick={() =>
-                  connect().then(() => {
-                    console.log("connected", asset);
-                    navigate(asset ? `/${asset}` : FALLBACK_ROUTE)
-                  })}>
+                <button
+                  className="btn btn-outline-primary"
+                  type="button"
+                  onClick={() =>
+                    connect({
+                      // walletConnect: {
+                      //   projectId: 'd0c1b8c866cfccbd943f1e06e7d088f4',
+                      //   networks: [WalletConnect.Networks.Stacks],
+                      // },
+                    }).then(() => {
+                      console.log('connected', asset);
+                      navigate(from);
+                    })
+                  }
+                >
                   Start now with Stacks Wallet
                 </button>
                 <button
                   className="btn btn-outline-primary"
                   type="button"
                   disabled={!isWcReady()}
-                  onClick={handleWcOpenAuth}
+                  onClick={() => handleWcOpenAuth().then(() => navigate(from))}
                 >
                   Start now with Wallet Connect
                 </button>
@@ -95,6 +109,6 @@ export default function Landing({
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }

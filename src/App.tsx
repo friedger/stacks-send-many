@@ -2,23 +2,13 @@ import Client from '@walletconnect/sign-client';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import Auth from './components/Auth';
 import { Footer } from './components/Footer';
-import { Network } from './components/Network';
-import { Rate } from './components/Rate';
 import { appMetaData, wcClientState } from './lib/auth';
 import { router } from './router';
-import metaverse from './styles/metaverse.png';
 
 /* global BigInt */
 BigInt.prototype.toJSON = function () {
   return this.toString();
-};
-
-const styles = {
-  backgroundPosition: 'center',
-  backgroundSize: 'cover',
-  backgroundImage: `url(${metaverse})`,
 };
 
 export default function App() {
@@ -48,18 +38,6 @@ export default function App() {
 
   return (
     <>
-      <nav className="navbar sticky-top navbar-dark text-light p-2" style={styles}>
-        <a className="navbar-brand" href="/">
-          <img src="/stacks.png" width="100" alt="Logo" />
-        </a>
-        <h1>Send Many</h1>
-        <div className="d-flex d-sm-block justify-content-xs-around">
-          <Rate />
-          <Network />
-          <Auth />
-        </div>
-      </nav>
-
       <main className="main-content">
         <RouterProvider router={router} />
       </main>
